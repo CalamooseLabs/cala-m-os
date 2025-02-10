@@ -126,7 +126,6 @@
         "$mod, down, movefocus, d"
         "$mod, tab, cyclenext"
         "$mod, C, killactive"
-        "$mod, X, exit"
       ];
     };
   };
