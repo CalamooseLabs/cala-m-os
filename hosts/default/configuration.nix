@@ -50,7 +50,13 @@
   # Enable Flakes
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
+  # Framework BIOS updates
   services.fwupd.enable = true;
+
+  # Mount usb drives
+  services.devmon.enable = true;
+  services.gvfs.enable = true; 
+  services.udisks2.enable = true;
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
