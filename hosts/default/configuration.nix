@@ -12,12 +12,31 @@
     ];
 
   # Use the systemd-boot EFI boot loader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.plymouth.enable = true;
-  boot.plymouth.theme = "breeze";
-  boot.kernelParams = [ "quiet" ];
+  boot = {
+    loader = {
+      timeout = 0;
+      systemd-boot.enable = true;
+      efi.canTouchEfiVariables = true;
+    };
 
+    plymouth = {
+      enable = true;
+      theme = "breeze";
+    };
+
+    kernelParams = [ 
+      "quiet"
+      "splash"
+      "boot.shell_on_fail"
+      "loglevel=3"
+      "rd.systemd.show_status=false"
+      "rd.udev.log_level=3"
+      "udev.log_priority=3"
+    ];
+
+    consoleLogLevel = 0;
+    initrd.verbose = false;
+  };
 
   networking = {
     hostName = "calamooselabs";
