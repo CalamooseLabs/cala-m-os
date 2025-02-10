@@ -29,15 +29,15 @@
         specialArgs = {inherit inputs;};
         modules = [
 	  inputs.nixos-hardware.nixosModules.framework-12th-gen-intel
-          ./hosts/default/configuration.nix
+          ./hosts/fw-13-12thgen/configuration.nix
           inputs.home-manager.nixosModules.default
           inputs.catppuccin.nixosModules.catppuccin
 	];
       };
-      work = nixpkgs.lib.nixosSystem {
+      calamooselabs = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs;};
         modules = [
-          ./hosts/work/configuration.nix
+          ./hosts/fw-13-12thgen/configuration.nix
           inputs.home-manager.nixosModules.default
         ];
       };

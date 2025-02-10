@@ -12,8 +12,31 @@
     ];
 
   # Use the systemd-boot EFI boot loader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot = {
+    loader = {
+      timeout = 0;
+      systemd-boot.enable = true;
+      efi.canTouchEfiVariables = true;
+    };
+
+    plymouth = {
+      enable = true;
+      theme = "breeze";
+    };
+
+    kernelParams = [ 
+      "quiet"
+      "splash"
+      "boot.shell_on_fail"
+      "loglevel=3"
+      "rd.systemd.show_status=false"
+      "rd.udev.log_level=3"
+      "udev.log_priority=3"
+    ];
+
+    consoleLogLevel = 0;
+    initrd.verbose = false;
+  };
 
   networking = {
     hostName = "calamooselabs";
@@ -23,20 +46,17 @@
   # Set your time zone.
   time.timeZone = "America/Chicago";
 
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-  # Select internationalisation properties.
-  # i18n.defaultLocale = "en_US.UTF-8";
-  # console = {
-  #   font = "Lat2-Terminus16";
-  #   keyMap = "us";
-  #   useXkbConfig = true; # use xkb.options in tty.
-  # };
 
   # Enable Flakes
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
+  # Framework BIOS updates
+  services.fwupd.enable = true;
+
+  # Mount usb drives
+  services.devmon.enable = true;
+  services.gvfs.enable = true; 
+  services.udisks2.enable = true;
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
@@ -62,29 +82,60 @@
     ];
   };
 
+  security.sudo.extraRules = [{
+    users = [ "ccalamos" ];
+    commands = [{ 
+      command = "ALL";
+      options = [ "NOPASSWD" ];
+    }];
+  }];
+
+  nixpkgs.config.allowUnfree = true;
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     git
-    vim
+    neovim
     lf
     acpi
-    deno
+    zed-editor
+    vivaldi
+    proton-pass
   ] ++ ([
     inputs.ghostty.packages."${pkgs.system}".default
   ]);
+
+  environment.variables = {
+    EDITOR = "nvim";
+    VISUAL = "nvim";
+  };
 
   programs.hyprland = {
     enable = true;
     package = inputs.hyprland.packages."${pkgs.system}".hyprland;
   };
 
+  programs.hyprlock = {
+    enable = true;
+    package = inputs.hyprlock.packages."${pkgs.system}".default;
+  };
+
+  security = {
+    polkit.enable = true;
+    pam.services.hyprlock = {};
+  };
+
   home-manager = {
     extraSpecialArgs = { inherit inputs; };
-    users = {
-      "ccalamos" = import ./home.nix;
+    users.ccalamos = {
+      imports = [
+        ./home.nix
+	inputs.catppuccin.homeManagerModules.catppuccin
+      ];
     };
   };
+
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -97,8 +148,14 @@
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
-  services.openssh.enable = true;
-
+  services.openssh = {
+    enable = true;
+    settings = {
+      PasswordAuthentication = false;
+      KbdInteractiveAuthentication = false;
+      PermitRootLogin = "prohibit-password";
+    };
+  };
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
