@@ -126,16 +126,6 @@
     pam.services.hyprlock = {};
   };
 
-  home-manager = {
-    extraSpecialArgs = { inherit inputs; };
-    users.ccalamos = {
-      imports = [
-        ./home.nix
-        inputs.catppuccin.homeManagerModules.catppuccin
-      ];
-    };
-  };
-
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
