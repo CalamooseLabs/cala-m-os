@@ -100,6 +100,10 @@
     settings = {
       "$mod" = "SUPER";
 
+      input = {
+        numlock_by_default = true;
+      };
+
       monitor = [
         "eDP-1, 2256x1504@60, 0x0, 1"
         "DP-7, 2560x1440@60, 2560x-1504, 1"
@@ -111,6 +115,11 @@
         "$mod, P, exec, proton-pass"
         "$mod, B, exec, vivaldi"
         "$mod, L, exec, hyprlock"
+        ", XF86AudioRaiseVolume, exec, pactl set-sink-volume @DEFAULT_SINK@ +10%"
+        ", XF86AudioLowerVolume, exec, pactl set-sink-volume @DEFAULT_SINK@ -10%"
+        ", XF86AudioMut, exec, pactl set-sink-mute @DEFAULT_SINK@ toggle"
+        ", XF86MonBrightnessUp, exec, brightnessctl set +5%"
+        ", XF86MonBrightnessDown, exec, brightnessctl set 5%-"
       ];
     };
   };
