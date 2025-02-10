@@ -131,7 +131,7 @@
     users.ccalamos = {
       imports = [
         ./home.nix
-	inputs.catppuccin.homeManagerModules.catppuccin
+        inputs.catppuccin.homeManagerModules.catppuccin
       ];
     };
   };

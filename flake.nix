@@ -25,20 +25,27 @@
   in
   {
     nixosConfigurations = {
-      default = nixpkgs.lib.nixosSystem {
-        specialArgs = {inherit inputs;};
-        modules = [
-	  inputs.nixos-hardware.nixosModules.framework-12th-gen-intel
-          ./hosts/fw-13-12thgen/configuration.nix
-          inputs.home-manager.nixosModules.default
-          inputs.catppuccin.nixosModules.catppuccin
-	];
-      };
       calamooselabs = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs;};
         modules = [
-          ./hosts/fw-13-12thgen/configuration.nix
+          inputs.nixos-hardware.nixosModules.framework-12th-gen-intel
           inputs.home-manager.nixosModules.default
+          inputs.catppuccin.nixosModules.catppuccin
+          
+          ./hosts/fw-13-12thgen/configuration.nix
+
+          {
+            home-manager = {
+              extraSpecialArgs = { inherit inputs; };
+              users.ccalamos = {
+                imports = [
+                  inputs.catppuccin.homeManagerModules.catppuccin
+                  
+                  ./users/ccalamos/home.nix
+                ];
+              };
+            };
+          }
         ];
       };
     };

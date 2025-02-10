@@ -120,10 +120,13 @@
         ", XF86AudioMut, exec, pactl set-sink-mute @DEFAULT_SINK@ toggle"
         ", XF86MonBrightnessUp, exec, brightnessctl set +5%"
         ", XF86MonBrightnessDown, exec, brightnessctl set 5%-"
-        "$mod, h, movefocus, l"
-        "$mod, l, movefocus, r"
-        "$mod, k, movefocus, u"
-        "$mod, j, movefocus, d"
+        "$mod, left, movefocus, l"
+        "$mod, right, movefocus, r"
+        "$mod, up, movefocus, u"
+        "$mod, down, movefocus, d"
+        "$mod, tab, cyclenext"
+        "$mod, C, killactive"
+        "$mod, X, exit"
       ];
     };
   };
