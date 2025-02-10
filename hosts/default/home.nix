@@ -100,7 +100,11 @@
     settings = {
       "$mod" = "SUPER";
 
-      monitor = "eDP-1, 2256x1504@60, 0x0, 1";
+      monitor = [
+        "eDP-1, 2256x1504@60, 0x0, 1"
+        "DP-7, 2560x1440@60, 2560x1504, 1"
+        "DP-8, 2560x1440@60, 0x1504, 1"
+      ];
       
       bind = [
         "$mod, Q, exec, ghostty"
