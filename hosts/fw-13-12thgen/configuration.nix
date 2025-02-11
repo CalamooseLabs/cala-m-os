@@ -101,6 +101,7 @@
     vivaldi
     proton-pass
     btop
+    zathura
   ] ++ ([
     inputs.ghostty.packages."${pkgs.system}".default
   ]);
@@ -120,10 +121,6 @@
     package = inputs.hyprlock.packages."${pkgs.system}".default;
   };
   
-  programs.zathura = {
-    enable = true;
-  };
-
   security = {
     polkit.enable = true;
     pam.services.hyprlock = {};
