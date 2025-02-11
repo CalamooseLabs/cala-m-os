@@ -38,7 +38,8 @@
   };
   programs.ghostty.enable = true;
   programs.chromium.enable = true;
-  
+  programs.zathura.enable = true;
+
   programs.git = {
     enable = true;
     userName = "Cole J. Calamos";
