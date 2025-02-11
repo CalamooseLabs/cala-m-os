@@ -38,7 +38,9 @@
   };
   programs.ghostty.enable = true;
   programs.chromium.enable = true;
+  programs.vivaldi.enable = true;
   programs.zathura.enable = true;
+  programs.btop.enable = true;
 
   programs.git = {
     enable = true;
