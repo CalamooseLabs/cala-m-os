@@ -104,6 +104,7 @@
     qutebrowser
     lazygit
     bat
+    waybar
     plex-desktop
   ] ++ ([
     inputs.ghostty.packages."${pkgs.system}".default
