@@ -101,6 +101,10 @@
     proton-pass
     btop
     zathura
+    qutebrowser
+    lazygit
+    bat
+    plex-desktop
   ] ++ ([
     inputs.ghostty.packages."${pkgs.system}".default
   ]);
@@ -128,12 +132,22 @@
 
   # Enable the OpenSSH daemon.
   services.openssh = {
-    enable = true;
+    enable = false;
     settings = {
       PasswordAuthentication = false;
       KbdInteractiveAuthentication = false;
       PermitRootLogin = "prohibit-password";
     };
+  };
+
+  fileSystems."/mnt/backups" = {
+    device = "nas.calamos.family:/mnt/Media Library/Backups";
+    fsType = "nfs";
+    options = [ 
+      "x-systemd.automount"
+      "noauto"
+      "x-systemd.idle-timeout=600"
+    ];
   };
   
   system.stateVersion = "24.11"; # Did you read the comment?
