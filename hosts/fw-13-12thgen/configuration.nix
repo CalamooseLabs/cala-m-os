@@ -96,6 +96,7 @@
     neovim
     lf
     acpi
+    rofi-wayland
     zed-editor
     vivaldi
     proton-pass
