@@ -143,7 +143,8 @@
         "$mod, up, movefocus, u"
         "$mod, down, movefocus, d"
         "$mod, tab, cyclenext"
-        "$mod, C, killactive"
+        "$mod, escape, killactive"
+        "$mod, space, exec, rofi -show drun -showicons"
       ];
     };
   };
