@@ -55,6 +55,8 @@
   programs.zathura.enable = true;
   programs.btop.enable = true;
   programs.bat.enable = true;
+  programs.rofi.enable = true;
+  programs.waybar.enable = true;
   programs.git = {
     enable = true;
     userName = "Cole J. Calamos";
