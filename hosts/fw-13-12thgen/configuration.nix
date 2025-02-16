@@ -107,6 +107,10 @@
 
   nixpkgs.config.allowUnfree = true;
 
+  programs.gnupg.agent = {
+    enable = true;
+  };
+
   environment.systemPackages = with pkgs; [
     git
     neovim
@@ -124,6 +128,7 @@
     waybar
     plex-desktop
     pavucontrol
+    gnupg
   ] ++ ([
     inputs.ghostty.packages."${pkgs.system}".default
   ]);
