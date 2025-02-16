@@ -40,7 +40,6 @@
               users.ccalamos = {
                 imports = [
                   inputs.catppuccin.homeManagerModules.catppuccin
-                  
                   ./users/ccalamos/home.nix
                 ];
               };
