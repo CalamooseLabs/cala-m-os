@@ -107,10 +107,6 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  programs.gnupg.agent = {
-    enable = true;
-  };
-
   environment.systemPackages = with pkgs; [
     git
     neovim
@@ -129,6 +125,7 @@
     plex-desktop
     pavucontrol
     gnupg
+    pinentry
   ] ++ ([
     inputs.ghostty.packages."${pkgs.system}".default
   ]);
@@ -136,6 +133,11 @@
   environment.variables = {
     EDITOR = "nvim";
     VISUAL = "nvim";
+  };
+
+  programs.gnupg.agent = {
+    enable = true;
+    pinentryPackage = pkgs.pinentry;
   };
 
   programs.hyprland = {
