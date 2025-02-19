@@ -44,25 +44,25 @@
         };
         "clock#date" = {
           interval = 10;
-          format = "    {:%a. %b. %D %Y}";
+          format = "    {:%a. %b. %d %Y}";
           tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
         };
         "network" = {
           format-wifi = "{essid} ({signalStrength}%)";
-          format-ethernet = "{ipaddr}";
+          format-ethernet = "ETH: {ipaddr}";
           tooltip-format = "{ifname} via {gwaddr}";
           format-linked = "{ifname} (No IP)";
           format-disconnected = "Disconnected ⚠";
           format-alt = "{ifname}: {ipaddr}/{cidr}";
         };
         "pulseaudio" = {
-          "format" = "{volume}% {icon}";
+          "format" = "Volume: {volume}%";
           "scroll-step" = 1;
           "on-click" = "pavucontrol";
           "ignored-sinks" = [ "Easy Effects Sink" ];
         };
         "battery" = {
-          "format" = "{capacity}% {icon}";
+          "format" = "    Battery: {capacity}%";
         };
       };
     };
