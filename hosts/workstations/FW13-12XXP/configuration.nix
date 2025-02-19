@@ -131,6 +131,7 @@
     brightnessctl # Brightness control
     gnupg # GPG
     pinentry # GPG required
+    imagemagick # Image manipulation
   ] ++ ([
     # From Flake
     inputs.ghostty.packages."${pkgs.system}".default # Terminal
