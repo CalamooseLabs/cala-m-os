@@ -23,7 +23,7 @@
 
     plymouth = {
       enable = true;
-      logo = ../../../assets/logo.png;
+      logo = ../../../assets/logo-100x100.png;
       theme = "breeze";
     };
 
