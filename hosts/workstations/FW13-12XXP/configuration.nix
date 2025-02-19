@@ -130,7 +130,8 @@
     gnupg # GPG
     pinentry # GPG required
   ] ++ ([
-    inputs.ghostty.packages."${pkgs.system}".default
+    # From Flake
+    inputs.ghostty.packages."${pkgs.system}".default # Terminal
   ]);
 
   environment.variables = {
