@@ -1,6 +1,8 @@
-# Edit this configuration file to define what should be installed on
-# your system. Help is available in the configuration.nix(5) man page, on
-# https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
+##################################
+#                                #
+#   Framework 12th Gen. Laptop   #
+#                                #
+##################################
 
 { config, lib, pkgs, inputs, ... }:
 
@@ -24,7 +26,7 @@
       theme = "breeze";
     };
 
-    kernelParams = [ 
+    kernelParams = [
       "quiet"
       "splash"
       "boot.shell_on_fail"
@@ -55,7 +57,7 @@
 
   # Mount usb drives
   services.devmon.enable = true;
-  services.gvfs.enable = true; 
+  services.gvfs.enable = true;
   services.udisks2.enable = true;
 
   # Enable the X11 windowing system.
@@ -99,7 +101,7 @@
 
   security.sudo.extraRules = [{
     users = [ "ccalamos" ];
-    commands = [{ 
+    commands = [{
       command = "ALL";
       options = [ "NOPASSWD" ];
     }];
@@ -108,24 +110,25 @@
   nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs; [
-    git
-    neovim
-    lf
-    acpi
-    rofi-wayland
-    zed-editor
-    vivaldi
-    proton-pass
-    btop
-    zathura
-    qutebrowser
-    lazygit
-    bat
-    waybar
-    plex-desktop
-    pavucontrol
-    gnupg
-    pinentry
+    git # Git version control
+    neovim # Neovim editor
+    lf # CLI file explorer
+    acpi # Battery indicator cli
+    rofi-wayland # App Launcher
+    zed-editor # Code Editor
+    vivaldi # Browser
+    proton-pass # Password Manager
+    btop # System Monitor
+    zathura # PDF Viewer
+    qutebrowser # VIM-like Browser
+    lazygit # Git cli manager
+    bat # Better cat
+    waybar # Topbar
+    plex-desktop # Plex
+    pavucontrol # Volume Mixer
+    brightnessctl # Brightness control
+    gnupg # GPG
+    pinentry # GPG required
   ] ++ ([
     inputs.ghostty.packages."${pkgs.system}".default
   ]);
@@ -149,7 +152,7 @@
     enable = true;
     package = inputs.hyprlock.packages."${pkgs.system}".default;
   };
-  
+
   security = {
     polkit.enable = true;
     pam.services.hyprlock = {};
@@ -169,13 +172,12 @@
   fileSystems."/mnt/backups" = {
     device = "nas.calamos.family:/mnt/Media Library/Backups";
     fsType = "nfs";
-    options = [ 
+    options = [
       "x-systemd.automount"
       "noauto"
       "x-systemd.idle-timeout=600"
     ];
   };
-  
+
   system.stateVersion = "24.11"; # Did you read the comment?
 }
-

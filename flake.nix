@@ -32,7 +32,7 @@
           inputs.home-manager.nixosModules.default
           inputs.catppuccin.nixosModules.catppuccin
           
-          ./hosts/fw-13-12thgen/configuration.nix
+          ./hosts/workstations/FW13-12XXP/configuration.nix
 
           {
             home-manager = {
