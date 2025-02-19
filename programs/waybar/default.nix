@@ -45,7 +45,7 @@
             tooltip-format = ''
                 <big>{:%Y %B}</big>
                 <tt><small>{calendar}</small></tt>'';
-            format-alt = " {:%d/%m/%Y}";
+            format-alt = " {:%a. %m %d %Y}";
             format = " {:%H:%M}";
         };
 
@@ -85,7 +85,7 @@
 
         "custom/power" = {
             tooltip = false;
-            on-click = "bash ~/.config/rofi/scripts/powermenu.sh";
+            on-click = "powermenu";
             format = "襤";
         };
       };
