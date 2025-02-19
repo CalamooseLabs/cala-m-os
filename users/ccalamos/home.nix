@@ -4,6 +4,10 @@
   home.username = "ccalamos";
   home.homeDirectory = "/home/ccalamos";
 
+  imports = [
+    ../../programs/wayland
+  ];
+
   home.stateVersion = "24.11"; # Please read the comment before changing.
 
   xdg.mimeApps = {
@@ -58,7 +62,7 @@
   programs.btop.enable = true;
   programs.bat.enable = true;
   programs.rofi.enable = true;
-  programs.waybar.enable = true;
+  # programs.waybar.enable = true;
   programs.git = {
     enable = true;
     userName = "Cole J. Calamos";
