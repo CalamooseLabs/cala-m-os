@@ -126,6 +126,7 @@
     waybar # Topbar
     plex-desktop # Plex
     pavucontrol # Volume Mixer
+    playerctl # Media Controls
     brightnessctl # Brightness control
     gnupg # GPG
     pinentry # GPG required
