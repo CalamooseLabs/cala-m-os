@@ -60,6 +60,8 @@
         button = true;
         dock = "right";
       };
+
+      relative_line_numbers = true;
     };
   };
 }
