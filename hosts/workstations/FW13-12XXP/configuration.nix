@@ -132,6 +132,8 @@
     gnupg # GPG
     pinentry # GPG required
     imagemagick # Image manipulation
+    devenv # Development environment setups
+    direnv # Automatic devenv setup
   ] ++ ([
     # From Flake
     inputs.ghostty.packages."${pkgs.system}".default # Terminal

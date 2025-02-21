@@ -7,6 +7,7 @@
   imports = [
     ../../programs/waybar
     ../../programs/rofi
+    ../../programs/zed-editor
   ];
 
   home.stateVersion = "24.11"; # Please read the comment before changing.
