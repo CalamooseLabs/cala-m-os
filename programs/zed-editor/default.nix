@@ -18,8 +18,8 @@
       confirm_quit = false;
       load_direnv = "direct";
 
-      auto_update = "false";
-      auto_check_updates = "false";
+      auto_update = false;
+      auto_check_updates = false;
 
       edit_predictions_disabled_in = [
         "comment"
@@ -31,7 +31,7 @@
       buffer_font_size = 16;
 
       ensure_final_newline_on_save = true;
-      format_on_save = true;
+      format_on_save = "on";
 
       search = {
         whole_word = false;

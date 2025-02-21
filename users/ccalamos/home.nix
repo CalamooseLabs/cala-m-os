@@ -8,6 +8,7 @@
     ../../programs/waybar
     ../../programs/rofi
     ../../programs/zed-editor
+    ../../programs/direnv
   ];
 
   home.stateVersion = "24.11"; # Please read the comment before changing.
@@ -27,14 +28,9 @@
 
   home.packages = with pkgs; [
     noto-fonts
-    meslo-lgs-nf
 
     # All Nerd Fonts
     nerd-fonts.fantasque-sans-mono
-    nerd-fonts.fira-code
-    nerd-fonts.fira-mono
-    nerd-fonts.mononoki
-    nerd-fonts.noto
     nerd-fonts.zed-mono
   ];
 
