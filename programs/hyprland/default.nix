@@ -5,6 +5,7 @@
       enable = true;
 
       extraConfig = ''
+        exec-once = hyprpaper
       '';
 
       settings = {
