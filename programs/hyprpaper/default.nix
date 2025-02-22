@@ -1,14 +1,17 @@
 { pkgs, inputs, ... }:
 
+let
+  wallpaper = ./wallpapers/wallpaper.png;
+in
 {
     services.hyprpaper = {
         enable = true;
         settings = {
           preload = [
-            "./wallpapers/wallpaper.png"
+            (builtins.toString wallpaper)
           ];
           wallpaper = [
-            "./wallpapers/wallpaper.png"
+            ",${builtins.toString wallpaper}"
           ];
         };
     };
