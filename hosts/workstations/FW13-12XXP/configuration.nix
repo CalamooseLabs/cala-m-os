@@ -160,6 +160,9 @@
     pam.services.hyprlock = {};
   };
 
+  xdg.portal.enable = true;
+  xdg.portal.xdgOpenUsePortal = false;
+
 
   # Enable the OpenSSH daemon.
   services.openssh = {
