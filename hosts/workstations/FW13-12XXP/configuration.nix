@@ -139,6 +139,13 @@
     inputs.ghostty.packages."${pkgs.system}".default # Terminal
   ]);
 
+  # Plex needs this to login/click on links.
+  xdg.portal = {
+     enable = true;
+     extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+     xdgOpenUsePortal = true;
+   };
+
   programs.gnupg.agent = {
     enable = true;
     pinentryPackage = pkgs.pinentry;
