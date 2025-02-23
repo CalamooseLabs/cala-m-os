@@ -100,6 +100,9 @@
     ];
   };
 
+  # Trusted users for devenv
+  nix.settings.trusted-users = [ "root" "ccalamos" ];
+
   security.sudo.extraRules = [{
     users = [ "ccalamos" ];
     commands = [{

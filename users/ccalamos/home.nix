@@ -8,6 +8,7 @@ let
 
   # List of Programs
   import_programs = [
+    "bash"
     "bat"
     "btop"
     "direnv"
