@@ -20,6 +20,7 @@
 
       auto_update = false;
       auto_check_updates = false;
+      auto_install_extension = false;
 
       edit_predictions_disabled_in = [
         "comment"
