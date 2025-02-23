@@ -6,9 +6,6 @@
 
 { config, lib, pkgs, inputs, ... }:
 
-let
-  plexWrapper = import ../../../programs/plex-desktop/wrapper.nix { inherit pkgs; };
-in
 {
   imports =
     [ # Include the results of the hardware scan.
@@ -128,8 +125,7 @@ in
     lazygit # Git cli manager
     bat # Better cat
     waybar # Topbar
-    #plex-desktop # Plex
-    plexWrapper
+    plex-desktop # Plex
     pavucontrol # Volume Mixer
     playerctl # Media Controls
     brightnessctl # Brightness control
