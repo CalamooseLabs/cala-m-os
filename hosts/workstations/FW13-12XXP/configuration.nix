@@ -128,7 +128,7 @@ in
     lazygit # Git cli manager
     bat # Better cat
     waybar # Topbar
-    plex-desktop # Plex
+    #plex-desktop # Plex
     plexWrapper
     pavucontrol # Volume Mixer
     playerctl # Media Controls
