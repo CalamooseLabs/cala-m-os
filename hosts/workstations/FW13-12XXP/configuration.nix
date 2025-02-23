@@ -6,6 +6,9 @@
 
 { config, lib, pkgs, inputs, ... }:
 
+let
+  plexWrapper = import ../../../programs/plex-desktop/wrapper.nix { inherit pkgs; };
+in
 {
   imports =
     [ # Include the results of the hardware scan.
@@ -125,7 +128,8 @@
     lazygit # Git cli manager
     bat # Better cat
     waybar # Topbar
-    plex-desktop # Plex
+    #plex-desktop # Plex
+    plexWrapper
     pavucontrol # Volume Mixer
     playerctl # Media Controls
     brightnessctl # Brightness control
@@ -159,10 +163,6 @@
     polkit.enable = true;
     pam.services.hyprlock = {};
   };
-
-  xdg.portal.enable = true;
-  xdg.portal.xdgOpenUsePortal = false;
-
 
   # Enable the OpenSSH daemon.
   services.openssh = {
