@@ -139,11 +139,6 @@
     inputs.ghostty.packages."${pkgs.system}".default # Terminal
   ]);
 
-  environment.variables = {
-    EDITOR = "nvim";
-    VISUAL = "nvim";
-  };
-
   programs.gnupg.agent = {
     enable = true;
     pinentryPackage = pkgs.pinentry;
