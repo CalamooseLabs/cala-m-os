@@ -4,54 +4,33 @@
 #                                #
 ##################################
 
-{ config, lib, pkgs, inputs, ... }:
+{ pkgs, inputs, ... }:
 
+let
+  import_users = [
+    "ccalamos"
+  ];
+
+  usersPath = ../../../users;
+
+  getUsers = name: import "${toString (usersPath + "/${name}/default.nix")}";
+
+  userList = map getUsers import_users;
+in
 {
   imports =
-    [ # Include the results of the hardware scan.
+    [
+      # Hardware Config
       ./hardware-configuration.nix
-      inputs.home-manager.nixosModules.default
-    ];
+      inputs.nixos-hardware.nixosModules.framework-12th-gen-intel
 
-  # Use the systemd-boot EFI boot loader.
-  boot = {
-    loader = {
-      timeout = 0;
-      systemd-boot.enable = true;
-      efi.canTouchEfiVariables = true;
-    };
-
-    plymouth = {
-      enable = true;
-      logo = ../../../assets/logo-100x100.png;
-      theme = "breeze";
-    };
-
-    kernelParams = [
-      "quiet"
-      "splash"
-      "boot.shell_on_fail"
-      "loglevel=3"
-      "rd.systemd.show_status=false"
-      "rd.udev.log_level=3"
-      "udev.log_priority=3"
-    ];
-
-    consoleLogLevel = 0;
-    initrd.verbose = false;
-  };
+      # Common Core Config
+      ../_core/configuration.nix
+    ] ++ userList;
 
   networking = {
     hostName = "calamooselabs";
-    networkmanager.enable = true;
   };
-
-  # Set your time zone.
-  time.timeZone = "America/Chicago";
-
-
-  # Enable Flakes
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # Framework BIOS updates
   services.fwupd.enable = true;
@@ -67,117 +46,64 @@
   # Configure keymap in X11
   services.xserver.xkb.layout = "us";
 
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
-
-  # Enable bluetooth
-  hardware.bluetooth = {
-    enable = true;
-    powerOnBoot = true;
-  };
-
   # Enable touchpad support (enabled default in most desktopManager).
   services.libinput.enable = true;
 
-  # Audio Control
-  services.pulseaudio.enable = false; # Use Pipewire, the modern sound subsystem
-
-  security.rtkit.enable = true;
-
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    jack.enable = true;
-  };
-
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.ccalamos = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" ];
-    packages = with pkgs; [
-    ];
-  };
-
-  # Trusted users for devenv
-  nix.settings.trusted-users = [ "root" "ccalamos" ];
-
-  security.sudo.extraRules = [{
-    users = [ "ccalamos" ];
-    commands = [{
-      command = "ALL";
-      options = [ "NOPASSWD" ];
-    }];
-  }];
-
-  nixpkgs.config.allowUnfree = true;
-
   environment.systemPackages = with pkgs; [
-    git # Git version control
-    neovim # Neovim editor
-    lf # CLI file explorer
+    # git # Git version control
+    # neovim # Neovim editor
+    # lf # CLI file explorer
     acpi # Battery indicator cli
-    rofi-wayland # App Launcher
-    zed-editor # Code Editor
-    vivaldi # Browser
+    # rofi-wayland # App Launcher
+    # zed-editor # Code Editor
+    # vivaldi # Browser
     proton-pass # Password Manager
-    btop # System Monitor
-    zathura # PDF Viewer
+    # btop # System Monitor
+    # zathura # PDF Viewer
     qutebrowser # VIM-like Browser
-    lazygit # Git cli manager
-    bat # Better cat
-    waybar # Topbar
+    # lazygit # Git cli manager
+    # bat # Better cat
+    # waybar # Topbar
     plex-desktop # Plex
     pavucontrol # Volume Mixer
     playerctl # Media Controls
     brightnessctl # Brightness control
-    gnupg # GPG
-    pinentry # GPG required
+    # gnupg # GPG
+    # pinentry # GPG required
     imagemagick # Image manipulation
-    devenv # Development environment setups
-    direnv # Automatic devenv setup
-  ] ++ ([
+    # direnv # Automatic devenv setup
+  ];
+    # ] ++ ([
     # From Flake
-    inputs.ghostty.packages."${pkgs.system}".default # Terminal
-  ]);
+    # inputs.ghostty.packages."${pkgs.system}".default # Terminal
+  # ]);
 
   # Plex needs this to login/click on links.
   xdg.portal = {
-     enable = true;
-     extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-     xdgOpenUsePortal = true;
-   };
-
-  programs.gnupg.agent = {
     enable = true;
-    pinentryPackage = pkgs.pinentry;
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+    xdgOpenUsePortal = true;
   };
 
-  programs.hyprland = {
-    enable = true;
-    package = inputs.hyprland.packages."${pkgs.system}".hyprland;
-    portalPackage = inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
-  };
+  # programs.gnupg.agent = {
+  #   enable = true;
+  #   pinentryPackage = pkgs.pinentry;
+  # };
 
-  programs.hyprlock = {
-    enable = true;
-    package = inputs.hyprlock.packages."${pkgs.system}".default;
-  };
+  # programs.hyprland = {
+  #   enable = true;
+  #   package = inputs.hyprland.packages."${pkgs.system}".hyprland;
+  #   portalPackage = inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
+  # };
+
+  # programs.hyprlock = {
+  #   enable = true;
+  #   package = inputs.hyprlock.packages."${pkgs.system}".default;
+  # };
 
   security = {
     polkit.enable = true;
     pam.services.hyprlock = {};
-  };
-
-  # Enable the OpenSSH daemon.
-  services.openssh = {
-    enable = false;
-    settings = {
-      PasswordAuthentication = false;
-      KbdInteractiveAuthentication = false;
-      PermitRootLogin = "prohibit-password";
-    };
   };
 
   fileSystems."/mnt/backups" = {
@@ -190,5 +116,4 @@
     ];
   };
 
-  system.stateVersion = "24.11"; # Did you read the comment?
 }

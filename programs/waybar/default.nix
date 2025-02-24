@@ -1,4 +1,4 @@
-{ pkgs, inputs, ... }:
+{ pkgs, ... }:
 
 {
   # Let it try to start a few more times
@@ -7,6 +7,7 @@
   };
   programs.waybar = {
     enable = true;
+    package = pkgs.rofi-waybar;
     systemd = {
       enable = true;
       target = "hyprland-session.target"; # NOTE = hyprland/default.nix stops graphical-session.target and starts hyprland-sessionl.target
