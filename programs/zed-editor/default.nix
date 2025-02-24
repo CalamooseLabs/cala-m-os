@@ -66,6 +66,14 @@
       };
 
       relative_line_numbers = true;
+
+      lsp = {
+        nix = {
+          binary = {
+            path_lookup = true;
+          };
+        };
+      };
     };
   };
 }

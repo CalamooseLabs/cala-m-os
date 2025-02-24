@@ -1,10 +1,7 @@
 { inputs, ... }:
 
 {
-  imports = [
-    # Home Manager
-    inputs.home-manager.nixosModules.default
-  ];
+  imports = [ ../_core ];
 
   users.users.ccalamos = {
     isNormalUser = true;
@@ -20,7 +17,6 @@
   }];
 
   home-manager = {
-    extraSpecialArgs = { inherit inputs; };
     users.ccalamos = {
       imports = [
         inputs.catppuccin.homeManagerModules.catppuccin

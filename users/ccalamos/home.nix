@@ -34,7 +34,7 @@ in
   home.username = "ccalamos";
   home.homeDirectory = "/home/ccalamos";
 
-  imports = [ ../_core/home/.nix ] ++ user_imports;
+  imports = [ ../_core/home.nix ] ++ user_imports;
 
   catppuccin.enable = true;
 }
