@@ -1,6 +1,11 @@
 { inputs, ... }:
 
 {
+  imports = [
+    # Home Manager
+    inputs.home-manager.nixosModules.default
+  ];
+
   users.users.ccalamos = {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" ];
@@ -15,6 +20,7 @@
   }];
 
   home-manager = {
+    extraSpecialArgs = { inherit inputs; };
     users.ccalamos = {
       imports = [
         inputs.catppuccin.homeManagerModules.catppuccin

@@ -1,13 +1,13 @@
-{ inputs, ... }:
+{ ... }:
 
 {
-  import = [
-    # Home Manager
-    inputs.home-manager.nixosModules.default
+  # import = [
+  #   # Home Manager
+  #   inputs.home-manager.nixosModules.default
 
-    # Theme
-    # inputs.catppuccin.nixosModules.catppuccin
-  ];
+  #   # Theme
+  #   # inputs.catppuccin.nixosModules.catppuccin
+  # ];
 
   # Boot loader
   boot = {
@@ -72,9 +72,8 @@
   nixpkgs.config.allowUnfree = true;
 
   # Add Home Manager
-  home-manager = {
-    extraSpecialArgs = { inherit inputs; };
-  };
+  # home-manager = {
+  # };
 
   # Original State Version
   system.stateVersion = "24.11"; # Do not change
