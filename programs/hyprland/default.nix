@@ -28,9 +28,9 @@
       settings = {
         "$mod" = "SUPER";
 
-        exec-once = [
-          ''${inputs.hyprpaper.packages."${pkgs.system}".default}/bin/hyprpaper''
-        ];
+        # exec-once = [
+        #   ''${inputs.hyprpaper.packages."${pkgs.system}".default}/bin/hyprpaper''
+        # ];
 
         input = {
           numlock_by_default = true;
@@ -66,7 +66,7 @@
           ];
 
         bind = [
-          "$mod, Q, exec, ghostty"
+          "$mod, grave, exec, ghostty"
           "$mod, P, exec, proton-pass"
           "$mod, B, exec, vivaldi"
           "$mod, L, exec, hyprlock"
@@ -76,7 +76,7 @@
           "$mod, up, movefocus, u"
           "$mod, down, movefocus, d"
           "$mod, tab, cyclenext"
-          "$mod, escape, killactive"
+          "$mod, Q, killactive"
           "$mod, space, exec, rofi -show drun -showicons"
         ];
       };

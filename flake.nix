@@ -19,7 +19,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, ... }@inputs: 
+  outputs = { self, nixpkgs, ... }@inputs:
   let
     system = "x86_64-linux";
     pkgs = nixpkgs.legacyPackages.${system};
@@ -32,7 +32,7 @@
           inputs.nixos-hardware.nixosModules.framework-12th-gen-intel
           inputs.home-manager.nixosModules.default
           inputs.catppuccin.nixosModules.catppuccin
-          
+
           ./hosts/workstations/FW13-12XXP/configuration.nix
 
           {
@@ -49,5 +49,15 @@
         ];
       };
     };
+
+    templates.dev-shell = {
+      path = ./templates/dev-shell;
+      description = "a simple direnv nix flake shell";
+      welcomeText = ''
+        # Nix Dev Shell Template
+      '';
+    };
+
+    templates.default = self.templates.dev-shell;
   };
 }
