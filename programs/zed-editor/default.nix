@@ -4,7 +4,11 @@
   programs.zed-editor = {
     enable = true;
 
-    extensions = [];
+    extraPackages = [ pkgs.nixd ];
+
+    extensions = [
+      "nix"
+    ];
 
     userSettings = {
       telemetry = {
