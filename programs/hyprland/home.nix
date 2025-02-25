@@ -1,12 +1,6 @@
 { lib, pkgs, inputs, ... }:
 
 {
-  # programs.hyprland = {
-  #     enable = true;
-  #     package = inputs.hyprland.packages."${pkgs.system}".hyprland;
-  #     portalPackage = inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
-  # };
-
   wayland.windowManager.hyprland = {
       enable = true;
       package = inputs.hyprland.packages."${pkgs.system}".hyprland;
@@ -51,6 +45,7 @@
         binde =
           let
             pactl = lib.getExe' pkgs.pulseaudio "pactl";
+            brightnessctl = lib.getExe' pkgs.brightnessctl "brightnessctl";
           in
           [
             # Volume - Output
@@ -64,8 +59,8 @@
             ", XF86AudioMute, exec, ${pactl} set-source-mute @DEFAULT_SOURCE@ toggle"
 
             # Brightness
-            ", XF86MonBrightnessUp, exec, brightnessctl set +5%"
-            ", XF86MonBrightnessDown, exec, brightnessctl set 5%-"
+            ", XF86MonBrightnessUp, exec, ${brightnessctl} set +5%"
+            ", XF86MonBrightnessDown, exec, ${brightnessctl} set 5%-"
           ];
 
         bind = [
