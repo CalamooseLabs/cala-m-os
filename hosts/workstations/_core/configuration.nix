@@ -1,4 +1,4 @@
-{ users_list, ... }:
+{ users_list, ... }: { ... }:
 let
   usersPath = ../../../users;
 
