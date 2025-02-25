@@ -4,7 +4,7 @@ let
   user_home_path = if user_home == null then "/home/${username}" else user_home;
 
   root_path = ../../.;
-  user_config_path = "${root_path}/users/${username}/home.nix";
+  user_config_path = "${root_path}/users/${username}";
   programs_path = "${root_path}/programs";
 
   user_configuration = "${user_config_path}/configuation.nix";
