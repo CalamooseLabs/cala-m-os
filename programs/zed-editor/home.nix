@@ -31,8 +31,11 @@
       ];
 
       hide_mouse_while_typing = true;
-      ui_font_size = 16;
+      ui_font_size = 14;
+      ui_font_family = "Zed Plex Mono";
+      buffer_font_family = "Zed Plex Mono";
       buffer_font_size = 16;
+      tab_size = 2;
 
       ensure_final_newline_on_save = true;
       format_on_save = "on";

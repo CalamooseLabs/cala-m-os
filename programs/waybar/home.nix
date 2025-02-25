@@ -5,6 +5,7 @@
   systemd.user.services.waybar = {
     Unit.StartLimitBurst = 30;
   };
+
   programs.waybar = {
     enable = true;
 
@@ -22,72 +23,72 @@
         modules-right = ["pulseaudio" "network" "backlight" "battery" "clock" "tray" "custom/power"];
 
         "wlr/workspaces" = {
-            disable-scroll = true;
-            sort-by-name = true;
-            format = "{icon}";
-            format-icons = {default = "";};
+          disable-scroll = true;
+          sort-by-name = true;
+          format = "{icon}";
+          format-icons = {default = "";};
         };
 
         tray = {
-            icon-size = 21;
-            spacing = 10;
+          icon-size = 21;
+          spacing = 10;
         };
 
         "custom/music" = {
-            format = "  {}";
-            escape = true;
-            interval = 5;
-            tooltip = false;
-            exec = "${pkgs.playerctl}/bin/playerctl metadata --format '{{ title }}'";
-            max-length = 50;
+          format = "  {}";
+          escape = true;
+          interval = 5;
+          tooltip = false;
+          exec = "${pkgs.playerctl}/bin/playerctl metadata --format '{{ title }}'";
+          max-length = 50;
         };
 
         clock = {
-            tooltip-format = ''
-                <big>{:%Y %B}</big>
-                <tt><small>{calendar}</small></tt>'';
-            format-alt = " {:%a. %m %d %Y}";
-            format = " {:%H:%M}";
+          tooltip-format = ''
+            <big>{:%Y %B}</big>
+            <tt><small>{calendar}</small></tt>'';
+          format-alt = " {:%a. %m %d %Y}";
+          format = " {:%H:%M}";
         };
 
         network = {
-            format-wifi = "";
-            format-disconnected = "";
-            format-ethernet = "";
-            format-alt = "  {signalStrength}%";
-            tootip = false;
+          format-wifi = "";
+          format-disconnected = "";
+          format-ethernet = "";
+          format-alt = "  {signalStrength}%";
+          tootip = false;
         };
 
         backlight = {
-            device = "intel_backlight";
-            format = "{icon}";
-            format-icons = ["" "" "" "" "" "" "" "" ""];
-            format-alt = "{icon} {percent}%";
+          device = "intel_backlight";
+          format = "{icon}";
+          format-icons = ["" "" "" "" "" "" "" "" ""];
+          format-alt = "{icon} {percent}%";
         };
 
         battery = {
-            states = {
-                warning = 30;
-                critical = 15;
-            };
-            format = "{icon}";
-            format-charging = "";
-            format-plugged = "";
-            format-alt = "{icon} {capacity}%";
-            format-icons = ["" "" "" "" "" "" "" "" "" "" "" ""];
+          states = {
+            warning = 30;
+            critical = 15;
+          };
+          format = "{icon}";
+          format-charging = "";
+          format-plugged = "";
+          format-alt = "{icon} {capacity}%";
+          format-icons = ["" "" "" "" "" "" "" "" "" "" "" ""];
         };
 
         pulseaudio = {
-            format = "{icon}  {volume}%";
-            format-muted = "";
-            format-icons = ["" "" " "];
-            on-click = "${pkgs.pavucontrol}/bin/pavucontrol";
+          format = "{icon}  {volume}%";
+          format-muted = "";
+          format-icons = ["" "" " "];
+          on-click = "${pkgs.pavucontrol}/bin/pavucontrol";
         };
 
         "custom/power" = {
-            tooltip = false;
-            on-click = "powermenu";
-            format = "襤";
+          tooltip = false;
+          on-click = "powermenu";
+          format = "襤";
         };
       };
     };
