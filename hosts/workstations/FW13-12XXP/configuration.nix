@@ -19,7 +19,7 @@ in
       inputs.nixos-hardware.nixosModules.framework-12th-gen-intel
 
       # Common Core Config
-      (import ../_core/configuration.nix { import_users = import_users; })
+      (import ../_core/configuration.nix { users_list = import_users; })
     ];
 
   networking = {
