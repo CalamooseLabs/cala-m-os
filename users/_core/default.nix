@@ -17,7 +17,7 @@ let
 in
 {
   imports = [
-    ./configuration.nix { inherit username; } # Core Config
+    (import ./configuration.nix { username = username; }) # Core Config
     user_configuration # User Config
   ] ++ config_imports;
 
@@ -25,7 +25,7 @@ in
     users = {
       "${username}" = {
         imports = [
-          ./home.nix { inherit username user_home_path; } # Core Home Config
+          (import ./home.nix { username = username; user_home_path = user_home_path; }) # Core Home Config
           user_home_configuration # User Home Config
         ] ++ home_imports;
       };
