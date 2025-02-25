@@ -7,7 +7,7 @@ let
   user_config_path = "${root_path}/users/${username}";
   programs_path = "${root_path}/programs";
 
-  user_configuration = "${user_config_path}/configuation.nix";
+  user_configuration = "${user_config_path}/configuration.nix";
   user_home_configuration = "${user_config_path}/home.nix";
 
   makeProgramConfigs = name: filename: import (programs_path + "/${name}/${filename}");
