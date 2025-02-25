@@ -27,6 +27,6 @@ let
 in
 {
   imports = [
-    ../_core { inherit username import_programs; }
+    (import ../_core { username = username; import_programs = import_programs; })
   ];
 }
