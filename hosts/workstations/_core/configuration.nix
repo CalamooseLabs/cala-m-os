@@ -1,6 +1,14 @@
-{ ... }:
+{ users_list, ... }:
+let
+  usersPath = ../../../users;
 
+  getUsers = name: import "${toString (usersPath + "/${name}/default.nix")}";
+
+  user_imports = map getUsers users_list;
+in
 {
+  imports = user_imports;
+
   # Boot loader
   boot = {
     loader = {

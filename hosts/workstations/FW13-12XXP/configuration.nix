@@ -10,12 +10,6 @@ let
   import_users = [
     "ccalamos"
   ];
-
-  usersPath = ../../../users;
-
-  getUsers = name: import "${toString (usersPath + "/${name}/default.nix")}";
-
-  userList = map getUsers import_users;
 in
 {
   imports =
@@ -25,8 +19,8 @@ in
       inputs.nixos-hardware.nixosModules.framework-12th-gen-intel
 
       # Common Core Config
-      ../_core/configuration.nix
-    ] ++ userList;
+      ../_core/configuration.nix { inherit import_users; }
+    ];
 
   networking = {
     hostName = "calamooselabs";
