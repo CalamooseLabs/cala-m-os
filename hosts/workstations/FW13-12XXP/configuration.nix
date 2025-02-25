@@ -64,7 +64,7 @@ in
     # lazygit # Git cli manager
     # bat # Better cat
     # waybar # Topbar
-    plex-desktop # Plex
+    # plex-desktop # Plex
     pavucontrol # Volume Mixer
     playerctl # Media Controls
     brightnessctl # Brightness control
