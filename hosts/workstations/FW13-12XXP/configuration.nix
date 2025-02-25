@@ -41,10 +41,10 @@ in
   services.udisks2.enable = true;
 
   # Enable the X11 windowing system.
-  services.xserver.enable = true;
+  # services.xserver.enable = true;
 
   # Configure keymap in X11
-  services.xserver.xkb.layout = "us";
+  # services.xserver.xkb.layout = "us";
 
   # Enable touchpad support (enabled default in most desktopManager).
   services.libinput.enable = true;
@@ -79,32 +79,32 @@ in
   # ]);
 
   # Plex needs this to login/click on links.
-  xdg.portal = {
-    enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-    xdgOpenUsePortal = true;
-  };
+  # xdg.portal = {
+  #   enable = true;
+  #   extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+  #   xdgOpenUsePortal = true;
+  # };
 
   # programs.gnupg.agent = {
   #   enable = true;
   #   pinentryPackage = pkgs.pinentry;
   # };
 
-   programs.hyprland = {
-     enable = true;
-     package = inputs.hyprland.packages."${pkgs.system}".hyprland;
-     portalPackage = inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
-   };
+   # programs.hyprland = {
+   #   enable = true;
+   #   package = inputs.hyprland.packages."${pkgs.system}".hyprland;
+   #   portalPackage = inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
+   # };
 
   # programs.hyprlock = {
   #   enable = true;
   #   package = inputs.hyprlock.packages."${pkgs.system}".default;
   # };
 
-  security = {
-    polkit.enable = true;
-    pam.services.hyprlock = {};
-  };
+  # security = {
+  #   polkit.enable = true;
+  #   pam.services.hyprlock = {};
+  # };
 
   fileSystems."/mnt/backups" = {
     device = "nas.calamos.family:/mnt/Media Library/Backups";
