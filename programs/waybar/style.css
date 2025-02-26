@@ -1,36 +1,36 @@
 * {
-    font-family: FantasqueSansMono Nerd Font;
-    font-size: 17px;
-    min-height: 0;
+  /* font-family: FantasqueSansMono Nerd Font; */
+  font-size: 17px;
+  min-height: 0;
 }
 
 #waybar {
-    background: transparent;
-    color: @text;
-    margin: 5px 5px;
+  background: transparent;
+  color: @text;
+  margin: 5px 5px;
 }
 
 #workspaces {
-    border-radius: 1rem;
-    margin: 5px 0px;
-    background-color: @surface0;
-    margin-left: 1rem;
+  border-radius: 1rem;
+  margin: 5px 0px;
+  background-color: @surface0;
+  margin-left: 1rem;
 }
 
 #workspaces button {
-    color: @lavender;
-    border-radius: 1rem;
-    padding: 0.5rem;
+  color: @lavender;
+  border-radius: 1rem;
+  padding: 0.5rem;
 }
 
 #workspaces button.active {
-    color: @sky;
-    border-radius: 1rem;
+  color: @sky;
+  border-radius: 1rem;
 }
 
 #workspaces button:hover {
-    color: @sapphire;
-    border-radius: 1rem;
+  color: @sapphire;
+  border-radius: 1rem;
 }
 
 #custom-music,
@@ -42,64 +42,64 @@
 #pulseaudio,
 #custom-lock,
 #custom-power {
-    background-color: @surface0;
-    padding: 0.5rem 1rem;
-    margin: 5px 0;
+  background-color: @surface0;
+  padding: 0.5rem 1rem;
+  margin: 5px 0;
 }
 
 #clock {
-    color: @lavender;
-    border-radius: 0px 1rem 1rem 0px;
-    margin-right: 1rem;
+  color: @lavender;
+  border-radius: 0px 1rem 1rem 0px;
+  margin-right: 1rem;
 }
 
 #battery {
-    color: @green;
+  color: @green;
 }
 
 #battery.charging {
-    color: @green;
+  color: @green;
 }
 
 #battery.warning:not(.charging) {
-    color: @red;
+  color: @red;
 }
 
 #network {
-    color: @flamingo;
+  color: @flamingo;
 }
 
 #backlight {
-    color: @yellow;
+  color: @yellow;
 }
 
 #backlight,
 #battery {
-    border-radius: 0;
+  border-radius: 0;
 }
 
 #pulseaudio {
-    color: @pink;
-    border-radius: 1rem 0px 0px 1rem;
-    margin-left: 1rem;
+  color: @pink;
+  border-radius: 1rem 0px 0px 1rem;
+  margin-left: 1rem;
 }
 
 #pulseaudio.muted {
-    color: @red;
+  color: @red;
 }
 
 #custom-music {
-    color: @teal;
-    border-radius: 1rem;
+  color: @teal;
+  border-radius: 1rem;
 }
 
 #custom-power {
-    margin-right: 1rem;
-    border-radius: 1rem;
-    color: @red;
+  margin-right: 1rem;
+  border-radius: 1rem;
+  color: @red;
 }
 
 #tray {
-    margin-right: 1rem;
-    border-radius: 1rem;
+  margin-right: 1rem;
+  border-radius: 1rem;
 }

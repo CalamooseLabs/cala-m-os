@@ -32,8 +32,8 @@
 
       hide_mouse_while_typing = true;
       ui_font_size = 14;
-      ui_font_family = "Zed Plex Mono";
-      buffer_font_family = "Zed Plex Mono";
+      ui_font_family = "MesloLGS NF";
+      buffer_font_family = "MesloLGS NF";
       buffer_font_size = 16;
       tab_size = 2;
 
