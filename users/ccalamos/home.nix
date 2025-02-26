@@ -1,11 +1,10 @@
 { pkgs, ... }:
 
-
 {
   home.packages = with pkgs; [
-    proton-pass # Password Manager
-    qutebrowser # VIM-like Browser
     imagemagick # Image manipulation
+    proton-pass # Password manager
+    spotify # Spotify music player
   ];
 
   catppuccin.enable = true;

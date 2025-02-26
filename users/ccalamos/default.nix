@@ -18,6 +18,7 @@ let
       "lf"
       "neovim"
       "plex-desktop"
+      "qutebrowser"
       "rofi"
       "vivaldi"
       "waybar"
