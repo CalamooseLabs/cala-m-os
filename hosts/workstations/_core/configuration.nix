@@ -7,7 +7,7 @@ let
   user_imports = map getUsers users_list;
 in
 {
-  imports = user_imports;
+  imports = [ ./home.nix ] ++ user_imports;
 
   # Boot loader
   boot = {

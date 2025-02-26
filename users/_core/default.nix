@@ -21,14 +21,12 @@ in
     user_configuration # User Config
   ] ++ config_imports;
 
-  home-manager = {
-    users = {
-      "${username}" = {
-        imports = [
-          (import ./home.nix { username = username; user_home_path = user_home_path; }) # Core Home Config
-          user_home_configuration # User Home Config
-        ] ++ home_imports;
-      };
+  home-manager.users = {
+    "${username}" = {
+      imports = [
+        (import ./home.nix { username = username; user_home_path = user_home_path; }) # Core Home Config
+        user_home_configuration # User Home Config
+      ] ++ home_imports;
     };
   };
 }
