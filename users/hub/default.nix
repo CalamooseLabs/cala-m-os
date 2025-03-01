@@ -1,29 +1,19 @@
 { ... }:
 
 let
-  username = "ccalamos";
+  username = "hub";
   import_programs = [
       "bash"
-      "bat"
       "btop"
-      "direnv"
       "fonts"
       "ghostty"
-      "git"
-      "gpg"
       "hyprpaper"
       "hyprland"
       "hyprlock"
-      "lazygit"
       "lf"
-      "neovim"
-      "plex-desktop"
-      "qutebrowser"
       "rofi"
       "vivaldi"
       "waybar"
-      "zathura"
-      # "zed-editor"
     ];
 in
 {

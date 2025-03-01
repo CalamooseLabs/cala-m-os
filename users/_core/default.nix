@@ -18,14 +18,14 @@ in
 {
   imports = [
     (import ./configuration.nix { username = username; }) # Core Config
-    user_configuration # User Config
+    (import user_configuration { username = username; }) # User Config
   ] ++ config_imports;
 
   home-manager.users = {
     "${username}" = {
       imports = [
         (import ./home.nix { username = username; user_home_path = user_home_path; }) # Core Home Config
-        user_home_configuration # User Home Config
+        (import user_home_configuration { username = username; }) # User Home Config
       ] ++ home_imports;
     };
   };

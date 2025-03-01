@@ -4,7 +4,10 @@
   programs.zed-editor = {
     enable = true;
 
-    extraPackages = [ pkgs.nixd ];
+    extraPackages = [
+      pkgs.nixd
+      pkgs.nil
+    ];
 
     extensions = [
       "nix"
@@ -20,7 +23,7 @@
       autosave = "on_focus_change";
       restore_on_startup = "none";
       confirm_quit = false;
-      load_direnv = "direct";
+      load_direnv = "shell";
 
       auto_update = false;
       auto_check_updates = false;
