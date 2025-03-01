@@ -23,7 +23,7 @@ let
       "vivaldi"
       "waybar"
       "zathura"
-      # "zed-editor"
+      "zed-editor"
     ];
 in
 {
