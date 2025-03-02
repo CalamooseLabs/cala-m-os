@@ -23,6 +23,10 @@
       settings = {
         "$mod" = "SUPER";
 
+        debug = {
+          disable_logs = lib.mkForce true;
+        };
+
         exec-once = [
           "hyprlock"
         ];
