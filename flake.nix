@@ -8,11 +8,6 @@
     # Specific Hardware Fixes
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
-    # Hypr Family
-    hyprpaper.url = "github:hyprwm/hyprpaper";
-    hyprland.url = "github:hyprwm/Hyprland";
-    hyprlock.url = "github:hyprwm/Hyprlock";
-
     # Ghostty Terminal
     ghostty.url = "github:ghostty-org/ghostty";
 

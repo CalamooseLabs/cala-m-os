@@ -1,4 +1,4 @@
-{ users_list, ... }: { inputs, pkgs, ... }:
+{ users_list, ... }: { lib, pkgs, ... }:
 let
   usersPath = ../../../users;
 
@@ -74,12 +74,16 @@ in
   # Allow unfree
   nixpkgs.config.allowUnfree = true;
 
-  # Enable hyprland
-  # programs.hyprland = {
-  #   enable = true;
-  #   package = inputs.hyprland.packages."${pkgs.system}".hyprland;
-  #   portalPackage = inputs.hyprland.packages."${pkgs.system}".xdg-desktop-portal-hyprland;
-  # };
+  # Login Service
+  services.greetd = {
+    enable = true;
+    settings = {
+      default_session = {
+        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd sway";
+        user = "${lib.elemAt users_list 0}";
+      };
+    };
+  };
 
   # Original State Version
   system.stateVersion = "24.11"; # Do not change
