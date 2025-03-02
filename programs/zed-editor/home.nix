@@ -23,7 +23,7 @@
       autosave = "on_focus_change";
       restore_on_startup = "none";
       confirm_quit = false;
-      load_direnv = "shell";
+      load_direnv = "shell_hook";
 
       auto_update = false;
       auto_check_updates = false;

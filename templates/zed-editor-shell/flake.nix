@@ -1,5 +1,5 @@
 {
-  description = "A nix flake zed dev environment";
+  description = "Development environment with custom zed-editor configuration";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
@@ -9,8 +9,51 @@
   let
     system = "x86_64-linux";
     pkgs = import nixpkgs { system = system; };
+
+    # Define a function to create zed-wrapped with custom settings
+    makeZedWrapped = zedSettings:
+      pkgs.runCommand "zed-wrapped" {
+        buildInputs = [ pkgs.makeWrapper ];
+        zedSettingsJSON = builtins.toJSON zedSettings;
+      } ''
+        mkdir -p $out/bin
+
+        # Create the zed wrapper with inline configuration
+        makeWrapper ${pkgs.zed-editor}/bin/zeditor $out/bin/zeditor \
+          --set OVERRIDE_SETTINGS "$zedSettingsJSON" \
+          --run '
+            ZED_CONFIG=".config/zed"
+            SETTINGS_PATH="$HOME/$ZED_CONFIG"
+            OVERRIDE_PATH="$PWD/.direnv/$ZED_CONFIG"
+
+            mkdir -p "$OVERRIDE_PATH"
+
+            if [ -d "$SETTINGS_PATH/themes" ]; then
+              cp -r "$SETTINGS_PATH/themes" "$OVERRIDE_PATH"
+            fi
+
+            TEMP_FILE=$(mktemp)
+
+            echo "$OVERRIDE_SETTINGS" | ${pkgs.jq}/bin/jq "." > "$TEMP_FILE"
+
+            if [ -f "$SETTINGS_PATH/settings.json" ]; then
+              ${pkgs.jq}/bin/jq -s ".[0] * .[1]" "$SETTINGS_PATH/settings.json" "$TEMP_FILE" > "$OVERRIDE_PATH/settings.json"
+            else
+              cp "$TEMP_FILE" "$OVERRIDE_PATH/settings.json"
+            fi
+
+            rm "$TEMP_FILE"
+
+            export XDG_CONFIG_HOME="$PWD/.direnv/.config"
+          '
+      '';
+
   in
   {
-    devShells.${system}.default = import ./shell.nix { inherit pkgs; };
+    # Pass the function to shell.nix
+    devShells.${system}.default = import ./shell.nix {
+      inherit pkgs;
+      makeZedWrapped = makeZedWrapped;
+    };
   };
 }

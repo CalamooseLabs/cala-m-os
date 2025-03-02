@@ -27,10 +27,10 @@
   };
 
   outputs = { self, nixpkgs, ... }@inputs:
-  let
-    system = "x86_64-linux";
-    pkgs = nixpkgs.legacyPackages.${system};
-  in
+  # let
+    # system = "x86_64-linux";
+    # pkgs = nixpkgs.legacyPackages.${system};
+  # in
   {
     nixosConfigurations = {
       calamooselabs = nixpkgs.lib.nixosSystem {
@@ -41,14 +41,6 @@
       };
     };
 
-    templates.dev-shell = {
-      path = ./templates/dev-shell;
-      description = "a simple direnv nix flake shell";
-      welcomeText = ''
-        # Nix Dev Shell Template
-      '';
-    };
-
-    templates.default = self.templates.dev-shell;
+    templates = import ./templates;
   };
 }

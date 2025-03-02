@@ -1,7 +1,7 @@
 { ... }:
 
 let
-  username = "hub";
+  username = builtins.baseNameOf (toString ./.);
   import_programs = [
       "bash"
       "btop"

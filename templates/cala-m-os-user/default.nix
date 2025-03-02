@@ -1,7 +1,7 @@
 { ... }:
 
 let
-  username = "";
+  username = builtins.baseNameOf (toString ./.);
   import_programs = [
   ];
 in

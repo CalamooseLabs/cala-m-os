@@ -25,10 +25,6 @@
       settings = {
         "$mod" = "SUPER";
 
-        # exec-once = [
-        #   ''${inputs.hyprpaper.packages."${pkgs.system}".default}/bin/hyprpaper''
-        # ];
-
         input = {
           numlock_by_default = true;
         };
@@ -40,6 +36,11 @@
           "DP-7, 2560x1440@60, 2560x-1504, 1"
           "DP-8, 2560x1440@60, 0x-1504, 1"
         ];
+
+        misc = {
+          disable_hyprland_logo = lib.mkForce true;
+          disable_splash_rendering = lib.mkForce true;
+        };
 
         # Repeated Binds
         binde =

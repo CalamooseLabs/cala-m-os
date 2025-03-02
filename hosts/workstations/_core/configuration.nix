@@ -37,6 +37,9 @@ in
     initrd.verbose = false;
   };
 
+  # Remove manuals, as we google everything anyways
+  documentation.enable = false;
+
   # Enable Network Manager
   networking.networkmanager.enable = true;
 

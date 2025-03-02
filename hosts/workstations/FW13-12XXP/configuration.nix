@@ -9,6 +9,7 @@
 let
   import_users = [
     "ccalamos"
+    "hub"
   ];
 in
 {
