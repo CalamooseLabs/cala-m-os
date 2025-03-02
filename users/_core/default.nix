@@ -1,4 +1,4 @@
-{ username, import_programs, user_home ? null, ... }: { ... }:
+{ username, import_programs, user_home ? null, ... }: { config, ... }:
 
 let
   user_home_path = if user_home == null then "/home/${username}" else user_home;
@@ -10,10 +10,21 @@ let
   user_configuration = "${user_config_path}/configuration.nix";
   user_home_configuration = "${user_config_path}/home.nix";
 
-  makeProgramConfigs = name: filename: import (programs_path + "/${name}/${filename}");
+  # For system configuration, check if program is enabled
+  makeProgramConfigs = name:
+    let
+      # Check if this program is already enabled in the configuration
+      isEnabled = config.programs.${name}.enable or false;
+    in
+      if isEnabled
+      then {} # Return empty attrset if already enabled
+      else import (programs_path + "/${name}/configuration.nix");
 
-  config_imports = map (name: makeProgramConfigs name "configuration.nix") import_programs;
-  home_imports = map (name: makeProgramConfigs name "home.nix") import_programs;
+  # For home-manager, import all programs without checking
+  makeHomeConfigs = name: import (programs_path + "/${name}/home.nix");
+
+  config_imports = map makeProgramConfigs import_programs;
+  home_imports = map makeHomeConfigs import_programs;
 in
 {
   imports = [
