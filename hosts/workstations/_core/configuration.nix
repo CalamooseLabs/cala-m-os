@@ -75,11 +75,11 @@ in
   nixpkgs.config.allowUnfree = true;
 
   # Enable hyprland
-  programs.hyprland = {
-    enable = true;
-    package = inputs.hyprland.packages."${pkgs.system}".hyprland;
-    portalPackage = inputs.hyprland.packages."${pkgs.system}".xdg-desktop-portal-hyprland;
-  };
+  # programs.hyprland = {
+  #   enable = true;
+  #   package = inputs.hyprland.packages."${pkgs.system}".hyprland;
+  #   portalPackage = inputs.hyprland.packages."${pkgs.system}".xdg-desktop-portal-hyprland;
+  # };
 
   # Original State Version
   system.stateVersion = "24.11"; # Do not change
