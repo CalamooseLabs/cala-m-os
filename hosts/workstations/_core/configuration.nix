@@ -75,22 +75,16 @@ in
   nixpkgs.config.allowUnfree = true;
 
   # Login Service
-  # services.greetd = {
-  #   enable = true;
-  #   settings = {
-  #     default_session = {
-  #       command = "${pkgs.hyprland}/bin/Hyprland";
-  #       user = "${lib.elemAt users_list 0}";
-  #     };
-  #   };
-  # };
-  #
-  services.displayManager = {
-    autoLogin = {
-      enable = true;
-      user = "${lib.elemAt users_list 0}";
+  services.greetd = {
+    enable = true;
+    settings = {
+      default_session = {
+        command = "${pkgs.hyprland}/bin/Hyprland &> /dev/null";
+        user = "${lib.elemAt users_list 0}";
+      };
     };
   };
+
 
   # Original State Version
   system.stateVersion = "24.11"; # Do not change
