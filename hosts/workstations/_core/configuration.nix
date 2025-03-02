@@ -79,7 +79,7 @@ in
     enable = true;
     settings = {
       default_session = {
-        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd hyprland";
+        command = "${pkgs.hyprland}/bin/Hyprland";
         user = "${lib.elemAt users_list 0}";
       };
     };

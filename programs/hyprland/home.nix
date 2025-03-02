@@ -3,8 +3,6 @@
 {
   wayland.windowManager.hyprland = {
       enable = true;
-      # package = null;#inputs.hyprland.packages."${pkgs.system}".hyprland;
-      # portalPackage = null; #inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
 
       xwayland.enable = true;
 
@@ -24,6 +22,10 @@
 
       settings = {
         "$mod" = "SUPER";
+
+        exec-once = [
+          "hyprlock"
+        ];
 
         input = {
           numlock_by_default = true;
