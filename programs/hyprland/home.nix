@@ -25,6 +25,8 @@
 
         debug = {
           disable_logs = lib.mkForce true;
+          enable_stdout_logs = lib.mkForce false;
+          suppress_errors = lib.mkForce true;
         };
 
         exec-once = [
