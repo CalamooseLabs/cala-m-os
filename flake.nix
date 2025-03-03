@@ -21,7 +21,11 @@
     };
   };
 
-  outputs = { self, nixpkgs, ... }@inputs:
+  outputs = { nixpkgs, ... } @ inputs:
+  let
+    system = "x86_64-linux";
+    pkgs = import nixpkgs { system = system; };
+  in
   {
     nixosConfigurations = {
       calamooselabs = nixpkgs.lib.nixosSystem {
@@ -33,5 +37,7 @@
     };
 
     templates = import ./templates;
+
+    devShells.${system}.default = import ./shell.nix { inherit pkgs; };
   };
 }

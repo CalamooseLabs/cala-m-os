@@ -1,16 +1,13 @@
-{ pkgs, ... }:
+{ ... }:
 
 {
   programs.zed-editor = {
     enable = true;
 
     extraPackages = [
-      pkgs.nixd
-      pkgs.nil
     ];
 
     extensions = [
-      "nix"
     ];
 
     userSettings = {
@@ -73,12 +70,8 @@
 
       relative_line_numbers = true;
 
-      lsp = {
-        nix = {
-          binary = {
-            path_lookup = true;
-          };
-        };
+      auto_install_extensions = {
+          "html" = false;
       };
     };
   };

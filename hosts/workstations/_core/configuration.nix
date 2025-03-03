@@ -46,9 +46,6 @@ in
   # Set Chicago timezone
   time.timeZone = "America/Chicago";
 
-  # Enable Flakes
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
-
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
@@ -85,6 +82,19 @@ in
     };
   };
 
+  # Garbage Collection & Flakes
+  nix = {
+    gc = {
+      automatic = true;
+      dates = "daily";
+      options = "--delete-older-than 3d";
+    };
+
+    settings = {
+      auto-optimise-store = true;
+      experimental-features = [ "nix-command" "flakes" ];
+    };
+  };
 
   # Original State Version
   system.stateVersion = "24.11"; # Do not change
