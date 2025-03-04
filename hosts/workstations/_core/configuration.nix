@@ -19,8 +19,8 @@ in
 
     plymouth = {
       enable = true;
-      logo = ../../../assets/logo-100x100.png;
-      theme = "breeze";
+      # logo = ../../../assets/logo-100x100.png;
+      # theme = "breeze";
     };
 
     kernelParams = [

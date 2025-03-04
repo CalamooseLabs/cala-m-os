@@ -1,4 +1,4 @@
-{ ... }:
+{ lib, ... }:
 
 {
     programs.hyprlock = {
@@ -6,13 +6,13 @@
 
         settings = {
           general = {
-            disable_loading_bar = true;
-            grace = 0;
-            hide_cursor = true;
-            no_fade_in = false;
+            disable_loading_bar = lib.mkForce true;
+            grace = lib.mkForce 0;
+            hide_cursor = lib.mkForce false;
+            no_fade_in = lib.mkForce false;
           };
 
-          background = [
+          background = lib.mkForce [
             {
               path = "screenshot";
               blur_passes = 3;
@@ -20,21 +20,18 @@
             }
           ];
 
-          input-field = [
+          input-field = lib.mkForce [
             {
-              size = "200, 50";
-              position = "0, -80";
-              monitor = "";
-              dots_center = true;
-              fade_on_empty = false;
-              font_color = "rgb(202, 211, 245)";
-              inner_color = "rgb(91, 96, 120)";
-              outer_color = "rgb(24, 25, 38)";
-              outline_thickness = 5;
-              placeholder_text = ''
+              size = lib.mkForce "200, 50";
+              position = lib.mkForce "0, -80";
+              monitor = lib.mkForce "";
+              dots_center = lib.mkForce true;
+              fade_on_empty = lib.mkForce false;
+              outline_thickness = lib.mkForce 5;
+              placeholder_text = lib.mkForce ''
                 <span foreground="##cad3f5">Password...</span>
               '';
-              shadow_passes = 2;
+              shadow_passes = lib.mkForce 2;
             }
           ];
         };

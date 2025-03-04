@@ -7,5 +7,5 @@
     spotify # Spotify music player
   ];
 
-  catppuccin.enable = true;
+  # catppuccin.enable = true;
 }

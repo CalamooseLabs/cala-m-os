@@ -20,7 +20,7 @@
       autosave = "on_focus_change";
       restore_on_startup = "none";
       confirm_quit = false;
-      load_direnv = "shell_hook";
+      load_direnv = "direct";
 
       auto_update = false;
       auto_check_updates = false;
@@ -31,10 +31,6 @@
       ];
 
       hide_mouse_while_typing = true;
-      ui_font_size = 14;
-      ui_font_family = "MesloLGS NF";
-      buffer_font_family = "MesloLGS NF";
-      buffer_font_size = 16;
       tab_size = 2;
 
       ensure_final_newline_on_save = true;

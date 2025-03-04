@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 lock="  Lock"
-logout="  Log Out"
 shutdown="  Shut Down"
 reboot="  Reboot"
 sleep="  Sleep"
@@ -19,9 +18,6 @@ $shutdown" | rofi -dmenu\
 if [ "$selected_option" == "$lock" ]
 then
     hyprlock
-elif [ "$selected_option" == "$logout" ]
-then
-    loginctl terminate-user "$(whoami)"
 elif [ "$selected_option" == "$shutdown" ]
 then
     systemctl poweroff

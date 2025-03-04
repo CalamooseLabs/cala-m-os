@@ -13,6 +13,7 @@
 
     # Theme
     catppuccin.url = "github:catppuccin/nix";
+    stylix.url = "github:danth/stylix";
 
     # Home Manager
     home-manager = {
