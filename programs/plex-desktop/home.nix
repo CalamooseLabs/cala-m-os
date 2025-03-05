@@ -2,6 +2,6 @@
 
 {
   home.packages = [
-    pkgs.plex-desktop
+    (import ../../wrappers/plex-desktop { inherit pkgs; })
   ];
 }
