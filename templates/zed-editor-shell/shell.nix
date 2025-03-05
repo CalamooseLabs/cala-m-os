@@ -1,4 +1,4 @@
-{ pkgs, makeZedWrapped }:
+{ pkgs, inputs }:
 
 let
   # Define your zed settings
@@ -10,7 +10,7 @@ let
 in
 pkgs.mkShell {
   buildInputs = [
-    (makeZedWrapped zedSettings)
+    (inputs.zed-wrapper zedSettings)
   ];
 
   shellHook = ''
