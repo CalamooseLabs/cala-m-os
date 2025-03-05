@@ -10,7 +10,7 @@ let
 in
 pkgs.mkShell {
   buildInputs = [
-    (inputs.zed-wrapper zedSettings)
+    (import inputs.zed-wrapper zedSettings)
   ];
 
   shellHook = ''

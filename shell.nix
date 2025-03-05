@@ -19,7 +19,7 @@ pkgs.mkShell {
   buildInputs = [
     pkgs.nixd
     pkgs.nil
-    ./programs/zed-editor/wrapper.nix zedSettings
+    (import ./programs/zed-editor/wrapper.nix zedSettings)
   ];
 
   shellHook = ''

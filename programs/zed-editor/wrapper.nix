@@ -1,4 +1,4 @@
-zedSettings: { pkgs, ... }:
+{ pkgs, ... }: zedSettings:
 
 pkgs.runCommand "zed-wrapped" {
   buildInputs = [ pkgs.makeWrapper ];

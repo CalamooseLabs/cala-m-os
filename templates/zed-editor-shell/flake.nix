@@ -16,7 +16,6 @@
     pkgs = import nixpkgs { system = system; };
   in
   {
-    # Pass the function to shell.nix
     devShells.${system}.default = import ./shell.nix {
       inherit pkgs;
       inherit inputs;
