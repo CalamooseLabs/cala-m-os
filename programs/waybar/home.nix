@@ -20,18 +20,13 @@
         position = "top";
         modules-left = ["wlr/workspaces"];
         modules-center = ["custom/music"];
-        modules-right = ["pulseaudio" "network" "backlight" "battery" "clock" "tray" "custom/power"];
+        modules-right = ["pulseaudio" "network" "backlight" "battery" "clock" "custom/power"];
 
         "wlr/workspaces" = {
           disable-scroll = true;
           sort-by-name = true;
           format = "{icon}";
           format-icons = {default = "";};
-        };
-
-        tray = {
-          icon-size = 21;
-          spacing = 10;
         };
 
         "custom/music" = {
