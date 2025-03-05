@@ -7,7 +7,6 @@ sleep="  Sleep"
 hibernate="  Hibernate"
 # Get answer from user via rofi
 selected_option=$(echo "$lock
-$logout
 $sleep
 $hibernate
 $reboot
