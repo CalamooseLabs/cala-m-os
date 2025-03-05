@@ -59,5 +59,9 @@
         logo = ../../assets/logo-100x100.png;
       };
     };
+
+    opacity = {
+      terminal = 0.9;
+    };
   };
 }
