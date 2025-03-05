@@ -34,26 +34,29 @@
         };
 
         # Repeated Binds
-        binde =
-          let
-            pactl = lib.getExe' pkgs.pulseaudio "pactl";
-            brightnessctl = lib.getExe' pkgs.brightnessctl "brightnessctl";
-          in
-          [
-            # Volume - Output
-            ", XF86AudioRaiseVolume, exec, ${pactl} set-sink-volume @DEFAULT_SINK@ +5%"
-            ", XF86AudioLowerVolume, exec, ${pactl} set-sink-volume @DEFAULT_SINK@ -5%"
-            # Volume - Input
-            ", XF86AudioRaiseVolume, exec, ${pactl} set-source-volume @DEFAULT_SOURCE@ +5%"
-            ", XF86AudioLowerVolume, exec, ${pactl} set-source-volume @DEFAULT_SOURCE@ -5%"
-            # Volume - Mute
-            ", XF86AudioMute, exec, ${pactl} set-sink-mute @DEFAULT_SINK@ toggle"
-            ", XF86AudioMute, exec, ${pactl} set-source-mute @DEFAULT_SOURCE@ toggle"
+        binde = let
+          pactl = lib.getExe' pkgs.pulseaudio "pactl";
+          brightnessctl = lib.getExe' pkgs.brightnessctl "brightnessctl";
+        in
+        [
+          # Volume - Output
+          ", XF86AudioRaiseVolume, exec, ${pactl} set-sink-volume @DEFAULT_SINK@ +5%"
+          ", XF86AudioLowerVolume, exec, ${pactl} set-sink-volume @DEFAULT_SINK@ -5%"
+          # Volume - Input
+          ", XF86AudioRaiseVolume, exec, ${pactl} set-source-volume @DEFAULT_SOURCE@ +5%"
+          ", XF86AudioLowerVolume, exec, ${pactl} set-source-volume @DEFAULT_SOURCE@ -5%"
+          # Volume - Mute
+          ", XF86AudioMute, exec, ${pactl} set-sink-mute @DEFAULT_SINK@ toggle"
+          ", XF86AudioMute, exec, ${pactl} set-source-mute @DEFAULT_SOURCE@ toggle"
 
-            # Brightness
-            ", XF86MonBrightnessUp, exec, ${brightnessctl} set +5%"
-            ", XF86MonBrightnessDown, exec, ${brightnessctl} set 5%-"
-          ];
+          # Brightness
+          ", XF86MonBrightnessUp, exec, ${brightnessctl} set +5%"
+          ", XF86MonBrightnessDown, exec, ${brightnessctl} set 5%-"
+        ];
+
+        bindm = [
+          "$mod, mouse:272, movewindow"
+        ];
 
         bind = [
           "$mod, grave, exec, ghostty"
