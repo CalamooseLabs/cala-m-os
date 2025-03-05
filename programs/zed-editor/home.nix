@@ -20,15 +20,17 @@
       autosave = "on_focus_change";
       restore_on_startup = "none";
       confirm_quit = false;
-      load_direnv = "direct";
+      load_direnv = "shell_hook";
 
       auto_update = false;
       auto_check_updates = false;
 
       edit_predictions_disabled_in = [
-        "comment"
-        "string"
       ];
+
+      features = {
+        edit_prediction_provider = "zed";
+      };
 
       hide_mouse_while_typing = true;
       tab_size = 2;

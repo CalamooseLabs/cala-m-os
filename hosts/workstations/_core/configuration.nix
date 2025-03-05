@@ -1,4 +1,4 @@
-{ users_list, ... }: { lib, pkgs, ... }:
+{ users_list, ... }: { lib, ... }:
 let
   usersPath = ../../../users;
 
@@ -74,8 +74,7 @@ in
     enable = true;
     settings = {
       default_session = {
-        command = "${pkgs.hyprland}/bin/Hyprland &> /dev/null";
-        user = "${lib.elemAt users_list 0}";
+        user = lib.mkForce "${lib.elemAt users_list 0}";
       };
     };
   };
@@ -92,18 +91,6 @@ in
       auto-optimise-store = true;
       experimental-features = [ "nix-command" "flakes" ];
     };
-  };
-
-  # Extra Portal Configuration
-  xdg.portal = {
-    enable = true;
-    wlr.enable = true;
-    extraPortals = [pkgs.xdg-desktop-portal-gtk pkgs.xdg-desktop-portal];
-    configPackages = [
-      pkgs.xdg-desktop-portal-gtk
-      pkgs.xdg-desktop-portal-hyprland
-      pkgs.xdg-desktop-portal
-    ];
   };
 
   # Original State Version
