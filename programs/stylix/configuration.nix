@@ -37,17 +37,17 @@
 
     fonts = {
       monospace = {
-        package = pkgs.meslo-lg;
+        package = pkgs.meslo-lgs-nf;
         name = "MesloLGS NF";
       };
 
       sansSerif = {
-        package = pkgs.meslo-lg;
+        package = pkgs.meslo-lgs-nf;
         name = "MesloLGS NF";
       };
 
       serif = {
-        package = pkgs.meslo-lg;
+        package = pkgs.meslo-lgs-nf;
         name = "MesloLGS NF";
       };
     };

@@ -1,9 +1,9 @@
 { pkgs, ... }:
 
 {
-  fonts.fontconfig.enable = true;
+  # fonts.fontconfig.enable = true;
 
-  home.packages = with pkgs; [
-    meslo-lgs-nf
-  ];
+  # home.packages = with pkgs; [
+  #   meslo-lgs-nf
+  # ];
 }

@@ -48,14 +48,14 @@
             <big>{:%Y %B}</big>
             <tt><small>{calendar}</small></tt>'';
           format-alt = " {:%a. %m %d %Y}";
-          format = " {:%H:%M}";
+          format = " {:%I:%M %p}";
         };
 
         network = {
           format-wifi = "";
           format-disconnected = "";
           format-ethernet = "";
-          format-alt = "  {signalStrength}%";
+          format-alt = " {signalStrength}%";
           tootip = false;
         };
 
@@ -79,7 +79,7 @@
         };
 
         pulseaudio = {
-          format = "{icon}  {volume}%";
+          format = "{icon} {volume}%";
           format-muted = "";
           format-icons = ["" "" " "];
           on-click = "${pkgs.pavucontrol}/bin/pavucontrol";
