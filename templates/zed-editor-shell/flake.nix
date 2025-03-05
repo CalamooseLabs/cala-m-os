@@ -5,7 +5,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
     zed-wrapper = {
-      url = "github:CalamooseLabs/cala-m-os?path=wrappers/zed-editor";
+      url = "github:CalamooseLabs/cala-m-os?dir=wrappers/zed-editor";
       flake = false;
     };
   };

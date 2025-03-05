@@ -1,6 +1,8 @@
 { pkgs, inputs }:
 
 let
+  zedWrapper = import "${inputs.zed-wrapper}/wrappers/zed-editor/default.nix" { inherit pkgs; };
+
   # Define your zed settings
   zedSettings = {
     "vim_mode" = false;
@@ -10,7 +12,7 @@ let
 in
 pkgs.mkShell {
   buildInputs = [
-    (import inputs.zed-wrapper zedSettings)
+    (zedWrapper zedSettings)
   ];
 
   shellHook = ''
