@@ -1,12 +1,10 @@
 * {
-  font-family: MesloLGS NF;
   font-size: 17px;
   min-height: 0;
 }
 
 window#waybar {
   background: transparent;
-  /* color: @text; */
   margin: 5px 5px;
 }
 
