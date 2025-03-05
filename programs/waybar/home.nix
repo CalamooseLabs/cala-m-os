@@ -55,7 +55,7 @@
           format-wifi = "";
           format-disconnected = "";
           format-ethernet = "";
-          format-alt = " {signalStrength}%";
+          format-alt = "{bandwidthDownOctet}";
           tootip = false;
         };
 
