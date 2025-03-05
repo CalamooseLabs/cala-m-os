@@ -56,7 +56,7 @@
 
     targets = {
       plymouth = {
-        logo = ../../assets/logo-100x100.png;
+        logo = ../../assets/logo.png;
       };
     };
 
