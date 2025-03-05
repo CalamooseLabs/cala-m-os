@@ -1,5 +1,6 @@
 {
   pkgs,
+  lib,
   ...
 }: let
   rofi-powermenu = pkgs.writeTextFile {
@@ -28,6 +29,6 @@ in {
       display-drun = "Apps";
       drun-display-format = "{name}";
     };
-    theme = "material";
+    theme = lib.mkForce "material";
   };
 }

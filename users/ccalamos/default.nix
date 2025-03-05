@@ -7,7 +7,7 @@ let
       "bat"
       "btop"
       "direnv"
-      # "fonts"
+      "fonts"
       "ghostty"
       "git"
       "gpg"

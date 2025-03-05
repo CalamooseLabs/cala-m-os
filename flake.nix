@@ -12,7 +12,6 @@
     ghostty.url = "github:ghostty-org/ghostty";
 
     # Theme
-    catppuccin.url = "github:catppuccin/nix";
     stylix.url = "github:danth/stylix";
 
     # Home Manager

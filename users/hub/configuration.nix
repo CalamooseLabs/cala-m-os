@@ -16,7 +16,6 @@
   home-manager = {
     users."${username}" = {
       imports = [
-        # inputs.catppuccin.homeManagerModules.catppuccin
       ];
     };
   };

@@ -6,6 +6,4 @@
     proton-pass # Password manager
     spotify # Spotify music player
   ];
-
-  # catppuccin.enable = false;
 }
