@@ -29,7 +29,7 @@
               fade_on_empty = lib.mkForce false;
               outline_thickness = lib.mkForce 5;
               placeholder_text = lib.mkForce ''
-                <span foreground="##cad3f5">Password...</span>
+                <span>Password...</span>
               '';
               shadow_passes = lib.mkForce 2;
             }
