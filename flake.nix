@@ -19,6 +19,10 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Calamoose Labs
+    zed-editor.url = "github:CalamooseLabs/flakyherd?dir=wrappers/zed-editor";
+    plex-desktop.url = "github:CalamooseLabs/flakyherd?dir=wrappers/plex-desktop";
   };
 
   outputs = { nixpkgs, ... } @ inputs:
@@ -38,6 +42,6 @@
 
     templates = import ./templates;
 
-    devShells.${system}.default = import ./shell.nix { inherit pkgs; };
+    devShells.${system}.default = import ./shell.nix { inherit inputs; inherit pkgs; };
   };
 }

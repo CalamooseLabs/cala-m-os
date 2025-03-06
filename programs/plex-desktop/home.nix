@@ -1,7 +1,7 @@
-{ pkgs, ... }:
+{ inputs, ... }:
 
 {
   home.packages = [
-    (import ../../wrappers/plex-desktop { inherit pkgs; })
+    inputs.plex-desktop.packages.x86_64-linux.default
   ];
 }

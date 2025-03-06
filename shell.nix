@@ -1,8 +1,6 @@
-{ pkgs, ... }:
+{ inputs, pkgs, ... }:
 
 let
-  zedWrapper = import ./wrappers/zed-editor { inherit pkgs; };
-
   zedSettings = {
     lsp = {
       nix = {
@@ -21,7 +19,7 @@ pkgs.mkShell {
   buildInputs = [
     pkgs.nixd
     pkgs.nil
-    (zedWrapper zedSettings)
+    (inputs.zed-editor.packages.x86_64-linux.default zedSettings)
   ];
 
   shellHook = ''
