@@ -21,7 +21,10 @@
     };
 
     # Calamoose Labs
-    antlers.url = "github:CalamooseLabs/antlers/flakes?dir=flakes";
+    antlers = {
+      url = "github:CalamooseLabs/antlers/flakes?dir=flakes";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { nixpkgs, ... } @ inputs:

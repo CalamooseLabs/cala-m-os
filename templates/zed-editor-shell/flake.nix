@@ -6,6 +6,7 @@
 
     zed-editor = {
       url = "github:CalamooseLabs/antlers/flakes.zed-editor?dir=flakes/zed-editor";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 

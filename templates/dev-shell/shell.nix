@@ -1,7 +1,7 @@
 { pkgs }:
 
 pkgs.mkShell {
-  packages = with pkgs; [  ];
+  packages = [  ];
 
   shellHook = ''
     echo "Welcome to dev shell"
