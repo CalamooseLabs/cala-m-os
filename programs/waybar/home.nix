@@ -48,9 +48,8 @@
 
         network = {
           format-wifi = "";
-          format-disconnected = "";
+          format-disconnected = "󰤮";
           format-ethernet = "";
-          format-alt = "{bandwidthDownOctet}";
           tootip = false;
         };
 
