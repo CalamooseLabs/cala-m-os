@@ -19,10 +19,10 @@ pkgs.mkShell {
   buildInputs = [
     pkgs.nixd
     pkgs.nil
-    (inputs.zed-editor.packages.x86_64-linux.default zedSettings)
+    (inputs.antlers.packages.x86_64-linux.zed-editor zedSettings)
   ];
 
   shellHook = ''
-    echo "Using wrapped local zed: ./.direnv/.config/zed"
+    echo "Using Local Nix-Enabled Zed!"
   '';
 }

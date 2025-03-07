@@ -1,5 +1,28 @@
 {
   "nodes": {
+    "antlers": {
+      "inputs": {
+        "nixpkgs": "nixpkgs",
+        "plex-desktop-flake": "plex-desktop-flake",
+        "zed-editor-flake": "zed-editor-flake"
+      },
+      "locked": {
+        "dir": "flakes",
+        "lastModified": 1741361853,
+        "narHash": "sha256-Dsyk2w3Y+GhcgZHjPSqa4voelnKol0mSKUyQT88jT0M=",
+        "owner": "CalamooseLabs",
+        "repo": "antlers",
+        "rev": "b2a1e67a6db0caf550831f2f6a4490a37e2ec09d",
+        "type": "github"
+      },
+      "original": {
+        "dir": "flakes",
+        "owner": "CalamooseLabs",
+        "ref": "flakes",
+        "repo": "antlers",
+        "type": "github"
+      }
+    },
     "base16": {
       "inputs": {
         "fromYaml": "fromYaml"
@@ -286,11 +309,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1741217763,
-        "narHash": "sha256-g/TrltIjFHIjtzKY5CJpoPANfHQWDD43G5U1a/v5oVg=",
+        "lastModified": 1741345870,
+        "narHash": "sha256-KTpoO4oaucdFr3oJJBYpGK+aWVVrLvtiT17EQE7Cf4Y=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "486b066025dccd8af7fbe5dd2cc79e46b88c80da",
+        "rev": "04c915bcf1a1eac3519372ff3185beef053fba7c",
         "type": "github"
       },
       "original": {
@@ -322,11 +345,11 @@
     },
     "nixos-hardware": {
       "locked": {
-        "lastModified": 1740646007,
-        "narHash": "sha256-dMReDQobS3kqoiUCQIYI9c0imPXRZnBubX20yX/G5LE=",
+        "lastModified": 1741325094,
+        "narHash": "sha256-RUAdT8dZ6k/486vnu3tiNRrNW6+Q8uSD2Mq7gTX4jlo=",
         "owner": "NixOS",
         "repo": "nixos-hardware",
-        "rev": "009b764ac98a3602d41fc68072eeec5d24fc0e49",
+        "rev": "b48cc4dab0f9711af296fc367b6108cf7b8ccb16",
         "type": "github"
       },
       "original": {
@@ -338,15 +361,15 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1741173522,
-        "narHash": "sha256-k7VSqvv0r1r53nUI/IfPHCppkUAddeXn843YlAC5DR0=",
-        "owner": "nixos",
+        "lastModified": 1741246872,
+        "narHash": "sha256-Q6pMP4a9ed636qilcYX8XUguvKl/0/LGXhHcRI91p0U=",
+        "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "d69ab0d71b22fa1ce3dbeff666e6deb4917db049",
+        "rev": "10069ef4cf863633f57238f179a0297de84bd8d3",
         "type": "github"
       },
       "original": {
-        "owner": "nixos",
+        "owner": "NixOS",
         "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
@@ -386,11 +409,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1741173522,
-        "narHash": "sha256-k7VSqvv0r1r53nUI/IfPHCppkUAddeXn843YlAC5DR0=",
+        "lastModified": 1741246872,
+        "narHash": "sha256-Q6pMP4a9ed636qilcYX8XUguvKl/0/LGXhHcRI91p0U=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "d69ab0d71b22fa1ce3dbeff666e6deb4917db049",
+        "rev": "10069ef4cf863633f57238f179a0297de84bd8d3",
         "type": "github"
       },
       "original": {
@@ -411,22 +434,6 @@
       },
       "original": {
         "owner": "NixOS",
-        "ref": "nixos-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs_4": {
-      "locked": {
-        "lastModified": 1741173522,
-        "narHash": "sha256-k7VSqvv0r1r53nUI/IfPHCppkUAddeXn843YlAC5DR0=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "d69ab0d71b22fa1ce3dbeff666e6deb4917db049",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
         "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
@@ -455,35 +462,32 @@
         "type": "github"
       }
     },
-    "plex-desktop": {
+    "plex-desktop-flake": {
       "inputs": {
-        "nixpkgs": "nixpkgs_2"
+        "nixpkgs": [
+          "antlers",
+          "nixpkgs"
+        ]
       },
       "locked": {
-        "dir": "wrappers/plex-desktop",
-        "lastModified": 1741303804,
-        "narHash": "sha256-qqe6tj/+iRUZ4oQItg+f01Dudvgq+jjQZ7aJsruE+jU=",
-        "owner": "CalamooseLabs",
-        "repo": "flakyherd",
-        "rev": "ac27c22cf0140059d63c1d043d1d71b13ccec58a",
-        "type": "github"
+        "lastModified": 1,
+        "narHash": "sha256-/TrPSzQmDrxAYh9TsD0bu0AUnP96MQK1f7LjWtliyCE=",
+        "path": "./plex-desktop",
+        "type": "path"
       },
       "original": {
-        "dir": "wrappers/plex-desktop",
-        "owner": "CalamooseLabs",
-        "repo": "flakyherd",
-        "type": "github"
+        "path": "./plex-desktop",
+        "type": "path"
       }
     },
     "root": {
       "inputs": {
+        "antlers": "antlers",
         "ghostty": "ghostty",
         "home-manager": "home-manager",
         "nixos-hardware": "nixos-hardware",
-        "nixpkgs": "nixpkgs",
-        "plex-desktop": "plex-desktop",
-        "stylix": "stylix",
-        "zed-editor": "zed-editor"
+        "nixpkgs": "nixpkgs_2",
+        "stylix": "stylix"
       }
     },
     "stylix": {
@@ -508,11 +512,11 @@
         "tinted-zed": "tinted-zed"
       },
       "locked": {
-        "lastModified": 1741112087,
-        "narHash": "sha256-dBGwN4aHmX2QUXolZDhV+p06+WM5ZykL4wd9BD6bT7k=",
+        "lastModified": 1741335745,
+        "narHash": "sha256-jsYqEZ/gll40Jgl8BhzEAYz4E86uwUm99RkaVY38chk=",
         "owner": "danth",
         "repo": "stylix",
-        "rev": "11780517948f214b9f93d1bf5a2d29bc181d3a33",
+        "rev": "6fada03cd5e223aa9c111e7073118692065a7ee1",
         "type": "github"
       },
       "original": {
@@ -655,24 +659,22 @@
         "type": "github"
       }
     },
-    "zed-editor": {
+    "zed-editor-flake": {
       "inputs": {
-        "nixpkgs": "nixpkgs_4"
+        "nixpkgs": [
+          "antlers",
+          "nixpkgs"
+        ]
       },
       "locked": {
-        "dir": "wrappers/zed-editor",
-        "lastModified": 1741303804,
-        "narHash": "sha256-qqe6tj/+iRUZ4oQItg+f01Dudvgq+jjQZ7aJsruE+jU=",
-        "owner": "CalamooseLabs",
-        "repo": "flakyherd",
-        "rev": "ac27c22cf0140059d63c1d043d1d71b13ccec58a",
-        "type": "github"
+        "lastModified": 1,
+        "narHash": "sha256-0XiYCyjXjQCfdt9kOnJt8/les+VHETMb1J6w76JavbQ=",
+        "path": "./zed-editor",
+        "type": "path"
       },
       "original": {
-        "dir": "wrappers/zed-editor",
-        "owner": "CalamooseLabs",
-        "repo": "flakyherd",
-        "type": "github"
+        "path": "./zed-editor",
+        "type": "path"
       }
     },
     "zig": {

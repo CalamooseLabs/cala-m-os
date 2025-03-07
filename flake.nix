@@ -21,8 +21,7 @@
     };
 
     # Calamoose Labs
-    zed-editor.url = "github:CalamooseLabs/flakyherd?dir=wrappers/zed-editor";
-    plex-desktop.url = "github:CalamooseLabs/flakyherd?dir=wrappers/plex-desktop";
+    antlers.url = "github:CalamooseLabs/antlers/flakes?dir=flakes";
   };
 
   outputs = { nixpkgs, ... } @ inputs:
