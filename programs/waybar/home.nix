@@ -69,12 +69,12 @@
           format = "{icon}";
           format-charging = "";
           format-plugged = "";
-          format-alt = "{icon} {capacity}%";
+          format-alt = "{icon}{capacity}%";
           format-icons = ["" "" "" "" "" "" "" "" "" "" "" ""];
         };
 
         pulseaudio = {
-          format = "{icon} {volume}%";
+          format = "{icon}{volume}%";
           format-muted = "";
           format-icons = ["" "" " "];
           on-click = "${pkgs.pavucontrol}/bin/pavucontrol";
