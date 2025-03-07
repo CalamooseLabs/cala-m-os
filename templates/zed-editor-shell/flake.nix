@@ -4,9 +4,8 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
-    zed-wrapper = {
-      url = "github:CalamooseLabs/cala-m-os?dir=wrappers/zed-editor";
-      flake = false;
+    zed-editor = {
+      url = "github:CalamooseLabs/antlers/flakes.zed-editor?dir=flakes/zed-editor";
     };
   };
 
