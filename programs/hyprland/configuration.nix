@@ -16,6 +16,9 @@
       pkgs.xdg-desktop-portal-hyprland
       pkgs.xdg-desktop-portal
     ];
+
+    config.common.default = "*";
+    config.hyprland.default = ["hyprland"];
   };
 
   # Login Service

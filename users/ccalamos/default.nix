@@ -22,6 +22,7 @@ let
       "rofi"
       "stylix"
       "vivaldi"
+      "vlc"
       "waybar"
       "yazi"
       "yubikey"

@@ -13,4 +13,13 @@
     viAlias = true;
     vimAlias = true;
   };
+
+  xdg.mimeApps = {
+    enable = true;
+
+    defaultApplications = {
+      # Text Files
+      "text/plain" = ["nvim.desktop"];
+    };
+  };
 }
