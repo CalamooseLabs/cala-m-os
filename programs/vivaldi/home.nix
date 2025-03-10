@@ -1,6 +1,4 @@
-{ ... }:
-
-{
+{...}: {
   programs.vivaldi = {
     enable = true;
   };

@@ -3,10 +3,7 @@
 #   Framework 12th Gen. Laptop   #
 #                                #
 ##################################
-
-{ inputs, ... }:
-
-let
+{inputs, ...}: let
   import_users = [
     # Default User
     "ccalamos"
@@ -14,17 +11,15 @@ let
     # Other Users
     "hub"
   ];
-in
-{
-  imports =
-    [
-      # Hardware Config
-      ./hardware-configuration.nix
-      inputs.nixos-hardware.nixosModules.framework-12th-gen-intel
+in {
+  imports = [
+    # Hardware Config
+    ./hardware-configuration.nix
+    inputs.nixos-hardware.nixosModules.framework-12th-gen-intel
 
-      # Common Core Config
-      (import ../_core/configuration.nix { users_list = import_users; })
-    ];
+    # Common Core Config
+    (import ../_core/configuration.nix {users_list = import_users;})
+  ];
 
   networking = {
     hostName = "calamooselabs";

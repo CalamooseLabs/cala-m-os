@@ -1,6 +1,7 @@
-{ pkgs, inputs }:
-
-let
+{
+  pkgs,
+  inputs,
+}: let
   # Define your zed settings
   zedSettings = {
     "vim_mode" = false;
@@ -8,12 +9,12 @@ let
     "load_direnv" = "shell_hook";
   };
 in
-pkgs.mkShell {
-  buildInputs = [
-    (inputs.zed-editor.packages.x86_64-linux.default zedSettings)
-  ];
+  pkgs.mkShell {
+    buildInputs = [
+      (inputs.zed-editor.packages.x86_64-linux.default zedSettings)
+    ];
 
-  shellHook = ''
-    echo "Using wrapped local zed: ./.direnv/.config/zed"
-  '';
-}
+    shellHook = ''
+      echo "Using wrapped local zed: ./.direnv/.config/zed"
+    '';
+  }

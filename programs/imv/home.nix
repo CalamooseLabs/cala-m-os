@@ -1,6 +1,4 @@
-{ ... }:
-
-{
+{...}: {
   programs.imv = {
     enable = true;
   };

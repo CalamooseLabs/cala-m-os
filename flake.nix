@@ -1,5 +1,5 @@
 {
-  description = "Cala-M-OS Base Configuration Flake";
+  description = "Cala-M-OS Configuration Flake";
 
   inputs = {
     # Unstable NixOS Branch
@@ -27,12 +27,10 @@
     };
   };
 
-  outputs = { nixpkgs, ... } @ inputs:
-  let
+  outputs = {nixpkgs, ...} @ inputs: let
     system = "x86_64-linux";
-    pkgs = import nixpkgs { system = system; };
-  in
-  {
+    pkgs = import nixpkgs {system = system;};
+  in {
     nixosConfigurations = {
       calamooselabs = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs;};
@@ -44,6 +42,9 @@
 
     templates = import ./templates;
 
-    devShells.${system}.default = import ./shell.nix { inherit inputs; inherit pkgs; };
+    devShells.${system}.default = import ./shell.nix {
+      inherit inputs;
+      inherit pkgs;
+    };
   };
 }

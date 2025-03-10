@@ -1,6 +1,4 @@
-{ ... }:
-
-{
+{...}: {
   programs.zed-editor = {
     enable = true;
 
@@ -69,7 +67,7 @@
       relative_line_numbers = true;
 
       auto_install_extensions = {
-          "html" = false;
+        "html" = false;
       };
     };
   };

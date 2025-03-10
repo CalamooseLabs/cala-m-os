@@ -1,13 +1,11 @@
-{ users_list, ... }: { lib, ... }:
-let
+{users_list, ...}: {lib, ...}: let
   usersPath = ../../../users;
 
   getUsers = name: import "${toString (usersPath + "/${name}/default.nix")}";
 
   user_imports = map getUsers users_list;
-in
-{
-  imports = [ ./home.nix ] ++ user_imports;
+in {
+  imports = [./home.nix] ++ user_imports;
 
   # Boot loader
   boot = {
@@ -89,7 +87,7 @@ in
 
     settings = {
       auto-optimise-store = true;
-      experimental-features = [ "nix-command" "flakes" ];
+      experimental-features = ["nix-command" "flakes"];
     };
   };
 

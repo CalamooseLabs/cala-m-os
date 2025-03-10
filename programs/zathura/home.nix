@@ -1,16 +1,14 @@
-{ ... }:
+{...}: {
+  programs.zathura = {
+    enable = true;
+  };
 
-{
-    programs.zathura = {
-        enable = true;
+  xdg.mimeApps = {
+    enable = true;
+
+    defaultApplications = {
+      # PDFs
+      "application/pdf" = ["org.pwmt.zathura.desktop"];
     };
-
-    xdg.mimeApps = {
-      enable = true;
-
-      defaultApplications = {
-        # PDFs
-        "application/pdf" = ["org.pwmt.zathura.desktop"];
-      };
-    };
+  };
 }

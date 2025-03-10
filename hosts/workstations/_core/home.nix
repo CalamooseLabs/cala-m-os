@@ -1,12 +1,10 @@
-{ inputs, ... }:
-
-{
+{inputs, ...}: {
   imports = [
     inputs.home-manager.nixosModules.default # Add Home Manager
   ];
 
   home-manager = {
-    extraSpecialArgs = { inherit inputs; };
+    extraSpecialArgs = {inherit inputs;};
     backupFileExtension = "hm-backup";
 
     useGlobalPkgs = true;

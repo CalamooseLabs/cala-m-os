@@ -1,6 +1,4 @@
-{ ... }:
-
-{
+{...}: {
   programs.yazi = {
     enable = true;
     shellWrapperName = "y";
@@ -16,6 +14,5 @@
         sort_dir_first = true;
       };
     };
-
   };
 }

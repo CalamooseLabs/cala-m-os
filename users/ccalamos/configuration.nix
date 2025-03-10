@@ -1,17 +1,19 @@
-{ username, ... }: { ... }:
-
-{
+{username, ...}: {...}: {
   users.users."${username}" = {
-    extraGroups = [ "wheel" "networkmanager" ];
+    extraGroups = ["wheel" "networkmanager"];
   };
 
-  security.sudo.extraRules = [{
-    users = [ "${username}" ];
-    commands = [{
-      command = "ALL";
-      options = [ "NOPASSWD" ];
-    }];
-  }];
+  security.sudo.extraRules = [
+    {
+      users = ["${username}"];
+      commands = [
+        {
+          command = "ALL";
+          options = ["NOPASSWD"];
+        }
+      ];
+    }
+  ];
 
   home-manager = {
     users."${username}" = {
