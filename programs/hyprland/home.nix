@@ -3,6 +3,10 @@
   pkgs,
   ...
 }: {
+  home.packages = [
+    pkgs.wl-clipboard
+  ];
+
   wayland.windowManager.hyprland = {
     enable = true;
 
