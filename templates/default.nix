@@ -30,4 +30,12 @@
       # Zed Dev Shell Template
     '';
   };
+
+  nkc-lease-amendment = {
+    path = ./nkc-lease-amendment;
+    description = "Lease Amendment template in LaTeX";
+    welcomeText = ''
+      Ensure to run direnv allow
+    '';
+  };
 }
