@@ -29,6 +29,8 @@ in {
       "udev.log_priority=3"
     ];
 
+    tmp.useTmpfs = true;
+
     consoleLogLevel = 0;
     initrd.verbose = false;
   };
