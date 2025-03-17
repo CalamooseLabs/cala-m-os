@@ -4,6 +4,7 @@
   config,
   ...
 }: let
+  rofi-calculator = pkgs.writeShellScriptBin "rcalculator" (builtins.readFile ./scripts/calculator.sh);
   rofi-powermenu = pkgs.writeTextFile {
     name = "rofi_powermenu";
     destination = "/bin/powermenu";
@@ -11,14 +12,18 @@
     text = builtins.readFile ./scripts/powermenu.sh;
   };
 in {
-  home.packages = [rofi-powermenu];
+  home.packages = [
+    pkgs.bc
+    rofi-powermenu
+    rofi-calculator
+  ];
   programs.rofi = {
     enable = true;
     package =
       pkgs.rofi-wayland.overrideAttrs
       (oldAttrs: {mesonFlags = ["-Dxcb=disabled"];});
     extraConfig = {
-      modi = "drun";
+      modi = "drun,calc:rcalculator";
       icon-theme = "Papirus-Dark";
       show-icons = true;
       terminal = "ghostty";
