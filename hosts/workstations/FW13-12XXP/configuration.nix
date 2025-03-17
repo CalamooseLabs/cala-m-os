@@ -26,7 +26,11 @@ in {
   };
 
   # Framework BIOS updates
-  services.fwupd.enable = true;
+  services.fwupd = {
+    enable = true;
+    extraRemotes = ["lvfs-testing"];
+    uefiCapsuleSettings.DisableCapsuleUpdateOnDisk = true;
+  };
 
   # Mount usb drives
   services.devmon.enable = true;
