@@ -31,6 +31,14 @@
     '';
   };
 
+  spreadsheet-pdf = {
+    path = ./spreadsheet-pdf;
+    description = "Spreadsheet to PDF template in SC-IM";
+    welcomeText = ''
+      Ensure to run direnv allow
+    '';
+  };
+
   nkc-lease-amendment = {
     path = ./nkc-lease-amendment;
     description = "Lease Amendment template in LaTeX";

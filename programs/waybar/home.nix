@@ -71,7 +71,7 @@
         };
 
         pulseaudio = {
-          format = "{icon}{volume}%";
+          format = "{icon} {volume}%";
           format-muted = "";
           format-icons = ["" "" " "];
           on-click = "${pkgs.pavucontrol}/bin/pavucontrol";
