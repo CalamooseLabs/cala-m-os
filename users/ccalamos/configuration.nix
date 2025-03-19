@@ -1,6 +1,6 @@
 {username, ...}: {...}: {
   users.users."${username}" = {
-    extraGroups = ["wheel" "networkmanager"];
+    extraGroups = ["wheel" "networkmanager" "scanner" "lp"];
   };
 
   security.sudo.extraRules = [

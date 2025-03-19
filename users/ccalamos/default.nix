@@ -18,6 +18,7 @@
     "plex-desktop"
     "qutebrowser"
     "rofi"
+    "scanner"
     "stylix"
     "vivaldi"
     "vlc"
