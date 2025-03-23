@@ -23,6 +23,9 @@ in {
 
   networking = {
     hostName = "calamooselabs";
+
+    # Power saver for laptops
+    networkmanager.wifi.powersave = true;
   };
 
   # Framework BIOS updates

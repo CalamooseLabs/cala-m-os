@@ -48,6 +48,7 @@
           format-wifi = "";
           format-disconnected = "󰤮";
           format-ethernet = "";
+          on-click = "ghostty -e nmtui"; # TODO: Change this to using terminal variable
           tootip = false;
         };
 

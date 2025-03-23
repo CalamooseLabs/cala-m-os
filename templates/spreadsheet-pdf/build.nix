@@ -3,7 +3,7 @@ pkgs.stdenv.mkDerivation {
   name = "pdf";
   src = ./.;
   buildInputs = with pkgs; [
-    texliveFull
+    texliveSmall
     pandoc
     sc-im
     expect
