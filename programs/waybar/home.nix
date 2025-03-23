@@ -67,7 +67,7 @@
           format = "{icon}";
           format-charging = "";
           format-plugged = "";
-          format-alt = "{icon}{capacity}%";
+          format-alt = "{icon} {capacity}%";
           format-icons = ["" "" "" "" "" "" "" "" "" "" "" ""];
         };
 
