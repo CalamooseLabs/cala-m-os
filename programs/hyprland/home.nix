@@ -28,7 +28,7 @@
 
       monitor = [
         "eDP-1, 2256x1504@60, 0x0, 1" # Laptop Screen
-        "desc:Microstep MSI MP341CQ 0x00000077, 3840x1440@60, -3840x0, 1" # Work Widescreen
+        "desc:Microstep MSI MP341CQ 0x00000077, 3440x1440@60, -3440x0, 1" # Work Widescreen
         "desc:Microstep MSI G272QPF 0x01010101, 2560x1440@60, 2560x-1504, 1" # Office Right Monitor
         "DP-6, 2560x1440@60, 0x-1504, 1" # Office Left Monitor
       ];
