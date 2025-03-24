@@ -9,6 +9,7 @@
     "ghostty"
     "git"
     "gpg"
+    "hypridle"
     "hyprland"
     "hyprlock"
     "hyprpaper"
