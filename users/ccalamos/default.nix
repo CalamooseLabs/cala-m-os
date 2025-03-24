@@ -22,6 +22,7 @@
     "stylix"
     "vivaldi"
     "vlc"
+    "vpn"
     "waybar"
     "yazi"
     "yubikey"
