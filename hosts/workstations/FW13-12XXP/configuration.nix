@@ -10,6 +10,7 @@
 
     # Other Users
     "hub"
+    "developer"
   ];
 in {
   imports = [
@@ -49,6 +50,8 @@ in {
   # SOPS
   sops = {
     defaultSopsFile = ./secrets/users.json;
+    defaultSopsFormat = "json";
+
     age = {
       sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
       keyFile = "/var/lib/sops-nix/key.txt";
