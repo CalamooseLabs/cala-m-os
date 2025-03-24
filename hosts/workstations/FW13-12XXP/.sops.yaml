@@ -1,0 +1,9 @@
+keys:
+  - &admin_ccalamos age17z9wprp3v560ffazll2rfq3ahvnfmryr2ret0zr4sxdyhj4vgyuqfa2cxq
+  - &server_calamooselabs age1lhyzvsd4h45cj22k9hzneeejp72ruvu5gpqzcwwv3srgmg3ke46qej0028
+creation_rules:
+  - path_regex: secrets/[^/]+\.(yaml|json|env|ini)$
+    key_groups:
+      - age:
+          - *admin_ccalamos
+          - *server_calamooselabs

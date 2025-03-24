@@ -20,6 +20,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # SOPS
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Calamoose Labs
     antlers = {
       url = "github:CalamooseLabs/antlers/flakes?dir=flakes";

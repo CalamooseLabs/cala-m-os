@@ -5,7 +5,8 @@
 
   user_imports = map getUsers users_list;
 in {
-  imports = [./home.nix] ++ user_imports;
+  imports =
+    [./home.nix] ++ user_imports;
 
   # Boot loader
   boot = {
