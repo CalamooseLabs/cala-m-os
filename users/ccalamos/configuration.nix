@@ -1,4 +1,8 @@
-{username, ...}: {config, ...}: {
+{username, ...}: {
+  config,
+  pkgs,
+  ...
+}: {
   users.users."${username}" = {
     isNormalUser = true;
     hashedPasswordFile = config.sops.secrets.admin_hash.path;
@@ -31,6 +35,18 @@
       "x-systemd.automount"
       "noauto"
       "x-systemd.idle-timeout=600"
+    ];
+  };
+
+  environment.systemPackages = [pkgs.cifs-utils];
+  fileSystems."/mnt/nkc" = {
+    device = "//10.50.1.1/Data";
+    fsType = "cifs";
+    options = [
+      "x-systemd.automount"
+      "noauto"
+      "x-systemd.idle-timeout=600"
+      "credentials=${config.sops.secrets.work_credentials.path}"
     ];
   };
 }

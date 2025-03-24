@@ -62,7 +62,8 @@ in {
       admin_hash = {
         neededForUsers = true;
       };
-      admin_password = {};
+
+      work_credentials = {};
     };
   };
 }
