@@ -11,7 +11,7 @@
     # Ghostty Terminal
     ghostty.url = "github:ghostty-org/ghostty";
 
-    # Theme
+    # Theming
     stylix.url = "github:danth/stylix";
 
     # Home Manager
