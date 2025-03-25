@@ -2,8 +2,41 @@
   networking.firewall.checkReversePath = "loose";
 
   sops = {
+    secrets = {
+      CasaMosVPN_PrivateKey = {
+        sopsFile = ./secrets/CasaMosVPN.json;
+        format = "json";
+        restartUnits = ["NetworkManager.service"];
+      };
+      CasaMosVPN_PublicKey = {
+        sopsFile = ./secrets/CasaMosVPN.json;
+        format = "json";
+        restartUnits = ["NetworkManager.service"];
+      };
+      CasaMosVPN_Address = {
+        sopsFile = ./secrets/CasaMosVPN.json;
+        format = "json";
+        restartUnits = ["NetworkManager.service"];
+      };
+      CasaMosVPN_DNS = {
+        sopsFile = ./secrets/CasaMosVPN.json;
+        format = "json";
+        restartUnits = ["NetworkManager.service"];
+      };
+      CasaMosVPN_AllowedIPS = {
+        sopsFile = ./secrets/CasaMosVPN.json;
+        format = "json";
+        restartUnits = ["NetworkManager.service"];
+      };
+      CasaMosVPN_Endpoint = {
+        sopsFile = ./secrets/CasaMosVPN.json;
+        format = "json";
+        restartUnits = ["NetworkManager.service"];
+      };
+    };
+
     templates = {
-      "CasaMosVPN.nmconnection" = {
+      "CasaMos VPN.nmconnection" = {
         content = ''
           [connection]
           id=CasaMos VPN

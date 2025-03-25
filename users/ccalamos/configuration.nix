@@ -3,9 +3,16 @@
   pkgs,
   ...
 }: {
+  sops = {
+    secrets = {
+      work_credentials = {
+        sopsFile = ./secrets/nkc.json;
+        format = "json";
+      };
+    };
+  };
+
   users.users."${username}" = {
-    isNormalUser = true;
-    hashedPasswordFile = config.sops.secrets.admin_hash.path;
     extraGroups = ["wheel" "networkmanager" "scanner" "lp"];
   };
 

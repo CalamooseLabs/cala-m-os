@@ -49,46 +49,12 @@ in {
 
   # SOPS
   sops = {
-    defaultSopsFile = ./secrets/users.json;
     defaultSopsFormat = "json";
 
     age = {
       sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
       keyFile = "/var/lib/sops-nix/key.txt";
       generateKey = true;
-    };
-
-    secrets = {
-      admin_hash = {
-        neededForUsers = true;
-      };
-
-      work_credentials = {};
-
-      CasaMosVPN_PrivateKey = {
-        sopsFile = ./secrets/vpn.json;
-        format = "json";
-      };
-      CasaMosVPN_PublicKey = {
-        sopsFile = ./secrets/vpn.json;
-        format = "json";
-      };
-      CasaMosVPN_Address = {
-        sopsFile = ./secrets/vpn.json;
-        format = "json";
-      };
-      CasaMosVPN_DNS = {
-        sopsFile = ./secrets/vpn.json;
-        format = "json";
-      };
-      CasaMosVPN_AllowedIPS = {
-        sopsFile = ./secrets/vpn.json;
-        format = "json";
-      };
-      CasaMosVPN_Endpoint = {
-        sopsFile = ./secrets/vpn.json;
-        format = "json";
-      };
     };
   };
 }

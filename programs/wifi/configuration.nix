@@ -2,8 +2,9 @@
   sops = {
     secrets = {
       CalamooseWiFi_Password = {
-        sopsFile = ./secrets/wifi.json;
+        sopsFile = ./secrets/CalamooseWiFi.json;
         format = "json";
+        restartUnits = ["NetworkManager.service"];
       };
     };
 
