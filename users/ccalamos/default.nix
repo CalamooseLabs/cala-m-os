@@ -14,6 +14,7 @@
     "hyprlock"
     "hyprpaper"
     "imv"
+    "ios"
     "lazygit"
     "neovim"
     "plex-desktop"
