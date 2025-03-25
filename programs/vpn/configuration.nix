@@ -6,7 +6,7 @@
       "CasaMosVPN.nmconnection" = {
         content = ''
           [connection]
-          id=CasaMosVPN
+          id=CasaMos VPN
           uuid=518f99f8-a3d4-4baf-b746-3fc4e0c40a40
           type=wireguard
           interface-name=wg0
@@ -28,7 +28,7 @@
           [ipv6]
           method=disabled
         '';
-        path = "/etc/NetworkManager/system-connections/CasaMosVPN.nmconnection";
+        path = "/etc/NetworkManager/system-connections/CasaMos VPN.nmconnection";
       };
     };
   };

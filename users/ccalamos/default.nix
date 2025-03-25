@@ -27,6 +27,7 @@
     "vlc"
     "vpn"
     "waybar"
+    "wifi"
     "yazi"
     "yubikey"
     "zathura"
