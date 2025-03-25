@@ -64,6 +64,11 @@ in {
       };
 
       work_credentials = {};
+
+      CasaMosVPN_PrivateKey = {
+        sopsFile = ./secrets/vpn.json;
+        format = "json";
+      };
     };
   };
 }
