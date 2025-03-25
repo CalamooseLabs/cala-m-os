@@ -69,6 +69,26 @@ in {
         sopsFile = ./secrets/vpn.json;
         format = "json";
       };
+      CasaMosVPN_PublicKey = {
+        sopsFile = ./secrets/vpn.json;
+        format = "json";
+      };
+      CasaMosVPN_Address = {
+        sopsFile = ./secrets/vpn.json;
+        format = "json";
+      };
+      CasaMosVPN_DNS = {
+        sopsFile = ./secrets/vpn.json;
+        format = "json";
+      };
+      CasaMosVPN_AllowedIPS = {
+        sopsFile = ./secrets/vpn.json;
+        format = "json";
+      };
+      CasaMosVPN_Endpoint = {
+        sopsFile = ./secrets/vpn.json;
+        format = "json";
+      };
     };
   };
 }

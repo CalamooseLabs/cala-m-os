@@ -1,21 +1,35 @@
 {config, ...}: {
-  networking.networkmanager.dns = "systemd-resolved";
-  services.resolved.enable = true;
+  networking.firewall.checkReversePath = "loose";
 
-  networking.wg-quick.interfaces = {
-    wg0 = {
-      address = ["10.0.0.12/32"];
-      dns = ["10.0.0.10"];
-      privateKeyFile = config.sops.secrets.CasaMosVPN_PrivateKey.path;
+  sops = {
+    templates = {
+      "CasaMosVPN.nmconnection" = {
+        content = ''
+          [connection]
+          id=CasaMosVPN
+          uuid=518f99f8-a3d4-4baf-b746-3fc4e0c40a40
+          type=wireguard
+          interface-name=wg0
+          autoconnect=false
 
-      peers = [
-        {
-          publicKey = "TYTGNq3NY5etwSjJtXdAYWAClFjCzcdYyQBSBmZZjlU=";
-          allowedIPs = ["0.0.0.0/0"];
-          endpoint = "152.117.65.133:51820";
-          persistentKeepalive = 25;
-        }
-      ];
+          [wireguard]
+          private-key=${config.sops.placeholder.CasaMosVPN_PrivateKey}
+
+          [wireguard-peer.${config.sops.placeholder.CasaMosVPN_PublicKey}]
+          endpoint=${config.sops.placeholder.CasaMosVPN_Endpoint}
+          allowed-ips=${config.sops.placeholder.CasaMosVPN_AllowedIPS}
+          persistent-keepalive=25
+
+          [ipv4]
+          method=manual
+          address1=${config.sops.placeholder.CasaMosVPN_Address}
+          dns=${config.sops.placeholder.CasaMosVPN_DNS}
+
+          [ipv6]
+          method=disabled
+        '';
+        path = "/etc/NetworkManager/system-connections/CasaMosVPN.nmconnection";
+      };
     };
   };
 }
