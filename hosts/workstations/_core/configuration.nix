@@ -39,6 +39,9 @@ in {
   # Remove manuals, as we google everything anyways
   documentation.enable = false;
 
+  # Enable Firewall
+  networking.firewall.enable = true;
+
   # Enable Network Manager
   networking.networkmanager.enable = true;
 

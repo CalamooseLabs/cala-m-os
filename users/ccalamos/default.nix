@@ -21,6 +21,7 @@
     "qutebrowser"
     "rofi"
     "scanner"
+    "share-internet"
     "stylix"
     "vivaldi"
     "vlc"
