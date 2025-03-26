@@ -1,4 +1,9 @@
-{...}: {
+{pkgs, ...}: {
+  home.packages = [
+    pkgs.dnsmasq
+    pkgs.nftables
+  ];
+
   # Install the script from the external file
   home.file.".local/bin/share-internet" = {
     source = ./scripts/share-internet.sh;
