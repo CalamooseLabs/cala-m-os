@@ -5,8 +5,8 @@
   ];
 
   # Install the script from the external file
-  home.file.".local/bin/share-internet" = {
-    source = ./scripts/share-internet.sh;
+  home.file.".local/bin/bridge-internet" = {
+    source = ./scripts/bridge-internet.sh;
     executable = true;
   };
 

@@ -35,6 +35,12 @@ while getopts "i:e:r:n:t:h" opt; do
     esac
 done
 
+# Check if the script is run as root
+if [ "$EUID" -ne 0 ]; then
+  echo "This script must be run as root. Please use sudo."
+  exit 1
+fi
+
 # Check if required arguments are provided
 if [ -z "$INTERNET_DEVICE" ] || [ -z "$ETHERNET_DEVICE" ]; then
     echo "Error: Both internet device and ethernet device must be specified."
@@ -94,23 +100,19 @@ echo "Setting up internet sharing from $INTERNET_DEVICE to $ETHERNET_DEVICE..."
 ip link set up $ETHERNET_DEVICE
 ip addr add ${IP_RANGE}.1/${NETMASK} dev $ETHERNET_DEVICE
 
-# Enable packet forwarding
-sysctl net.ipv4.ip_forward=1
-
 # Check if NAT table exists, create if not
 if ! nft list tables | grep -q "table ip nat"; then
     echo "Creating NAT table..."
     nft add table ip nat
-    nft add chain ip nat PREROUTING { type nat hook prerouting priority -100 \; }
     nft add chain ip nat POSTROUTING { type nat hook postrouting priority 100 \; }
     CREATED_NAT_TABLE=1
 fi
 
 # Enable NAT for leaving packets
-nft add rule ip nat POSTROUTING oifname $INTERNET_DEVICE masquerade
+nft add rule nat POSTROUTING oifname $INTERNET_DEVICE masquerade
 
 # Start dnsmasq for DHCP (using alternative port)
-dnsmasq -i $ETHERNET_DEVICE --dhcp-range=${IP_RANGE}.2,${IP_RANGE}.255,255.255.255.0,$LEASE_TIME --port=$DHCP_PORT &
+dnsmasq  -d -i $ETHERNET_DEVICE --dhcp-range=${IP_RANGE}.2,${IP_RANGE}.255,255.255.255.0,$LEASE_TIME --port=$DHCP_PORT &
 DNSMASQ_PID=$!
 
 echo "Internet sharing active. Press Ctrl+C to stop and clean up."

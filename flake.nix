@@ -35,7 +35,9 @@
 
   outputs = {nixpkgs, ...} @ inputs: let
     system = "x86_64-linux";
-    pkgs = import nixpkgs {system = system;};
+    pkgs = import nixpkgs {
+      system = system;
+    };
   in {
     nixosConfigurations = {
       calamooselabs = nixpkgs.lib.nixosSystem {
