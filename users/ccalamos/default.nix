@@ -6,6 +6,7 @@
     "bridge-internet"
     "btop"
     "direnv"
+    "flipperzero"
     "fonts"
     "ghostty"
     "git"
