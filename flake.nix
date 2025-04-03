@@ -8,11 +8,14 @@
     # Specific Hardware Fixes
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
-    # Ghostty Terminal
-    ghostty.url = "github:ghostty-org/ghostty";
-
     # Theming
     stylix.url = "github:danth/stylix";
+
+    # Disko
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Home Manager
     home-manager = {
