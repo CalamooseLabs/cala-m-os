@@ -4,7 +4,7 @@
     userName = "Cole J. Calamos";
     userEmail = "cole@calamos.family";
     signing = {
-      key = "63C1F6DB3F13A405";
+      key = "50D56BF0B93CA212";
       signByDefault = true;
     };
     extraConfig = {

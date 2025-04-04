@@ -3,7 +3,11 @@
 #   Framework 12th Gen. Laptop   #
 #                                #
 ##################################
-{inputs, ...}: let
+{
+  inputs,
+  pkgs,
+  ...
+}: let
   import_users = [
     # Default User
     "ccalamos"
@@ -51,10 +55,14 @@ in {
   sops = {
     defaultSopsFormat = "json";
 
-    age = {
-      sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
-      keyFile = "/var/lib/sops-nix/key.txt";
-      generateKey = true;
+    gnupg = {
+      home = "/home/ccalamos/.gnupg";
+      sshKeyPaths = [];
     };
+    # age = {
+    #   sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
+    #   keyFile = "/var/lib/sops-nix/key.txt";
+    #   generateKey = true;
+    # };
   };
 }
