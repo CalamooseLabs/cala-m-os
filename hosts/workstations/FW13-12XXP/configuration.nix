@@ -20,6 +20,7 @@ in {
 
     # SOPS for secret management
     inputs.sops-nix.nixosModules.sops
+    # inputs.agenix.nixosModules.default
 
     # Common Core Config
     (import ../_core/configuration.nix {users_list = import_users;})
@@ -50,18 +51,6 @@ in {
   # SOPS
   sops = {
     defaultSopsFormat = "json";
-
-    # gnupg = {
-    #   # enable = true;
-    #   home = "/home/ccalamos/.gnupg";
-    #   sshKeyPaths = [];
-    # };
-    age = {
-      sshKeyPaths = [];
-      # plugins = [pkgs.age-plugin-yubikey];
-      # keyFile = "/var/lib/sops-nix/key.txt";
-      keyFile = "/home/ccalamos/age-yubikey-identity-3b6e30a3.txt";
-      # generateKey = true;
-    };
+    age.keyFile = "/etc/sops/key.txt";
   };
 }

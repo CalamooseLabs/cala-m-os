@@ -1,6 +1,7 @@
 {...}: let
   username = "ccalamos";
   import_programs = [
+    "agenix"
     "bash"
     "bat"
     "bridge-internet"

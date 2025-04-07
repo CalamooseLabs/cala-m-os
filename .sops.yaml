@@ -1,10 +1,4 @@
-keys:
-  - &yubikey_admin 0x3E9FCB0ACA0A3C73
-  - &yubikey_age age1yubikey1qvqy8f2qhwprxg6wmpzec06f2gceze40jxx7x9tdxjzx6ag45uj9y8p96kt
 creation_rules:
   - path_regex: secrets/[^/]+\.(yaml|json|env|ini)$
-    key_groups:
-      - pgp:
-          - *yubikey_admin
-      - age:
-          - *yubikey_age
+    age: "age1gtag0mez357aaka4ee7azeg8t60wtwe2q22y5tcmf77plczwld5qghchq6"
+    pgp: "0x3E9FCB0ACA0A3C73"
