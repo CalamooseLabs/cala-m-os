@@ -7,6 +7,15 @@
     '';
   };
 
+  cala-m-os-secret = {
+    path = ./cala-m-os-secret;
+    description = "a simple agenix to be added to a module";
+    welcomeText = ''
+      # Cala M OS Secret Template
+      Use `agenix -e [secretfile] -i ./identities/yubi.key` to get started
+    '';
+  };
+
   cala-m-os-user = {
     path = ./cala-m-os-user;
     description = "a simple user nix flake";
