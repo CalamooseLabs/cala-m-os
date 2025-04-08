@@ -1,11 +1,21 @@
-{inputs, ...}: {
+{
+  pkgs,
+  inputs,
+  lib,
+  ...
+}: {
   imports = [
     inputs.agenix.nixosModules.default
   ];
 
-  environment.systemPackages = [inputs.agenix.packages."x86_64-linux".default];
+  environment.systemPackages = [
+    inputs.agenix.packages."x86_64-linux".default
+    pkgs.age-plugin-yubikey
+  ];
 
   age.identityPaths = [
-    "/home/ccalamos/cala-m-os/programs/agenix/identities/yubi.key"
+    "${builtins.toString ./.}/identities/yubi.key"
   ];
+
+  age.ageBin = "PATH=$PATH:${lib.makeBinPath [pkgs.age-plugin-yubikey]} ${pkgs.age}/bin/age";
 }
