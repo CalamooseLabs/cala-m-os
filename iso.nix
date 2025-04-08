@@ -20,6 +20,7 @@ in {
         disko-install
         git
         vim
+        age
         age-plugin-yubikey
       ];
 

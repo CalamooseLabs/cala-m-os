@@ -23,12 +23,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # SOPS
-    sops-nix = {
-      url = "github:Mic92/sops-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
+    # Agenix (Secret management)
     agenix = {
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
