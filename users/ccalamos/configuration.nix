@@ -3,15 +3,6 @@
   pkgs,
   ...
 }: {
-  sops = {
-    secrets = {
-      work_credentials = {
-        sopsFile = ./secrets/nkc.json;
-        format = "json";
-      };
-    };
-  };
-
   users.users."${username}" = {
     extraGroups = ["wheel" "networkmanager" "scanner" "lp"];
   };
@@ -53,7 +44,7 @@
       "x-systemd.automount"
       "noauto"
       "x-systemd.idle-timeout=600"
-      "credentials=${config.sops.secrets.work_credentials.path}"
+      "credentials=${config.age.secrets.work_credentials.path}"
     ];
   };
 }

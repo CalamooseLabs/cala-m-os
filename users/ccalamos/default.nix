@@ -25,7 +25,6 @@
     "proton-pass"
     "rofi"
     "scanner"
-    "sops"
     "spotify"
     "stylix"
     "vivaldi"
@@ -40,6 +39,7 @@
   ];
 in {
   imports = [
+    ./secrets
     (import ../_core {
       username = username;
       import_programs = import_programs;

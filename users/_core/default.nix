@@ -23,6 +23,7 @@
 in {
   imports =
     [
+      ./secrets
       (import ./configuration.nix {username = username;}) # Core Config
       (import user_configuration {username = username;}) # User Config
     ]
