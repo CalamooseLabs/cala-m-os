@@ -49,6 +49,21 @@
           ./hosts/workstations/FW13-12XXP/configuration.nix
         ];
       };
+
+      FW13-12XXP = nixpkgs.lib.nixosSystem {
+        specialArgs = {inherit inputs;};
+        modules = [
+          ./hosts/workstations/FW13-12XXP/configuration.nix
+        ];
+      };
+
+      FW13-11XXP = nixpkgs.lib.nixosSystem {
+        specialArgs = {inherit inputs;};
+        modules = [
+          ./hosts/workstations/FW13-11XXP/configuration.nix
+          inputs.disko.nixosModules.disko
+        ];
+      };
     };
 
     templates = import ./templates;
