@@ -17,7 +17,6 @@ in {
       ];
 
       environment.systemPackages = with pkgs; [
-        disko-install
         git
         vim
         age
