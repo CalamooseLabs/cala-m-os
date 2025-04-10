@@ -26,6 +26,7 @@
     "rofi"
     "scanner"
     "spotify"
+    "streamdeck"
     "stylix"
     "vivaldi"
     "vlc"
