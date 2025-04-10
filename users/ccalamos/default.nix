@@ -21,6 +21,7 @@
     "ios"
     "lazygit"
     "neovim"
+    "obs-studio"
     "plex-desktop"
     "proton-pass"
     "rofi"
