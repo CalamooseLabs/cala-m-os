@@ -48,6 +48,14 @@
     '';
   };
 
+  nkc-farmland-lease = {
+    path = ./nkc-farmland-lease;
+    description = "Farmland Masrer Lease template in LaTeX";
+    welcomeText = ''
+      Ensure to run direnv allow
+    '';
+  };
+
   nkc-lease-amendment = {
     path = ./nkc-lease-amendment;
     description = "Lease Amendment template in LaTeX";

@@ -64,6 +64,22 @@
           inputs.disko.nixosModules.disko
         ];
       };
+
+      isoImage = nixpkgs.lib.nixosSystem {
+        specialArgs = {inherit inputs;};
+        modules = [
+          ({modulesPath, ...}: {
+            imports = [
+              "${modulesPath}/installer/cd-dvd/installation-cd-minimal.nix"
+              ./hosts/workstations/FW13-11XXP/configuration.nix
+            ];
+            networking.wireless.enable = false;
+
+            nixpkgs.hostPlatform = "x86_64-linux";
+          })
+          inputs.disko.nixosModules.disko
+        ];
+      };
     };
 
     templates = import ./templates;
