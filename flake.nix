@@ -82,6 +82,10 @@
       };
     };
 
+    formatter = {
+      x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.alejandra;
+    };
+
     templates = import ./templates;
 
     devShells.${system}.default = import ./shell.nix {
