@@ -41,45 +41,29 @@
     pkgs = import nixpkgs {
       system = system;
     };
+
+    # Configurations
+    FW13-12XXP = nixpkgs.lib.nixosSystem {
+      specialArgs = {inherit inputs;};
+      modules = [
+        ./hosts/workstations/FW13-12XXP/configuration.nix
+      ];
+    };
+
+    FW13-11XXP = nixpkgs.lib.nixosSystem {
+      specialArgs = {inherit inputs;};
+      modules = [
+        ./hosts/workstations/FW13-11XXP/configuration.nix
+        inputs.disko.nixosModules.disko
+      ];
+    };
   in {
     nixosConfigurations = {
-      calamooselabs = nixpkgs.lib.nixosSystem {
-        specialArgs = {inherit inputs;};
-        modules = [
-          ./hosts/workstations/FW13-12XXP/configuration.nix
-        ];
-      };
+      FW13-11XXP = FW13-11XXP;
+      FW13-12XXP = FW13-12XXP;
 
-      FW13-12XXP = nixpkgs.lib.nixosSystem {
-        specialArgs = {inherit inputs;};
-        modules = [
-          ./hosts/workstations/FW13-12XXP/configuration.nix
-        ];
-      };
-
-      FW13-11XXP = nixpkgs.lib.nixosSystem {
-        specialArgs = {inherit inputs;};
-        modules = [
-          ./hosts/workstations/FW13-11XXP/configuration.nix
-          inputs.disko.nixosModules.disko
-        ];
-      };
-
-      isoImage = nixpkgs.lib.nixosSystem {
-        specialArgs = {inherit inputs;};
-        modules = [
-          ({modulesPath, ...}: {
-            imports = [
-              "${modulesPath}/installer/cd-dvd/installation-cd-minimal.nix"
-              ./hosts/workstations/FW13-11XXP/configuration.nix
-            ];
-            networking.wireless.enable = false;
-
-            nixpkgs.hostPlatform = "x86_64-linux";
-          })
-          inputs.disko.nixosModules.disko
-        ];
-      };
+      # Default Configuration
+      calamooselabs = FW13-12XXP;
     };
 
     formatter = {
