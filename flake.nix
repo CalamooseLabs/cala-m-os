@@ -1,5 +1,5 @@
 {
-  description = "Cala-M-OS Configuration Flake";
+  description = "Cala-M-OS NixOS Configuration Flake";
 
   inputs = {
     # Unstable NixOS Branch
