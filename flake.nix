@@ -52,6 +52,50 @@
         ./hardware-configuration.nix
       ];
     };
+
+    installer = nixpkgs.lib.nixosSystem {
+       specialArgs = {inherit inputs;};
+       modules = [
+         {
+  imports =
+    [
+      ./hardware-configuration.nix
+    ];
+
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+
+  networking.hostName = "calamooselabs";
+
+  networking.networkmanager.enable = true;
+
+  time.timeZone = "America/Chicago";
+
+  i18n.defaultLocale = "en_US.UTF-8";
+
+  users.users.ccalamos = {
+    isNormalUser = true;
+    description = "Cole J. Calamos";
+    extraGroups = [ "networkmanager" "wheel" ];
+    packages = with pkgs; [];
+  };
+
+  services.getty.autologinUser = "ccalamos";
+
+  nixpkgs.config.allowUnfree = true;
+
+  environment.systemPackages = with pkgs; [
+    vim 
+    git
+  ];
+
+  services.pcscd.enable = true;
+
+  system.stateVersion = "24.11"; # Did you read the comment?
+
+}
+       ];
+    };
   in {
     nixosConfigurations = {
       FW13-11XXP = FW13-11XXP;
