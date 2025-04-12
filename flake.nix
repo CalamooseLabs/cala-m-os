@@ -11,12 +11,6 @@
     # Theming
     stylix.url = "github:danth/stylix";
 
-    # Disko
-    disko = {
-      url = "github:nix-community/disko";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # Home Manager
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -47,6 +41,7 @@
       specialArgs = {inherit inputs;};
       modules = [
         ./hosts/workstations/FW13-12XXP/configuration.nix
+        ./hardware-configuration.nix
       ];
     };
 
@@ -54,7 +49,7 @@
       specialArgs = {inherit inputs;};
       modules = [
         ./hosts/workstations/FW13-11XXP/configuration.nix
-        inputs.disko.nixosModules.disko
+        ./hardware-configuration.nix
       ];
     };
   in {
@@ -64,6 +59,7 @@
 
       # Default Configuration
       calamooselabs = FW13-12XXP;
+      nixos = calamooselabs;
     };
 
     formatter = {
