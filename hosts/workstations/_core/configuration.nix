@@ -30,7 +30,8 @@ in {
       "udev.log_priority=3"
     ];
 
-    tmp.useTmpfs = true;
+    # Trying to move this to disko
+    # tmp.useTmpfs = true;
 
     consoleLogLevel = 0;
     initrd.verbose = false;

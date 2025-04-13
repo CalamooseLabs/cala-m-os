@@ -11,6 +11,11 @@
     # Theming
     stylix.url = "github:danth/stylix";
 
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Home Manager
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -53,47 +58,10 @@
       ];
     };
 
-    installer = nixpkgs.lib.nixosSystem {
+    iso = nixpkgs.lib.nixosSystem {
       specialArgs = {inherit inputs;};
-      modules = [
-        {
-          imports = [
-            ./hardware-configuration.nix
-          ];
-
-          boot.loader.systemd-boot.enable = true;
-          boot.loader.efi.canTouchEfiVariables = true;
-
-          networking.hostName = "calamooselabs";
-
-          networking.networkmanager.enable = true;
-
-          time.timeZone = "America/Chicago";
-
-          i18n.defaultLocale = "en_US.UTF-8";
-
-          users.users.ccalamos = {
-            isNormalUser = true;
-            description = "Cole J. Calamos";
-            extraGroups = ["networkmanager" "wheel"];
-            packages = [];
-          };
-
-          services.getty.autologinUser = "ccalamos";
-
-          nixpkgs.config.allowUnfree = true;
-
-          environment.systemPackages = with pkgs; [
-            vim
-            git
-            age-plugin-yubikey
-          ];
-
-          services.pcscd.enable = true;
-
-          system.stateVersion = "24.11"; # Did you read the comment?
-        }
-      ];
+      system = "x86_64-linux";
+      modules = [./iso.nix];
     };
   in {
     nixosConfigurations = {
@@ -102,7 +70,7 @@
 
       # Default Configuration
       calamooselabs = FW13-12XXP;
-      nixos = installer;
+      iso = iso;
     };
 
     formatter = {

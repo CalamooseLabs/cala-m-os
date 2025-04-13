@@ -15,6 +15,9 @@
 in {
   imports = [
     # Hardware Config
+    ./hardware-configuration.nix
+    ./disko.nix
+    inputs.disko.nixosModules.disko
     inputs.nixos-hardware.nixosModules.framework-12th-gen-intel
 
     # Common Core Config
