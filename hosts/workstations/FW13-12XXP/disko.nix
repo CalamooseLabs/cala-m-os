@@ -44,14 +44,6 @@
           };
         };
       };
-      nodev = {
-        "/tmp" = {
-          fsType = "tmpfs";
-          mountOptions = [
-            "size=30G"
-          ];
-        };
-      };
     };
   };
 }
