@@ -31,7 +31,7 @@ in {
     ];
 
     # Trying to move this to disko
-    # tmp.useTmpfs = true;
+    tmp.useTmpfs = true;
 
     consoleLogLevel = 0;
     initrd.verbose = false;
