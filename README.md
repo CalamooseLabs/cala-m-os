@@ -19,3 +19,11 @@
 8. Run `nixos-rebuild switch --flake .#calamooselabs`
 
 9. Reboot
+
+## Disko install
+
+1. Run Custom ISO Build
+
+2. On new computer boot into custom ISO installer and run `install-cala-m-os`
+
+3. Reboot

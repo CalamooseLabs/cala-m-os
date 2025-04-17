@@ -56,6 +56,14 @@
     '';
   };
 
+  tex-editor = {
+    path = ./tex-editor;
+    description = "LaTeX document creator";
+    welcomeText = ''
+      Ensure to run direnv allow
+    '';
+  };
+
   nkc-lease-amendment = {
     path = ./nkc-lease-amendment;
     description = "Lease Amendment template in LaTeX";
