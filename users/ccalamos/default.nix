@@ -27,6 +27,7 @@
     "rofi"
     "scanner"
     "spotify"
+    "ssh"
     "streamdeck"
     "stylix"
     "vivaldi"
