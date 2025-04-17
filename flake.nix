@@ -46,7 +46,6 @@
       specialArgs = {inherit inputs;};
       modules = [
         ./hosts/workstations/FW13-12XXP/configuration.nix
-        ./hardware-configuration.nix
       ];
     };
 
@@ -54,7 +53,6 @@
       specialArgs = {inherit inputs;};
       modules = [
         ./hosts/workstations/FW13-11XXP/configuration.nix
-        ./hardware-configuration.nix
       ];
     };
 
