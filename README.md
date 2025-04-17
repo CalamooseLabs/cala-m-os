@@ -2,7 +2,7 @@
   <i>Calamoose Labs Presents</i>
 </p>
 <p align="center">
-  <img height="250px" src="./assets/cala-m-os_logo.png" alt="Logo" />
+  <img height="250px" src="./assets/cala-m-os_logo_large.png" alt="Logo" />
 </p>
 <h1 align="center" style="color: gold;">
   <u>C A L A - M - O S</u>
