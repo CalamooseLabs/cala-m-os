@@ -55,6 +55,28 @@
 
 3. Reboot
 
+### Key Installation
+
+#### GPG Signing key
+
+1. Copy Yubikey's GPG secret key into home directory: `sudo cp /run/agenix/yubigpg.asc`
+
+2. Change owner to self: `sudo chown ccalamos:users yubigpg.asc`
+
+3. Import to GPG: `gpg --import yubigpg.asc`
+
+4. Delete key: `rm yubigpg.asc`
+
+#### SSH Keys
+
+1. Go into SSH directory: `cd ~/.ssh`
+
+2. Grab keys from Yubikey: `ssh-keygen -K`
+
+3. Start ssh-agent: `eval "$(ssh-agent -s)"`
+
+4. Add to ssh-agent: `ssh-add ~/.ssh/id_ed25519_sk_rk_it\@calamos.family`
+
 ## License
 
 Internal App is open-source software licensed under the MIT License.
@@ -62,5 +84,5 @@ Internal App is open-source software licensed under the MIT License.
 <p align="right">
   <br />
   <br />
-  <span>© 2024 Calamoose Labs, Inc.</span> &nbsp; <img src="./assets/logo.png" alt="Calamoose Labs Logo" height="15px">
+  <span>© 2025 Calamoose Labs, Inc.</span> &nbsp; <img src="./assets/logo.png" alt="Calamoose Labs Logo" height="15px">
 </p>
