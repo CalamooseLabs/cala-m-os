@@ -1,2 +1,3 @@
 {...}: {
+  programs.ssh.startAgent = false;
 }
