@@ -22,7 +22,7 @@
 
 ## Disko install
 
-1. Run Custom ISO Build
+1. Run Custom ISO Build running `nix flake build`
 
 2. On new computer boot into custom ISO installer and run `install-cala-m-os`
 
