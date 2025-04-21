@@ -59,7 +59,7 @@
 
     targets = {
       plymouth = {
-        logo = ../../assets/logo.png;
+        logo = ../../assets/cala-m-os_logo.png;
       };
     };
 
