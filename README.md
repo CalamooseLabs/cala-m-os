@@ -75,7 +75,7 @@
 
 3. Start ssh-agent: `eval "$(ssh-agent -s)"`
 
-4. Add to ssh-agent: `ssh-add ~/.ssh/id_ed25519_sk_rk_it\@calamos.family`
+4. Add to ssh-agent: `ssh-add ~/.ssh/id_ed25519_sk_rk_it@calamos.family`
 
 ## License
 
@@ -84,5 +84,5 @@ Internal App is open-source software licensed under the MIT License.
 <p align="right">
   <br />
   <br />
-  <span>© 2025 Calamoose Labs, Inc.</span> &nbsp; <img src="./assets/logo.png" alt="Calamoose Labs Logo" height="15px">
+  <span>© 2025 Calamoose Labs, Inc.</span>&nbsp;<img src="./assets/logo.png" alt="Calamoose Labs Logo" height="15px">
 </p>
