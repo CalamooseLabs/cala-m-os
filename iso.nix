@@ -12,6 +12,17 @@
     git
     neovim
     age-plugin-yubikey
+    # Do the following:
+    # Grab latest from master on github
+    # run the prefetch
+    # run the disko-install
+    # nixos-enter
+    # set repo to /etc/nixos
+    # chown wheel
+    # 770 chmod
+    # prefetch
+    # nixos-rebuild
+    # reboot
     (pkgs.writeShellScriptBin "install-cala-m-os" ''
       set -eux
       rm /etc/nixos/*

@@ -4,8 +4,8 @@
     NIXOS_OZONE_WL = "1";
   };
 
-  # environment.systemPackages = [pkgs.displaylink];
-  # services.xserver.videoDrivers = ["displaylink" "modesetting"];
+  environment.systemPackages = [pkgs.displaylink];
+  services.xserver.videoDrivers = ["displaylink" "modesetting"];
 
   # Extra Portal Configuration
   xdg.portal = {
