@@ -1,9 +1,9 @@
 {
-  cala-m-os-program = {
-    path = ./cala-m-os-program;
-    description = "a simple program flake";
+  cala-m-os-module = {
+    path = ./cala-m-os-module;
+    description = "a simple module flake";
     welcomeText = ''
-      # Cala M OS Program Template
+      # Cala M OS Module Template
     '';
   };
 

@@ -1,12 +1,12 @@
 {...}: let
   username = builtins.baseNameOf (toString ./.);
-  import_programs = [
+  modules = [
   ];
 in {
   imports = [
     (import ../_core {
       username = username;
-      import_programs = import_programs;
+      import_modules = modules;
     })
   ];
 }

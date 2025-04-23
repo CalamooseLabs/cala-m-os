@@ -1,4 +1,0 @@
-{...}:
-{
-  # Left blank for tracking
-}

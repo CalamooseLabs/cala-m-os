@@ -1,6 +1,6 @@
 {
   username,
-  import_programs,
+  import_modules,
   user_home ? null,
   ...
 }: {...}: let
@@ -11,15 +11,15 @@
 
   root_path = ../../.;
   user_config_path = "${root_path}/users/${username}";
-  programs_path = "${root_path}/programs";
+  modules_path = "${root_path}/modules";
 
   user_configuration = "${user_config_path}/configuration.nix";
   user_home_configuration = "${user_config_path}/home.nix";
 
-  makeProgramConfigs = name: filename: import (programs_path + "/${name}/${filename}");
+  makeModuleConfigs = name: filename: import (modules_path + "/${name}/${filename}");
 
-  config_imports = map (name: makeProgramConfigs name "configuration.nix") import_programs;
-  home_imports = map (name: makeProgramConfigs name "home.nix") import_programs;
+  config_imports = map (name: makeModuleConfigs name "configuration.nix") import_modules;
+  home_imports = map (name: makeModuleConfigs name "home.nix") import_modules;
 in {
   imports =
     [

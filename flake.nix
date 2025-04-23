@@ -40,35 +40,19 @@
     pkgs = import nixpkgs {
       system = system;
     };
-
-    # Configurations
-    FW13-12XXP = nixpkgs.lib.nixosSystem {
-      specialArgs = {inherit inputs;};
-      modules = [
-        ./hosts/workstations/FW13-12XXP/configuration.nix
-      ];
-    };
-
-    FW13-11XXP = nixpkgs.lib.nixosSystem {
-      specialArgs = {inherit inputs;};
-      modules = [
-        ./hosts/workstations/FW13-11XXP/configuration.nix
-      ];
-    };
-
-    iso = nixpkgs.lib.nixosSystem {
-      specialArgs = {inherit inputs;};
-      system = "x86_64-linux";
-      modules = [./iso.nix];
-    };
   in {
     nixosConfigurations = {
-      FW13-11XXP = FW13-11XXP;
-      FW13-12XXP = FW13-12XXP;
-
-      # Default Configuration
-      calamooselabs = FW13-12XXP;
-      iso = iso;
+      devbox = nixpkgs.lib.nixosSystem {
+        specialArgs = {inherit inputs;};
+        modules = [
+          ./hosts/devbox/configuration.nix
+        ];
+      };
+      iso = nixpkgs.lib.nixosSystem {
+        specialArgs = {inherit inputs;};
+        system = "x86_64-linux";
+        modules = [./iso.nix];
+      };
     };
 
     formatter = {

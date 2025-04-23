@@ -49,29 +49,6 @@ in {
   # Set Chicago timezone
   time.timeZone = "America/Chicago";
 
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
-
-  # Enable bluetooth
-  hardware.bluetooth = {
-    enable = true;
-    powerOnBoot = true;
-  };
-
-  # Audio Control
-  services.pulseaudio.enable = false; # Use Pipewire, the modern sound subsystem
-
-  security.rtkit.enable = true;
-
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    # pulse.enable = true;
-    # jack.enable = true;
-    # wireplumber.enable = true;
-  };
-
   # Allow unfree
   nixpkgs.config.allowUnfree = true;
 

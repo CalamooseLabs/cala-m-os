@@ -1,23 +1,52 @@
 {...}: let
-  username = builtins.baseNameOf (toString ./.);
-  import_programs = [
+  username = "ccalamos";
+  modules = [
+    "agenix"
     "bash"
+    "bat"
+    "bridge-internet"
     "btop"
+    "direnv"
+    "easyeffects"
+    "flipperzero"
     "fonts"
     "ghostty"
-    "hyprpaper"
+    "git"
+    "gpg"
+    "hypridle"
     "hyprland"
     "hyprlock"
-    "lf"
+    "hyprpaper"
+    "imagemagick"
+    "imv"
+    "ios"
+    "lazygit"
+    "neovim"
+    "obs-studio"
+    "plex-desktop"
+    "proton-pass"
     "rofi"
+    "scanner"
+    "spotify"
+    "ssh"
+    "streamdeck"
+    "stylix"
     "vivaldi"
+    "vlc"
+    "vpn"
     "waybar"
+    "wifi"
+    "yazi"
+    "yubikey"
+    "zathura"
+    "zed-editor"
   ];
 in {
   imports = [
+    ./secrets
     (import ../_core {
       username = username;
-      import_programs = import_programs;
+      import_modules = modules;
     })
   ];
 }

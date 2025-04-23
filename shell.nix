@@ -63,6 +63,5 @@ in
 
     shellHook = ''
       echo "Using Local Nix-Enabled Zed!"
-      git update-index --assume-unchanged hardware-configuration.nix
     '';
   }

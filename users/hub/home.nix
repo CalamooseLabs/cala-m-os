@@ -1,4 +1,3 @@
 {...}: {...}: {
-  home.packages = [
-  ];
+  home.packages = [];
 }

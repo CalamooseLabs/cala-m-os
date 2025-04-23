@@ -1,6 +1,10 @@
-{username, ...}: {...}: {
+{username, ...}: {
+  config,
+  pkgs,
+  ...
+}: {
   users.users."${username}" = {
-    extraGroups = ["wheel" "networkmanager"];
+    extraGroups = ["wheel" "networkmanager" "scanner" "lp"];
   };
 
   security.sudo.extraRules = [
@@ -29,6 +33,18 @@
       "x-systemd.automount"
       "noauto"
       "x-systemd.idle-timeout=600"
+    ];
+  };
+
+  environment.systemPackages = [pkgs.cifs-utils];
+  fileSystems."/mnt/nkc" = {
+    device = "//10.50.1.1/Data";
+    fsType = "cifs";
+    options = [
+      "x-systemd.automount"
+      "noauto"
+      "x-systemd.idle-timeout=600"
+      "credentials=${config.age.secrets.work_credentials.path}"
     ];
   };
 }
