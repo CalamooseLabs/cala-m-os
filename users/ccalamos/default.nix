@@ -7,6 +7,7 @@
     "bridge-internet"
     "btop"
     "direnv"
+    "easyeffects"
     "flipperzero"
     "fonts"
     "ghostty"
