@@ -8,7 +8,7 @@
   lib,
   ...
 }: let
-  usersPath = ../../../users;
+  usersPath = ../../users;
   defaultUser = lib.elemAt users_list 0;
 
   isDefaultUser = name: name == defaultUser;
@@ -22,7 +22,7 @@
 
   isVM = machine_type == "VM" || machine_type == "vm";
   machine_root =
-    "../../../machines"
+    "../../machines"
     + (
       if isVM
       then "/vms"
