@@ -6,9 +6,9 @@
 }: {
   inputs,
   lib,
+  cala-m-os,
   ...
 }: let
-  globalUser = "hub";
   usersPath = ../../users;
   defaultUser = lib.elemAt users_list 0;
 
@@ -92,7 +92,7 @@ in {
     enable = true;
     settings = {
       default_session = {
-        user = lib.mkForce "${globalUser}";
+        user = lib.mkForce "${cala-m-os.globalDefaultUser}";
       };
     };
   };
@@ -114,7 +114,7 @@ in {
   # Allow any wheel user to change configuration
   system.activationScripts.setPermissions = ''
     # Set ownership to root:wheel
-    chown -R root:wheel /etc/nixos
+    chown -R ${cala-m-os.globalDefaultUser}:${cala-m-os.globalAdminGroup} /etc/nixos
 
     # Set directory permissions to 775
     find /etc/nixos -type d -exec chmod 775 {} +

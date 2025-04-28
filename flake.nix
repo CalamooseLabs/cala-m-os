@@ -40,10 +40,14 @@
     pkgs = import nixpkgs {
       system = system;
     };
+    cala-m-os = import ./settings.nix;
   in {
     nixosConfigurations = {
       devbox = nixpkgs.lib.nixosSystem {
-        specialArgs = {inherit inputs;};
+        specialArgs = {
+          inherit inputs;
+          inherit cala-m-os;
+        };
         modules = [
           ./hosts/devbox/configuration.nix
         ];

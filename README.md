@@ -91,7 +91,6 @@ Things to do:
 
 - Make it so whatever user is the default, the name is "hub" but it inherits all behaviors
 - Move any specific items to either machine (like internal display for laptop) [maybe we will have it pass the machine being used as well so it sets that up but also grabs any machine modules]
-- Add modules for gpus into the machines
 - Work on switcher to switch between Users
 - Work on prefetch so install-cala-m-os will setup prefetch as well
 - Side effects removed from all modules and machines

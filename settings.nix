@@ -1,0 +1,4 @@
+{
+  globalDefaultUser = "hub";
+  globalAdminGroup = "wheel";
+}

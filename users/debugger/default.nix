@@ -1,7 +1,7 @@
-{isDefaultUser, ...}: {...}: let
+{isDefaultUser, ...}: {cala-m-os, ...}: let
   username =
     if isDefaultUser
-    then "hub"
+    then cala-m-os.globalDefaultUser
     else builtins.baseNameOf (toString ./.);
 
   uuid = builtins.baseNameOf (toString ./.);
