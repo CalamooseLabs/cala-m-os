@@ -1,6 +1,7 @@
 {
   username,
   import_modules,
+  uuid,
   user_home ? null,
   ...
 }: {...}: let
@@ -10,7 +11,7 @@
     else user_home;
 
   root_path = ../../.;
-  user_config_path = "${root_path}/users/${username}";
+  user_config_path = "${root_path}/users/${uuid}";
   modules_path = "${root_path}/modules";
 
   user_configuration = "${user_config_path}/configuration.nix";

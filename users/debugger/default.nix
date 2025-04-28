@@ -4,6 +4,8 @@
     then "hub"
     else builtins.baseNameOf (toString ./.);
 
+  uuid = builtins.baseNameOf (toString ./.);
+
   modules = [
     "agenix"
     "bash"
@@ -51,6 +53,7 @@ in {
     (import ../_core {
       username = username;
       import_modules = modules;
+      uuid = uuid;
     })
   ];
 }

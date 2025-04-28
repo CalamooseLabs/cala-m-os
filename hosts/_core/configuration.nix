@@ -15,7 +15,7 @@
   getUsers = name:
     import (toString (usersPath + "/${name}/default.nix")) {
       inherit inputs lib;
-      isDefault = isDefaultUser name;
+      isDefaultUser = isDefaultUser name;
     };
 
   user_imports = map getUsers users_list;
