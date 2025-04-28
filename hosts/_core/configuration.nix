@@ -22,7 +22,7 @@
 
   isVM = machine_type == "VM" || machine_type == "vm";
   machine_root =
-    "../../machines"
+    ../../machines
     + (
       if isVM
       then "/vms"
@@ -30,7 +30,7 @@
     );
   machine_path = toString (machine_root + "/${machine_uuid}");
 
-  machine_configuration = toString (machine_path + "/configuration.nix");
+  machine_configuration = import (toString (machine_path + "/configuration.nix"));
 in {
   imports =
     [
