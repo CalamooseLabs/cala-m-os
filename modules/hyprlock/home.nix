@@ -34,4 +34,14 @@
       ];
     };
   };
+
+  wayland.windowManager.hyprland = {
+    settings = {
+      exec-once = [
+        "hyprlock"
+      ];
+
+      bind = ["$mod, L, exec, hyprlock"];
+    };
+  };
 }

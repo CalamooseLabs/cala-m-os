@@ -3,21 +3,24 @@
 #        Main Daily Laptop       #
 #                                #
 ##################################
-{inputs, ...}: let
+{...}: let
   import_users = [
     # Default User
-    "hub"
+    "debugger"
 
     # Other Users
   ];
+
+  machine_type = "Workstation";
+  machine_uuid = "FW13-12XXP";
 in {
   imports = [
-    # Hardware Config
-    inputs.disko.nixosModules.disko
-    ../../machines/workstations/FW13-12XXP/configuration.nix
-
     # Common Core Config
-    (import ../_core/configuration.nix {users_list = import_users;})
+    (import ../_core/configuration.nix {
+      users_list = import_users;
+      machine_type = machine_type;
+      machine_uuid = machine_uuid;
+    })
   ];
 
   networking.hostName = "devbox";

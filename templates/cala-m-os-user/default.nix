@@ -1,5 +1,9 @@
-{...}: let
-  username = builtins.baseNameOf (toString ./.);
+{isDefaultUser, ...}: {...}: let
+  username =
+    if isDefaultUser
+    then "hub"
+    else builtins.baseNameOf (toString ./.);
+
   modules = [
   ];
 in {

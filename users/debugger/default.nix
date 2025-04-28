@@ -1,5 +1,9 @@
-{...}: let
-  username = "hub";
+{isDefaultUser, ...}: {...}: let
+  username =
+    if isDefaultUser
+    then "hub"
+    else builtins.baseNameOf (toString ./.);
+
   modules = [
     "agenix"
     "bash"

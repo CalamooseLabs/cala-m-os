@@ -1,12 +1,46 @@
-{users_list, ...}: {lib, ...}: let
+{
+  users_list,
+  machine_type,
+  machine_uuid,
+  ...
+}: {
+  inputs,
+  lib,
+  ...
+}: let
   usersPath = ../../../users;
+  defaultUser = lib.elemAt users_list 0;
 
-  getUsers = name: import "${toString (usersPath + "/${name}/default.nix")}";
+  isDefaultUser = name: name == defaultUser;
+  getUsers = name:
+    import (toString (usersPath + "/${name}/default.nix")) {
+      inherit inputs lib;
+      isDefault = isDefaultUser name;
+    };
 
   user_imports = map getUsers users_list;
+
+  isVM = machine_type == "VM" || machine_type == "vm";
+  machine_root =
+    "../../../machines"
+    + (
+      if isVM
+      then "/vms"
+      else "/workstations"
+    );
+  machine_path = toString (machine_root + "/${machine_uuid}");
+
+  machine_configuration = import (toString (machine_path + "/configuration.nix"));
 in {
   imports =
-    [./home.nix] ++ user_imports;
+    [
+      inputs.disko.nixosModules.disko
+      (import ./home.nix {
+        machine_path = machine_path;
+      })
+    ]
+    ++ user_imports
+    ++ machine_configuration;
 
   # Boot loader
   boot = {
@@ -57,7 +91,7 @@ in {
     enable = true;
     settings = {
       default_session = {
-        user = lib.mkForce "${lib.elemAt users_list 0}";
+        user = lib.mkForce "${defaultUser}";
       };
     };
   };
@@ -75,6 +109,9 @@ in {
       experimental-features = ["nix-command" "flakes"];
     };
   };
+
+  # Finer grain privileged process control
+  security.polkit.enable = true;
 
   # Original State Version
   system.stateVersion = "24.11"; # Do not change

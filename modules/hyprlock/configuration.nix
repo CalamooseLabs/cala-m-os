@@ -1,6 +1,3 @@
 {...}: {
-  security = {
-    polkit.enable = true;
-    pam.services.hyprlock = {};
-  };
+  security.pam.services.hyprlock = {};
 }

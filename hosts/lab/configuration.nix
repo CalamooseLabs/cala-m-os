@@ -1,24 +1,28 @@
 ##################################
 #                                #
-#        Main Daily Laptop       #
+#         Lab Powerhouse         #
+#                                #
+#     Used for the Following:    #
+#     - Playground for Testing   #
+#     - Virtualization           #
 #                                #
 ##################################
-{inputs, ...}: let
-  import_users = [
-    # Default User
-    "hub"
+{...}: let
+  users = ["virt"];
 
-    # Other Users
-    "virt"
-  ];
+  machine_type = "Workstation";
+  machine_uuid = "TRX50-SAGE";
 in {
   imports = [
     # Hardware Config
-    inputs.disko.nixosModules.disko
-    ../../machines/workstations/TRX50-SAGE/configuration.nix
+    ./modules/virt-manager
 
     # Common Core Config
-    (import ../_core/configuration.nix {users_list = import_users;})
+    (import ../_core/configuration.nix {
+      users_list = users;
+      machine_type = machine_type;
+      machine_uuid = machine_uuid;
+    })
   ];
 
   networking.hostName = "lab";

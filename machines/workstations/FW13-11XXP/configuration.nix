@@ -1,6 +1,6 @@
 ##################################
 #                                #
-#   Framework 11th Gen. Laptop   #
+#   Framework 12th Gen. Laptop   #
 #                                #
 ##################################
 {inputs, ...}: {
@@ -11,10 +11,8 @@
     inputs.nixos-hardware.nixosModules.framework-11th-gen-intel
   ];
 
-  networking = {
-    # Power saver for laptops
-    networkmanager.wifi.powersave = true;
-  };
+  # Power saver for laptops
+  networking.networkmanager.wifi.powersave = true;
 
   # Framework BIOS updates
   services.fwupd = {
@@ -23,7 +21,7 @@
     uefiCapsuleSettings.DisableCapsuleUpdateOnDisk = true;
   };
 
-  # Enable touchpad support
+  # Enable touchpad support (enabled default in most desktopManager).
   services.libinput.enable = true;
 
   # Thunderbolt
