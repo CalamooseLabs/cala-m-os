@@ -30,7 +30,7 @@
     );
   machine_path = toString (machine_root + "/${machine_uuid}");
 
-  machine_configuration = import (toString (machine_path + "/configuration.nix"));
+  machine_configuration = toString (machine_path + "/configuration.nix");
 in {
   imports =
     [
@@ -38,9 +38,9 @@ in {
       (import ./home.nix {
         machine_path = machine_path;
       })
+      machine_configuration
     ]
-    ++ user_imports
-    ++ machine_configuration;
+    ++ user_imports;
 
   # Boot loader
   boot = {
