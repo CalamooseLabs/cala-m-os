@@ -111,6 +111,18 @@ in {
     };
   };
 
+  # Allow any wheel user to change configuration
+  system.activationScripts.setPermissions = ''
+    # Set ownership to root:wheel
+    chown -R root:wheel /etc/nixos
+
+    # Set directory permissions to 775
+    find /etc/nixos -type d -exec chmod 775 {} +
+
+    # Set file permissions to 664
+    find /etc/nixos -type f -exec chmod 664 {} +
+  '';
+
   # Finer grain privileged process control
   security.polkit.enable = true;
 
