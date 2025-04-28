@@ -8,6 +8,7 @@
   lib,
   ...
 }: let
+  globalUser = "hub";
   usersPath = ../../users;
   defaultUser = lib.elemAt users_list 0;
 
@@ -91,7 +92,7 @@ in {
     enable = true;
     settings = {
       default_session = {
-        user = lib.mkForce "${defaultUser}";
+        user = lib.mkForce "${globalUser}";
       };
     };
   };
