@@ -49,7 +49,7 @@
       echo
       echo "Cala-M-OS has been sucessfully installed, please reboot the system."
       exit
-    '')
+    '') # TODO: Add prefetch to the rebuild process
   ];
 
   services.pcscd.enable = true;
