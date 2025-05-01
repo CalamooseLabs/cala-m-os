@@ -31,6 +31,7 @@
     "obs-studio"
     "plex-desktop"
     "proton-pass"
+    "rawtherapee"
     "rofi"
     "scanner"
     "spotify"
