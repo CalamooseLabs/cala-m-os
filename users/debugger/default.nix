@@ -14,6 +14,7 @@
     "btop"
     "direnv"
     "easyeffects"
+    "elgato-prompter"
     "flipperzero"
     "fonts"
     "ghostty"
