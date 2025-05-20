@@ -37,6 +37,7 @@
     "spotify"
     "ssh"
     "stylix"
+    "virt-manager"
     "vivaldi"
     "vlc"
     "vpn"
