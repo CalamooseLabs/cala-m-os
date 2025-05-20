@@ -10,6 +10,12 @@
         no_fade_in = lib.mkForce false;
       };
 
+      auth = {
+        fingerprint = {
+          enabled = true;
+        };
+      };
+
       background = lib.mkForce [
         {
           path = "screenshot";

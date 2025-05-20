@@ -33,6 +33,7 @@
     "obs-studio"
     "pdf-editor"
     "rawtherapee"
+    "rebuild-config"
     "remote-desktop"
     "rofi"
     "scanner"
