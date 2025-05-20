@@ -1,5 +1,5 @@
 {pkgs, ...}: {
   home.packages = [
-    pkgs.protonvpn-gui
+    pkgs.remmina
   ];
 }
