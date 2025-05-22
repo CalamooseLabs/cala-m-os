@@ -3,9 +3,14 @@
     (pkgs.writeShellScriptBin "rebuild-config" ''
       set -eux
 
-      lazygit -p /etc/nixos
+      config_path="/etc/nixos"
+
+      if [ -n "$(git -C $config_path status --porcelain)" ]; then
+        lazygit -p $config_path
+      fi
+
       # Run zeditor to edit the NixOS configuration
-      sudo nixos-rebuild switch --flake /etc/nixos
+      sudo nixos-rebuild switch --flake $config_path
     '')
   ];
 }
