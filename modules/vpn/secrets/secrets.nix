@@ -6,4 +6,5 @@ in {
   ];
 
   "CasaMosVPN.nmconnection.age".publicKeys = [yubinano];
+  "NKCGateway.nmconnection.age".publicKeys = [yubinano];
 }
