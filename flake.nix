@@ -11,6 +11,7 @@
     # Theming
     stylix.url = "github:danth/stylix";
 
+    # Disk Partitioning Tool
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
