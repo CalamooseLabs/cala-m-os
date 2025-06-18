@@ -9,7 +9,6 @@
         lazygit -p $config_path
       fi
 
-      # Run zeditor to edit the NixOS configuration
       sudo nixos-rebuild switch --flake $config_path
     '')
   ];
