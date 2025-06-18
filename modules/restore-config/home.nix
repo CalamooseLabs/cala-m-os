@@ -7,6 +7,9 @@
 
       sudo nix-store --verify --check-contents --repair
       sudo nixos-rebuild switch --flake $config_path
+
+      # Reset network manager
+      sudo systemctl restart NetworkManager
     '')
   ];
 }
