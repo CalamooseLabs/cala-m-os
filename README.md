@@ -36,7 +36,7 @@
 
 ### Key Installation
 
-#### GPG Signing key
+#### GPG Signing key(s)
 
 1. Copy Yubikey's GPG secret key into home directory: `sudo cp /run/agenix/yubigpg.asc`
 
