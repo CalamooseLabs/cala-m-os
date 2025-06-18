@@ -5,7 +5,7 @@
 
       config_path="/etc/nixos"
 
-      sudo nix-store --verify --check-contents --repair
+      sudo nix-store --verify --repair
       sudo nixos-rebuild switch --flake $config_path
 
       # Reset network manager
