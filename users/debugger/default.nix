@@ -32,6 +32,7 @@
     "rawtherapee"
     "rebuild-config"
     "remote-desktop"
+    "restore-config"
     "rofi"
     "scanner"
     "spotify"
