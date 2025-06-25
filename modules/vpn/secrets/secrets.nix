@@ -3,6 +3,7 @@ let
 in {
   age.identityPaths = [
     "./identities/yubi.key"
+    "/etc/nixos/modules/agenix/identities/yubi.key"
   ];
 
   "CasaMosVPN.nmconnection.age".publicKeys = [yubinano];

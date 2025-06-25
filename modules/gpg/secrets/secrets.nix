@@ -3,6 +3,7 @@ let
 in {
   age.identityPaths = [
     "./identities/yubi.key"
+    "/etc/nixos/modules/agenix/identities/yubi.key"
   ];
 
   "yubigpg.asc.age".publicKeys = [yubinano];
