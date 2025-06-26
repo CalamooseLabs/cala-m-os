@@ -1,4 +1,4 @@
-{...}: {
+{lib, ...}: {
   programs.nh = {
     enable = true;
     clean = {
@@ -8,5 +8,5 @@
     flake = "/etc/nixos";
   };
 
-  nix.gc.automatic = false;
+  nix.gc.automatic = lib.mkForce false;
 }
