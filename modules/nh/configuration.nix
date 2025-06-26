@@ -7,4 +7,6 @@
     };
     flake = "/etc/nixos";
   };
+
+  nix.gc.automatic = false;
 }
