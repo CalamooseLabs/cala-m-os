@@ -6,7 +6,7 @@
       config_path="/etc/nixos"
 
       sudo nix-store --verify --repair
-      sudo nh os switch
+      nh os switch $config_path
 
       # Reset network manager
       sudo systemctl restart NetworkManager

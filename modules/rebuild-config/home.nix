@@ -9,7 +9,7 @@
         lazygit -p $config_path
       fi
 
-      sudo nh os switch
+      nh os switch $config_path
     '')
   ];
 }
