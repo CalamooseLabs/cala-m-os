@@ -9,7 +9,7 @@
         lazygit -p $config_path
       fi
 
-      sudo nixos-rebuild switch --flake $config_path
+      sudo nh os switch
     '')
   ];
 }

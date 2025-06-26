@@ -27,6 +27,7 @@
     "ios"
     "lazygit"
     "neovim"
+    "nh"
     "obs-studio"
     "pdf-editor"
     "rawtherapee"
