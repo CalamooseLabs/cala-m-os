@@ -82,7 +82,7 @@ in {
   networking.networkmanager.enable = true;
 
   # Set Chicago timezone
-  time.timeZone = "America/Chicago";
+  time.timeZone = "America/Denver";
 
   # Allow unfree
   nixpkgs.config.allowUnfree = true;
