@@ -3,7 +3,7 @@
 #        Main Daily Laptop       #
 #                                #
 ##################################
-{...}: let
+{pkgs, ...}: let
   import_users = [
     # Default User
     "debugger"
@@ -26,7 +26,19 @@ in {
   networking.hostName = "devbox";
 
   # Enable CUPS to print documents.
-  services.printing.enable = true;
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    openFirewall = true;
+  };
+
+  services.printing = {
+    enable = true;
+    drivers = with pkgs; [
+      cups-filters
+      cups-browsed
+    ];
+  };
 
   # Mount usb drives
   services.devmon.enable = true;
