@@ -16,6 +16,7 @@
     "git"
     "hyprland"
     "steam"
+    "stylix"
     "vivaldi"
     "yubikey"
   ];
