@@ -17,6 +17,7 @@
     "hyprland"
     "steam"
     "vivaldi"
+    "yubikey"
   ];
 in {
   imports = [
