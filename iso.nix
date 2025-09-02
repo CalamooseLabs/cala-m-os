@@ -21,13 +21,21 @@
       HOST_FLAKE=$1
 
       echo "Step One: Generating Configuration"
-      nixos-generate-config --no-filesystem
+      nixos-generate-config --no-filesystems
       echo "Step One Completed!"
       echo
       echo "Step Two: Erasing and Formatting Disk"
       disko --mode destroy,format,mount --flake github:CalamooseLabs/cala-m-os#$HOST_FLAKE
       echo "Step Two Completed!"
       echo
+      echo "Step Three: Move disko to default installation"
+      # imports =
+      # [ # Include the results of the hardware scan.
+      #   ./hardware-configuration.nix
+      #   "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
+      #   ./disk-config.nix
+      # ];
+
       echo "Step Three: Installing Minimal NixOS Configuration"
       nixos-install
       echo "Step Three Completed!"
