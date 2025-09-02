@@ -33,7 +33,7 @@
 
   environment.systemPackages = with pkgs; [
     protonup-qt # GUI for installing custom Proton versions like GE_Proton
-    proton
+    protonup
   ];
 
   environment.sessionVariables = {
