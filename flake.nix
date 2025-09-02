@@ -53,6 +53,15 @@
           ./hosts/devbox/configuration.nix
         ];
       };
+      htpc = nixpkgs.lib.nixosSystem {
+        specialArgs = {
+          inherit inputs;
+          inherit cala-m-os;
+        };
+        modules = [
+          ./hosts/htpc/configuration.nix
+        ];
+      };
       iso = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs;};
         system = "x86_64-linux";

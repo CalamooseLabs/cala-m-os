@@ -13,4 +13,8 @@
       "x-scheme-handler/https" = ["vivaldi-stable.desktop"];
     };
   };
+
+  home.sessionVariables = {
+    BROWSER = "vivaldi";
+  };
 }

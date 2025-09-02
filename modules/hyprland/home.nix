@@ -34,7 +34,7 @@
 
       bind = [
         "$mod, grave, exec, $TERMINAL"
-        "$mod, B, exec, vivaldi"
+        "$mod, B, exec, $BROWSER"
 
         "$mod, left, movefocus, l"
         "$mod, right, movefocus, r"
