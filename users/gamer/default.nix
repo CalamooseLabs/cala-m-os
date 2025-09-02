@@ -19,7 +19,6 @@
   ];
 in {
   imports = [
-    ./secrets
     (import ../_core {
       username = username;
       import_modules = modules;
