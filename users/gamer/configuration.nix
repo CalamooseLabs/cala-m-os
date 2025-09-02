@@ -29,7 +29,7 @@
     capSysNice = true;
   };
 
-  programs.steam.gamescopeSession = true;
+  programs.steam.gamescopeSession.enable = true;
 
   environment.systemPackages = with pkgs; [
     protonup-qt # GUI for installing custom Proton versions like GE_Proton
