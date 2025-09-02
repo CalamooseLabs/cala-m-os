@@ -25,6 +25,8 @@ in {
 
   networking.hostName = "htpc";
 
+  # TODO: Enable SSH for non-dev systems.
+
   # Mount usb drives
   services.devmon.enable = true;
   services.gvfs.enable = true;

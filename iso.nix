@@ -28,7 +28,6 @@
       disko --mode destroy,format,mount --flake github:CalamooseLabs/cala-m-os#$HOST_FLAKE
       echo "Step Two Completed!"
       echo
-      echo "Step Three: Move disko to default installation"
       # imports =
       # [ # Include the results of the hardware scan.
       #   ./hardware-configuration.nix
@@ -37,6 +36,9 @@
       # ];
 
       echo "Step Three: Installing Minimal NixOS Configuration"
+      # TODO:
+      # Need to run through this and add the above some how, perhaps it pulls a file with just that content?
+      # set root dir to be / not /mnt? or maybe it will not work?
       nixos-install
       echo "Step Three Completed!"
       echo
@@ -48,6 +50,8 @@
       nixos-enter -- nixos-rebuild boot --flake /etc/nixos#$HOST_FLAKE --option allow-unfree true --experimental-features 'nix-command flakes'
       echo "Step Five Completed!"
       echo
+      # TODO:
+      # These next steps should only happen on certain hosts (IE devbox but not htpc)
       echo "Step Six: Adding GPG Key to Default User"
       echo "Step Six Completed!"
       echo
