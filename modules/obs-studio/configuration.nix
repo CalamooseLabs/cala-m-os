@@ -19,4 +19,8 @@
       obs-pipewire-audio-capture
     ];
   };
+
+  # Open SRT port for camera streaming
+  networking.firewall.allowedTCPPorts = [9998];
+  networking.firewall.allowedUDPPorts = [9998];
 }
