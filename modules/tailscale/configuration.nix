@@ -3,6 +3,10 @@
   config,
   ...
 }: {
+  nixpkgs.overlays = [
+    (import ./overlay.nix)
+  ];
+
   services.tailscale = {
     enable = true;
   };
