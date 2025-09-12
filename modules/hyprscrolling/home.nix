@@ -13,8 +13,10 @@
         layout = "scrolling";
       };
 
-      hyprscrolling = {
-        fullscreen_on_one_column = true;
+      plugin = {
+        hyprscrolling = {
+          fullscreen_on_one_column = true;
+        };
       };
     };
   };
