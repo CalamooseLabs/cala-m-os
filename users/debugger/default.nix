@@ -28,6 +28,7 @@
     "lazygit"
     "neovim"
     "nh"
+    "niri"
     "obs-studio"
     "pdf-editor"
     "rawtherapee"
