@@ -5,19 +5,19 @@
   };
 
   # Extra Portal Configuration
-  xdg.portal = {
-    enable = true;
-    wlr.enable = true;
-    extraPortals = [
-      pkgs.xdg-desktop-portal-hyprland
-    ];
-    configPackages = [
-      pkgs.xdg-desktop-portal-hyprland
-    ];
+  # xdg.portal = {
+  #   enable = true;
+  #   wlr.enable = true;
+  #   extraPortals = [
+  #     pkgs.xdg-desktop-portal-hyprland
+  #   ];
+  #   configPackages = [
+  #     pkgs.xdg-desktop-portal-hyprland
+  #   ];
 
-    config.common.default = "*";
-    config.hyprland.default = ["hyprland"];
-  };
+  #   config.common.default = "*";
+  #   config.hyprland.default = ["hyprland"];
+  # };
 
   # Login Service
   services.greetd.settings.default_session.command = "${pkgs.hyprland}/bin/Hyprland &> /dev/null";
