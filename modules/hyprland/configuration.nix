@@ -22,7 +22,7 @@
   # Login Service
   services.greetd.settings.default_session.command = "${pkgs.hyprland}/bin/Hyprland &> /dev/null";
 
-  programs.hyprland = {
-    enable = true;
-  };
+  # programs.hyprland = {
+  #   enable = true;
+  # };
 }

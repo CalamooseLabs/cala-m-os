@@ -11,6 +11,17 @@
     # Theming
     stylix.url = "github:danth/stylix";
 
+    # Hyprland & Plugins
+    hyprland = {
+      url = "github:hyprwm/Hyprland";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    hyprland-plugins = {
+      url = "github:hyprwm/hyprland-plugins";
+      inputs.hyprland.follows = "hyprland";
+    };
+
     # Disk Partitioning Tool
     disko = {
       url = "github:nix-community/disko";
