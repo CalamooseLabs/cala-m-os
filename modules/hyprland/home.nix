@@ -19,10 +19,6 @@
     extraConfig = ''
     '';
 
-    plugins = [
-      inputs.hyprland-plugins.packages.${pkgs.system}.hyprscrolling
-    ];
-
     settings = {
       "$mod" = "SUPER";
 
