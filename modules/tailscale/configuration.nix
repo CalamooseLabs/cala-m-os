@@ -3,6 +3,10 @@
   config,
   ...
 }: {
+  imports = [
+    ./secrets
+  ];
+
   nixpkgs.overlays = [
     (import ./overlay.nix)
   ];
