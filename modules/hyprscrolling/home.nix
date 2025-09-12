@@ -13,7 +13,7 @@
         layout = "scrolling";
       };
 
-      hyprscolling = {
+      hyprscrolling = {
         fullscreen_on_one_column = true;
       };
     };
