@@ -3,8 +3,9 @@
 #  ASUS Pro WS TRX50-Sage WiFi   #
 #  AMD Ryzen Threadripper 7960X  #
 #    64GB ECC DDR5 6000 CL32     #
-#    ASUS RTX5090 ROG Astral     #
-# Intel Arc A750 Limited Edition #
+#   RTX 5090 Founders Edition    #
+#           RTX 4060             #
+#      Intel Arc A310 Omni       #
 #                                #
 ##################################
 {pkgs, ...}: {
@@ -15,14 +16,8 @@
 
     # Modules
     ../../modules/nvidia-gpu/configuration.nix
+    ../../modules/intel-gpu/configuration.nix
   ];
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
-
-  hardware.graphics = {
-    enable = true;
-    enable32Bit = true;
-  };
-
-  users.users.hub.extraGroups = ["libvirtd"];
 }

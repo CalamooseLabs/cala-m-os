@@ -4,15 +4,10 @@
 #                                #
 ##################################
 {...}: let
-  import_users = [
-    # Default User
-    "gamer"
+  import_users = ["gamer"];
 
-    # Other Users
-  ];
-
-  machine_type = "Workstation";
-  machine_uuid = "AMD-X86_64";
+  machine_type = "VM";
+  machine_uuid = "Large";
 in {
   imports = [
     # Common Core Config
@@ -24,10 +19,6 @@ in {
   ];
 
   networking.hostName = "htpc";
-
-  services.openssh = {
-    enable = true;
-  };
 
   # Mount usb drives
   services.devmon.enable = true;

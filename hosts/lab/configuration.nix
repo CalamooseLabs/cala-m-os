@@ -1,21 +1,31 @@
 ##################################
 #                                #
-#         Lab Powerhouse         #
+#           Lab Server           #
 #                                #
 #     Used for the Following:    #
-#     - Playground for Testing   #
-#     - Virtualization           #
+#     - HTPC                     #
+#     - Plex Server              #
+#     - Studio Stream            #
+#     - Torrent Manager          #
 #                                #
 ##################################
 {...}: let
-  users = ["virt"];
+  users = ["server"];
 
   machine_type = "Workstation";
   machine_uuid = "TRX50-SAGE";
+
+  vms = {
+    "media" = {
+      devices = ["arc-a310" "jetkvm-usb"];
+      storage = 100; # GBs
+      mac = "02:00:00:00:00:01";
+    };
+  };
 in {
   imports = [
-    # Hardware Config
-    ./modules/virt-manager
+    # Import VMs
+    (import ./vm-manager.nix vms)
 
     # Common Core Config
     (import ../_core/configuration.nix {

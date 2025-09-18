@@ -1,6 +1,7 @@
 {...}: {
   imports = [
-    ./modules/intel-arc750/home.nix
-    ./modules/nvidia-rtx5090/home.nix
+    # Modules
+    ../../modules/nvidia-gpu/home.nix
+    ../../modules/intel-gpu/home.nix
   ];
 }

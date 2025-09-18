@@ -11,10 +11,15 @@
     # Theming
     stylix.url = "github:danth/stylix";
 
+    # MicroVM
+    microvm = {
+      url = "github:microvm-nix/microvm.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Hyprland & Plugins
     hyprland = {
       url = "github:hyprwm/Hyprland";
-      # inputs.nixpkgs.follows = "nixpkgs";
     };
 
     hyprland-plugins = {
@@ -47,7 +52,11 @@
     };
   };
 
-  outputs = {nixpkgs, ...} @ inputs: let
+  outputs = {
+    self,
+    nixpkgs,
+    ...
+  } @ inputs: let
     system = "x86_64-linux";
     pkgs = import nixpkgs {
       system = system;
@@ -70,7 +79,19 @@
           inherit cala-m-os;
         };
         modules = [
+          inputs.microvm.nixosModules.microvm
           ./hosts/htpc/configuration.nix
+        ];
+      };
+      lab = nixpkgs.lib.nixosSystem {
+        specialArgs = {
+          inherit inputs;
+          inherit cala-m-os;
+          inherit self;
+        };
+        modules = [
+          inputs.microvm.nixosModules.host
+          ./hosts/lab/configuration.nix
         ];
       };
       iso = nixpkgs.lib.nixosSystem {
