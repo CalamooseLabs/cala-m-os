@@ -4,9 +4,13 @@
 }: {
   lib,
   inputs,
+  vmName,
+  vmConfig,
+  vmDeviceFiles,
+  networkInterface,
   ...
 }: {
-  imports = [inputs.microvm.nixosModules.microvm];
+  imports = [inputs.microvm.nixosModules.microvm] ++ vmDeviceFiles;
 
   microvm = {
     # VM resources
@@ -27,9 +31,33 @@
         proto = "virtiofs";
       }
     ];
+
+    interfaces = [
+      {
+        type = "macvtap";
+        id = "vm-${vmName}";
+        mac = "02:00:00:00:00:${vmConfig.macID}";
+        mode = "bridge";
+        link = networkInterface;
+      }
+      {
+        type = "tap";
+        id = "vm-${vmName}--to-host";
+        mac = "02:00:00:00:01:${vmConfig.macID}";
+      }
+    ];
+
+    volumes = [
+      {
+        image = "${vmName}-vm.img";
+        mountPoint = "/";
+        size = vmConfig.storage * 1024;
+      }
+    ];
   };
 
   networking = {
     useDHCP = false;
+    networking.interfaces."${networkInterface}".useDHCP = true;
   };
 }

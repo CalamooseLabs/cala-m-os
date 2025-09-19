@@ -2,7 +2,6 @@
   vms,
   networkInterface,
 }: {
-  cala-m-os,
   inputs,
   self,
   ...
@@ -27,42 +26,16 @@
 
   vm_configs =
     builtins.mapAttrs (name: vm: {
+      flake = self;
+      updateFlake = "git+file:///etc/nixos";
+      autostart = true;
+
+      # Pass specialArgs to the VM's nixosConfiguration
       specialArgs = {
-        inherit name;
-        inherit vm;
         inherit networkInterface;
-        inherit cala-m-os;
-        inherit inputs;
-        inherit self;
-      };
-
-      config = {
-        imports = [self.nixosConfigurations."${name}".config] ++ (map (device: getDeviceFiles device "guest.nix") vm.devices);
-        microvm = {
-          interfaces = [
-            {
-              type = "macvtap";
-              id = "vm-${name}";
-              mac = "02:00:00:00:00:${vm.macID}";
-              mode = "bridge";
-              link = networkInterface;
-            }
-            {
-              type = "tap";
-              id = "vm-${name}--to-host";
-              mac = "02:00:00:00:01:${vm.macID}";
-            }
-          ];
-          volumes = [
-            {
-              image = "${name}-vm.img";
-              mountPoint = "/";
-              size = vm.storage * 1024;
-            }
-          ];
-        };
-
-        networking.interfaces."${networkInterface}".useDHCP = true;
+        vmName = name;
+        vmConfig = vm;
+        vmDeviceFiles = map (device: getDeviceFiles device "guest.nix") vm.devices;
       };
     })
     vms;
