@@ -31,7 +31,7 @@
       echo "Step Two Completed!"
       echo
       echo "Step Three: Installing Minimal NixOS Configuration"
-      nixos-install
+      nixos-install --root /etc/nixos/iso/minimal-config
       echo "Step Three Completed!"
       echo
       echo "Step Four: Cloning Cala-M-OS"
