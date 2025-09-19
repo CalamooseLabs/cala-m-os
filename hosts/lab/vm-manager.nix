@@ -2,7 +2,7 @@
   vms,
   networkInterface,
 }: {
-  # cala-m-os,
+  cala-m-os,
   inputs,
   self,
   ...
@@ -28,9 +28,15 @@
   vm_configs =
     builtins.mapAttrs (name: vm: {
       specialArgs = {
+        # VM Specific
         name = name;
         vm = vm;
         networkInterface = networkInterface;
+
+        # General Stuff
+        inputs = inputs;
+        cala-m-os = cala-m-os;
+        self = self;
       };
 
       config = {
