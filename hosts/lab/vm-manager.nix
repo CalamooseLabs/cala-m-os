@@ -28,15 +28,9 @@
   vm_configs =
     builtins.mapAttrs (name: vm: {
       specialArgs = {
-        # VM Specific
-        name = name;
-        vm = vm;
-        networkInterface = networkInterface;
-
-        # General Stuff
-        inputs = inputs;
-        cala-m-os = cala-m-os;
-        self = self;
+        inherit name;
+        inherit vm;
+        inherit networkInterface;
       };
 
       config = {

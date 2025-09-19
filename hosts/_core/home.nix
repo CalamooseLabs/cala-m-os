@@ -1,4 +1,8 @@
-{machine_path, ...}: {inputs, ...}: let
+{machine_path, ...}: {
+  inputs,
+  cala-m-os,
+  ...
+}: let
   machine_home = toString (machine_path + "/home.nix");
 in {
   imports = [
@@ -6,7 +10,10 @@ in {
   ];
 
   home-manager = {
-    extraSpecialArgs = {inherit inputs;};
+    extraSpecialArgs = {
+      inherit inputs;
+      inherit cala-m-os;
+    };
     backupFileExtension = "hm-backup";
 
     useGlobalPkgs = true;
