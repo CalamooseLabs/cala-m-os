@@ -79,7 +79,6 @@
           inherit cala-m-os;
         };
         modules = [
-          inputs.microvm.nixosModules.microvm
           ./hosts/htpc/configuration.nix
         ];
       };
@@ -90,7 +89,6 @@
           inherit self;
         };
         modules = [
-          inputs.microvm.nixosModules.host
           ./hosts/lab/configuration.nix
         ];
       };
