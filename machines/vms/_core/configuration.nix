@@ -6,7 +6,7 @@
   vmName,
   vmConfig,
   vmDeviceFiles,
-  networkInterface,
+  vmBridge,
   ...
 }: {
   imports = vmDeviceFiles;
@@ -37,7 +37,7 @@
         id = "vm-${vmName}";
         mac = "02:00:00:00:00:${vmConfig.macID}";
         mode = "bridge";
-        link = networkInterface;
+        link = "${vmBridge}";
       }
       {
         type = "tap";
@@ -57,6 +57,6 @@
 
   networking = {
     useDHCP = false;
-    interfaces."${networkInterface}".useDHCP = true;
+    interfaces."${vmBridge}".useDHCP = true;
   };
 }

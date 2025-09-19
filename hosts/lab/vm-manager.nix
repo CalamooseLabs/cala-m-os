@@ -34,10 +34,11 @@
       config = import ../${name}/configuration.nix;
       # Pass specialArgs to the VM's nixosConfiguration
       specialArgs = {
-        inherit networkInterface inputs cala-m-os;
+        inherit inputs cala-m-os;
         vmName = name;
         vmConfig = vm;
         vmDeviceFiles = map (device: getDeviceFiles device "guest.nix") vm.devices;
+        vmBridge = networkInterface;
       };
     })
     vms;
