@@ -26,7 +26,7 @@
 
   vm_configs =
     builtins.mapAttrs (name: vm: {
-      imports = [self.nixosConfiguration."${name}".config] ++ (map (device: getDeviceFiles device "guest.nix") vm.devices);
+      imports = [self.nixosConfigurations."${name}".config] ++ (map (device: getDeviceFiles device "guest.nix") vm.devices);
       microvm = {
         interfaces = [
           {

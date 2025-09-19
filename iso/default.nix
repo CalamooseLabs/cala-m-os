@@ -6,6 +6,7 @@
   imports = [(modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")];
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
+  nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs; [
     disko
@@ -31,15 +32,18 @@
       echo "Step Two Completed!"
       echo
       echo "Step Three: Installing Minimal NixOS Configuration"
-      nixos-install --root /etc/nixos/iso/minimal-config
+      mkdir /mnt/etc/nixos -p
+      cp /etc/nixos/iso/minimal-config/* /mnt/etc/nixos/
+      nixos-install
       echo "Step Three Completed!"
       echo
       echo "Step Four: Cloning Cala-M-OS"
+      rm -rf /mnt/etc/nixos
       git clone https://github.com/calamooselabs/cala-m-os /mnt/etc/nixos/
       echo "Step Four Completed!"
       echo
       echo "Step Five: Building Cala-M-OS"
-      nixos-enter -- nixos-rebuild boot --flake /etc/nixos#$HOST_FLAKE --option allow-unfree true --experimental-features 'nix-command flakes'
+      nixos-enter -- nixos-rebuild boot --flake /etc/nixos#$HOST_FLAKE
       echo "Step Five Completed!"
       echo
       # TODO:
