@@ -3,7 +3,8 @@
   networkInterface,
 }: {
   inputs,
-  self,
+  # self,
+  cala-m-os,
   ...
 }: let
   device_path = ./devices;
@@ -26,13 +27,14 @@
 
   vm_configs =
     builtins.mapAttrs (name: vm: {
-      flake = self;
-      updateFlake = "git+file:///etc/nixos";
-      autostart = true;
+      # flake = self;
+      # updateFlake = "git+file:///etc/nixos";
+      # autostart = true;
 
+      config = import ../${name}/configuration.nix;
       # Pass specialArgs to the VM's nixosConfiguration
       specialArgs = {
-        inherit networkInterface;
+        inherit networkInterface inputs cala-m-os;
         vmName = name;
         vmConfig = vm;
         vmDeviceFiles = map (device: getDeviceFiles device "guest.nix") vm.devices;
