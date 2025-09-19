@@ -79,7 +79,6 @@
             "defaults"
             "noatime"
             "nodiratime"
-            "nobarrier" # Improves performance, slightly less safe
           ];
         };
       };
