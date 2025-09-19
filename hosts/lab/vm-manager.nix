@@ -2,6 +2,7 @@
   vms,
   networkInterface,
 }: {
+  cala-m-os,
   inputs,
   self,
   ...
@@ -26,6 +27,12 @@
 
   vm_configs =
     builtins.mapAttrs (name: vm: {
+      specialArgs = {
+        inputs = inputs;
+        cala-m-os = cala-m-os;
+        self = self;
+      };
+
       config = {
         imports = [self.nixosConfigurations."${name}".config] ++ (map (device: getDeviceFiles device "guest.nix") vm.devices);
         microvm = {
