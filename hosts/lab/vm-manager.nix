@@ -3,6 +3,7 @@
   networkInterface,
 }: {
   cala-m-os,
+  # pkgs,
   inputs,
   self,
   ...
@@ -27,10 +28,15 @@
 
   vm_configs =
     builtins.mapAttrs (name: vm: {
+      # pkgs = pkgs;
+
       specialArgs = {
         inherit name;
         inherit vm;
         inherit networkInterface;
+        inherit cala-m-os;
+        inherit inputs;
+        inherit self;
       };
 
       config = {
