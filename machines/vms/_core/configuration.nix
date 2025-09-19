@@ -57,6 +57,6 @@
 
   networking = {
     useDHCP = false;
-    networking.interfaces."${networkInterface}".useDHCP = true;
+    interfaces."${networkInterface}".useDHCP = true;
   };
 }
