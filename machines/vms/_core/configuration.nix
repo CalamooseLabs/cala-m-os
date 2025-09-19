@@ -3,14 +3,13 @@
   memory,
 }: {
   lib,
-  inputs,
   vmName,
   vmConfig,
   vmDeviceFiles,
   networkInterface,
   ...
 }: {
-  imports = [inputs.microvm.nixosModules.microvm] ++ vmDeviceFiles;
+  imports = vmDeviceFiles;
 
   microvm = {
     # VM resources
