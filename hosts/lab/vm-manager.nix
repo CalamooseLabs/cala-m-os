@@ -37,7 +37,7 @@
               id = "vm-${name}";
               mac = "02:00:00:00:00:${vm.macID}";
               mode = "bridge";
-              link = "${networkInterface}";
+              link = networkInterface;
             }
             # {
             #   type = "tap";
