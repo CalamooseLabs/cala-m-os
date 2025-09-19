@@ -36,8 +36,10 @@
               type = "macvtap";
               id = "vm-${name}";
               mac = "02:00:00:00:00:${vm.macID}";
-              mode = "bridge";
-              link = "eno2";
+              macvtap = {
+                mode = "bridge";
+                link = networkInterface;
+              };
             }
             # {
             #   type = "tap";
