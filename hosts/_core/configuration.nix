@@ -85,7 +85,10 @@ in {
   time.timeZone = "America/Denver";
 
   # Allow unfree
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs = {
+    config.allowUnfree = true;
+    hostPlatform = {system = "x86_64-linux";};
+  };
 
   # Login Service
   services.greetd = {
