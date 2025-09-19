@@ -95,7 +95,7 @@
       iso = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs;};
         system = "x86_64-linux";
-        modules = [./iso.nix];
+        modules = [./iso/default.nix];
       };
     };
 

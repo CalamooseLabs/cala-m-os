@@ -28,4 +28,8 @@
       }
     ];
   };
+
+  networking = {
+    useDHCP = false;
+  };
 }

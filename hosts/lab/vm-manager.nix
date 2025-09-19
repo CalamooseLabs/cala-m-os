@@ -1,4 +1,7 @@
-{vms}: {
+{
+  vms,
+  networkInterface,
+}: {
   inputs,
   self,
   ...
@@ -23,13 +26,20 @@
 
   vm_configs =
     builtins.mapAttrs (name: vm: {
-      imports = [self.nixosConfiguration.${name}.config] ++ (map (device: getDeviceFiles device "guest.nix") vm.devices);
+      imports = [self.nixosConfiguration."${name}".config] ++ (map (device: getDeviceFiles device "guest.nix") vm.devices);
       microvm = {
         interfaces = [
           {
-            type = "tap";
+            type = "macvtap";
             id = "vm-${name}";
-            mac = vm.mac;
+            mac = "02:00:00:00:00:${vm.macID}";
+            mode = "bridge";
+            link = networkInterface;
+          }
+          {
+            type = "tap";
+            id = "vm-${name}--to-host";
+            mac = "02:00:00:00:01:${vm.macID}";
           }
         ];
         volumes = [
@@ -40,6 +50,8 @@
           }
         ];
       };
+
+      networking.interfaces."${networkInterface}".useDHCP = true;
     })
     vms;
 in {

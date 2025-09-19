@@ -19,13 +19,18 @@
     "media" = {
       devices = ["arc-a310" "jetkvm-usb"];
       storage = 100; # GBs
-      mac = "02:00:00:00:00:01";
+      macID = "01";
     };
   };
+
+  bridgeInterface = "eno2";
 in {
   imports = [
     # Import VMs
-    (import ./vm-manager.nix {vms = vms;})
+    (import ./vm-manager.nix {
+      vms = vms;
+      networkInterface = bridgeInterface;
+    })
 
     # Common Core Config
     (import ../_core/configuration.nix {

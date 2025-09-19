@@ -20,25 +20,17 @@
       fi
       HOST_FLAKE=$1
 
-      echo "Step One: Generating Configuration"
-      nixos-generate-config --no-filesystems
+      echo "Step One: Generating & Fetching Configurations"
+      rm -rf /etx/nixos/*
+      git clone https://github.com/calamooselabs/cala-m-os.git /etc/nixos
+      nixos-generate-config --no-filesystems --dir /etc/nixos/iso/minimal-config/
       echo "Step One Completed!"
       echo
       echo "Step Two: Erasing and Formatting Disk"
-      disko --mode destroy,format,mount --flake github:CalamooseLabs/cala-m-os#$HOST_FLAKE
+      disko --mode destroy,format,mount --flake /etc/nixos/.#$HOST_FLAKE --yes-wipe-all-disks
       echo "Step Two Completed!"
       echo
-      # imports =
-      # [ # Include the results of the hardware scan.
-      #   ./hardware-configuration.nix
-      #   "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
-      #   ./disk-config.nix
-      # ];
-
       echo "Step Three: Installing Minimal NixOS Configuration"
-      # TODO:
-      # Need to run through this and add the above some how, perhaps it pulls a file with just that content?
-      # set root dir to be / not /mnt? or maybe it will not work?
       nixos-install
       echo "Step Three Completed!"
       echo
