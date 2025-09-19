@@ -39,11 +39,11 @@
               mode = "bridge";
               link = "${networkInterface}";
             }
-            {
-              type = "tap";
-              id = "vm-${name}--to-host";
-              mac = "02:00:00:00:01:${vm.macID}";
-            }
+            # {
+            #   type = "tap";
+            #   id = "vm-${name}--to-host";
+            #   mac = "02:00:00:00:01:${vm.macID}";
+            # }
           ];
 
           volumes = [
@@ -55,7 +55,7 @@
           ];
         };
 
-        networking.interfaces."${networkInterface}".useDHCP = true;
+        networking.interfaces.eth0.useDHCP = true;
       };
 
       specialArgs = {
