@@ -25,7 +25,7 @@
 in {
   imports = [
     # Import VMs
-    (import ./vm-manager.nix vms)
+    (import ./vm-manager.nix {vms = vms;})
 
     # Common Core Config
     (import ../_core/configuration.nix {
