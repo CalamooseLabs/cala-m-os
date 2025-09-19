@@ -92,6 +92,15 @@
           ./hosts/lab/configuration.nix
         ];
       };
+      media = nixpkgs.lib.nixosSystem {
+        specialArgs = {
+          inherit inputs;
+          inherit cala-m-os;
+        };
+        modules = [
+          ./hosts/media/configuration.nix
+        ];
+      };
       iso = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs;};
         system = "x86_64-linux";
