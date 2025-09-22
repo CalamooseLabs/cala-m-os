@@ -11,11 +11,8 @@
     "bash"
     "bat"
     "btop"
-    "fonts"
-    "ghostty"
     "git"
     "openssh"
-    "ttyd"
     "yubikey"
   ];
 in {
