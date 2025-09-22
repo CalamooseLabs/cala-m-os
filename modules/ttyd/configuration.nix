@@ -1,0 +1,5 @@
+{...}: {
+  services.ttyd = {
+    enable = true;
+  };
+}

@@ -3,7 +3,11 @@
 #        Main Daily Laptop       #
 #                                #
 ##################################
-{pkgs, ...}: let
+{
+  lib,
+  pkgs,
+  ...
+}: let
   import_users = [
     # Default User
     "debugger"
@@ -57,4 +61,7 @@ in {
     pulse.enable = true;
     wireplumber.enable = true;
   };
+
+  # Devbox can have manual
+  documentation.enable = lib.mkForce true;
 }

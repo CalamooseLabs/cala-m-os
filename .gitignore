@@ -1,4 +1,4 @@
 .direnv
 result
 iso/minimal-config/hardware-configuration.nix
-#iso/minimal-config/disko.nix
+iso/minimal-config/disko.nix

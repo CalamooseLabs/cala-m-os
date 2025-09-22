@@ -73,7 +73,7 @@ in {
   };
 
   # Remove manuals, as we google everything anyways
-  documentation.enable = false;
+  documentation.enable = lib.mkDefault false;
 
   # Enable Firewall
   networking.firewall.enable = true;

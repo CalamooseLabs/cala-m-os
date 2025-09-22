@@ -21,20 +21,14 @@
       fi
       HOST_FLAKE=$1
 
-      echo "Step One: Generating & Fetching Configurations"
-      rm -rf /etx/nixos/*
-      git clone https://github.com/calamooselabs/cala-m-os.git /etc/nixos
-      nixos-generate-config --no-filesystems --dir /etc/nixos/iso/minimal-config/
-      echo "Step One Completed!"
-      echo
-      echo "Step Two: Erasing and Formatting Disk"
-      disko --mode destroy,format,mount --flake /etc/nixos/.#$HOST_FLAKE --yes-wipe-all-disks
+      echo "Step One: Erasing and Formatting Disk"
+      disko --mode destroy,format,mount --flake github:CalamooseLabs/cala-m-os#$HOST_FLAKE --yes-wipe-all-disks
       echo "Step Two Completed!"
       echo
-      echo "Step Three: Installing Minimal NixOS Configuration"
+      echo "Step Two: Installing Minimal NixOS Configuration"
       mkdir /mnt/etc/nixos -p
-      cp /etc/nixos/iso/minimal-config/* /mnt/etc/nixos/
-      nixos-install
+      git clone https://github.com/calamooselabs/cala-m-os.git /mnt/etc/nixos
+      INITIAL_INSTALL_MODE=1 nixos-install
       echo "Step Three Completed!"
       echo
       echo "Step Four: Cloning Cala-M-OS"
