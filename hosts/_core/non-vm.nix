@@ -30,4 +30,9 @@
     # Set file permissions to 664
     find /etc/nixos -type f -exec chmod 664 {} +
   '';
+
+  # TODO:
+  # These next steps should only happen on certain hosts (IE devbox but not htpc)
+  # These will be moved to a oneshot on non-vm
+  # Preftech, gpg keys, ssh keys
 }

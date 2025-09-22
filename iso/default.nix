@@ -13,7 +13,7 @@
     git
     neovim
     (pkgs.writeShellScriptBin "install-cala-m-os" ''
-      set -eux
+      set -eu
 
       if [ -z "$1" ]; then
         echo "Usage: $0 <flake>"
@@ -23,35 +23,21 @@
 
       echo "Step One: Erasing and Formatting Disk"
       disko --mode destroy,format,mount --flake github:CalamooseLabs/cala-m-os#$HOST_FLAKE --yes-wipe-all-disks
-      echo "Step Two Completed!"
+      echo "Step One Completed!"
       echo
       echo "Step Two: Installing Minimal NixOS Configuration"
       mkdir /mnt/etc/nixos -p
       git clone https://github.com/calamooselabs/cala-m-os.git /mnt/etc/nixos
-      INITIAL_INSTALL_MODE=1 nixos-install
-      echo "Step Three Completed!"
+      INITIAL_INSTALL_MODE=1 nixos-install --flake /mnt/etc/nixos#$HOST_FLAKE
+      echo "Step Two Completed!"
       echo
-      echo "Step Four: Cloning Cala-M-OS"
-      rm -rf /mnt/etc/nixos
-      git clone https://github.com/calamooselabs/cala-m-os /mnt/etc/nixos/
-      echo "Step Four Completed!"
-      echo
-      echo "Step Five: Building Cala-M-OS"
+      echo "Step Three: Building Cala-M-OS"
       nixos-enter -- nixos-rebuild boot --flake /etc/nixos#$HOST_FLAKE
-      echo "Step Five Completed!"
-      echo
-      # TODO:
-      # These next steps should only happen on certain hosts (IE devbox but not htpc)
-      echo "Step Six: Adding GPG Key to Default User"
-      echo "Step Six Completed!"
-      echo
-      echo "Step Seven: Adding SSH Key to Default User"
-      echo "Step Seven Completed!"
-      echo
+      echo "Step Three Completed!"
       echo
       echo "Cala-M-OS has been sucessfully installed, please reboot the system."
       exit
-    '') # TODO: Add prefetch to the rebuild process
+    '')
   ];
 
   services.pcscd.enable = true;
