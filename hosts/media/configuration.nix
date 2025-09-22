@@ -27,11 +27,9 @@ in {
     })
 
     # Caddy SSL
-    (
-      import ../../services/caddy/default.nix {
-        caddyConfig = caddyConfig;
-      }
-    )
+    (import ../../services/caddy/default.nix {
+      caddyConfig = caddyConfig;
+    })
   ];
 
   networking.hostName = "media";
