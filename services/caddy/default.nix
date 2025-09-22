@@ -87,7 +87,7 @@ in {
   };
 
   # Link token to Caddy service
-  systemd.services.caddy.serviceConfigEnvironmentFile = [tokenPath];
+  systemd.services.caddy.serviceConfig.EnvironmentFile = [tokenPath];
 
   # Open HTTPS port
   networking.firewall.allowedTCPPorts = [443];
