@@ -8,7 +8,11 @@
 #      Intel Arc A310 Omni       #
 #                                #
 ##################################
-{pkgs, ...}: {
+{
+  pkgs,
+  cala-m-os,
+  ...
+}: {
   imports = [
     # Hardware Config
     ./hardware-configuration.nix
@@ -23,6 +27,11 @@
     kernelPackages = pkgs.linuxPackages_latest;
 
     # Enable mdadm for RAID 0
-    swraid.enable = true;
+    swraid = {
+      enable = true;
+      mdadmConf = ''
+        MAILADDR <mailto:${cala-m-os.globalDefaultEmail}>
+      '';
+    };
   };
 }
