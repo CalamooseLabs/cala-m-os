@@ -19,5 +19,10 @@
     ../../modules/intel-gpu/configuration.nix
   ];
 
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot = {
+    kernelPackages = pkgs.linuxPackages_latest;
+
+    # Enable mdadm for RAID 0
+    swraid.enable = true;
+  };
 }
