@@ -11,7 +11,7 @@
 
   caddyConfig = {
     "localhost:32400" = {
-      aliases = ["plex.yourdomain.com"];
+      aliases = ["plex-test.calamos.family"];
     };
   };
 

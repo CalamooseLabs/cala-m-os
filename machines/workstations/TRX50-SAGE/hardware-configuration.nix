@@ -2,6 +2,7 @@
   config,
   lib,
   modulesPath,
+  cala-m-os,
   ...
 }: {
   imports = [
@@ -12,6 +13,12 @@
   boot.initrd.kernelModules = [];
   boot.kernelModules = ["kvm-amd" "dm-raid" "raid0"];
   boot.extraModulePackages = [];
+  boot.swraid = {
+    enable = true;
+    mdadmConf = ''
+      MAILADDR <mailto:${cala-m-os.globalDefaultEmail}>
+    '';
+  };
 
   networking.useDHCP = lib.mkDefault true;
 
