@@ -1,4 +1,7 @@
-{caddyConfig}: {
+{
+  caddyConfig,
+  tokenPath,
+}: {
   lib,
   pkgs,
   ...
@@ -68,9 +71,6 @@
       normalizedConfig
     )
   );
-
-  # Get first token path (assuming single token for simplicity)
-  tokenPath = normalizedConfig.tokenPath;
 in {
   # Configure Caddy service
   services.caddy = {

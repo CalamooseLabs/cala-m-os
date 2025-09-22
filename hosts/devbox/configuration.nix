@@ -21,10 +21,10 @@
 
   caddyConfig = {
     "localhost:32400" = {
-      tokenPath = config.age.secrets.plex-cloudflare-token.path;
       aliases = ["plex.calamos.family"];
     };
   };
+  tokenPath = config.age.secrets.plex-cloudflare-token.path;
 in {
   imports = [
     ./secrets
@@ -39,6 +39,7 @@ in {
     # Caddy SSL
     (import ../../services/caddy/default.nix {
       caddyConfig = caddyConfig;
+      tokenPath = tokenPath;
     })
   ];
 
