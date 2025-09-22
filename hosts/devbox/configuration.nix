@@ -16,7 +16,7 @@
 in {
   imports = [
     # Common Core Config
-    (import ../_core/configuration.nix {
+    (import ../_core/default.nix {
       users_list = import_users;
       machine_type = machine_type;
       machine_uuid = machine_uuid;

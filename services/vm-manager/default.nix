@@ -1,14 +1,12 @@
 {
+  device_path,
   vms,
   networkInterface,
 }: {
   inputs,
-  # self,
   cala-m-os,
   ...
 }: let
-  device_path = ./devices;
-
   getDeviceFiles = device: filename: import (device_path + "/${device}/${filename}");
 
   allDevices = builtins.concatLists (builtins.attrValues (
@@ -41,11 +39,11 @@
                 link = networkInterface;
               };
             }
-            # {
-            #   type = "tap";
-            #   id = "vm-${name}--to-host";
-            #   mac = "02:00:00:00:01:${vm.macID}";
-            # }
+            {
+              type = "tap";
+              id = "vm-${name}--to-host";
+              mac = "02:00:00:00:01:${vm.macID}";
+            }
           ];
 
           volumes = [

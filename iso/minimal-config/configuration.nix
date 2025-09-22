@@ -1,8 +1,25 @@
-{pkgs, ...}: {
+{
+  machine_type,
+  machine_uuid,
+  ...
+}: {pkgs, ...}: let
+  isVM = machine_type == "VM" || machine_type == "vm";
+  machine_root =
+    ../../machines
+    + (
+      if isVM
+      then "/vms"
+      else "/workstations"
+    );
+  machine_path = toString (machine_root + "/${machine_uuid}");
+
+  machine_hardware = import (toString (machine_path + "/hardware-configuration.nix"));
+  machine_disko = import (toString (machine_path + "/disko.nix"));
+in {
   imports = [
-    ./hardware-configuration.nix
+    machine_hardware
     "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
-    ./disko.nix
+    machine_disko
   ];
 
   boot.loader.systemd-boot.enable = true;

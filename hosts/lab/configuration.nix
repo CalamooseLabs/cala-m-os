@@ -27,13 +27,14 @@
 in {
   imports = [
     # Import VMs
-    (import ./vm-manager.nix {
+    (import ../../services/vm-manager/default.nix {
+      device_path = ./devices;
       vms = vms;
       networkInterface = bridgeInterface;
     })
 
     # Common Core Config
-    (import ../_core/configuration.nix {
+    (import ../_core/default.nix {
       users_list = users;
       machine_type = machine_type;
       machine_uuid = machine_uuid;
