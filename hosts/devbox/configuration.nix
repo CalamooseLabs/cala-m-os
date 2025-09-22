@@ -6,7 +6,6 @@
 {
   lib,
   pkgs,
-  config,
   ...
 }: let
   import_users = [
@@ -18,28 +17,13 @@
 
   machine_type = "Workstation";
   machine_uuid = "FW13-12XXP";
-
-  caddyConfig = {
-    "localhost:32400" = {
-      aliases = ["plex.calamos.family"];
-    };
-  };
-  tokenPath = config.age.secrets.plex-cloudflare-token.path;
 in {
   imports = [
-    ./secrets
-
     # Common Core Config
     (import ../_core/default.nix {
       users_list = import_users;
       machine_type = machine_type;
       machine_uuid = machine_uuid;
-    })
-
-    # Caddy SSL
-    (import ../../services/caddy/default.nix {
-      caddyConfig = caddyConfig;
-      tokenPath = tokenPath;
     })
   ];
 
