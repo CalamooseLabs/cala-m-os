@@ -5,7 +5,6 @@
 }: let
   caddyWithCloudflare = pkgs.caddy.withPlugins {
     plugins = ["github.com/caddy-dns/cloudflare@v0.2.1"];
-    # hash = "sha256-j+xUy8OAjEo+bdMOkQ1kVqDnEkzKGTBIbMDVL7YDwDY=";
     hash = "sha256-j+xUy8OAjEo+bdMOkQ1kVqDnEkzKGTBIbMDVL7YDwDY=";
   };
 
@@ -80,9 +79,7 @@ in {
 
     # Global configuration for Cloudflare DNS
     globalConfig = ''
-      {
-        acme_dns cloudflare {$CLOUDFLARE_API_TOKEN}
-      }
+      acme_dns cloudflare {$CLOUDFLARE_API_TOKEN}
     '';
 
     # Set all virtual hosts
