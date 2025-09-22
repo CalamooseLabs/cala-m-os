@@ -36,8 +36,7 @@ in {
         machine_uuid = machine_uuid;
       })
     ]
-    ++ lib.optional (initialInstallMode != "1")
-    # Import VMs
+    ++ lib.optional (!initialInstallMode)
     (import ../../services/vm-manager/default.nix {
       device_path = ./devices;
       vms = vms;
