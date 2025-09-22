@@ -2,7 +2,11 @@
   machine_type,
   machine_uuid,
   ...
-}: {pkgs, ...}: let
+}: {
+  lib,
+  pkgs,
+  ...
+}: let
   isVM = machine_type == "VM" || machine_type == "vm";
   machine_root =
     ../../machines
@@ -25,7 +29,7 @@ in {
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = "nixos-temp";
+  networking.hostName = lib.mkForce "nixos-temp";
 
   networking.networkmanager.enable = true;
 

@@ -4,7 +4,6 @@
   networkInterface,
 }: {
   inputs,
-  initialInstallMode,
   cala-m-os,
   ...
 }: let
@@ -60,7 +59,7 @@
       };
 
       specialArgs = {
-        inherit inputs cala-m-os initialInstallMode;
+        inherit inputs cala-m-os;
       };
     })
     vms;
