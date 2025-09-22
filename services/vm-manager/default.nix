@@ -42,7 +42,7 @@
             }
             {
               type = "tap";
-              id = "vm-${name}--to-host";
+              id = "vm-${name}-i";
               mac = "02:00:00:00:01:${vm.macID}";
             }
           ];
