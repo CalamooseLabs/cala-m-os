@@ -7,6 +7,7 @@
   inputs,
   lib,
   cala-m-os,
+  pkgs,
   ...
 }: let
   usersPath = ../../users;
@@ -104,6 +105,7 @@ in {
     settings = {
       default_session = {
         user = lib.mkForce "${cala-m-os.globalDefaultUser}";
+        command = lib.mkDefault "${pkgs.bash}/bin/bash";
       };
     };
   };
