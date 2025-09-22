@@ -28,7 +28,7 @@
 
 ### Cala-M-OS install
 
-1. Run Custom ISO Build running `nix build .#nixosConfigurations.iso.config.system.build.images.isoImage`
+1. Run Custom ISO Build running `nix build .#nixosConfigurations.iso.config.system.build.isoImage`
 
 2. On new computer boot into custom ISO installer and run `sudo install-cala-m-os <flake_name>`
 
