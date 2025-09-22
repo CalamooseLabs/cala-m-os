@@ -70,7 +70,7 @@
   );
 
   # Get first token path (assuming single token for simplicity)
-  tokenPath = (lib.head (lib.attrValues normalizedConfig)).tokenPath;
+  tokenPath = normalizedConfig.tokenPath;
 in {
   # Configure Caddy service
   services.caddy = {
@@ -78,20 +78,16 @@ in {
     package = caddyWithCloudflare;
 
     # Global configuration for Cloudflare DNS
-    globalConfig = ''
-      acme_dns cloudflare {$CLOUDFLARE_API_TOKEN}
-    '';
+    # globalConfig = ''
+    #   acme_dns cloudflare {$CLOUDFLARE_API_TOKEN}
+    # '';
 
     # Set all virtual hosts
     virtualHosts = allVirtualHosts;
   };
 
   # Link token to Caddy service
-  systemd.services.caddy = {
-    serviceConfig = {
-      EnvironmentFile = [tokenPath];
-    };
-  };
+  systemd.services.caddy.serviceConfigEnvironmentFile = [tokenPath];
 
   # Open HTTPS port
   networking.firewall.allowedTCPPorts = [443];
