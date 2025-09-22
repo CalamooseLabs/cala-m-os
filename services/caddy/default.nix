@@ -40,20 +40,7 @@
           dns cloudflare {$CLOUDFLARE_API_TOKEN}
         }
 
-        reverse_proxy ${target} {
-          header_up X-Forwarded-For {remote_host}
-          header_up X-Forwarded-Proto {scheme}
-          header_up X-Forwarded-Host {host}
-          header_up X-Real-IP {remote_host}
-          ${lib.optionalString cfg.enableWebsocket ''
-          header_up Upgrade {header.Upgrade}
-          header_up Connection {header.Connection}
-        ''}
-          ${mkHeaders cfg.extraHeaders}
-          flush_interval ${cfg.flushInterval}
-        }
-
-        ${cfg.customConfig}
+        respond "Hello, World!!!"
       '';
     };
   };
