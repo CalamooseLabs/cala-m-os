@@ -62,12 +62,14 @@
       system = system;
     };
     cala-m-os = import ./settings.nix;
+    initialInstallMode = builtins.getEnv "INITIAL_INSTALL_MODE" == "1";
   in {
     nixosConfigurations = {
       devbox = nixpkgs.lib.nixosSystem {
         specialArgs = {
           inherit inputs;
           inherit cala-m-os;
+          inherit initialInstallMode;
         };
         modules = [
           ./hosts/devbox/configuration.nix
@@ -78,6 +80,7 @@
           inherit inputs;
           inherit cala-m-os;
           inherit self;
+          inherit initialInstallMode;
         };
         modules = [
           ./hosts/lab/configuration.nix

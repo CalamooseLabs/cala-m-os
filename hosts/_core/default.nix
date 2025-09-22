@@ -3,9 +3,7 @@
   machine_type,
   machine_uuid,
   ...
-}: {...}: let
-  initialInstallMode = builtins.getEnv "INITIAL_INSTALL_MODE" == "1";
-in {
+}: {initialInstallMode, ...}: {
   imports =
     if initialInstallMode
     then [

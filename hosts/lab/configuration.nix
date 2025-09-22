@@ -9,9 +9,11 @@
 #     - Torrent Manager          #
 #                                #
 ##################################
-{lib, ...}: let
-  initialInstallMode = builtins.getEnv "INITIAL_INSTALL_MODE" == "1";
-
+{
+  lib,
+  initialInstallMode,
+  ...
+}: let
   users = ["server"];
 
   machine_type = "Workstation";
@@ -28,20 +30,26 @@
   bridgeInterface = "eno2";
 in {
   imports =
-    [
-      # Common Core Config
+    if !initialInstallMode
+    then [
+      (import ../../services/vm-manager/default.nix {
+        device_path = ./devices;
+        vms = vms;
+        networkInterface = bridgeInterface;
+      })
       (import ../_core/default.nix {
         users_list = users;
         machine_type = machine_type;
         machine_uuid = machine_uuid;
       })
     ]
-    ++ lib.optional (!initialInstallMode)
-    (import ../../services/vm-manager/default.nix {
-      device_path = ./devices;
-      vms = vms;
-      networkInterface = bridgeInterface;
-    });
+    else [
+      (import ../_core/default.nix {
+        users_list = users;
+        machine_type = machine_type;
+        machine_uuid = machine_uuid;
+      })
+    ];
 
   networking.hostName = "lab";
 }
