@@ -40,7 +40,7 @@
     value = {
       extraConfig = ''
         tls {
-          dns cloudflare {$CLOUDFLARE_API_TOKEN}
+          dns cloudflare {env.CLOUDFLARE_API_TOKEN}
         }
 
         reverse_proxy ${target} {
@@ -78,9 +78,9 @@ in {
     package = caddyWithCloudflare;
 
     # Global configuration for Cloudflare DNS
-    # globalConfig = ''
-    #   acme_dns cloudflare {$CLOUDFLARE_API_TOKEN}
-    # '';
+    globalConfig = ''
+      acme_dns cloudflare {$CLOUDFLARE_API_TOKEN}
+    '';
 
     # Set all virtual hosts
     virtualHosts = allVirtualHosts;
