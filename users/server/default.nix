@@ -15,7 +15,6 @@
     "ghostty"
     "git"
     "openssh"
-    "stylix"
     "ttyd"
     "yubikey"
   ];
