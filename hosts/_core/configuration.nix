@@ -6,6 +6,7 @@
 }: {
   inputs,
   lib,
+  cala-m-os,
   ...
 }: let
   usersPath = ../../users;
@@ -94,6 +95,16 @@ in {
     settings = {
       auto-optimise-store = true;
       experimental-features = ["nix-command" "flakes"];
+    };
+  };
+
+  # Login Service
+  services.greetd = {
+    enable = true;
+    settings = {
+      default_session = {
+        user = lib.mkForce "${cala-m-os.globalDefaultUser}";
+      };
     };
   };
 

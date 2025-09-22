@@ -1,22 +1,8 @@
-{
-  lib,
-  cala-m-os,
-  ...
-}: {
+{cala-m-os, ...}: {
   # Allow unfree
   nixpkgs = {
     config.allowUnfree = true;
     hostPlatform = {system = "x86_64-linux";};
-  };
-
-  # Login Service
-  services.greetd = {
-    enable = true;
-    settings = {
-      default_session = {
-        user = lib.mkForce "${cala-m-os.globalDefaultUser}";
-      };
-    };
   };
 
   # Allow any wheel user to change configuration
