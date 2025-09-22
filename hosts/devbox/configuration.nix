@@ -22,7 +22,7 @@
   caddyConfig = {
     "localhost:32400" = {
       tokenPath = config.age.secrets.plex-cloudflare-token.path;
-      aliases = ["plex.yourdomain.com"];
+      aliases = ["plex.calamos.family"];
     };
   };
 in {
