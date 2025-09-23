@@ -1,31 +1,30 @@
 {
   caddyConfig,
   tokenPath,
-}: {
-  lib,
-  pkgs,
-  ...
-}: let
-  mkReverseProxy = listenAddr: domain: {
-    ${domain} = {
-      extraConfig = ''
-        tls {
-          dns cloudflare {$CLOUDFLARE_API_TOKEN}
-        }
+}: {pkgs, ...}: let
+  transformedConfig = builtins.listToAttrs (
+    builtins.concatLists (
+      builtins.attrValues (
+        builtins.mapAttrs (
+          localhost: domains:
+            map (domain: {
+              name = domain;
+              value = {
+                extraConfig = ''
+                  tls {
+                    dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+                  }
 
-        reverse_proxy ${listenAddr}
-      '';
-    };
-  };
-
-  virtualHosts =
-    lib.attrsets.mapAttrs' (
-      listenAddr: domains:
-        lib.lists.listToAttrs (
-          map (domain: mkReverseProxy listenAddr domain) domains
+                  reverse_proxy ${localhost}
+                '';
+              };
+            })
+            domains
         )
+        caddyConfig
+      )
     )
-    caddyConfig;
+  );
 in {
   # Configure Caddy service
   services.caddy = {
@@ -41,7 +40,7 @@ in {
     # '';
 
     # Set all virtual hosts
-    virtualHosts = virtualHosts;
+    virtualHosts = transformedConfig;
   };
 
   # Link token to Caddy service
