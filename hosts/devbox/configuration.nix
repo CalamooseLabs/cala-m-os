@@ -71,13 +71,23 @@ in {
       hash = "sha256-j+xUy8OAjEo+bdMOkQ1kVqDnEkzKGTBIbMDVL7YDwDY=";
     };
 
-    virtualHosts."dev.calamooselabs.com".extraConfig = ''
-      tls {
-        dns cloudflare {$CLOUDFLARE_API_TOKEN}
-      }
+    virtualHosts = {
+      "localhost" = {
+        extraConfig = ''
+          respond "Hello, World!!!"
+        '';
+      };
 
-      respond "Hello, world!"
-    '';
+      "dev.calamooselabs.com" = {
+        extraConfig = ''
+          tls {
+             dns cloudflare {$CLOUDFLARE_API_TOKEN}
+          }
+
+          reverse_proxy localhost:443
+        '';
+      };
+    };
   };
 
   systemd.services.caddy.serviceConfig.EnvironmentFile = [config.age.secrets.plex-cloudflare-token.path];
