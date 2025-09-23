@@ -61,7 +61,12 @@ in {
     pulse.enable = true;
     wireplumber.enable = true;
   };
-
+  services.caddy = {
+    enable = true;
+    virtualHosts."localhost".extraConfig = ''
+      respond "Hello, world!"
+    '';
+  };
   # Devbox can have manual
   documentation.enable = lib.mkForce true;
 }
