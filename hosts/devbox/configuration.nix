@@ -71,7 +71,7 @@ in {
       hash = "sha256-j+xUy8OAjEo+bdMOkQ1kVqDnEkzKGTBIbMDVL7YDwDY=";
     };
 
-    virtualHosts."plex-test.calamos.family".extraConfig = ''
+    virtualHosts."dev.calamooselabs.com".extraConfig = ''
       tls {
         dns cloudflare {$CLOUDFLARE_API_TOKEN}
       }
@@ -85,6 +85,7 @@ in {
   };
 
   systemd.services.caddy.serviceConfig.EnvironmentFile = [config.age.secrets.plex-cloudflare-token.path];
+
   # Devbox can have manual
   documentation.enable = lib.mkForce true;
 }
