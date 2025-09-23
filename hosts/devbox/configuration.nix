@@ -6,6 +6,7 @@
 {
   lib,
   pkgs,
+  config,
   ...
 }: let
   import_users = [
@@ -19,6 +20,7 @@
   machine_uuid = "FW13-12XXP";
 in {
   imports = [
+    ./secrets
     # Common Core Config
     (import ../_core/default.nix {
       users_list = import_users;
@@ -61,12 +63,28 @@ in {
     pulse.enable = true;
     wireplumber.enable = true;
   };
+
   services.caddy = {
     enable = true;
-    virtualHosts."localhost".extraConfig = ''
+    package = pkgs.caddy.withPlugins {
+      plugins = ["github.com/caddy-dns/cloudflare@v0.2.1"];
+      hash = "sha256-j+xUy8OAjEo+bdMOkQ1kVqDnEkzKGTBIbMDVL7YDwDY=";
+    };
+
+    virtualHosts."plex-test.calamos.family".extraConfig = ''
+      tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+      }
+
       respond "Hello, world!"
     '';
+
+    globalConfig = ''
+      acme_dns cloudflare {$CLOUDFLARE_API_TOKEN}
+    '';
   };
+
+  systemd.services.caddy.serviceConfig.EnvironmentFile = [config.age.secrets.plex-cloudflare-token.path];
   # Devbox can have manual
   documentation.enable = lib.mkForce true;
 }
