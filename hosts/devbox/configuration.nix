@@ -73,7 +73,7 @@ in {
 
     virtualHosts."dev.calamooselabs.com".extraConfig = ''
       tls {
-        dns cloudflare {$CLOUDFLARE_API_TOKEN}
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
       }
 
       respond "Hello, world!"
