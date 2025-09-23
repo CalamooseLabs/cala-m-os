@@ -35,9 +35,12 @@ in {
     };
 
     # Global configuration for Cloudflare DNS
-    # globalConfig = ''
-    #   acme_dns cloudflare {$CLOUDFLARE_API_TOKEN}
-    # '';
+    globalConfig = ''
+      acme_dns cloudflare {$CLOUDFLARE_API_TOKEN}
+      log {
+        output discard
+      }
+    '';
 
     # Set all virtual hosts
     virtualHosts = transformedConfig;
