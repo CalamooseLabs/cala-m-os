@@ -9,10 +9,6 @@
   machine_type = "VM";
   machine_uuid = "Medium";
 
-  caddyConfig = {
-    "localhost:32400" = ["plex-test.calamos.family"];
-  };
-
   tokenPath = config.age.secrets.plex-cloudflare-token.path;
 in {
   imports = [
@@ -26,9 +22,10 @@ in {
     })
 
     # Caddy SSL
-    (import ../../services/caddy/default.nix {
-      caddyConfig = caddyConfig;
+    (import ../../services/certs/default.nix {
+      domain = "plex.calamooselabs.com";
       tokenPath = tokenPath;
+      target = "localhost:32400";
     })
   ];
 

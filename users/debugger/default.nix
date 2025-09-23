@@ -41,7 +41,7 @@
     "spotify"
     "ssh"
     "stylix"
-    "tailscale"
+    # "tailscale"
     "virt-manager"
     "vivaldi"
     "vlc"
