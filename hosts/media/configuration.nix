@@ -10,9 +10,7 @@
   machine_uuid = "Medium";
 
   caddyConfig = {
-    "localhost:32400" = {
-      aliases = ["plex-test.calamos.family"];
-    };
+    "localhost:32400" = ["plex-test.calamos.family"];
   };
 
   tokenPath = config.age.secrets.plex-cloudflare-token.path;
