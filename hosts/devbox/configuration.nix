@@ -73,15 +73,11 @@ in {
 
     virtualHosts."dev.calamooselabs.com".extraConfig = ''
       tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        dns cloudflare {$CLOUDFLARE_API_TOKEN}
       }
 
       respond "Hello, world!"
     '';
-
-    # globalConfig = ''
-    #   acme_dns cloudflare {$CLOUDFLARE_API_TOKEN}
-    # '';
   };
 
   systemd.services.caddy.serviceConfig.EnvironmentFile = [config.age.secrets.plex-cloudflare-token.path];
