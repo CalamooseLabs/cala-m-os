@@ -79,9 +79,9 @@ in {
       respond "Hello, world!"
     '';
 
-    globalConfig = ''
-      acme_dns cloudflare {$CLOUDFLARE_API_TOKEN}
-    '';
+    # globalConfig = ''
+    #   acme_dns cloudflare {$CLOUDFLARE_API_TOKEN}
+    # '';
   };
 
   systemd.services.caddy.serviceConfig.EnvironmentFile = [config.age.secrets.plex-cloudflare-token.path];
