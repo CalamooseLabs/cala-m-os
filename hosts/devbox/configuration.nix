@@ -73,7 +73,7 @@ in {
 
     virtualHosts."plex-test.calamos.family".extraConfig = ''
       tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        dns cloudflare {$CLOUDFLARE_API_TOKEN}
       }
 
       respond "Hello, world!"
