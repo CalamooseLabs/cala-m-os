@@ -34,7 +34,7 @@ in {
     enable = true;
     openFirewall = true;
     settings = {
-      update.mechanism = "internal";
+      update.mechanism = "external";
       server = {
         urlbase = "localhost";
         port = 7878;
@@ -47,7 +47,7 @@ in {
     enable = true;
     openFirewall = true;
     settings = {
-      update.mechanism = "internal";
+      update.mechanism = "external";
       server = {
         urlbase = "localhost";
         port = 8989;
@@ -60,7 +60,7 @@ in {
     enable = true;
     openFirewall = true;
     settings = {
-      update.mechanism = "internal";
+      update.mechanism = "external";
       server = {
         urlbase = "localhost";
         port = 9696;
