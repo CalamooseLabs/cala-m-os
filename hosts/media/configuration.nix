@@ -19,8 +19,9 @@ in {
 
     # Caddy SSL
     (import ../../services/caddy/default.nix {
-      domain = "plex.calamooselabs.com";
-      target = "localhost:32400";
+      reverse_proxies = {
+        "plex.calamooselabs.com" = "localhost:32400";
+      };
     })
   ];
 

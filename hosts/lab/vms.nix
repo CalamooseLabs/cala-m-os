@@ -28,6 +28,12 @@
         }
       ];
     };
+    "torrent" = {
+      devices = [];
+      storage = 100;
+      macID = "03";
+      shares = [];
+    };
   };
 
   bridgeInterface = "eno2";
