@@ -1,9 +1,19 @@
 {config, ...}: let
+  domain = "calamooselabs.com";
+
   vms = {
     "media" = {
       devices = ["arc-a310"];
       storage = 100; # GBs
       macID = "01";
+      shares = [
+        {
+          proto = "virtiofs";
+          tag = "acmecerts";
+          source = "/var/lib/acme/${domain}";
+          mountPoint = "/mnt/acme";
+        }
+      ];
     };
   };
 
@@ -18,13 +28,11 @@ in {
       device_path = ./devices;
       vms = vms;
       networkInterface = bridgeInterface;
-      # Add additonal shares into vms to pass through
     })
 
     (import ../../services/certs/default.nix {
-      domain = "calamooselabs.com";
+      domain = domain;
       tokenPath = tokenPath;
-      # Make this work with multiple
     })
   ];
 }

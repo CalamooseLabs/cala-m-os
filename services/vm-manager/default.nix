@@ -55,20 +55,16 @@
             }
           ];
 
-          shares = [
-            {
-              proto = "virtiofs";
-              tag = "agenix";
-              source = "/run/agenix";
-              mountPoint = "/run/agenix";
-            }
-            {
-              proto = "virtiofs";
-              tag = "acmecerts";
-              source = "/var/lib/acme/calamooselabs.com";
-              mountPoint = "/mnt/acme";
-            }
-          ];
+          shares =
+            [
+              {
+                proto = "virtiofs";
+                tag = "agenix";
+                source = "/run/agenix";
+                mountPoint = "/run/agenix";
+              }
+            ]
+            ++ vm.shares;
         };
 
         networking.interfaces.eth0.useDHCP = true;
