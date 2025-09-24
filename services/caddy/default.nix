@@ -22,5 +22,9 @@
   # Open HTTPS port
   networking.firewall.allowedTCPPorts = [80 443];
 
-  systemd.services.caddy.serviceConfig.AmbientCapabilities = "CAP_NET_BIND_SERVICE";
+  systemd.services.caddy.serviceConfig = {
+    Restart = "on-failure";
+    RestartSec = "5s";
+    AmbientCapabilities = "CAP_NET_BIND_SERVICE";
+  };
 }
