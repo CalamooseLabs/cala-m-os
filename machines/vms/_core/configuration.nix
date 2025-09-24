@@ -15,7 +15,7 @@
     balloon = lib.mkDefault true;
 
     # Hypervisor settings
-    hypervisor = "qemu";
+    hypervisor = lib.mkDefault "qemu";
     graphics.enable = lib.mkDefault false;
 
     # Share memory for better performance
