@@ -16,7 +16,7 @@
 
     # Hypervisor settings
     hypervisor = "qemu";
-    graphics.enable = false;
+    graphics.enable = lib.mkDefault false;
 
     # Share memory for better performance
     shares = [

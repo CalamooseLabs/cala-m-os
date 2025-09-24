@@ -15,6 +15,19 @@
         }
       ];
     };
+    "htpc" = {
+      devices = ["rtx-5090" "icron-ranger"];
+      storage = 100; # GBs
+      macID = "02";
+      shares = [
+        {
+          proto = "virtiofs";
+          tag = "games";
+          source = "/vm-data";
+          mountPoint = "/mnt/games";
+        }
+      ];
+    };
   };
 
   bridgeInterface = "eno2";

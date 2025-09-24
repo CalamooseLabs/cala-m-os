@@ -37,4 +37,6 @@ in {
     pulse.enable = true;
     wireplumber.enable = true;
   };
+
+  microvm.graphics.enable = true;
 }

@@ -12,7 +12,10 @@
     "bat"
     "btop"
     "git"
+    "nh"
     "openssh"
+    "rebuild-config"
+    "restore-config"
     "yubikey"
   ];
 in {

@@ -1,4 +1,6 @@
 {...}: {
+  imports = [../../../../machines/modules/intel-gpu/configuration.nix];
+
   microvm.devices = [
     {
       bus = "pci";
