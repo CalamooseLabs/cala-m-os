@@ -24,7 +24,6 @@ in {
     (import ../../services/certs/default.nix {
       domain = "calamooselabs.com";
       tokenPath = tokenPath;
-      target = "localhost:32400";
       # Make this work with multiple
     })
   ];
