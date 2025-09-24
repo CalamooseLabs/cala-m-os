@@ -1,8 +1,8 @@
 {...}: {
   age = {
     secrets = {
-      "plex-cloudflare-token" = {
-        file = ./. + "/plex-cloudflare-token.age";
+      "cloudflare-token" = {
+        file = ./. + "/cloudflare-token.age";
       };
     };
     identityPaths = [

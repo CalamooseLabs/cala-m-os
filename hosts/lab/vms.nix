@@ -9,7 +9,7 @@
 
   bridgeInterface = "eno2";
 
-  tokenPath = config.age.secrets.plex-cloudflare-token.path;
+  tokenPath = config.age.secrets.cloudflare-token.path;
 in {
   imports = [
     ./secrets
