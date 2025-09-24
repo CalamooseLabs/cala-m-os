@@ -38,5 +38,5 @@ in {
     wireplumber.enable = true;
   };
 
-  microvm.graphics.enable = true;
+  # microvm.graphics.enable = true;
 }
