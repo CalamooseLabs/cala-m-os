@@ -54,6 +54,20 @@
               size = vm.storage * 1024;
             }
           ];
+
+          shares = [
+            {
+              tag = "ro-store";
+              source = "/nix/store";
+              mountPoint = "/nix/.ro-store";
+            }
+            {
+              proto = "virtiofs";
+              tag = "agenix";
+              source = "/run/agenix";
+              mountPoint = "/mnt/agenix";
+            }
+          ];
         };
 
         networking.interfaces.eth0.useDHCP = true;
