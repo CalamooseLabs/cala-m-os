@@ -10,8 +10,6 @@
   machine_uuid = "Medium";
 in {
   imports = [
-    ./secrets
-
     # Common Core Config
     (import ../_core/default.nix {
       users_list = import_users;
