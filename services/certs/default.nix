@@ -36,7 +36,9 @@
       environmentFile = tokenPath;
       dnsPropagationCheck = true;
       extraDomainNames = ["*.${domain}"];
-      group = "acme";
+      group = "caddy";
     };
   };
+
+  services.caddy.enable = true;
 }

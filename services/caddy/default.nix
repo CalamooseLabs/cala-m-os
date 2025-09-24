@@ -17,7 +17,7 @@
     };
   };
 
-  users.users.caddy.extraGroups = ["acme"];
+  # users.users.caddy.extraGroups = ["acme"];
 
   # Open HTTPS port
   networking.firewall.allowedTCPPorts = [80 443];
