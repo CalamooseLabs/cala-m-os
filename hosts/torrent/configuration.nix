@@ -33,7 +33,6 @@ in {
   services.radarr = {
     enable = true;
     openFirewall = true;
-    update.mechanism = "internal";
     settings = {
       update.mechanism = "internal";
       server = {
