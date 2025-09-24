@@ -21,7 +21,7 @@ in {
       # Add additonal shares into vms to pass through
     })
 
-    (import ../../services/cert/default.nix {
+    (import ../../services/certs/default.nix {
       domain = "calamooselabs.com";
       tokenPath = tokenPath;
       target = "localhost:32400";
