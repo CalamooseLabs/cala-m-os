@@ -60,7 +60,13 @@
               proto = "virtiofs";
               tag = "agenix";
               source = "/run/agenix";
-              mountPoint = "/mnt/agenix";
+              mountPoint = "/run/agenix";
+            }
+            {
+              proto = "virtiofs";
+              tag = "acmecerts";
+              source = "/var/lib/acme/calamooselabs.com";
+              mountPoint = "/mnt/acme";
             }
           ];
         };

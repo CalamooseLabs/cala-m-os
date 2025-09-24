@@ -3,13 +3,11 @@
 #       Plex Media Server        #
 #                                #
 ##################################
-{config, ...}: let
+{...}: let
   import_users = ["server"];
 
   machine_type = "VM";
   machine_uuid = "Medium";
-
-  tokenPath = config.age.secrets.plex-cloudflare-token.path;
 in {
   imports = [
     ./secrets
@@ -22,9 +20,8 @@ in {
     })
 
     # Caddy SSL
-    (import ../../services/certs/default.nix {
+    (import ../../services/caddy/default.nix {
       domain = "plex.calamooselabs.com";
-      tokenPath = tokenPath;
       target = "localhost:32400";
     })
   ];
