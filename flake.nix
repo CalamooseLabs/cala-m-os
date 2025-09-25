@@ -61,11 +61,30 @@
     ...
   } @ inputs: let
     system = "x86_64-linux";
+
     pkgs = import nixpkgs {
       system = system;
+      # overlays = import ./overlays;
     };
     cala-m-os = import ./settings.nix;
     initialInstallMode = builtins.getEnv "INITIAL_INSTALL_MODE" == "1";
+
+    # Define the yubikey-manager overlay module
+    yubikey-overlay-module = {
+      nixpkgs.overlays = [
+        (final: prev: {
+          yubikey-manager = prev.yubikey-manager.overrideAttrs (oldAttrs: rec {
+            version = "5.7.1";
+            src = prev.fetchFromGitHub {
+              owner = "Yubico";
+              repo = "yubikey-manager";
+              rev = version;
+              hash = "sha256-WC74UldrUYpedSk0oSZJn+AdvJYsS/WWJaLYZ3OMqLo=";
+            };
+          });
+        })
+      ];
+    };
   in {
     nixosConfigurations = {
       devbox = nixpkgs.lib.nixosSystem {
@@ -76,6 +95,7 @@
         };
         modules = [
           ./hosts/devbox/configuration.nix
+          yubikey-overlay-module
         ];
       };
       ephemeral = nixpkgs.lib.nixosSystem {
