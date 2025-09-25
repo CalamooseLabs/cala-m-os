@@ -11,6 +11,9 @@
     # Theming
     stylix.url = "github:danth/stylix";
 
+    # Impermanence
+    impermanence.url = "github:nix-community/impermanence";
+
     # MicroVM
     microvm = {
       url = "github:microvm-nix/microvm.nix";
@@ -73,6 +76,16 @@
         };
         modules = [
           ./hosts/devbox/configuration.nix
+        ];
+      };
+      ephemeral = nixpkgs.lib.nixosSystem {
+        specialArgs = {
+          inherit inputs;
+          inherit cala-m-os;
+          inherit initialInstallMode;
+        };
+        modules = [
+          ./hosts/ephemeral/configuration.nix
         ];
       };
       lab = nixpkgs.lib.nixosSystem {

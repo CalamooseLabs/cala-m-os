@@ -38,7 +38,5 @@ in {
     wireplumber.enable = true;
   };
 
-  microvm.qemu.machine = "q35";
-
   hardware.graphics.enable = true;
 }
