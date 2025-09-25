@@ -19,8 +19,7 @@ in {
   ];
   programs.rofi = {
     enable = true;
-    package =
-      pkgs.rofi-wayland.overrideAttrs ({...}: {mesonFlags = ["-Dxcb=disabled"];});
+    # package = pkgs.rofi-wayland.overrideAttrs ({...}: {mesonFlags = ["-Dxcb=disabled"];});
     extraConfig = {
       modi = "drun,calc:rcalculator";
       icon-theme = "Papirus-Dark";

@@ -1,5 +1,5 @@
 {pkgs, ...}: {
   home.packages = [
-    pkgs.masterpdfeditor4
+    pkgs.masterpdfeditor
   ];
 }
