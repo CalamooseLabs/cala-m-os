@@ -64,61 +64,30 @@
 
     pkgs = import nixpkgs {
       system = system;
-      # overlays = import ./overlays;
+      overlays = import ./overlays;
     };
     cala-m-os = import ./settings.nix;
     initialInstallMode = builtins.getEnv "INITIAL_INSTALL_MODE" == "1";
 
-    # Define the yubikey-manager overlay module
-    yubikey-overlay-module = {
-      nixpkgs.overlays = [
-        (final: prev: {
-          yubikey-manager = prev.yubikey-manager.overrideAttrs (oldAttrs: rec {
-            version = "5.7.1";
-            src = prev.fetchFromGitHub {
-              owner = "Yubico";
-              repo = "yubikey-manager";
-              rev = version;
-              hash = "sha256-WC74UldrUYpedSk0oSZJn+AdvJYsS/WWJaLYZ3OMqLo=";
-            };
-          });
-        })
-      ];
-    };
+    mkSystem = hostname: extraSpecialArgs:
+      nixpkgs.lib.nixosSystem {
+        inherit system;
+        specialArgs =
+          {
+            inherit inputs cala-m-os initialInstallMode;
+          }
+          // extraSpecialArgs;
+        modules = [
+          ./hosts/${hostname}/configuration.nix
+          {nixpkgs.overlays = import ./overlays;}
+        ];
+      };
   in {
     nixosConfigurations = {
-      devbox = nixpkgs.lib.nixosSystem {
-        specialArgs = {
-          inherit inputs;
-          inherit cala-m-os;
-          inherit initialInstallMode;
-        };
-        modules = [
-          ./hosts/devbox/configuration.nix
-          yubikey-overlay-module
-        ];
-      };
-      ephemeral = nixpkgs.lib.nixosSystem {
-        specialArgs = {
-          inherit inputs;
-          inherit cala-m-os;
-          inherit initialInstallMode;
-        };
-        modules = [
-          ./hosts/ephemeral/configuration.nix
-        ];
-      };
-      lab = nixpkgs.lib.nixosSystem {
-        specialArgs = {
-          inherit inputs;
-          inherit cala-m-os;
-          inherit self;
-          inherit initialInstallMode;
-        };
-        modules = [
-          ./hosts/lab/configuration.nix
-        ];
-      };
+      devbox = mkSystem "devbox" {};
+      ephemeral = mkSystem "ephemeral" {};
+      lab = mkSystem "lab" {inherit self;};
+
       iso = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs;};
         system = "x86_64-linux";
