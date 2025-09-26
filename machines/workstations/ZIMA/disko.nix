@@ -49,5 +49,6 @@
     };
   };
 
+  fileSystems."/persistent".neededForBoot = true;
   virtualisation.vmVariantWithDisko.virtualisation.fileSystems."/persistent".neededForBoot = true;
 }
