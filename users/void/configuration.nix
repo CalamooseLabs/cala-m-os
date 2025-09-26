@@ -18,4 +18,6 @@
       ];
     }
   ];
+
+  services.pcscd.enable = true;
 }

@@ -17,7 +17,6 @@
     "openssh"
     "rebuild-config"
     "restore-config"
-    "yubikey"
   ];
 in {
   imports = [

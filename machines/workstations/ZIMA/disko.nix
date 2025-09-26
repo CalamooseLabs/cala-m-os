@@ -20,11 +20,19 @@
               };
             };
             persistent = {
-              size = "30G";
+              size = "20G";
               content = {
                 type = "filesystem";
                 format = "ext4";
                 mountpoint = "/persistent";
+              };
+            };
+            root = {
+              size = "10G";
+              content = {
+                type = "filesystem";
+                format = "ext4";
+                mountpoint = "/nix";
               };
             };
             swap = {
@@ -50,5 +58,5 @@
   };
 
   fileSystems."/persistent".neededForBoot = true;
-  virtualisation.vmVariantWithDisko.virtualisation.fileSystems."/persistent".neededForBoot = true;
+  fileSystems."/nix".neededForBoot = true;
 }
