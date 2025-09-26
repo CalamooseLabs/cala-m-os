@@ -20,7 +20,7 @@
               };
             };
             persistent = {
-              size = "10G";
+              size = "40G";
               content = {
                 type = "filesystem";
                 format = "ext4";

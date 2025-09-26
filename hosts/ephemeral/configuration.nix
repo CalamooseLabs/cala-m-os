@@ -29,6 +29,7 @@ in {
       "/var/log"
       "/etc/nixos"
       "/var/lib/systemd/coredump"
+      "/var/lib/nixos"
       "/run/agenix"
     ];
     files = [
