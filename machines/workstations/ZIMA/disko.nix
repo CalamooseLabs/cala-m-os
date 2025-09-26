@@ -20,7 +20,7 @@
               };
             };
             persistent = {
-              size = "40G";
+              size = "30G";
               content = {
                 type = "filesystem";
                 format = "ext4";
@@ -42,7 +42,7 @@
         fsType = "tmpfs";
         mountOptions = [
           "defaults"
-          "size=2G"
+          "size=10G"
           "mode=755"
         ];
       };
