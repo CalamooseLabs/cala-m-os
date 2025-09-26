@@ -28,7 +28,7 @@
       echo "Step Two: Installing Minimal NixOS Configuration"
       mkdir /mnt/etc/nixos -p
       git clone https://github.com/calamooselabs/cala-m-os.git /mnt/etc/nixos
-      INITIAL_INSTALL_MODE=1 nixos-install --flake /mnt/etc/nixos#$HOST_FLAKE --impure
+      INITIAL_INSTALL_MODE=1 nixos-install --flake /mnt/etc/nixos#$HOST_FLAKE --impure --no-root-password
       echo "Step Two Completed!"
       echo
       echo "Step Three: Building Cala-M-OS"

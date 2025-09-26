@@ -20,4 +20,6 @@
   ];
 
   services.pcscd.enable = true;
+
+  programs.fuse.userAllowOther = true;
 }

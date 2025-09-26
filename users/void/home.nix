@@ -1,5 +1,5 @@
 {...}: {
-  cala-m-os,
+  # cala-m-os,
   inputs,
   pkgs,
   ...
@@ -13,12 +13,12 @@
     pkgs.pciutils
   ];
 
-  home.persistence."/persistent/home/${cala-m-os.globalDefaultUser}" = {
-    directories = [
-      ".gnupg"
-      ".ssh"
-      ".local/share/keyrings"
-    ];
-    allowOther = true;
-  };
+  # home.persistence."/persistent/home/${cala-m-os.globalDefaultUser}" = {
+  #   directories = [
+  #     ".gnupg"
+  #     ".ssh"
+  #     ".local/share/keyrings"
+  #   ];
+  #   allowOther = true;
+  # };
 }
