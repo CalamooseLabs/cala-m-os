@@ -19,7 +19,7 @@
                 ];
               };
             };
-            persist = {
+            persistent = {
               size = "10G";
               content = {
                 type = "filesystem";
@@ -48,4 +48,6 @@
       };
     };
   };
+
+  virtualisation.vmVariantWithDisko.virtualisation.fileSystems."/persistent".neededForBoot = true;
 }
