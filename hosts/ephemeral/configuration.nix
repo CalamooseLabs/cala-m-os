@@ -30,7 +30,6 @@ in {
       "/etc/nixos"
       "/var/lib/systemd/coredump"
       "/var/lib/nixos"
-      "/run/agenix"
     ];
     files = [
       "/etc/machine-id"

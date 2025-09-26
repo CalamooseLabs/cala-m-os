@@ -22,4 +22,8 @@
   services.pcscd.enable = true;
 
   programs.fuse.userAllowOther = true;
+
+  systemd.services.agenix.after = [
+    "basic.target" # Ensures “basic boot-up” runs prior to agenix, including impermanence's bind-mounts
+  ];
 }
