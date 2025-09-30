@@ -7,7 +7,7 @@
   import_users = ["void"];
 
   machine_type = "Workstation";
-  machine_uuid = "ZIMA";
+  machine_uuid = "AMD-X86_64";
 in {
   imports = [
     inputs.impermanence.nixosModules.impermanence

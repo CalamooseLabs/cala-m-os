@@ -2,48 +2,61 @@
   disko.devices = {
     disk = {
       main = {
-        device = "/dev/nvme0n1";
         type = "disk";
+        device = "/dev/nvme0n1";
         content = {
           type = "gpt";
           partitions = {
             ESP = {
-              size = "500M";
+              size = "512M";
               type = "EF00";
               content = {
                 type = "filesystem";
                 format = "vfat";
                 mountpoint = "/boot";
-                mountOptions = ["umask=0077"];
+                mountOptions = [
+                  "defaults"
+                ];
               };
             };
-            root = {
-              end = "-70G";
+            persistent = {
+              size = "50G";
               content = {
                 type = "filesystem";
                 format = "ext4";
-                mountpoint = "/";
+                mountpoint = "/persistent";
               };
             };
-            encryptedSwap = {
-              size = "10M";
+            root = {
+              size = "50G";
               content = {
-                type = "swap";
-                randomEncryption = true;
-                priority = 100;
+                type = "filesystem";
+                format = "ext4";
+                mountpoint = "/nix";
               };
             };
-            plainSwap = {
-              size = "100%";
+            swap = {
+              size = "10G";
               content = {
                 type = "swap";
-                discardPolicy = "both";
-                resumeDevice = true;
               };
             };
           };
         };
       };
     };
+    nodev = {
+      "/" = {
+        fsType = "tmpfs";
+        mountOptions = [
+          "defaults"
+          "size=100G"
+          "mode=755"
+        ];
+      };
+    };
   };
+
+  fileSystems."/persistent".neededForBoot = true;
+  fileSystems."/nix".neededForBoot = true;
 }
