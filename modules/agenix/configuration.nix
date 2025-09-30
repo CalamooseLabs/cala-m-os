@@ -17,6 +17,8 @@
   age.identityPaths = [
     "${builtins.toString ./.}/identities/yubi.key"
     "${builtins.toString ./.}/identities/dev.key"
+    "${builtins.toString ./.}/identities/server.key"
+    "${builtins.toString ./.}/identities/backup.key"
   ];
 
   age.ageBin = "PATH=$PATH:${lib.makeBinPath [pkgs.age-plugin-yubikey]} ${pkgs.age}/bin/age";
