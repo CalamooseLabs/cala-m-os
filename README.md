@@ -56,7 +56,7 @@
 
 4. Rename to `id_ed25519_sk` & `id_ed25519_sk.pub`
 
-5. Add to ssh-agent: `ssh-add ~/.ssh/id_ed25519_sk_rk_it@calamos.family`
+5. Add to ssh-agent: `ssh-add ~/.ssh/id_ed25519_sk`
 
 ## License
 

@@ -7,7 +7,7 @@
   import_users = ["void"];
 
   machine_type = "Workstation";
-  machine_uuid = "AMD-X86_64";
+  machine_uuid = "A520M-ITX";
 in {
   imports = [
     inputs.impermanence.nixosModules.impermanence

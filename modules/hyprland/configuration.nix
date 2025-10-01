@@ -8,12 +8,6 @@
   xdg.portal = {
     enable = true;
     wlr.enable = true;
-    # extraPortals = [
-    #   pkgs.xdg-desktop-portal-hyprland
-    # ];
-    # configPackages = [
-    #   pkgs.xdg-desktop-portal-hyprland
-    # ];
 
     config.common.default = "*";
     config.hyprland.default = ["hyprland"];
