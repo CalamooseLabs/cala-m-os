@@ -42,4 +42,17 @@ in {
       "/etc/machine-id"
     ];
   };
+
+  boot.initrd.kernelModules = [
+    "vfio_pci"
+    "vfio"
+    "vfio_iommu_type1"
+
+    "nouveau"
+  ];
+
+  boot.kernelParams = [
+    "amd_iommu=on"
+    "vfio-pci.ids=10de:2705,10de:22bb"
+  ];
 }
