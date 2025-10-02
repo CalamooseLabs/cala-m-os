@@ -4,7 +4,15 @@
   ...
 }: {
   users.users."${username}" = {
-    extraGroups = ["wheel" "networkmanager" "scanner" "lp" "disk" "plugdev"];
+    extraGroups = [
+      "wheel"
+      "networkmanager"
+      "scanner"
+      "lp"
+      "disk"
+      "plugdev"
+      "dialout"
+    ];
   };
 
   security.sudo.extraRules = [
