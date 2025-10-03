@@ -1,4 +1,26 @@
 {...}: {
+  boot.kernelParams = [
+    # AMD IOMMU settings
+    "amd_iommu=on"
+    "iommu=pt" # Passthrough mode
+
+    # VFIO binding
+    "vfio-pci.ids=10de:2705,10de:22bb"
+
+    # If IOMMU groups are problematic, add:
+    "pcie_acs_override=downstream,multifunction"
+
+    # Disable framebuffer
+    "video=vesafb:off,efifb:off"
+  ];
+
+  # Ensure IOMMU support in kernel
+  boot.kernelModules = [
+    "vfio"
+    "vfio_iommu_type1"
+    "vfio_pci"
+  ];
+
   # boot.blacklistedKernelModules = [
   #   "nvidia"
   #   "nvidia_modeset"
