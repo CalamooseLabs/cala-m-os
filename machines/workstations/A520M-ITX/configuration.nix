@@ -13,13 +13,13 @@
     ./disko.nix
 
     # Modules
-    ../../modules/nvidia-gpu/configuration.nix
+    # ../../modules/nvidia-gpu/configuration.nix
   ];
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  hardware.graphics = {
-    enable = true;
-    enable32Bit = true;
-  };
+  # hardware.graphics = {
+  #   enable = true;
+  #   enable32Bit = true;
+  # };
 }

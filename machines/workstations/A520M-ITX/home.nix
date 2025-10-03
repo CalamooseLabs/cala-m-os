@@ -1,5 +1,5 @@
 {...}: {
-  imports = [
-    ../../modules/nvidia-gpu/home.nix
-  ];
+  # imports = [
+  # ../../modules/nvidia-gpu/home.nix
+  # ];
 }
