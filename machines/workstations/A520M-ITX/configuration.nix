@@ -14,4 +14,15 @@
   ];
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
+
+  boot.kernelParams = [
+    "amd_iommu=on"
+    "iommu=pt"
+  ];
+
+  boot.kernelModules = [
+    "vfio"
+    "vfio_iommu_type1"
+    "vfio_pci"
+  ];
 }
