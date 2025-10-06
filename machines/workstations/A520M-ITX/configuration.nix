@@ -15,11 +15,11 @@
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  # boot.kernelModules = [
-  #   "vfio"
-  #   "vfio_iommu_type1"
-  #   "vfio_pci"
-  # ];
+  boot.kernelModules = [
+    "vfio"
+    "vfio_iommu_type1"
+    "vfio_pci"
+  ];
 
   # Only blacklist NVIDIA GPU drivers
   boot.blacklistedKernelModules = [
@@ -52,6 +52,6 @@
   boot.kernelParams = [
     "amd_iommu=on"
     "iommu=pt"
-    # "vfio-pci.ids=10de:2705,10de:22bb" # Only GPU IDs
+    "vfio-pci.ids=10de:2705,10de:22bb" # Only GPU IDs
   ];
 }
