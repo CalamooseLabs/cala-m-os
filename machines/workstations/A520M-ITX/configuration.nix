@@ -40,7 +40,7 @@
   # Use the latest driver package that ships with the current kernel.
   # If you prefer a specific version, replace `linuxPackages_latest` with
   # the appropriate set, e.g. `linuxPackages_6_6`.
-  hardware.nvidia.package = pkgs.linuxPackages_latest.nvidiaDrivers;
+  # hardware.nvidia.package = pkgs.linuxPackages_latest.nvidiaDrivers;
 
   # Enable the kernel‑mode‑setting (KMS) component – recommended
   hardware.nvidia.modesetting.enable = true;
