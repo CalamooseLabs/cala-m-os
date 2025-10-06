@@ -28,6 +28,7 @@
     "nvidia_uvm"
     "nvidia_drm"
     "nouveau"
+    "snd_hda_intel"
   ];
   # -----------------------------------------------------------------
   # Core graphics stack – required for both nouveau and nvidia
