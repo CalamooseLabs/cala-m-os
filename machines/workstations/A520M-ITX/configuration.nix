@@ -33,7 +33,7 @@
   # -----------------------------------------------------------------
   # Core graphics stack – required for both nouveau and nvidia
   # -----------------------------------------------------------------
-  hardware.opengl.enable = true;
+  hardware.graphics.enable = true;
 
   # -----------------------------------------------------------------
   # Pull the proprietary NVIDIA driver that matches the running kernel
