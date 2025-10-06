@@ -15,11 +15,7 @@
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  # Mellanox works out of the box on host
   boot.kernelModules = [
-    # "mlx5_core"  # or mlx4_core depending on your card
-    # "mlx5_ib"    # If using InfiniBand
-    # VFIO for GPU passthrough
     "vfio"
     "vfio_iommu_type1"
     "vfio_pci"
@@ -33,7 +29,24 @@
     "nvidia_drm"
     "nouveau"
   ];
+  # -----------------------------------------------------------------
+  # Core graphics stack – required for both nouveau and nvidia
+  # -----------------------------------------------------------------
+  hardware.opengl.enable = true;
 
+  # -----------------------------------------------------------------
+  # Pull the proprietary NVIDIA driver that matches the running kernel
+  # -----------------------------------------------------------------
+  # Use the latest driver package that ships with the current kernel.
+  # If you prefer a specific version, replace `linuxPackages_latest` with
+  # the appropriate set, e.g. `linuxPackages_6_6`.
+  hardware.nvidia.package = pkgs.linuxPackages_latest.nvidiaDrivers;
+
+  # Enable the kernel‑mode‑setting (KMS) component – recommended
+  hardware.nvidia.modesetting.enable = true;
+
+  # Tell the X server (and Wayland) to use the NVIDIA driver instead of nouveau
+  services.xserver.videoDrivers = ["nvidia"];
   # Bind only GPU to VFIO
   boot.kernelParams = [
     "amd_iommu=on"
