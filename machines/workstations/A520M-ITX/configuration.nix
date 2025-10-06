@@ -44,7 +44,7 @@
 
   # Enable the kernel‑mode‑setting (KMS) component – recommended
   hardware.nvidia.modesetting.enable = true;
-
+  hardware.nvidia.open = false;
   # Tell the X server (and Wayland) to use the NVIDIA driver instead of nouveau
   services.xserver.videoDrivers = ["nvidia"];
   # Bind only GPU to VFIO
