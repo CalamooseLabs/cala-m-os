@@ -20,12 +20,12 @@
       storage = 100; # GBs
       macID = "02";
       shares = [
-        {
-          proto = "virtiofs";
-          tag = "games";
-          source = "/vm-data";
-          mountPoint = "/mnt/games";
-        }
+        #   {
+        #     proto = "virtiofs";
+        #     tag = "games";
+        #     source = "/vm-data";
+        #     mountPoint = "/mnt/games";
+        #   }
       ];
     };
     "torrent" = {
