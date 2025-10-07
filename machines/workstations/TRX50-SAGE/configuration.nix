@@ -26,6 +26,5 @@
   boot.kernelParams = [
     "amd_iommu=on"
     "iommu=pt"
-    # "vfio-pci.ids=10de:2705,10de:22bb" # Only GPU IDs
   ];
 }
