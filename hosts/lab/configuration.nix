@@ -30,4 +30,21 @@ in {
     ++ lib.optional (!initialInstallMode) ./vms.nix;
 
   networking.hostName = "lab";
+
+  boot.kernelModules = [
+    "vfio"
+    "vfio_iommu_type1"
+    "vfio_pci"
+  ];
+
+  # Only blacklist NVIDIA GPU drivers
+  boot.blacklistedKernelModules = [
+    "nvidia"
+    "nvidia_modeset"
+    "nvidia_uvm"
+    "nvidia_drm"
+    "nvidiafb"
+    "nouveau"
+    "snd_hda_intel"
+  ];
 }
