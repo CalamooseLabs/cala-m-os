@@ -16,7 +16,7 @@
       ];
     };
     "htpc" = {
-      devices = ["rtx-5090" "icron-ranger"];
+      devices = ["rtx-5090"];
       storage = 100; # GBs
       macID = "02";
       shares = [
@@ -33,6 +33,19 @@
       storage = 100;
       macID = "03";
       shares = [];
+    };
+    "travel" = {
+      devices = ["rtx-4060"];
+      storage = 100; # GBs
+      macID = "04";
+      shares = [
+        {
+          proto = "virtiofs";
+          tag = "games";
+          source = "/vm-data";
+          mountPoint = "/mnt/games";
+        }
+      ];
     };
   };
 
