@@ -38,5 +38,5 @@ in {
   #   wireplumber.enable = true;
   # };
 
-  # hardware.graphics.enable = true;
+  hardware.graphics.enable = true;
 }
