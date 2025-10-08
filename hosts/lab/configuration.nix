@@ -47,4 +47,18 @@ in {
     "nouveau"
     "snd_hda_intel"
   ];
+
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
+  };
+
+  environment.variables = {
+    ROC_ENABLE_PRE_VEGA = "1";
+  };
+
+  # Bind GPUs so they don't get confused
+  boot.extraModprobeConfig = ''
+    options vfio-pci ids=10de:2b85,10de:22e8,10de:2882,10de:22be
+  '';
 }
