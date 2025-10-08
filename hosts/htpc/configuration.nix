@@ -21,14 +21,14 @@ in {
   networking.hostName = "htpc";
 
   # Mount usb drives
-  services.devmon.enable = true;
-  services.gvfs.enable = true;
-  services.udisks2.enable = true;
+  # services.devmon.enable = true;
+  # services.gvfs.enable = true;
+  # services.udisks2.enable = true;
 
   # Audio Control
-  services.pulseaudio.enable = false;
+  # services.pulseaudio.enable = false;
 
-  security.rtkit.enable = true;
+  # security.rtkit.enable = true;
 
   services.pipewire = {
     enable = true;

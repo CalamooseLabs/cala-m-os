@@ -16,7 +16,6 @@
     "git"
     "hyprland"
     "steam"
-    "vivaldi"
     "yubikey"
   ];
 in {

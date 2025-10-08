@@ -12,13 +12,4 @@
     pkgs.usbutils
     pkgs.pciutils
   ];
-
-  # home.persistence."/persistent/home/${cala-m-os.globalDefaultUser}" = {
-  #   directories = [
-  #     ".gnupg"
-  #     ".ssh"
-  #     ".local/share/keyrings"
-  #   ];
-  #   allowOther = true;
-  # };
 }
