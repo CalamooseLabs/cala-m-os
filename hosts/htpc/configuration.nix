@@ -39,4 +39,6 @@ in {
   };
 
   hardware.graphics.enable = true;
+
+  microvm.graphics.enable = true;
 }
