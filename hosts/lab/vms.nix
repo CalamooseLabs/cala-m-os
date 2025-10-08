@@ -16,7 +16,7 @@
       ];
     };
     "htpc" = {
-      devices = ["rtx-5090"];
+      devices = ["rtx-5090" "icron-ranger"];
       storage = 100; # GBs
       macID = "02";
       shares = [
