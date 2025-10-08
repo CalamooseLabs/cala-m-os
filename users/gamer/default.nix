@@ -14,6 +14,7 @@
     "fonts"
     "ghostty"
     "git"
+    "openssh"
     "hyprland"
     "steam"
     "yubikey"
