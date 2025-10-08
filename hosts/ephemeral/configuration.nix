@@ -3,29 +3,22 @@
 #      Ephemeral Lab Machine     #
 #                                #
 ##################################
-{
-  inputs,
-  lib,
-  initialInstallMode,
-  ...
-}: let
+{inputs, ...}: let
   import_users = ["void"];
 
   machine_type = "Workstation";
   machine_uuid = "A520M-ITX";
 in {
-  imports =
-    [
-      inputs.impermanence.nixosModules.impermanence
+  imports = [
+    inputs.impermanence.nixosModules.impermanence
 
-      # Common Core Config
-      (import ../_core/default.nix {
-        users_list = import_users;
-        machine_type = machine_type;
-        machine_uuid = machine_uuid;
-      })
-    ]
-    ++ lib.optional (!initialInstallMode) ./vms.nix;
+    # Common Core Config
+    (import ../_core/default.nix {
+      users_list = import_users;
+      machine_type = machine_type;
+      machine_uuid = machine_uuid;
+    })
+  ];
 
   networking.hostName = "ephemeral";
 
@@ -42,17 +35,4 @@ in {
       "/etc/machine-id"
     ];
   };
-
-  # boot.initrd.kernelModules = [
-  #   "vfio_pci"
-  #   "vfio"
-  #   "vfio_iommu_type1"
-
-  #   "nouveau"
-  # ];
-
-  # boot.kernelParams = [
-  #   "amd_iommu=on"
-  #   "vfio-pci.ids=10de:2705,10de:22bb"
-  # ];
 }
