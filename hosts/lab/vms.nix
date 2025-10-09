@@ -35,7 +35,7 @@
       shares = [];
     };
     "travel" = {
-      devices = ["rtx-5090" "icron-ranger"];
+      devices = ["rtx-5090"];
       storage = 100; # GBs
       macID = "04";
       shares = [];
