@@ -16,7 +16,7 @@
       ];
     };
     "htpc" = {
-      devices = ["rtx-5090" "icron-ranger"];
+      devices = ["rtx-4060"];
       storage = 100; # GBs
       macID = "02";
       shares = [
@@ -35,7 +35,7 @@
       shares = [];
     };
     "travel" = {
-      devices = ["rtx-4060"];
+      devices = ["rtx-5090" "icron-ranger"];
       storage = 100; # GBs
       macID = "04";
       shares = [];
