@@ -48,9 +48,16 @@ in {
   #   };
   #   desktopManager.plasma6.enable = true;
   # };
+  hardware.nvidia = {
+    modesetting.enable = true;
+    powerManagement.enable = false;
+    open = false; # Use proprietary driver for RTX 5090
+    nvidiaSettings = true;
+  };
 
   services.xserver.enable = true; # optional
   # services.displayManager.sddm.wayland.enable = true;
+  services.xserver.videoDrivers = ["nvidia"];
 
   # As of 25.11
   services.displayManager.gdm.enable = true;
