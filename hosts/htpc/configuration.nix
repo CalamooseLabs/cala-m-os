@@ -48,10 +48,9 @@ in {
   };
 
   # Disable screen locking via systemd-logind
-  services.logind.lidSwitch = "ignore";
-  services.logind.extraConfig = ''
-    IdleAction=ignore
-  '';
+  services.logind.settings = {
+    IdleAction = "ignore";
+  };
 
   services.xserver.enable = true;
   services.displayManager.sddm.wayland.enable = true;
