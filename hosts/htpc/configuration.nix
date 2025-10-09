@@ -48,7 +48,7 @@ in {
   };
 
   # Disable screen locking via systemd-logind
-  services.logind.settings = {
+  services.logind.settings.Login = {
     IdleAction = "ignore";
   };
 
