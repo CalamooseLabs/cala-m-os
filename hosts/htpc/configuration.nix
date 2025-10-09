@@ -49,7 +49,7 @@ in {
   #   desktopManager.plasma6.enable = true;
   # };
 
-  # services.xserver.enable = true; # optional
+  services.xserver.enable = true; # optional
   # services.displayManager.sddm.wayland.enable = true;
 
   # As of 25.11
@@ -61,5 +61,7 @@ in {
   services.gnome.core-apps.enable = false;
   services.gnome.core-developer-tools.enable = false;
   services.gnome.games.enable = false;
+
+  microvm.graphics.enable = true;
   # environment.gnome.excludePackages = with pkgs; [gnome-tour gnome-user-docs];
 }
