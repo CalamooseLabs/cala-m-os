@@ -6,11 +6,7 @@
     }
     {
       bus = "usb";
-      path = "vendorid=0x1a40,productid=0x0101"; # Icron Ranger Cypress
+      path = "vendorid=0x13d3,productid=0x3602"; # Icron Ranger IMC
     }
-    # {
-    #   bus = "usb";
-    #   path = "vendorid=0x046d,productid=0xc52b"; # Logitech
-    # }
   ];
 }
