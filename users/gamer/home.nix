@@ -12,4 +12,18 @@
     pkgs.usbutils
     pkgs.pciutils
   ];
+
+  programs.plasma = {
+    enable = true;
+
+    configFile = {
+      kscreenlockerrc = {
+        Daemon = {
+          Autolock = false;
+          LockOnResume = false;
+          Timeout = 0;
+        };
+      };
+    };
+  };
 }
