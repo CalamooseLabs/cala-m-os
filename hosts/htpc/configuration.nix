@@ -3,7 +3,7 @@
 #        Home Theater PC         #
 #                                #
 ##################################
-{...}: let
+{lib, ...}: let
   import_users = ["gamer"];
 
   machine_type = "VM";
@@ -68,4 +68,12 @@ in {
   services.gnome.core-apps.enable = false;
   services.gnome.core-developer-tools.enable = false;
   services.gnome.games.enable = false;
+
+  # In your htpc microvm config, add:
+  boot.kernelModules = ["nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm"];
+
+  # Ensure early KMS
+  boot.kernelParams = ["nvidia-drm.modeset=1"];
+
+  boot.plymouth.enable = lib.mkForce true;
 }

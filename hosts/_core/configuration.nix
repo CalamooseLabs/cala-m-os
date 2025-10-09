@@ -54,7 +54,7 @@ in {
     };
 
     plymouth = {
-      enable = true;
+      enable = lib.mkDefault true;
     };
 
     kernelParams = [

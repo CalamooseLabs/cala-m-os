@@ -1,7 +1,7 @@
-{username, ...}: {...}: {
+{username, ...}: {pkgs, ...}: {
   users.users."${username}" = {
-    extraGroups = ["wheel" "networkmanager" "disk"];
-
+    extraGroups = ["wheel" "networkmanager" "disk" "video" "audio"];
+    shell = pkgs.bash;
     openssh.authorizedKeys.keyFiles = [
       ./public_keys/id_ed25519_sk.pub
     ];

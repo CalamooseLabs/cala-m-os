@@ -3,7 +3,7 @@
 #   Torrent Management Server    #
 #                                #
 ##################################
-{...}: let
+{lib, ...}: let
   import_users = ["voider"];
 
   machine_type = "VM";
@@ -51,10 +51,12 @@ in {
   hardware.nvidia = {
     modesetting.enable = true;
     powerManagement.enable = false;
-    open = false; # Use proprietary driver for RTX 5090
+    open = true; # Use proprietary driver for RTX 5090
     nvidiaSettings = true;
   };
 
   # Ensure shell is available (GDM requirement)
   programs.bash.enable = true;
+
+  boot.plymouth.enable = lib.mkForce true;
 }
