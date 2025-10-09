@@ -4,5 +4,9 @@
       bus = "usb";
       path = "vendorid=0x04b4,productid=0x6506"; # Icron Ranger
     }
+    {
+      bus = "usb";
+      path = "vendorid=0x046d,productid=0xc52b"; # Logitech
+    }
   ];
 }
