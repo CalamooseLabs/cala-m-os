@@ -31,4 +31,21 @@ in {
     enable = true;
     openFirewall = true;
   };
+
+  boot.supportedFilesystems = ["nfs"];
+
+  fileSystems."/media/movies" = {
+    device = "nas.calamos.family:/mnt/Media Library/Movies";
+    fsType = "nfs";
+  };
+
+  fileSystems."/media/tv-shows" = {
+    device = "nas.calamos.family:/mnt/Media Library/TV-Shows";
+    fsType = "nfs";
+  };
+
+  fileSystems."/mnt/backup" = {
+    device = "nas.calamos.family:/mnt/Media Library/Backups/Plex";
+    fsType = "nfs";
+  };
 }

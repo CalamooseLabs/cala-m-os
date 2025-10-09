@@ -43,6 +43,11 @@ in {
     };
   };
 
+  fileSystems."/mnt/backup/radarr" = {
+    device = "nas.calamos.family:/mnt/Media Library/Backups/Radarr";
+    fsType = "nfs";
+  };
+
   services.sonarr = {
     enable = true;
     openFirewall = true;
@@ -56,6 +61,11 @@ in {
     };
   };
 
+  fileSystems."/mnt/backup/sonarr" = {
+    device = "nas.calamos.family:/mnt/Media Library/Backups/Sonarr";
+    fsType = "nfs";
+  };
+
   services.prowlarr = {
     enable = true;
     openFirewall = true;
@@ -67,6 +77,11 @@ in {
         bindaddress = "*";
       };
     };
+  };
+
+  fileSystems."/mnt/backup/Prowlarr" = {
+    device = "nas.calamos.family:/mnt/Media Library/Backups/Prowlarr";
+    fsType = "nfs";
   };
 
   services.qbittorrent = {

@@ -20,12 +20,8 @@ in {
 
   networking.hostName = "testhtpc";
 
-  # DO NOT enable microvm.graphics - that's for virtual GPU only!
-  # microvm.graphics.enable = false;  # Not needed, false by default
-
   # X Server is required
   services.xserver.enable = true;
-  services.xserver.videoDrivers = ["nvidia"];
 
   # Display Manager & Desktop
   services.displayManager.gdm.enable = true;
@@ -44,20 +40,5 @@ in {
     wireplumber.enable = true;
   };
 
-  # Graphics support
-  hardware.graphics.enable = true;
-
-  # NVIDIA driver configuration
-  hardware.nvidia = {
-    modesetting.enable = true;
-    powerManagement.enable = false;
-    open = true; # Use proprietary driver for RTX 5090
-    nvidiaSettings = true;
-  };
-
-  # Ensure shell is available (GDM requirement)
-  programs.bash.enable = true;
-
-  boot.plymouth.enable = lib.mkForce true;
   services.greetd.enable = lib.mkForce false;
 }
