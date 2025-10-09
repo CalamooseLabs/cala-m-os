@@ -38,19 +38,28 @@ in {
 
   hardware.graphics.enable = true;
 
-  services = {
-    displayManager = {
-      sddm.enable = true; # This is the key
-      autoLogin = {
-        enable = true;
-        user = "hub";
-      };
-    };
-    desktopManager.plasma6.enable = true;
-  };
+  # services = {
+  #   displayManager = {
+  #     sddm.enable = true; # This is the key
+  #     autoLogin = {
+  #       enable = true;
+  #       user = "hub";
+  #     };
+  #   };
+  #   desktopManager.plasma6.enable = true;
+  # };
 
-  services.xserver.enable = true; # optional
-  services.displayManager.sddm.wayland.enable = true;
+  # services.xserver.enable = true; # optional
+  # services.displayManager.sddm.wayland.enable = true;
 
-  powerManagement.cpuFreqGovernor = "performance";
+  # As of 25.11
+  services.displayManager.gdm.enable = true;
+  services.desktopManager.gnome.enable = true;
+
+  # To disable installing GNOME's suite of applications
+  # and only be left with GNOME shell.
+  services.gnome.core-apps.enable = false;
+  services.gnome.core-developer-tools.enable = false;
+  services.gnome.games.enable = false;
+  environment.gnome.excludePackages = with pkgs; [gnome-tour gnome-user-docs];
 }
