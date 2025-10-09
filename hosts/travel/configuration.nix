@@ -59,4 +59,5 @@ in {
   programs.bash.enable = true;
 
   boot.plymouth.enable = lib.mkForce true;
+  services.greetd.enable = lib.mkForce false;
 }

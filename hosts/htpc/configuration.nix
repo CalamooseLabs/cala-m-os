@@ -76,4 +76,5 @@ in {
   boot.kernelParams = ["nvidia-drm.modeset=1"];
 
   boot.plymouth.enable = lib.mkForce true;
+  services.greetd.enable = lib.mkForce false;
 }

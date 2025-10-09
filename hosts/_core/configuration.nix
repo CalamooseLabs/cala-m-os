@@ -101,7 +101,7 @@ in {
 
   # Login Service
   services.greetd = {
-    enable = true;
+    enable = lib.mkDefault true;
     settings = {
       default_session = {
         user = lib.mkForce "${cala-m-os.globalDefaultUser}";
