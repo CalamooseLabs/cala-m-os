@@ -26,8 +26,6 @@ in {
   # services.udisks2.enable = true;
 
   # Audio Control
-  services.pulseaudio.enable = false;
-
   security.rtkit.enable = true;
 
   services.pipewire = {
@@ -39,4 +37,20 @@ in {
   };
 
   hardware.graphics.enable = true;
+
+  services = {
+    displayManager = {
+      sddm.enable = true; # This is the key
+      autoLogin = {
+        enable = true;
+        user = "hub";
+      };
+    };
+    desktopManager.plasma6.enable = true;
+  };
+
+  services.xserver.enable = true; # optional
+  services.displayManager.sddm.wayland.enable = true;
+
+  powerManagement.cpuFreqGovernor = "performance";
 }

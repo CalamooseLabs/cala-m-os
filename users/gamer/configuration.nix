@@ -31,10 +31,17 @@
 
   programs.steam.gamescopeSession.enable = true;
 
-  services.xserver.enable = true; # optional
-  services.displayManager.sddm.enable = true;
-  services.displayManager.sddm.wayland.enable = true;
-  services.desktopManager.plasma6.enable = true;
+  # Auto-launch Steam Big Picture Mode
+  systemd.user.services.steam-big-picture = {
+    description = "Steam Big Picture Mode";
+    wantedBy = ["graphical-session.target"];
+    after = ["graphical-session.target"];
+    serviceConfig = {
+      ExecStart = "${pkgs.steam}/bin/steam -bigpicture";
+      Restart = "on-failure";
+      RestartSec = 5;
+    };
+  };
 
   environment.systemPackages = with pkgs; [
     protonup-qt # GUI for installing custom Proton versions like GE_Proton
