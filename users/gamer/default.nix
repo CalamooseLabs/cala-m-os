@@ -15,7 +15,7 @@
     "ghostty"
     "git"
     "openssh"
-    "hyprland"
+    # "hyprland"
     "steam"
     "yubikey"
   ];

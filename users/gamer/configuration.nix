@@ -31,6 +31,11 @@
 
   programs.steam.gamescopeSession.enable = true;
 
+  services.xserver.enable = true; # optional
+  services.displayManager.sddm.enable = true;
+  services.displayManager.sddm.wayland.enable = true;
+  services.desktopManager.plasma6.enable = true;
+
   environment.systemPackages = with pkgs; [
     protonup-qt # GUI for installing custom Proton versions like GE_Proton
     protonup
