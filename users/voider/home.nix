@@ -1,13 +1,4 @@
-{...}: {
-  # cala-m-os,
-  inputs,
-  pkgs,
-  ...
-}: {
-  imports = [
-    inputs.impermanence.homeManagerModules.impermanence
-  ];
-
+{...}: {pkgs, ...}: {
   home.packages = [
     pkgs.usbutils
     pkgs.pciutils

@@ -3,7 +3,7 @@
 #   Torrent Management Server    #
 #                                #
 ##################################
-{lib, ...}: let
+{...}: let
   import_users = ["voider"];
 
   machine_type = "VM";
@@ -21,14 +21,7 @@ in {
   networking.hostName = "testhtpc";
 
   # X Server is required
-  services.xserver.enable = true;
-
-  # Display Manager & Desktop
-  # services.displayManager.gdm.enable = true;
-  # services.desktopManager.gnome.enable = true;
-  # services.gnome.core-apps.enable = false;
-  # services.gnome.core-developer-tools.enable = false;
-  # services.gnome.games.enable = false;
+  # services.xserver.enable = true;
 
   # Audio (PipeWire will handle the GPU's audio output)
   security.rtkit.enable = true;
