@@ -16,5 +16,9 @@
       bus = "usb";
       path = "vendorid=0x2dc8,productid=0x310b"; # 8 Bitdo Pro 3
     }
+    {
+      bus = "usb";
+      path = "vendorid=0x057e,productid=0x2009"; # 8 Bitdo Pro 3
+    }
   ];
 }
