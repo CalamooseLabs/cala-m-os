@@ -35,24 +35,24 @@ in {
     wireplumber.enable = true;
   };
 
-  # Plasma 6
-  services = {
-    displayManager = {
-      sddm.enable = true;
-      autoLogin = {
-        enable = true;
-        user = cala-m-os.globalDefaultUser;
-      };
-    };
-    desktopManager.plasma6.enable = true;
-  };
+  # # Plasma 6
+  # services = {
+  #   displayManager = {
+  #     sddm.enable = true;
+  #     autoLogin = {
+  #       enable = true;
+  #       user = cala-m-os.globalDefaultUser;
+  #     };
+  #   };
+  #   desktopManager.plasma6.enable = true;
+  # };
 
-  # Disable screen locking via systemd-logind
-  services.logind.settings.Login = {
-    IdleAction = "ignore";
-  };
+  # # Disable screen locking via systemd-logind
+  # # services.logind.settings.Login = {
+  # #   IdleAction = "ignore";
+  # # };
 
   services.xserver.enable = true;
-  services.displayManager.sddm.wayland.enable = true;
-  services.greetd.enable = lib.mkForce false;
+  # services.displayManager.sddm.wayland.enable = true;
+  # services.greetd.enable = lib.mkForce false;
 }
