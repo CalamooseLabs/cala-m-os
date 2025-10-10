@@ -24,11 +24,11 @@ in {
   services.xserver.enable = true;
 
   # Display Manager & Desktop
-  services.displayManager.gdm.enable = true;
-  services.desktopManager.gnome.enable = true;
-  services.gnome.core-apps.enable = false;
-  services.gnome.core-developer-tools.enable = false;
-  services.gnome.games.enable = false;
+  # services.displayManager.gdm.enable = true;
+  # services.desktopManager.gnome.enable = true;
+  # services.gnome.core-apps.enable = false;
+  # services.gnome.core-developer-tools.enable = false;
+  # services.gnome.games.enable = false;
 
   # Audio (PipeWire will handle the GPU's audio output)
   security.rtkit.enable = true;
@@ -40,5 +40,5 @@ in {
     wireplumber.enable = true;
   };
 
-  services.greetd.enable = lib.mkForce false;
+  # services.greetd.enable = lib.mkForce false;
 }

@@ -17,6 +17,7 @@
     "openssh"
     "rebuild-config"
     "restore-config"
+    "hyprland"
   ];
 in {
   imports = [

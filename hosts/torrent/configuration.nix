@@ -43,7 +43,7 @@ in {
     };
   };
 
-  fileSystems."/mnt/backup/radarr" = {
+  fileSystems."/mnt/backups/radarr" = {
     device = "nas.calamos.family:/mnt/Media Library/Backups/Radarr";
     fsType = "nfs";
   };
@@ -61,7 +61,7 @@ in {
     };
   };
 
-  fileSystems."/mnt/backup/sonarr" = {
+  fileSystems."/mnt/backups/sonarr" = {
     device = "nas.calamos.family:/mnt/Media Library/Backups/Sonarr";
     fsType = "nfs";
   };
@@ -79,7 +79,7 @@ in {
     };
   };
 
-  fileSystems."/mnt/backup/Prowlarr" = {
+  fileSystems."/mnt/backups/prowlarr" = {
     device = "nas.calamos.family:/mnt/Media Library/Backups/Prowlarr";
     fsType = "nfs";
   };
