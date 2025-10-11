@@ -1,6 +1,6 @@
 {username, ...}: {pkgs, ...}: {
   users.users."${username}" = {
-    extraGroups = ["wheel" "networkmanager" "disk" "plugdev" "video" "audio"];
+    extraGroups = ["wheel" "networkmanager" "disk" "plugdev" "video" "audio" "kvm" "gamemode"];
     openssh.authorizedKeys.keyFiles = [
       ./public_keys/id_ed25519_sk.pub
       ./public_keys/backup_id_ed25519_sk.pub
