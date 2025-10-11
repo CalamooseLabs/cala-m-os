@@ -1,6 +1,6 @@
 {username, ...}: {...}: {
   users.users."${username}" = {
-    extraGroups = ["wheel" "networkmanager" "disk" "plugdev" "libvirtd"];
+    extraGroups = ["wheel" "networkmanager" "disk" "plugdev" "libvirtd" "kvm"];
 
     openssh.authorizedKeys.keyFiles = [
       ./public_keys/id_ed25519_sk.pub
