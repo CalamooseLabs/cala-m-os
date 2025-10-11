@@ -3,11 +3,7 @@
 #        Home Theater PC         #
 #                                #
 ##################################
-{
-  lib,
-  cala-m-os,
-  ...
-}: let
+{...}: let
   import_users = ["gamer"];
 
   machine_type = "VM";
