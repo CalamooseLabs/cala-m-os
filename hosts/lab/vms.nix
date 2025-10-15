@@ -16,7 +16,7 @@
       ];
     };
     "htpc" = {
-      devices = ["rtx-5090" "anker-hub"];
+      devices = ["rtx-5090" "bus-01-02"];
       storage = 100; # GBs
       macID = "02";
       shares = [
