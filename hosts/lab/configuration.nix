@@ -57,8 +57,8 @@ in {
     ROC_ENABLE_PRE_VEGA = "1";
   };
 
-  # Bind GPUs so they don't get confused
-  boot.extraModprobeConfig = ''
-    options vfio-pci ids=10de:2b85,10de:22e8,10de:2882,10de:22be
-  '';
+  # Bind GPUs & USB Controllers so they don't get confused
+  # boot.extraModprobeConfig = ''
+  #   options vfio-pci ids=10de:2b85,10de:22e8,10de:2882,10de:22be
+  # '';
 }

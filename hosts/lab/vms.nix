@@ -34,7 +34,7 @@
       macID = "03";
       shares = [];
     };
-    "travel" = {
+    "studio" = {
       devices = ["rtx-4060" "bus-05-06"];
       storage = 100; # GBs
       macID = "04";

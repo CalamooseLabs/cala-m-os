@@ -4,7 +4,7 @@
 #                                #
 ##################################
 {...}: let
-  import_users = ["voider"];
+  import_users = ["mixer"];
 
   machine_type = "VM";
   machine_uuid = "Small";
@@ -18,10 +18,7 @@ in {
     })
   ];
 
-  networking.hostName = "testhtpc";
-
-  # X Server is required
-  # services.xserver.enable = true;
+  networking.hostName = "studio";
 
   # Audio (PipeWire will handle the GPU's audio output)
   security.rtkit.enable = true;
@@ -32,6 +29,4 @@ in {
     pulse.enable = true;
     wireplumber.enable = true;
   };
-
-  # services.greetd.enable = lib.mkForce false;
 }
