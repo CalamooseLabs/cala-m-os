@@ -37,12 +37,7 @@ in {
   microvm.hypervisor = "qemu";
 
   microvm.qemu = {
-    machine = "pc-q35-4.2,accel=kvm";
-    extraArgs = [
-      "-global"
-      "ICH9-LPC.disable_s3=1"
-      "-global"
-      "ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off"
-    ];
+    machine = "pc-i440fx-4.2,accel=kvm";
+    extraArgs = [];
   };
 }
