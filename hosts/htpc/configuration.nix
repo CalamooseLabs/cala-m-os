@@ -32,4 +32,6 @@ in {
   };
 
   services.xserver.enable = false;
+
+  microvm.qemu.machine = "q35";
 }

@@ -29,4 +29,6 @@ in {
     pulse.enable = true;
     wireplumber.enable = true;
   };
+
+  microvm.qemu.machine = "q35";
 }

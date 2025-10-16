@@ -3,14 +3,6 @@
     # Group 29 - all devices by PCI address
     {
       bus = "pci";
-      path = "0000:00:07.0";
-    } # Host Bridge (by address, not ID)
-    {
-      bus = "pci";
-      path = "0000:00:07.1";
-    } # PCI Bridge (by address, not ID)
-    {
-      bus = "pci";
       path = "0000:06:00.0";
     } # Non-Essential (bound via ID)
     {
