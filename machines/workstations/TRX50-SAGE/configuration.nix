@@ -8,7 +8,11 @@
 #      Intel Arc A310 Omni       #
 #                                #
 ##################################
-{pkgs, ...}: {
+{
+  pkgs,
+  config,
+  ...
+}: {
   imports = [
     # Hardware Config
     ./hardware-configuration.nix
@@ -30,4 +34,8 @@
     "vfio-pci.ids=10de:2b85,10de:22e8,10de:2882,10de:22be,1022:14c9"
     # "vfio-pci.ids=10de:2b85,10de:22e8,10de:2882,10de:22be,1022:14c9,1022:14ca,1022:14cc"
   ];
+
+  # Add to your NixOS configuration
+  boot.extraModulePackages = with config.boot.kernelPackages; [vendor-reset];
+  boot.kernelModules = ["vendor-reset"];
 }
