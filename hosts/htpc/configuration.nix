@@ -33,11 +33,5 @@ in {
 
   services.xserver.enable = false;
 
-  # microvm.hypervisor = lib.mkForce "cloud-hypervisor";
-  microvm.hypervisor = "qemu";
-
-  microvm.qemu = {
-    machine = "pc-i440fx-4.2,accel=kvm";
-    extraArgs = [];
-  };
+  microvm.hypervisor = "cloud-hypervisor";
 }
