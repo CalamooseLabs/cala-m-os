@@ -1,8 +1,21 @@
 {...}: {
   microvm.devices = [
+    # Group 6 - all devices by PCI address
     {
       bus = "pci";
-      path = "0000:c1:00.4"; # Bus 01 & 02 for USB Controller (under 10gig nic)
-    }
+      path = "0000:c0:07.0";
+    } # Host Bridge (by address, not ID)
+    {
+      bus = "pci";
+      path = "0000:c0:07.1";
+    } # PCI Bridge (by address, not ID)
+    {
+      bus = "pci";
+      path = "0000:c1:00.0";
+    } # Non-Essential (bound via ID)
+    {
+      bus = "pci";
+      path = "0000:c1:00.4";
+    } # USB Controller (bound via ID) (Under 10gig nic)
   ];
 }
