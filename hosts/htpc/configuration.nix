@@ -33,13 +33,16 @@ in {
 
   services.xserver.enable = false;
 
-  microvm.hypervisor = lib.mkForce "cloud-hypervisor";
-  # microvm.qemu = {
-  #   machine = "pc-q35-3.1";
-  #   extraArgs = [
-  #     "-global"
-  #     "ICH9-LPC.disable_s3=1"
-  #     "accel=kvm"
-  #   ];
-  # };
+  # microvm.hypervisor = lib.mkForce "cloud-hypervisor";
+  microvm.hypervisor = "qemu";
+
+  microvm.qemu = {
+    machine = "pc-q35-4.2,accel=kvm";
+    extraArgs = [
+      "-global"
+      "ICH9-LPC.disable_s3=1"
+      "-global"
+      "ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off"
+    ];
+  };
 }
