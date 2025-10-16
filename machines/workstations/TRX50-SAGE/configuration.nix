@@ -27,7 +27,7 @@
     "amd_iommu=on"
     "iommu=pt"
     "pcie_acs_override=downstream,multifunction"
-    "vfio-pci.ids=10de:2b85,10de:22e8,10de:2882,10de:22be,1022:14c9"
-    #"vfio-pci.ids=10de:2b85,10de:22e8,10de:2882,10de:22be,1022:14c9,1022:14ca,1022:14cc"
+    # "vfio-pci.ids=10de:2b85,10de:22e8,10de:2882,10de:22be,1022:14c9"
+    "vfio-pci.ids=10de:2b85,10de:22e8,10de:2882,10de:22be,1022:14c9,1022:14ca,1022:14cc"
   ];
 }

@@ -30,5 +30,11 @@ in {
     wireplumber.enable = true;
   };
 
-  microvm.qemu.machine = "q35";
+  microvm.qemu = {
+    machine = "q35";
+    extraArgs = [
+      "-global"
+      "ICH9-LPC.disable_s3=1"
+    ];
+  };
 }
