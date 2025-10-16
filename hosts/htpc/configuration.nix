@@ -3,7 +3,7 @@
 #        Home Theater PC         #
 #                                #
 ##################################
-{...}: let
+{lib, ...}: let
   import_users = ["gamer"];
 
   machine_type = "VM";
@@ -33,11 +33,13 @@ in {
 
   services.xserver.enable = false;
 
-  microvm.qemu = {
-    machine = "q35";
-    extraArgs = [
-      "-global"
-      "ICH9-LPC.disable_s3=1"
-    ];
-  };
+  microvm.hypervisor = lib.mkForce "cloud-hypervisor";
+  # microvm.qemu = {
+  #   machine = "pc-q35-3.1";
+  #   extraArgs = [
+  #     "-global"
+  #     "ICH9-LPC.disable_s3=1"
+  #     "accel=kvm"
+  #   ];
+  # };
 }
