@@ -35,7 +35,7 @@
       shares = [];
     };
     "studio" = {
-      devices = ["rtx-4060" "bus-05-06"];
+      devices = ["rtx-4060"];
       storage = 100; # GBs
       macID = "04";
       shares = [];
