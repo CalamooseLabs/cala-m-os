@@ -18,7 +18,7 @@
     "obs-studio"
     "openssh"
     # "rofi"
-    # "stylix"
+    "stylix"
     "spotify"
     "streamdeck"
     "vivaldi"
