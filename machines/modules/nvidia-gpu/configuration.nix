@@ -8,7 +8,7 @@
     nvidia = {
       modesetting.enable = true;
       powerManagement.enable = false;
-      open = false;
+      open = true;
       nvidiaSettings = true;
     };
   };
@@ -21,9 +21,9 @@
 
   services.xserver.videoDrivers = ["nvidia"];
 
-  boot.kernelModules = ["nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm"];
+  boot.kernelModules = ["nvidia" "nvidia_modeset" "nvidia_drm"];
 
-  boot.kernelParams = ["nvidia-drm.modeset=1"];
+  # boot.kernelParams = ["nvidia-drm.modeset=1"];
 
   boot.initrd.kernelModules = ["nvidia" "nvidia_modeset" "nvidia_drm"];
 }
