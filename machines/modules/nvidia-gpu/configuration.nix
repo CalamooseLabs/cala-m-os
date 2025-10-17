@@ -1,8 +1,4 @@
-{
-  # pkgs,
-  config,
-  ...
-}: {
+{config, ...}: {
   hardware = {
     graphics = {
       enable = true;
@@ -34,10 +30,6 @@
     LD_LIBRARY_PATH = "/run/opengl-driver/lib:/run/opengl-driver-32/lib";
     WLR_NO_HARDWARE_CURSORS = "1";
     NIXOS_OZONE_WL = "1";
-  };
-
-  hardware = {
-    opengl.enable = true;
   };
 
   services.xserver.videoDrivers = ["nvidia"];

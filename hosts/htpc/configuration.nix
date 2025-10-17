@@ -31,7 +31,7 @@ in {
     wireplumber.enable = true;
   };
 
-  services.xserver.enable = true;
+  services.xserver.enable = false;
 
   microvm.qemu.machine = "q35";
 }
