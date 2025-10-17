@@ -1,5 +1,5 @@
 {
-  pkgs,
+  # pkgs,
   config,
   ...
 }: {
@@ -8,17 +8,17 @@
       enable = true;
       enable32Bit = true;
 
-      extraPackages = with pkgs; [
-        mesa
-        vulkan-loader
-        vulkan-validation-layers
-        vulkan-extension-layer
-      ];
-      extraPackages32 = with pkgs.pkgsi686Linux; [
-        mesa
-        vulkan-loader
-        vulkan-validation-layers
-      ];
+      # extraPackages = with pkgs; [
+      #   mesa
+      #   vulkan-loader
+      #   vulkan-validation-layers
+      #   vulkan-extension-layer
+      # ];
+      # extraPackages32 = with pkgs.pkgsi686Linux; [
+      #   mesa
+      #   vulkan-loader
+      #   vulkan-validation-layers
+      # ];
     };
 
     nvidia = {
