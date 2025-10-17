@@ -94,7 +94,7 @@ in {
     };
 
     settings = {
-      auto-optimise-store = true;
+      auto-optimise-store = lib.mkDefault false;
       experimental-features = ["nix-command" "flakes"];
     };
   };

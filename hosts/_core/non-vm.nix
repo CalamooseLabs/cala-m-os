@@ -5,6 +5,8 @@
     hostPlatform = {system = "x86_64-linux";};
   };
 
+  nix.settings.auto-optimise-store = true;
+
   # Allow any wheel user to change configuration
   system.activationScripts.setPermissions = ''
     # Set ownership to root:wheel
