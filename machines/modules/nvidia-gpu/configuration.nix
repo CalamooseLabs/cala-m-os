@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  config,
+  ...
+}: {
   hardware = {
     graphics = {
       enable = true;
@@ -6,10 +10,11 @@
     };
 
     nvidia = {
-      modesetting.enable = true;
+      modesetting.enable = false;
       powerManagement.enable = false;
-      open = true;
+      open = false;
       nvidiaSettings = true;
+      package = config.boot.kernelPackages.nvidiaPackages.beta;
     };
   };
 
@@ -22,8 +27,6 @@
   services.xserver.videoDrivers = ["nvidia"];
 
   boot.kernelModules = ["nvidia" "nvidia_modeset" "nvidia_drm"];
-
-  # boot.kernelParams = ["nvidia-drm.modeset=1"];
 
   boot.initrd.kernelModules = ["nvidia" "nvidia_modeset" "nvidia_drm"];
 }
