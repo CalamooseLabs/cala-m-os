@@ -96,6 +96,7 @@ in {
     settings = {
       auto-optimise-store = lib.mkDefault false;
       experimental-features = ["nix-command" "flakes"];
+      trusted-users = ["root" "@wheel" cala-m-os.globalDefaultUser];
     };
   };
 
