@@ -40,11 +40,6 @@
                 link = networkInterface;
               };
             }
-            {
-              type = "tap";
-              id = "vm-${name}-i";
-              mac = "02:00:00:00:01:${vm.macID}";
-            }
           ];
 
           volumes = [
