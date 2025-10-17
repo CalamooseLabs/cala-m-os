@@ -30,8 +30,6 @@
     };
   };
 
-  xdg.portal.enable = true;
-
   environment.sessionVariables = {
     LD_LIBRARY_PATH = "/run/opengl-driver/lib:/run/opengl-driver-32/lib";
     WLR_NO_HARDWARE_CURSORS = "1";
