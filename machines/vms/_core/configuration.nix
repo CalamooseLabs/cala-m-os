@@ -29,6 +29,9 @@
         tag = "ro-store";
         proto = "virtiofs";
       }
+    ];
+
+    volumes = [
       {
         image = "nix-store-overlay.img";
         mountPoint = config.microvm.writableStoreOverlay;
