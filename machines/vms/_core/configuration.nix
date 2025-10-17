@@ -4,6 +4,7 @@
 }: {
   lib,
   inputs,
+  config,
   ...
 }: {
   imports = [inputs.microvm.nixosModules.microvm];
@@ -18,6 +19,8 @@
     hypervisor = lib.mkDefault "qemu";
     graphics.enable = lib.mkDefault false;
 
+    writableStoreOverlay = lib.mkDefault "/nix/.rw-store";
+
     # Share memory for better performance
     shares = [
       {
@@ -26,10 +29,17 @@
         tag = "ro-store";
         proto = "virtiofs";
       }
+      {
+        image = "nix-store-overlay.img";
+        mountPoint = config.microvm.writableStoreOverlay;
+        size = 2048; # Size in MB
+      }
     ];
   };
 
   networking = {
     useDHCP = false;
   };
+
+  nix.settings.use-daemon = false;
 }
