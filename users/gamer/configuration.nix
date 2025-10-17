@@ -1,6 +1,7 @@
 {username, ...}: {
   pkgs,
   cala-m-os,
+  lib,
   ...
 }: {
   users.users."${username}" = {
@@ -52,7 +53,7 @@
     STEAM_EXTRA_COMPAT_TOOLS_PATHS = "/home/${username}/.steam/root/compatibilitytools.d";
   };
 
-  services.greetd.settings.default_session.command = "gamescope -- steam -bigpicture";
+  services.greetd.settings.default_session.command = lib.mkForce "gamescope -- steam -bigpicture";
 
   system.activationScripts.setGamesPermissions = ''
     # Set ownership to root:wheel
