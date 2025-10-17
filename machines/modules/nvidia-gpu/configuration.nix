@@ -3,33 +3,15 @@
     graphics = {
       enable = true;
       enable32Bit = true;
-
-      # extraPackages = with pkgs; [
-      #   mesa
-      #   vulkan-loader
-      #   vulkan-validation-layers
-      #   vulkan-extension-layer
-      # ];
-      # extraPackages32 = with pkgs.pkgsi686Linux; [
-      #   mesa
-      #   vulkan-loader
-      #   vulkan-validation-layers
-      # ];
     };
 
     nvidia = {
       modesetting.enable = true;
       powerManagement.enable = false;
-      open = false;
+      open = true;
       nvidiaSettings = true;
       package = config.boot.kernelPackages.nvidiaPackages.beta;
     };
-  };
-
-  environment.sessionVariables = {
-    LD_LIBRARY_PATH = "/run/opengl-driver/lib:/run/opengl-driver-32/lib";
-    WLR_NO_HARDWARE_CURSORS = "1";
-    NIXOS_OZONE_WL = "1";
   };
 
   services.xserver.videoDrivers = ["nvidia"];
