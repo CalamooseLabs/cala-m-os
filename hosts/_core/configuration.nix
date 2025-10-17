@@ -83,7 +83,7 @@ in {
   # Enable Network Manager
   networking.networkmanager.enable = true;
 
-  # Set Chicago timezone
+  # Set Colorado timezone
   time.timeZone = "America/Denver";
   # Garbage Collection & Flakes
   nix = {
