@@ -10,7 +10,7 @@
     };
 
     nvidia = {
-      modesetting.enable = false;
+      modesetting.enable = true;
       powerManagement.enable = false;
       open = false;
       nvidiaSettings = true;
