@@ -16,7 +16,7 @@
       ];
     };
     "htpc" = {
-      devices = ["rtx-5090" "bus-01-02"];
+      devices = ["rtx-5090" "pci-usb-controller-1"];
       storage = 100; # GBs
       macID = "02";
       shares = [
@@ -35,7 +35,7 @@
       shares = [];
     };
     "studio" = {
-      devices = ["rtx-4060"];
+      devices = ["rtx-4060" "pci-usb-controller-2"];
       storage = 100; # GBs
       macID = "04";
       shares = [];
