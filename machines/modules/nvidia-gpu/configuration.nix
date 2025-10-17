@@ -8,7 +8,7 @@
     nvidia = {
       modesetting.enable = true;
       powerManagement.enable = false;
-      open = true;
+      open = false;
       nvidiaSettings = true;
     };
   };
@@ -18,4 +18,6 @@
   boot.kernelModules = ["nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm"];
 
   boot.kernelParams = ["nvidia-drm.modeset=1"];
+
+  boot.initrd.kernelModules = ["nvidia" "nvidia_modeset" "nvidia_drm"];
 }
