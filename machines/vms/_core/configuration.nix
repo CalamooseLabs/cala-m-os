@@ -43,6 +43,4 @@
   networking = {
     useDHCP = false;
   };
-
-  nix.settings.use-daemon = false;
 }
