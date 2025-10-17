@@ -35,18 +35,6 @@
 
   programs.steam.gamescopeSession.enable = true;
 
-  # Auto-launch Steam Big Picture Mode
-  systemd.user.services.steam-big-picture = {
-    description = "Steam Big Picture Mode";
-    wantedBy = ["graphical-session.target"];
-    after = ["graphical-session.target"];
-    serviceConfig = {
-      ExecStart = "${pkgs.steam}/bin/steam -bigpicture";
-      Restart = "on-failure";
-      RestartSec = 5;
-    };
-  };
-
   systemd.services.agenix.after = [
     "basic.target"
   ];
@@ -59,4 +47,6 @@
   environment.sessionVariables = {
     STEAM_EXTRA_COMPAT_TOOLS_PATHS = "/home/${username}/.steam/root/compatibilitytools.d";
   };
+
+  services.greetd.settings.default_session.command = "gamescope -- steam -bigpicture";
 }

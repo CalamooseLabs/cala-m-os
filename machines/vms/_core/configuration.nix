@@ -4,7 +4,6 @@
 }: {
   lib,
   inputs,
-  config,
   ...
 }: {
   imports = [inputs.microvm.nixosModules.microvm];
@@ -30,14 +29,6 @@
         proto = "virtiofs";
       }
     ];
-
-    # volumes = [
-    #   {
-    #     image = "nix-store-overlay.img";
-    #     mountPoint = config.microvm.writableStoreOverlay;
-    #     size = 2048; # Size in MB
-    #   }
-    # ];
   };
 
   networking = {
