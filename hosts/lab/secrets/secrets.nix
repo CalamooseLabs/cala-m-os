@@ -5,9 +5,9 @@ let
   yubibackup = "age1yubikey1qgychggwa5q2mc52u2w6xqznl7z9luadghvxhhtjl2k8pgjudh4z5cny283";
 in {
   "cloudflare-token.age".publicKeys = [
+    yubiserver
     yubinano
     yubidev
-    yubiserver
     yubibackup
   ];
 }
