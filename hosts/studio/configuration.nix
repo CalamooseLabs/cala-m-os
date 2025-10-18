@@ -30,5 +30,5 @@ in {
     wireplumber.enable = true;
   };
 
-  microvm.qemu.machine = "q35";
+  # microvm.qemu.machine = "q35";
 }
