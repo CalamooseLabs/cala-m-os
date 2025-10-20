@@ -54,6 +54,7 @@
 
   environment.sessionVariables = {
     STEAM_EXTRA_COMPAT_TOOLS_PATHS = "/home/${username}/.steam/root/compatibilitytools.d";
+    NIXPKGS_ALLOW_UNFREE = "1";
   };
 
   system.activationScripts.setGamesPermissions = ''
@@ -67,5 +68,9 @@
     # if you also want 32-bit support (e.g for Steam)
     enable32Bit = true;
     package32 = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system}.pkgsi686Linux.mesa;
+  };
+
+  hardware.opengl = {
+    enable = true;
   };
 }
