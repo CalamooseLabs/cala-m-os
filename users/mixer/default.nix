@@ -12,6 +12,7 @@
     "bat"
     "btop"
     "easyeffects"
+    "ghostty"
     "hyprland"
     "hyprpaper"
     "neovim"

@@ -32,4 +32,6 @@ in {
   };
 
   services.xserver.enable = true;
+
+  microvm.hypervisor = "cloud-hypervisor";
 }
