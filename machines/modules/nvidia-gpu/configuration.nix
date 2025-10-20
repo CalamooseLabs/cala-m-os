@@ -8,8 +8,8 @@
     nvidia = {
       modesetting.enable = true;
       powerManagement.enable = false;
-      open = false;
-      package = config.boot.kernelPackages.nvidiaPackages.beta;
+      open = true;
+      package = config.boot.kernelPackages.nvidiaPackages.stable;
       nvidiaSettings = true;
       forceFullCompositionPipeline = true;
     };
