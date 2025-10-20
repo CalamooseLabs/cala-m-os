@@ -12,6 +12,7 @@
     "bat"
     "btop"
     "git"
+    "neovim"
     "nh"
     "openssh"
     "rebuild-config"

@@ -1,6 +1,7 @@
 {username, ...}: {
   pkgs,
   cala-m-os,
+  inputs,
   ...
 }: {
   users.users."${username}" = {
@@ -34,7 +35,7 @@
 
   programs.gamescope = {
     enable = true;
-    capSysNice = true;
+    capSysNice = false;
   };
 
   programs.steam.gamescopeSession.enable = true;
@@ -56,4 +57,12 @@
     # Set ownership to root:wheel
     chown -R ${cala-m-os.globalDefaultUser}:${cala-m-os.globalAdminGroup} /mnt/games
   '';
+
+  hardware.graphics = {
+    package = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system}.mesa;
+
+    # if you also want 32-bit support (e.g for Steam)
+    enable32Bit = true;
+    package32 = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system}.pkgsi686Linux.mesa;
+  };
 }
