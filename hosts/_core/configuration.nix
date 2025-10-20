@@ -116,6 +116,4 @@ in {
 
   # Original State Version
   system.stateVersion = "24.11"; # Do not change
-
-  nixpkgs.config.allowUnfree = true;
 }
