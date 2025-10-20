@@ -22,8 +22,8 @@
 
     # Hyprland & Plugins
     hyprland = {
-      url = "github:hyprwm/Hyprland";
-      # inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:hyprwm/Hyprland/v0.51.1";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     hyprland-plugins = {
