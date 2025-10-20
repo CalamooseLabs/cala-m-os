@@ -36,6 +36,9 @@
   programs.gamescope = {
     enable = true;
     capSysNice = false;
+    args = [
+      "--expose-wayland"
+    ];
   };
 
   programs.steam.gamescopeSession.enable = true;
