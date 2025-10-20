@@ -10,7 +10,7 @@
         "gamescope -- steam -bigpicture"
       ];
 
-      bind = ["$mod, S, exec, gamescope -- steam -bigpicture"];
+      bind = ["$mod, S, exec, steam"];
     };
   };
 }

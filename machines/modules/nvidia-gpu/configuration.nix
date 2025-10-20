@@ -1,4 +1,4 @@
-{...}: {
+{config, ...}: {
   hardware = {
     graphics = {
       enable = true;
@@ -8,8 +8,10 @@
     nvidia = {
       modesetting.enable = true;
       powerManagement.enable = false;
-      open = true;
+      open = false;
+      package = config.boot.kernelPackages.nvidiaPackages.beta;
       nvidiaSettings = true;
+      forceFullCompositionPipeline = true;
     };
   };
 
