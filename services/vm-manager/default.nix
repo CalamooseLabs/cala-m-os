@@ -58,12 +58,12 @@
                 source = "/run/agenix";
                 mountPoint = "/run/agenix";
               }
-              {
-                source = "/run/opengl-driver";
-                mountPoint = "/run/opengl-driver";
-                tag = "opengl";
-                proto = "virtiofs";
-              }
+              # {
+              #   source = "/run/opengl-driver";
+              #   mountPoint = "/run/opengl-driver";
+              #   tag = "opengl";
+              #   proto = "virtiofs";
+              # }
             ]
             ++ vm.shares;
         };
