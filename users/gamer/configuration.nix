@@ -70,8 +70,4 @@
     enable32Bit = true;
     package32 = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system}.pkgsi686Linux.mesa;
   };
-
-  hardware.opengl = {
-    enable = true;
-  };
 }

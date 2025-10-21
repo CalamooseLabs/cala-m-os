@@ -6,9 +6,9 @@
 
   wayland.windowManager.hyprland = {
     settings = {
-      exec-once = [
-        "gamescope -- steam -bigpicture"
-      ];
+      # exec-once = [
+      #   "gamescope -- steam -bigpicture"
+      # ];
 
       bind = ["$mod, S, exec, steam"];
     };
