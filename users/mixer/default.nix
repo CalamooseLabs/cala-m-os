@@ -19,6 +19,7 @@
     "obs-studio"
     "openssh"
     # "rofi"
+    "steam"
     "stylix"
     "spotify"
     "streamdeck"

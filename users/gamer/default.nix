@@ -14,9 +14,10 @@
     "fonts"
     "ghostty"
     "git"
-    "openssh"
     "hyprland"
+    "openssh"
     "steam"
+    "stylix"
     "yubikey"
   ];
 in {
