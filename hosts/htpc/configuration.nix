@@ -32,4 +32,13 @@ in {
   };
 
   services.xserver.enable = true;
+
+  # CRITICAL: Disable llvmpipe completely
+  environment.variables = {
+    LIBGL_ALWAYS_SOFTWARE = "0";
+    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+    __VK_LAYER_NV_optimus = "NVIDIA_only";
+    VK_ICD_FILENAMES = "/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json";
+    MESA_LOADER_DRIVER_OVERRIDE = "nvidia";
+  };
 }
