@@ -63,6 +63,11 @@ in {
       xterm.enable = false;
       xfce.enable = true;
     };
+    displayManager = {
+      startx = {
+        enable = true;
+      };
+    };
   };
   services.displayManager.defaultSession = "xfce";
 }
