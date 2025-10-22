@@ -18,7 +18,7 @@
     hypervisor = lib.mkDefault "qemu";
     graphics.enable = lib.mkDefault false;
 
-    # writableStoreOverlay = lib.mkDefault "/nix/.rw-store";
+    writableStoreOverlay = lib.mkDefault "/nix/.rw-store";
 
     # Share memory for better performance
     # shares = [

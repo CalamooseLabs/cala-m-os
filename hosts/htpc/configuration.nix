@@ -41,4 +41,6 @@ in {
     VK_ICD_FILENAMES = "/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json";
     MESA_LOADER_DRIVER_OVERRIDE = "nvidia";
   };
+
+  services.nix-daemon.enable = true;
 }
