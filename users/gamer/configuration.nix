@@ -5,7 +5,7 @@
   ...
 }: {
   users.users."${username}" = {
-    extraGroups = ["wheel" "networkmanager" "disk" "plugdev" "video" "audio" "kvm" "gamemode"];
+    extraGroups = ["wheel" "networkmanager" "disk" "plugdev" "video" "audio" "kvm" "gamemode" "render"];
     openssh.authorizedKeys.keyFiles = [
       ./public_keys/id_ed25519_sk.pub
       ./public_keys/backup_id_ed25519_sk.pub
@@ -36,9 +36,6 @@
   programs.gamescope = {
     enable = true;
     capSysNice = true;
-    args = [
-      "--expose-wayland"
-    ];
   };
 
   programs.steam.gamescopeSession.enable = true;

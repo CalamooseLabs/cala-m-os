@@ -3,7 +3,7 @@
 #        Home Theater PC         #
 #                                #
 ##################################
-{...}: let
+{pkgs, ...}: let
   import_users = ["gamer"];
 
   machine_type = "VM";
@@ -40,5 +40,20 @@ in {
     __VK_LAYER_NV_optimus = "NVIDIA_only";
     VK_ICD_FILENAMES = "/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json";
     MESA_LOADER_DRIVER_OVERRIDE = "nvidia";
+  };
+
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true; # Was driSupport32Bit
+
+    extraPackages = with pkgs; [
+      nvidia-vaapi-driver
+      vulkan-loader
+      vulkan-validation-layers
+    ];
+
+    extraPackages32 = with pkgs.pkgsi686Linux; [
+      vulkan-loader
+    ];
   };
 }

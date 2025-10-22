@@ -9,7 +9,9 @@
       modesetting.enable = true;
       powerManagement.enable = false;
       open = true;
-      package = config.boot.kernelPackages.nvidiaPackages.stable;
+      package = config.boot.kernelPackages.nvidiaPackages.stable.overrideAttrs (old: {
+        # Force rebuild with guest's kernel
+      });
       nvidiaSettings = true;
       forceFullCompositionPipeline = true;
     };
