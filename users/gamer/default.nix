@@ -14,7 +14,7 @@
     "fonts"
     "ghostty"
     "git"
-    # "hyprland"
+    "hyprland"
     "openssh"
     "steam"
     "stylix"

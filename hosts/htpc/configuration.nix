@@ -31,7 +31,7 @@ in {
     wireplumber.enable = true;
   };
 
-  # services.xserver.enable = true;
+  services.xserver.enable = true;
 
   # CRITICAL: Disable llvmpipe completely
   environment.variables = {
@@ -57,17 +57,17 @@ in {
     ];
   };
 
-  services.xserver = {
-    enable = true;
-    desktopManager = {
-      xterm.enable = false;
-      xfce.enable = true;
-    };
-    displayManager = {
-      startx = {
-        enable = true;
-      };
-    };
-  };
-  services.displayManager.defaultSession = "xfce";
+  # services.xserver = {
+  #   enable = true;
+  #   desktopManager = {
+  #     xterm.enable = false;
+  #     xfce.enable = true;
+  #   };
+  #   displayManager = {
+  #     startx = {
+  #       enable = true;
+  #     };
+  #   };
+  # };
+  # services.displayManager.defaultSession = "xfce";
 }
