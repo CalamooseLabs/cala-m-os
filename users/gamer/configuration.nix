@@ -1,7 +1,7 @@
 {username, ...}: {
   pkgs,
   cala-m-os,
-  # inputs,
+  inputs,
   ...
 }: {
   users.users."${username}" = {
@@ -31,14 +31,14 @@
     };
   };
 
-  # programs.gamemode.enable = true;
+  programs.gamemode.enable = true;
 
-  # programs.gamescope = {
-  #   enable = true;
-  #   capSysNice = true;
-  # };
+  programs.gamescope = {
+    enable = true;
+    capSysNice = true;
+  };
 
-  # programs.steam.gamescopeSession.enable = true;
+  programs.steam.gamescopeSession.enable = true;
 
   systemd.services.agenix.after = [
     "basic.target"
@@ -54,7 +54,7 @@
   ];
 
   environment.sessionVariables = {
-    # STEAM_EXTRA_COMPAT_TOOLS_PATHS = "/home/${username}/.steam/root/compatibilitytools.d";
+    STEAM_EXTRA_COMPAT_TOOLS_PATHS = "/home/${username}/.steam/root/compatibilitytools.d";
     NIXPKGS_ALLOW_UNFREE = "1";
   };
 
@@ -64,10 +64,10 @@
   '';
 
   hardware.graphics = {
-    # package = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system}.mesa;
+    package = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system}.mesa;
 
     # if you also want 32-bit support (e.g for Steam)
     enable32Bit = true;
-    # package32 = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system}.pkgsi686Linux.mesa;
+    package32 = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system}.pkgsi686Linux.mesa;
   };
 }

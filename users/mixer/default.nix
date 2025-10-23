@@ -18,14 +18,14 @@
     "neovim"
     "obs-studio"
     "openssh"
-    # "rofi"
+    "rofi"
     "steam"
     "stylix"
     "spotify"
     "streamdeck"
     "vivaldi"
     "vlc"
-    # "waybar"
+    "waybar"
   ];
 in {
   imports = [
