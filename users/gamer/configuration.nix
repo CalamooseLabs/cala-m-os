@@ -24,13 +24,6 @@
     }
   ];
 
-  home-manager = {
-    users."${username}" = {
-      imports = [
-      ];
-    };
-  };
-
   programs.gamemode.enable = true;
 
   programs.gamescope = {
@@ -45,7 +38,6 @@
   ];
 
   environment.systemPackages = with pkgs; [
-    # protonup-qt # GUI for installing custom Proton versions like GE_Proton
     protonup
     steam-run
     vulkan-loader
@@ -59,15 +51,7 @@
   };
 
   system.activationScripts.setGamesPermissions = ''
-    # Set ownership to root:wheel
+    # Set ownership global user
     chown -R ${cala-m-os.globalDefaultUser}:${cala-m-os.globalAdminGroup} /mnt/games
   '';
-
-  hardware.graphics = {
-    package = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system}.mesa;
-
-    # if you also want 32-bit support (e.g for Steam)
-    enable32Bit = true;
-    package32 = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system}.pkgsi686Linux.mesa;
-  };
 }

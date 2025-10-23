@@ -19,10 +19,6 @@
     graphics.enable = lib.mkDefault false;
 
     writableStoreOverlay = lib.mkDefault "/nix/.rw-store";
-
-    # Share memory for better performance
-    # shares = [
-    # ];
   };
 
   networking = {

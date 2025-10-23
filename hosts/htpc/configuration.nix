@@ -3,11 +3,7 @@
 #        Home Theater PC         #
 #                                #
 ##################################
-{
-  pkgs,
-  lib,
-  ...
-}: let
+{lib, ...}: let
   import_users = ["gamer"];
 
   machine_type = "VM";
@@ -35,7 +31,7 @@ in {
     wireplumber.enable = true;
   };
 
-  services.xserver.enable = true;
+  # services.xserver.enable = true;
 
   microvm = {
     optimize.enable = false;
