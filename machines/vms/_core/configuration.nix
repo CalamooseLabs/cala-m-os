@@ -21,14 +21,8 @@
     writableStoreOverlay = lib.mkDefault "/nix/.rw-store";
 
     # Share memory for better performance
-    shares = [
-      {
-        source = "/nix/store";
-        mountPoint = "/nix/.ro-store";
-        tag = "ro-store";
-        proto = "virtiofs";
-      }
-    ];
+    # shares = [
+    # ];
   };
 
   networking = {

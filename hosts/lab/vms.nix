@@ -13,6 +13,12 @@
           source = "/var/lib/acme/${domain}";
           mountPoint = "/mnt/acme";
         }
+        {
+          source = "/nix/store";
+          mountPoint = "/nix/.ro-store";
+          tag = "ro-store";
+          proto = "virtiofs";
+        }
       ];
     };
     "htpc" = {
@@ -32,13 +38,27 @@
       devices = [];
       storage = 100;
       macID = "03";
-      shares = [];
+      shares = [
+        {
+          source = "/nix/store";
+          mountPoint = "/nix/.ro-store";
+          tag = "ro-store";
+          proto = "virtiofs";
+        }
+      ];
     };
     "studio" = {
       devices = ["rtx-4060" "pci-usb-controller-2"];
       storage = 100; # GBs
       macID = "04";
-      shares = [];
+      shares = [
+        {
+          source = "/nix/store";
+          mountPoint = "/nix/.ro-store";
+          tag = "ro-store";
+          proto = "virtiofs";
+        }
+      ];
     };
   };
 
