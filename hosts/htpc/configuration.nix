@@ -57,6 +57,8 @@ in {
     ];
   };
 
+  microvm.optimize.enable = false;
+
   # services.xserver = {
   #   enable = true;
   #   desktopManager = {

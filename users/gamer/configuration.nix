@@ -48,6 +48,9 @@
     # protonup-qt # GUI for installing custom Proton versions like GE_Proton
     protonup
     steam-run
+    vulkan-loader
+    vulkan-validation-layers
+    vulkan-tools
   ];
 
   environment.sessionVariables = {
