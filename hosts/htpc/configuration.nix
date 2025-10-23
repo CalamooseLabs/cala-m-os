@@ -54,11 +54,4 @@ in {
       }
     ];
   };
-
-  hardware.nvidia.prime = {
-    offload.enable = true;
-
-    nvidiaBusId = "PCI:0:9:0";
-    #mdgpuBusId = "PCI:54:0:0"; # If you have an AMD iGPU
-  };
 }
