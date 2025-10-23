@@ -58,6 +58,12 @@
           tag = "ro-store";
           proto = "virtiofs";
         }
+        {
+          source = "/run/opengl-driver";
+          mountPoint = "/run/opengl-driver";
+          tag = "opengl";
+          proto = "virtiofs";
+        }
       ];
     };
   };

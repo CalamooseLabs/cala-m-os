@@ -3,6 +3,7 @@
     extraGroups = ["wheel" "networkmanager" "disk" "video" "audio"];
     openssh.authorizedKeys.keyFiles = [
       ./public_keys/id_ed25519_sk.pub
+      ./public_keys/backup_id_ed25519_sk.pub
     ];
   };
 

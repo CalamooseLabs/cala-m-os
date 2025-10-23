@@ -1,7 +1,6 @@
 {username, ...}: {
   pkgs,
   cala-m-os,
-  inputs,
   ...
 }: {
   users.users."${username}" = {
