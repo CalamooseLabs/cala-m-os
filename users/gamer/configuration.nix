@@ -42,6 +42,7 @@
     vulkan-loader
     vulkan-validation-layers
     vulkan-tools
+    mangohud
   ];
 
   environment.sessionVariables = {
