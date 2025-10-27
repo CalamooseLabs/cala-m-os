@@ -61,7 +61,11 @@
               }
             ]
             ++ vm.shares
-            ++ lib.optionals vm.shareStore [
+            ++ lib.optionals (
+              if vm ? shareStore
+              then vm.shareStore
+              else true
+            ) [
               {
                 source = "/nix/store";
                 mountPoint = "/nix/.ro-store";
