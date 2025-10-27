@@ -49,9 +49,20 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # LanCache
+    lancache-domains = {
+      url = "github:uklans/cache-domains";
+      flake = false;
+    };
+
+    lancache-monolithic = {
+      url = "github:lancachenet/monolithic";
+      flake = false;
+    };
+
     lancache = {
       url = "github:boffbowsh/nix-lancache";
+      inputs.cache-domains.follows = "lancache-domains";
+      inputs.monolithic.follows = "lancache-monolithic";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

@@ -149,22 +149,6 @@
         "type": "github"
       }
     },
-    "cache-domains": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1746602289,
-        "narHash": "sha256-GsUQYB+MpLPBKTZ+cKjjUIiag+KmZgzTe5nC+UIinKE=",
-        "owner": "uklans",
-        "repo": "cache-domains",
-        "rev": "67535f7b9f32ca0bdbb6210c29f16493c9112a7b",
-        "type": "github"
-      },
-      "original": {
-        "owner": "uklans",
-        "repo": "cache-domains",
-        "type": "github"
-      }
-    },
     "darwin": {
       "inputs": {
         "nixpkgs": [
@@ -703,9 +687,13 @@
     },
     "lancache": {
       "inputs": {
-        "cache-domains": "cache-domains",
+        "cache-domains": [
+          "lancache-domains"
+        ],
         "flake-parts": "flake-parts",
-        "monolithic": "monolithic",
+        "monolithic": [
+          "lancache-monolithic"
+        ],
         "nixpkgs": [
           "nixpkgs"
         ]
@@ -721,6 +709,38 @@
       "original": {
         "owner": "boffbowsh",
         "repo": "nix-lancache",
+        "type": "github"
+      }
+    },
+    "lancache-domains": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1755374758,
+        "narHash": "sha256-GtZQ2T7+mtITAvBN4kDqk//Jp2gdsYiknUCjuy6pPvE=",
+        "owner": "uklans",
+        "repo": "cache-domains",
+        "rev": "170c0905e4d5230833a1854b896299c743c3059e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "uklans",
+        "repo": "cache-domains",
+        "type": "github"
+      }
+    },
+    "lancache-monolithic": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1740264490,
+        "narHash": "sha256-GuPx6Qcdi1+YOK4al7fVTKoY1J83sq2o3Yno1Y7JEMM=",
+        "owner": "lancachenet",
+        "repo": "monolithic",
+        "rev": "f817fe99d6767fd2ed061c10356b48ecfb8e4bfc",
+        "type": "github"
+      },
+      "original": {
+        "owner": "lancachenet",
+        "repo": "monolithic",
         "type": "github"
       }
     },
@@ -743,22 +763,6 @@
       "original": {
         "owner": "microvm-nix",
         "repo": "microvm.nix",
-        "type": "github"
-      }
-    },
-    "monolithic": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1740264490,
-        "narHash": "sha256-GuPx6Qcdi1+YOK4al7fVTKoY1J83sq2o3Yno1Y7JEMM=",
-        "owner": "lancachenet",
-        "repo": "monolithic",
-        "rev": "f817fe99d6767fd2ed061c10356b48ecfb8e4bfc",
-        "type": "github"
-      },
-      "original": {
-        "owner": "lancachenet",
-        "repo": "monolithic",
         "type": "github"
       }
     },
@@ -892,6 +896,8 @@
         "hyprland-plugins": "hyprland-plugins",
         "impermanence": "impermanence",
         "lancache": "lancache",
+        "lancache-domains": "lancache-domains",
+        "lancache-monolithic": "lancache-monolithic",
         "microvm": "microvm",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs",
