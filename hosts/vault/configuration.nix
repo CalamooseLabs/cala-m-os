@@ -3,12 +3,7 @@
 #       Lan Cache Server        #
 #                                #
 ##################################
-{
-  pkgs,
-  cala-m-os,
-  inputs,
-  ...
-}: let
+{inputs, ...}: let
   import_users = ["server"];
 
   machine_type = "VM";
@@ -34,7 +29,7 @@ in {
   virtualisation.arion = {
     backend = "docker";
     projects.lancache = {
-      serviceName = "arion-lancache";
+      serviceName = "lancache";
       settings = {
         imports = [./lancache/arion-compose.nix];
       };

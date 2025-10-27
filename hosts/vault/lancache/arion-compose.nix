@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{...}: {
   project.name = "lancache";
 
   services = {
