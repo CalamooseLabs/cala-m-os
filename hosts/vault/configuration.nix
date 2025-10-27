@@ -36,6 +36,7 @@ in {
       forwarders = ["1.1.1.1" "8.8.8.8"];
       cacheIp = "10.10.10.15";
     };
+
     cache = {
       enable = true;
       resolvers = ["1.1.1.1" "8.8.8.8"];
