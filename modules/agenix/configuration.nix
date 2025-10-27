@@ -15,9 +15,9 @@
   ];
 
   age.identityPaths = [
+    "${builtins.toString ./.}/identities/server.key"
     "${builtins.toString ./.}/identities/yubi.key"
     "${builtins.toString ./.}/identities/dev.key"
-    "${builtins.toString ./.}/identities/server.key"
     "${builtins.toString ./.}/identities/backup.key"
   ];
 
