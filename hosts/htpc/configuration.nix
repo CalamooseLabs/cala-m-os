@@ -31,8 +31,6 @@ in {
     wireplumber.enable = true;
   };
 
-  # services.xserver.enable = true;
-
   microvm = {
     optimize.enable = false;
     balloon = lib.mkForce false;

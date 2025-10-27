@@ -3,6 +3,7 @@
   vms,
   networkInterface,
 }: {
+  lib,
   inputs,
   initialInstallMode,
   cala-m-os,
@@ -59,7 +60,15 @@
                 mountPoint = "/run/agenix";
               }
             ]
-            ++ vm.shares;
+            ++ vm.shares
+            ++ lib.optionals vm.shareStore [
+              {
+                source = "/nix/store";
+                mountPoint = "/nix/.ro-store";
+                tag = "ro-store";
+                proto = "virtiofs";
+              }
+            ];
         };
 
         networking.interfaces.eth0.useDHCP = true;

@@ -49,6 +49,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # LanCache
+    lancache = {
+      url = "github:boffbowsh/nix-lancache";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Calamoose Labs
     antlers = {
       url = "github:CalamooseLabs/antlers/flakes?dir=flakes";

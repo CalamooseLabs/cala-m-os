@@ -6,6 +6,7 @@
       devices = ["arc-a310"];
       storage = 100; # GBs
       macID = "01";
+      shareStore = true;
       shares = [
         {
           proto = "virtiofs";
@@ -13,18 +14,13 @@
           source = "/var/lib/acme/${domain}";
           mountPoint = "/mnt/acme";
         }
-        {
-          source = "/nix/store";
-          mountPoint = "/nix/.ro-store";
-          tag = "ro-store";
-          proto = "virtiofs";
-        }
       ];
     };
     "htpc" = {
       devices = ["rtx-5090" "pci-usb-controller-1"];
       storage = 100; # GBs
       macID = "02";
+      shareStore = false;
       shares = [
         {
           proto = "virtiofs";
@@ -38,26 +34,15 @@
       devices = [];
       storage = 100;
       macID = "03";
-      shares = [
-        {
-          source = "/nix/store";
-          mountPoint = "/nix/.ro-store";
-          tag = "ro-store";
-          proto = "virtiofs";
-        }
-      ];
+      shareStore = true;
+      shares = [];
     };
     "studio" = {
       devices = ["rtx-4060" "pci-usb-controller-2"];
       storage = 100; # GBs
       macID = "04";
+      shareStore = true;
       shares = [
-        {
-          source = "/nix/store";
-          mountPoint = "/nix/.ro-store";
-          tag = "ro-store";
-          proto = "virtiofs";
-        }
         {
           source = "/run/opengl-driver";
           mountPoint = "/run/opengl-driver";
@@ -65,6 +50,13 @@
           proto = "virtiofs";
         }
       ];
+    };
+    "vault" = {
+      devices = [];
+      storage = 100;
+      macID = "05";
+      shareStore = true;
+      shares = [];
     };
   };
 
