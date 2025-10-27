@@ -3,7 +3,11 @@
 #       Lan Cache Server        #
 #                                #
 ##################################
-{inputs, ...}: let
+{
+  inputs,
+  pkgs,
+  ...
+}: let
   import_users = ["server"];
 
   machine_type = "VM";
@@ -17,33 +21,34 @@ in {
       machine_uuid = machine_uuid;
     })
 
-    inputs.lancache.nixosModules.dns
-    inputs.lancache.nixosModules.cache
+    inputs.lancache-nix.nixosModules.default
   ];
 
   networking.hostName = "vault";
 
-  services.plex = {
-    enable = true;
-    openFirewall = true;
-  };
-
   boot.supportedFilesystems = ["nfs"];
 
-  services.lancache = {
-    dns = {
-      enable = true;
-      forwarders = ["1.1.1.1" "8.8.8.8"];
-      cacheIp = "10.10.10.15";
-    };
+  # Enable nginx with slice module (required)
+  services.nginx.package = pkgs.nginxMainline.override {withSlice = true;};
 
-    cache = {
-      enable = true;
-      resolvers = ["1.1.1.1" "8.8.8.8"];
-    };
+  services.lancache = {
+    enable = true;
+    cacheLocation = "/mnt/cache/lancache";
+    logPrefix = "/var/log/nginx/lancache";
+    listenAddress = "10.10.10.33";
+
+    # Optional configurations
+    upstreamDns = ["1.1.1.1" "1.0.0.1"];
+    cacheDiskSize = "1000g";
+    cacheIndexSize = "500m";
+    cacheMaxAge = "3560d";
+    minFreeDisk = "10g";
+    sliceSize = "1m";
+    logFormat = "cachelog";
+    workerProcesses = "auto";
   };
 
-  fileSystems."/data/cache/cache" = {
+  fileSystems."/mnt/cache/lancache" = {
     device = "nas.calamos.family:/mnt/Media Library/Cache";
     fsType = "nfs";
   };
