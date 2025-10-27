@@ -30,7 +30,7 @@ in {
 
   boot.supportedFilesystems = ["nfs"];
 
-  lancache = {
+  services.lancache = {
     dns = {
       enable = true;
       forwarders = ["1.1.1.1" "8.8.8.8"];
