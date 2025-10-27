@@ -27,35 +27,24 @@ in {
 
   networking.hostName = "vault";
 
+  # Enable Docker for Arion
+  virtualisation.docker.enable = true;
+
+  # Arion configuration
+  virtualisation.arion = {
+    backend = "docker";
+    projects.lancache = {
+      serviceName = "arion-lancache";
+      settings = {
+        imports = [./lancache/arion-compose.nix];
+      };
+    };
+  };
+
   boot.supportedFilesystems = ["nfs"];
 
   fileSystems."/mnt/cache/lancache" = {
     device = "nas.calamos.family:/mnt/Media Library/Cache";
     fsType = "nfs";
-  };
-
-  environment.systemPackages = [
-    pkgs.arion
-
-    pkgs.docker-client
-  ];
-
-  virtualisation.docker.enable = false;
-  virtualisation.podman.enable = true;
-  virtualisation.podman.dockerSocket.enable = true;
-  virtualisation.podman.defaultNetwork.dnsname.enable = true;
-
-  users.extraUsers."${cala-m-os.globalDefaultUser}".extraGroups = ["podman"];
-
-  virtualisation.arion = {
-    backend = "podman-socket"; # or "docker"
-    projects.example = {
-      serviceName = "lancache"; # optional systemd service name, defaults to arion-example in this case
-      settings = {
-        # Specify you project here, or import it from a file.
-        # NOTE: This does NOT use ./arion-pkgs.nix, but defaults to NixOS' pkgs.
-        imports = [./lancache/arion-compose.nix];
-      };
-    };
   };
 }
