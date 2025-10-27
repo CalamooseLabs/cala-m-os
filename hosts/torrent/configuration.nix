@@ -7,7 +7,7 @@
   import_users = ["server"];
 
   machine_type = "VM";
-  machine_uuid = "Small";
+  machine_uuid = "X-Small";
 in {
   imports = [
     # Common Core Config
