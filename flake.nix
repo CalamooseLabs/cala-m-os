@@ -49,9 +49,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # LanCache
-    lancache-nix = {
-      url = "github:menixator/lancache.nix";
+    # Arion
+    arion = {
+      url = "github:hercules-ci/arion";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

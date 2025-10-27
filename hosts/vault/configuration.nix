@@ -4,8 +4,9 @@
 #                                #
 ##################################
 {
-  inputs,
   pkgs,
+  cala-m-os,
+  inputs,
   ...
 }: let
   import_users = ["server"];
@@ -21,35 +22,40 @@ in {
       machine_uuid = machine_uuid;
     })
 
-    inputs.lancache-nix.nixosModules.default
+    inputs.arion.nixosModules.arion
   ];
 
   networking.hostName = "vault";
 
   boot.supportedFilesystems = ["nfs"];
 
-  # Enable nginx with slice module (required)
-  services.nginx.package = pkgs.nginxMainline.override {withSlice = true;};
-
-  services.lancache = {
-    enable = true;
-    cacheLocation = "/mnt/cache/lancache";
-    logPrefix = "/var/log/nginx/lancache";
-    listenAddress = "10.10.10.33";
-
-    # Optional configurations
-    upstreamDns = ["1.1.1.1" "1.0.0.1"];
-    cacheDiskSize = "1000g";
-    cacheIndexSize = "500m";
-    cacheMaxAge = "3560d";
-    minFreeDisk = "10g";
-    sliceSize = "1m";
-    logFormat = "cachelog";
-    workerProcesses = "auto";
-  };
-
   fileSystems."/mnt/cache/lancache" = {
     device = "nas.calamos.family:/mnt/Media Library/Cache";
     fsType = "nfs";
+  };
+
+  environment.systemPackages = [
+    pkgs.arion
+
+    pkgs.docker-client
+  ];
+
+  virtualisation.docker.enable = false;
+  virtualisation.podman.enable = true;
+  virtualisation.podman.dockerSocket.enable = true;
+  virtualisation.podman.defaultNetwork.dnsname.enable = true;
+
+  users.extraUsers."${cala-m-os.globalDefaultUser}".extraGroups = ["podman"];
+
+  virtualisation.arion = {
+    backend = "podman-socket"; # or "docker"
+    projects.example = {
+      serviceName = "lancache"; # optional systemd service name, defaults to arion-example in this case
+      settings = {
+        # Specify you project here, or import it from a file.
+        # NOTE: This does NOT use ./arion-pkgs.nix, but defaults to NixOS' pkgs.
+        imports = [./lancache/arion-compose.nix];
+      };
+    };
   };
 }
