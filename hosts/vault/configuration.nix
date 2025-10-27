@@ -38,7 +38,7 @@ in {
 
   boot.supportedFilesystems = ["nfs"];
 
-  fileSystems."/mnt/cache/lancache" = {
+  fileSystems."/mnt/cache" = {
     device = "nas.calamos.family:/mnt/Media Library/Cache";
     fsType = "nfs";
   };
