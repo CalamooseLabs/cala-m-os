@@ -6,7 +6,6 @@
       devices = ["arc-a310"];
       storage = 100; # GBs
       macID = "01";
-      shareStore = true;
       shares = [
         {
           proto = "virtiofs";
@@ -34,14 +33,12 @@
       devices = [];
       storage = 100;
       macID = "03";
-      shareStore = true;
       shares = [];
     };
     "studio" = {
       devices = ["rtx-4060" "pci-usb-controller-2"];
       storage = 100; # GBs
       macID = "04";
-      shareStore = true;
       shares = [
         {
           source = "/run/opengl-driver";
@@ -55,7 +52,6 @@
       devices = [];
       storage = 100;
       macID = "05";
-      shareStore = true;
       shares = [];
     };
   };
