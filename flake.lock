@@ -226,27 +226,6 @@
     "flake-parts": {
       "inputs": {
         "nixpkgs-lib": [
-          "lancache",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1749398372,
-        "narHash": "sha256-tYBdgS56eXYaWVW3fsnPQ/nFlgWi/Z2Ymhyu21zVM98=",
-        "owner": "hercules-ci",
-        "repo": "flake-parts",
-        "rev": "9305fe4e5c2a6fcf5ba6a3ff155720fbe4076569",
-        "type": "github"
-      },
-      "original": {
-        "owner": "hercules-ci",
-        "repo": "flake-parts",
-        "type": "github"
-      }
-    },
-    "flake-parts_2": {
-      "inputs": {
-        "nixpkgs-lib": [
           "stylix",
           "nixpkgs"
         ]
@@ -685,62 +664,18 @@
         "type": "github"
       }
     },
-    "lancache": {
-      "inputs": {
-        "cache-domains": [
-          "lancache-domains"
-        ],
-        "flake-parts": "flake-parts",
-        "monolithic": [
-          "lancache-monolithic"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
+    "lancache-nix": {
       "locked": {
-        "lastModified": 1750198881,
-        "narHash": "sha256-5as6C7BSLNYxb4cwM0YtQ5KF0daUGQVY3LfqekeBYyo=",
-        "owner": "boffbowsh",
-        "repo": "nix-lancache",
-        "rev": "c55c577411da87274c7fa91051badc781a1f86e5",
+        "lastModified": 1741876714,
+        "narHash": "sha256-DnsK7a1b2MKOgHqRzaUChXSIavkBmv7+TrAd+WX8/lo=",
+        "owner": "menixator",
+        "repo": "lancache.nix",
+        "rev": "2df456815921c8dc8767d3abff07c086a9528634",
         "type": "github"
       },
       "original": {
-        "owner": "boffbowsh",
-        "repo": "nix-lancache",
-        "type": "github"
-      }
-    },
-    "lancache-domains": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1755374758,
-        "narHash": "sha256-GtZQ2T7+mtITAvBN4kDqk//Jp2gdsYiknUCjuy6pPvE=",
-        "owner": "uklans",
-        "repo": "cache-domains",
-        "rev": "170c0905e4d5230833a1854b896299c743c3059e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "uklans",
-        "repo": "cache-domains",
-        "type": "github"
-      }
-    },
-    "lancache-monolithic": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1740264490,
-        "narHash": "sha256-GuPx6Qcdi1+YOK4al7fVTKoY1J83sq2o3Yno1Y7JEMM=",
-        "owner": "lancachenet",
-        "repo": "monolithic",
-        "rev": "f817fe99d6767fd2ed061c10356b48ecfb8e4bfc",
-        "type": "github"
-      },
-      "original": {
-        "owner": "lancachenet",
-        "repo": "monolithic",
+        "owner": "menixator",
+        "repo": "lancache.nix",
         "type": "github"
       }
     },
@@ -895,9 +830,7 @@
         "hyprland": "hyprland",
         "hyprland-plugins": "hyprland-plugins",
         "impermanence": "impermanence",
-        "lancache": "lancache",
-        "lancache-domains": "lancache-domains",
-        "lancache-monolithic": "lancache-monolithic",
+        "lancache-nix": "lancache-nix",
         "microvm": "microvm",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs",
@@ -927,7 +860,7 @@
         "base16-helix": "base16-helix",
         "base16-vim": "base16-vim",
         "firefox-gnome-theme": "firefox-gnome-theme",
-        "flake-parts": "flake-parts_2",
+        "flake-parts": "flake-parts",
         "gnome-shell": "gnome-shell",
         "nixpkgs": "nixpkgs_2",
         "nur": "nur",
