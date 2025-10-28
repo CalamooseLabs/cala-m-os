@@ -3,7 +3,7 @@
 
   services = {
     # LANCache Monolithic Container
-    lancache = {
+    lancache-monolithic = {
       service = {
         image = "lancachenet/monolithic:latest";
         ports = [
@@ -40,7 +40,7 @@
           # Required environment variables ⁽⁸³⁾
           USE_GENERIC_CACHE = "true";
           LANCACHE_IP = "10.10.10.33"; # MicroVM IP
-          DNS_BIND_IP = "0.0.0.0";
+          DNS_BIND_IP = "10.10.10.33";
           UPSTREAM_DNS = "1.1.1.1";
         };
         restart = "unless-stopped";

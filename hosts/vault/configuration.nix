@@ -47,4 +47,6 @@ in {
     device = "nas.calamos.family:/mnt/Media Library/Cache";
     fsType = "nfs";
   };
+
+  services.resolved.enable = false;
 }
