@@ -36,7 +36,7 @@ in {
     projects.lancache = {
       serviceName = "lancache";
       settings = {
-        imports = [./lancache/arion-compose.nix];
+        imports = [(import ./lancache/arion-compose.nix {inherit cala-m-os;})];
       };
     };
   };

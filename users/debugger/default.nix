@@ -36,7 +36,6 @@
     "remote-desktop"
     "restore-config"
     "rofi"
-    "rpi-imager"
     "scanner"
     "spotify"
     "ssh"
