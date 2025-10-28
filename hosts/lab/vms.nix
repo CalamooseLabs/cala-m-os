@@ -19,7 +19,7 @@
       devices = ["rtx-5090" "pci-usb-controller-1"];
       storage = 100; # GBs
       macID = "02";
-      # shareStore = false;
+      shareStore = false;
       shares = [
         {
           proto = "virtiofs";
