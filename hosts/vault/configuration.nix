@@ -3,7 +3,11 @@
 #       Lan Cache Server        #
 #                                #
 ##################################
-{inputs, ...}: let
+{
+  inputs,
+  cala-m-os,
+  ...
+}: let
   import_users = ["server"];
 
   machine_type = "VM";
@@ -24,6 +28,7 @@ in {
 
   # Enable Docker for Arion
   virtualisation.docker.enable = true;
+  users.users."${cala-m-os.globalDefaultUser}".extraGroups = ["docker"];
 
   # Arion configuration
   virtualisation.arion = {
