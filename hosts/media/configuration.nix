@@ -3,7 +3,7 @@
 #       Plex Media Server        #
 #                                #
 ##################################
-{...}: let
+{cala-m-os, ...}: let
   import_users = ["server"];
 
   machine_type = "VM";
@@ -20,7 +20,7 @@ in {
     # Caddy SSL
     (import ../../services/caddy/default.nix {
       reverse_proxies = {
-        "plex.calamooselabs.com" = "localhost:32400";
+        "plex.${cala-m-os.fqdn}" = "localhost:32400";
       };
     })
   ];
@@ -35,17 +35,17 @@ in {
   boot.supportedFilesystems = ["nfs"];
 
   fileSystems."/media/movies" = {
-    device = "nas.calamos.family:/mnt/Media Library/Movies";
+    device = "${cala-m-os.nfs.server}${cala-m-os.nfs.media.movies}";
     fsType = "nfs";
   };
 
   fileSystems."/media/tv-shows" = {
-    device = "nas.calamos.family:/mnt/Media Library/TV-Shows";
+    device = "${cala-m-os.nfs.server}${cala-m-os.nfs.media.tv-shows}";
     fsType = "nfs";
   };
 
   fileSystems."/mnt/backup" = {
-    device = "nas.calamos.family:/mnt/Media Library/Backups/Plex";
+    device = "${cala-m-os.nfs.server}${cala-m-os.nfs.backup.plex}";
     fsType = "nfs";
   };
 }

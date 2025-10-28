@@ -75,7 +75,23 @@
             ];
         };
 
-        networking.interfaces.eth0.useDHCP = true;
+        networking.interfaces.eth0 = {
+          useDHCP = false;
+
+          ipv4.addresses = [
+            {
+              address = vm.ip;
+              prefixLength = 24;
+            }
+          ];
+          ipv4.routes = [
+            {
+              address = "0.0.0.0";
+              prefixLength = 0;
+              via = cala-m-os.ip.gateway;
+            }
+          ];
+        };
       };
 
       specialArgs = {

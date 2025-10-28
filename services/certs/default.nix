@@ -28,7 +28,7 @@
   security.acme = {
     acceptTerms = true;
     useRoot = true;
-    defaults.email = cala-m-os.globalDefaultEmail;
+    defaults.email = cala-m-os.globals.defaultEmail;
 
     certs."${domain}" = {
       domain = domain;

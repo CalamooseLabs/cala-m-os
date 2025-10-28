@@ -3,7 +3,11 @@
 #        Home Theater PC         #
 #                                #
 ##################################
-{lib, ...}: let
+{
+  lib,
+  cala-m-os,
+  ...
+}: let
   import_users = ["gamer"];
 
   machine_type = "VM";
@@ -36,20 +40,26 @@ in {
     balloon = lib.mkForce false;
 
     # Use VM's own store disk as base
-    storeOnDisk = true;
+    # storeOnDisk = true;
 
     # Enable writable overlay for building
     writableStoreOverlay = "/nix/.rw-store";
 
     # Persistent volume for the overlay
-    volumes = [
-      {
-        image = "nix-store-overlay.img";
-        mountPoint = "/nix/.rw-store";
-        size = 51200; # 50GB
-        autoCreate = true;
-        fsType = "ext4";
-      }
-    ];
+    # volumes = [
+    #   {
+    #     image = "nix-store-overlay.img";
+    #     mountPoint = "/nix/.rw-store";
+    #     size = 51200; # 50GB
+    #     autoCreate = true;
+    #     fsType = "ext4";
+    #   }
+    # ];
+  };
+
+  networking.nameservers = ["${cala-m-os.ip.vault}"];
+
+  services.resolved = {
+    enable = true;
   };
 }

@@ -10,7 +10,7 @@
   # Allow any wheel user to change configuration
   system.activationScripts.setPermissions = ''
     # Set ownership to root:wheel
-    chown -R ${cala-m-os.globalDefaultUser}:${cala-m-os.globalAdminGroup} /etc/nixos
+    chown -R ${cala-m-os.globals.defaultUser}:${cala-m-os.globals.adminGroup} /etc/nixos
 
     # Set directory permissions to 775
     find /etc/nixos -type d -exec chmod 775 {} +

@@ -1,16 +1,19 @@
-{config, ...}: let
-  domain = "calamooselabs.com";
-
+{
+  config,
+  cala-m-os,
+  ...
+}: let
   vms = {
     "media" = {
       devices = ["arc-a310"];
       storage = 100; # GBs
-      macID = "01";
+      macID = "10";
+      ip = cala-m-os.ip.media;
       shares = [
         {
           proto = "virtiofs";
           tag = "acmecerts";
-          source = "/var/lib/acme/${domain}";
+          source = "/var/lib/acme/${cala-m-os.fqdn}";
           mountPoint = "/mnt/acme";
         }
       ];
@@ -18,8 +21,8 @@
     "htpc" = {
       devices = ["rtx-5090" "pci-usb-controller-1"];
       storage = 100; # GBs
-      macID = "02";
-      shareStore = false;
+      macID = "25";
+      ip = cala-m-os.ip.htpc;
       shares = [
         {
           proto = "virtiofs";
@@ -32,13 +35,15 @@
     "torrent" = {
       devices = [];
       storage = 100;
-      macID = "03";
+      macID = "35";
+      ip = cala-m-os.ip.torrent;
       shares = [];
     };
     "studio" = {
       devices = ["rtx-4060" "pci-usb-controller-2"];
       storage = 100; # GBs
-      macID = "04";
+      macID = "30";
+      ip = cala-m-os.ip.studio;
       shares = [
         {
           source = "/run/opengl-driver";
@@ -51,7 +56,8 @@
     "vault" = {
       devices = [];
       storage = 100;
-      macID = "05";
+      macID = "20";
+      ip = cala-m-os.ip.vault;
       shares = [];
     };
   };
@@ -70,7 +76,7 @@ in {
     })
 
     (import ../../services/certs/default.nix {
-      domain = domain;
+      domain = cala-m-os.fqdn;
       tokenPath = tokenPath;
     })
   ];

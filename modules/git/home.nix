@@ -3,8 +3,8 @@
     enable = true;
     settings = {
       user = {
-        name = cala-m-os.globalFullName;
-        email = cala-m-os.globalDefaultEmail;
+        name = cala-m-os.globals.fullName;
+        email = cala-m-os.globals.defaultEmail;
       };
       safe.directory = [
         "/etc/nixos"

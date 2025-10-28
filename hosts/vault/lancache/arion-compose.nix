@@ -1,4 +1,4 @@
-{...}: {
+{cala-m-os, ...}: {
   project.name = "lancache";
 
   services = {
@@ -11,14 +11,13 @@
           "443:443"
         ];
         environment = {
-          # Required environment variables ⁽⁸³⁾
           CACHE_ROOT = "/data/cache";
-          CACHE_DISK_SIZE = "1000g"; # Adjust based on NFS space
+          CACHE_DISK_SIZE = "1000g";
           CACHE_INDEX_SIZE = "250m"; # 250MB per 1TB of cache
           CACHE_MAX_AGE = "3650d"; # ~10 years
           MIN_FREE_DISK = "10g";
-          UPSTREAM_DNS = "1.1.1.1";
-          TZ = "America/Denver"; # Adjust timezone
+          UPSTREAM_DNS = "${cala-m-os.ip.gateway}";
+          TZ = "${cala-m-os.globals.TZ}";
         };
         volumes = [
           "/mnt/cache/lancache:/data/cache"
@@ -37,11 +36,10 @@
           "53:53/tcp"
         ];
         environment = {
-          # Required environment variables ⁽⁸³⁾
           USE_GENERIC_CACHE = "true";
-          LANCACHE_IP = "10.10.10.33"; # MicroVM IP
-          DNS_BIND_IP = "10.10.10.33";
-          UPSTREAM_DNS = "1.1.1.1";
+          LANCACHE_IP = "${cala-m-os.ip.vault}";
+          DNS_BIND_IP = "${cala-m-os.ip.vault}";
+          UPSTREAM_DNS = "${cala-m-os.ip.gateway}";
         };
         restart = "unless-stopped";
       };

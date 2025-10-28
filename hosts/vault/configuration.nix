@@ -28,7 +28,7 @@ in {
 
   # Enable Docker for Arion
   virtualisation.docker.enable = true;
-  users.users."${cala-m-os.globalDefaultUser}".extraGroups = ["docker"];
+  users.users."${cala-m-os.globals.defaultUser}".extraGroups = ["docker"];
 
   # Arion configuration
   virtualisation.arion = {
@@ -44,7 +44,7 @@ in {
   boot.supportedFilesystems = ["nfs"];
 
   fileSystems."/mnt/cache" = {
-    device = "nas.calamos.family:/mnt/Media Library/Cache";
+    device = "${cala-m-os.nfs.server}${cala-m-os.nfs.media.lancache}";
     fsType = "nfs";
   };
 

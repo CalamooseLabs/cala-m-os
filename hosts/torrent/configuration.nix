@@ -3,7 +3,7 @@
 #   Torrent Management Server    #
 #                                #
 ##################################
-{...}: let
+{cala-m-os, ...}: let
   import_users = ["server"];
 
   machine_type = "VM";
@@ -20,10 +20,10 @@ in {
     # Caddy SSL
     (import ../../services/caddy/default.nix {
       reverse_proxies = {
-        "radarr.calamooselabs.com" = "localhost:7878";
-        "sonarr.calamooselabs.com" = "localhost:8989";
-        "prowlarr.calamooselabs.com" = "localhost:9696";
-        "qbit.calamooselabs.com" = "localhost:8080";
+        "radarr.${cala-m-os.fqdn}" = "localhost:7878";
+        "sonarr.${cala-m-os.fqdn}" = "localhost:8989";
+        "prowlarr.${cala-m-os.fqdn}" = "localhost:9696";
+        "qbit.${cala-m-os.fqdn}" = "localhost:8080";
       };
     })
   ];
@@ -36,7 +36,6 @@ in {
     settings = {
       update.mechanism = "external";
       server = {
-        urlbase = "localhost";
         port = 7878;
         bindaddress = "*";
       };
@@ -44,7 +43,7 @@ in {
   };
 
   fileSystems."/mnt/backups/radarr" = {
-    device = "nas.calamos.family:/mnt/Media Library/Backups/Radarr";
+    device = "${cala-m-os.nfs.server}${cala-m-os.nfs.backup.radarr}";
     fsType = "nfs";
   };
 
@@ -54,7 +53,6 @@ in {
     settings = {
       update.mechanism = "external";
       server = {
-        urlbase = "localhost";
         port = 8989;
         bindaddress = "*";
       };
@@ -62,7 +60,7 @@ in {
   };
 
   fileSystems."/mnt/backups/sonarr" = {
-    device = "nas.calamos.family:/mnt/Media Library/Backups/Sonarr";
+    device = "${cala-m-os.nfs.server}${cala-m-os.nfs.backup.sonarr}";
     fsType = "nfs";
   };
 
@@ -72,7 +70,6 @@ in {
     settings = {
       update.mechanism = "external";
       server = {
-        urlbase = "localhost";
         port = 9696;
         bindaddress = "*";
       };
@@ -80,7 +77,7 @@ in {
   };
 
   fileSystems."/mnt/backups/prowlarr" = {
-    device = "nas.calamos.family:/mnt/Media Library/Backups/Prowlarr";
+    device = "${cala-m-os.nfs.server}${cala-m-os.nfs.backup.prowlarr}";
     fsType = "nfs";
   };
 

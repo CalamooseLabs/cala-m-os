@@ -1,7 +1,7 @@
 {cala-m-os, ...}: {
   programs.virt-manager.enable = true;
 
-  users.groups.libvirtd.members = [cala-m-os.globalDefaultUser];
+  users.groups.libvirtd.members = [cala-m-os.globals.defaultUser];
 
   virtualisation = {
     libvirtd = {

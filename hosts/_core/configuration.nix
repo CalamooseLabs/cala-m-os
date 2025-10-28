@@ -84,7 +84,8 @@ in {
   networking.networkmanager.enable = true;
 
   # Set Colorado timezone
-  time.timeZone = "America/Denver";
+  time.timeZone = "${cala-m-os.globals.TZ}";
+
   # Garbage Collection & Flakes
   nix = {
     gc = {
@@ -96,7 +97,7 @@ in {
     settings = {
       auto-optimise-store = lib.mkDefault false;
       experimental-features = ["nix-command" "flakes"];
-      trusted-users = ["root" "@wheel" cala-m-os.globalDefaultUser];
+      trusted-users = ["root" "@wheel" cala-m-os.globals.defaultUser];
     };
   };
 
@@ -105,7 +106,7 @@ in {
     enable = lib.mkDefault true;
     settings = {
       default_session = {
-        user = lib.mkForce "${cala-m-os.globalDefaultUser}";
+        user = lib.mkForce "${cala-m-os.globals.defaultUser}";
         command = lib.mkDefault "${pkgs.bash}/bin/bash";
       };
     };

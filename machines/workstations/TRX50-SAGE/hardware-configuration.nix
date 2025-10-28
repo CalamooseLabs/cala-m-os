@@ -16,7 +16,7 @@
   boot.swraid = {
     enable = true;
     mdadmConf = ''
-      MAILADDR <mailto:${cala-m-os.globalDefaultEmail}>
+      MAILADDR <mailto:${cala-m-os.globals.defaultEmail}>
     '';
   };
 

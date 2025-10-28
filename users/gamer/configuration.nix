@@ -52,6 +52,6 @@
 
   system.activationScripts.setGamesPermissions = ''
     # Set ownership global user
-    chown -R ${cala-m-os.globalDefaultUser}:${cala-m-os.globalAdminGroup} /mnt/games
+    chown -R ${cala-m-os.globals.defaultUser}:${cala-m-os.globals.adminGroup} /mnt/games
   '';
 }
