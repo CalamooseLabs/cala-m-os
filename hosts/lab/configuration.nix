@@ -12,6 +12,7 @@
 {
   lib,
   initialInstallMode,
+  cala-m-os,
   ...
 }: let
   users = ["server"];
@@ -30,6 +31,23 @@ in {
     ++ lib.optional (!initialInstallMode) ./vms.nix;
 
   networking.hostName = "lab";
+
+  networking.networkmanager.enable = lib.mkForce false;
+
+  networking = {
+    interfaces.enp0s7 = {
+      ipv4.addresses = [
+        {
+          address = cala-m-os.ip.lab;
+          prefixLength = 26;
+        }
+      ];
+    };
+    defaultGateway = {
+      address = cala-m-os.ip.gateway;
+      interface = "eno2";
+    };
+  };
 
   boot.kernelModules = [
     "vfio"

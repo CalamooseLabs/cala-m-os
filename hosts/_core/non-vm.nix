@@ -1,4 +1,8 @@
-{cala-m-os, ...}: {
+{
+  cala-m-os,
+  lib,
+  ...
+}: {
   # Allow unfree
   nixpkgs = {
     config.allowUnfree = true;
@@ -20,7 +24,7 @@
   '';
 
   # Enable Network Manager
-  networking.networkmanager.enable = true;
+  networking.networkmanager.enable = lib.mkDefault true;
   # TODO:
   # These next steps should only happen on certain hosts (IE devbox but not htpc)
   # These will be moved to a oneshot on non-vm
