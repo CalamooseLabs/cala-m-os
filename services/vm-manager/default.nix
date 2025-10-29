@@ -96,7 +96,7 @@
         };
 
         systemd.network.networks."10-macvtap" = {
-          matchConfig.Name = "enp0s7";
+          matchConfig.Name = networkInterface;
 
           address = [
             "${vm.ip}/${toString 26}" # Use CIDR notation
