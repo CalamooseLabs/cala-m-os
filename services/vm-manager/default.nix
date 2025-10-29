@@ -81,7 +81,7 @@
         };
 
         systemd.network.networks."10-macvtap" = {
-          matchConfig.Name = "enp0s6";
+          matchConfig.MACAddress = "02:00:00:00:00:${vm.macID}";
 
           address = [
             "${vm.ip}/${toString 26}"
@@ -94,6 +94,10 @@
               GatewayOnLink = true;
             }
           ];
+
+          networkConfig = {
+            DNS = ["${cala-m-os.ip.gateway}"];
+          };
         };
       };
 
