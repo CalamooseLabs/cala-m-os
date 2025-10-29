@@ -49,4 +49,6 @@ in {
   };
 
   services.resolved.enable = false;
+
+  networking.nameservers = ["${cala-m-os.ip.gateway}"];
 }

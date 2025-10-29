@@ -38,7 +38,6 @@
 
   environment.systemPackages = with pkgs; [
     protonup
-    steam-run
     vulkan-loader
     vulkan-validation-layers
     vulkan-tools
