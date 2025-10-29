@@ -22,6 +22,7 @@
       devices = ["rtx-5090" "pci-usb-controller-1"];
       storage = 100; # GBs
       macID = "40";
+      shareStore = false;
       ip = cala-m-os.ip.htpc;
       dns = ["${cala-m-os.ip.vault}"];
       shares = [
