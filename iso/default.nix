@@ -10,7 +10,7 @@
 
   # Enable SSH in the boot process.
   systemd.services.sshd.wantedBy = pkgs.lib.mkForce ["multi-user.target"];
-  users.users.rootopenssh.authorizedKeys.keyFiles = [
+  users.users.root.openssh.authorizedKeys.keyFiles = [
     ./public_keys/id_ed25519_sk.pub
     ./public_keys/backup_id_ed25519_sk.pub
   ];
