@@ -112,5 +112,18 @@
 in {
   imports = [inputs.microvm.nixosModules.host] ++ host_files;
 
+  systemd.network.networks."${cala-m-os.networking.network-name}-noip" = {
+    matchConfig.Name = "vm-*";
+
+    linkConfig = {
+      RequiredForOnline = "no";
+    };
+
+    networkConfig = {
+      DHCP = "no";
+      LinkLocalAddressing = "no";
+    };
+  };
+
   microvm.vms = vm_configs;
 }
