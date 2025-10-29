@@ -125,12 +125,13 @@ in {
     matchConfig.Name = "vm-*";
 
     linkConfig = {
-      RequiredForOnline = "no";
+      Unmanaged = true;
+      RequiredForOnline = false;
     };
 
     networkConfig = {
-      DHCP = "no";
-      LinkLocalAddressing = "no";
+      DHCP = false;
+      LinkLocalAddressing = false;
     };
 
     address = [];
