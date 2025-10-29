@@ -36,28 +36,9 @@ in {
   };
 
   microvm = {
-    # optimize.enable = false;
     balloon = lib.mkForce false;
 
-    # Use VM's own store disk as base
-    # storeOnDisk = true;
-
-    # Enable writable overlay for building
     writableStoreOverlay = "/nix/.rw-store";
-
-    # Persistent volume for the overlay
-    # volumes = [
-    #   {
-    #     image = "nix-store-overlay.img";
-    #     mountPoint = "/nix/.rw-store";
-    #     size = 51200; # 50GB
-    #     autoCreate = true;
-    #     fsType = "ext4";
-    #   }
-    # ];
-  };
-  systemd.network.networks."${cala-m-os.networking.network-name}".networkConfig = {
-    DNS = ["${cala-m-os.ip.vault}"];
   };
 
   services.resolved = {

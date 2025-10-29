@@ -96,7 +96,10 @@
           ];
 
           networkConfig = {
-            DNS = ["${cala-m-os.ip.gateway}"];
+            DNS =
+              if vm ? dns
+              then vm.dns
+              else ["${cala-m-os.ip.gateway}"];
           };
         };
       };

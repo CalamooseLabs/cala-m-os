@@ -23,6 +23,7 @@
       storage = 100; # GBs
       macID = "40";
       ip = cala-m-os.ip.htpc;
+      dns = ["${cala-m-os.ip.vault}"];
       shares = [
         {
           proto = "virtiofs";
@@ -56,7 +57,7 @@
     "vault" = {
       devices = [];
       storage = 100;
-      macID = "20";
+      macID = "45";
       ip = cala-m-os.ip.vault;
       shares = [];
     };
