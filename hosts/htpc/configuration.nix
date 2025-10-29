@@ -36,7 +36,7 @@ in {
   };
 
   microvm = {
-    optimize.enable = false;
+    # optimize.enable = false;
     balloon = lib.mkForce false;
 
     # Use VM's own store disk as base

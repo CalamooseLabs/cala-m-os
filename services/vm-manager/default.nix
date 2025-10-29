@@ -76,7 +76,7 @@
         };
 
         networking = {
-          interfaces.eth0 = {
+          interfaces.enp0s7 = {
             ipv4.addresses = [
               {
                 address = vm.ip;

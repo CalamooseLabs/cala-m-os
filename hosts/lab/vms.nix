@@ -21,7 +21,7 @@
     "htpc" = {
       devices = ["rtx-5090" "pci-usb-controller-1"];
       storage = 100; # GBs
-      macID = "25";
+      macID = "40";
       ip = cala-m-os.ip.htpc;
       shares = [
         {
