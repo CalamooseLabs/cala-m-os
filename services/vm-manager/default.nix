@@ -75,22 +75,20 @@
             ];
         };
 
-        networking.interfaces.eth0 = {
-          useDHCP = false;
-
-          ipv4.addresses = [
-            {
-              address = vm.ip;
-              prefixLength = 26;
-            }
-          ];
-          ipv4.routes = [
-            {
-              address = "0.0.0.0";
-              prefixLength = 0;
-              via = cala-m-os.ip.gateway;
-            }
-          ];
+        networking = {
+          interfaces.eth0 = {
+            ipv4.addresses = [
+              {
+                address = vm.ip;
+                prefixLength = 26;
+              }
+            ];
+          };
+          defaultGateway = {
+            address = cala-m-os.ip.gateway;
+            interface = "eth0";
+          };
+          nameservers = ["10.10.10.33"];
         };
       };
 

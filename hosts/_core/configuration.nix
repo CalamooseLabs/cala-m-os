@@ -80,9 +80,6 @@ in {
   # Enable Firewall
   networking.firewall.enable = true;
 
-  # Enable Network Manager
-  networking.networkmanager.enable = true;
-
   # Set Colorado timezone
   time.timeZone = "${cala-m-os.globals.TZ}";
 

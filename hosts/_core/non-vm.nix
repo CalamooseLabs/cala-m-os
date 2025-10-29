@@ -19,6 +19,8 @@
     find /etc/nixos -type f -exec chmod 664 {} +
   '';
 
+  # Enable Network Manager
+  networking.networkmanager.enable = true;
   # TODO:
   # These next steps should only happen on certain hosts (IE devbox but not htpc)
   # These will be moved to a oneshot on non-vm
