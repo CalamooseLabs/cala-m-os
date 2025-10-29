@@ -88,7 +88,6 @@
             address = cala-m-os.ip.gateway;
             interface = "eth0";
           };
-          nameservers = ["10.10.10.33"];
         };
       };
 
