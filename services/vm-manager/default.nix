@@ -81,7 +81,7 @@
           ipv4.addresses = [
             {
               address = vm.ip;
-              prefixLength = 24;
+              prefixLength = 26;
             }
           ];
           ipv4.routes = [
