@@ -80,7 +80,7 @@
           useDHCP = false;
         };
 
-        systemd.network.networks."10-macvtap" = {
+        systemd.network.networks."${cala-m-os.networking.network-name}" = {
           matchConfig.MACAddress = "02:00:00:00:00:${vm.macID}";
 
           address = [

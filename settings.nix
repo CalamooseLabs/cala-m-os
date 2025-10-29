@@ -10,6 +10,9 @@
 
   # Lab Settings
   fqdn = "calamooselabs.com";
+  networking = {
+    network-name = "10-macvtap";
+  };
 
   # IP Address Table
   ip = {

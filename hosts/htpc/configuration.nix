@@ -56,8 +56,9 @@ in {
     #   }
     # ];
   };
-
-  networking.nameservers = ["${cala-m-os.ip.vault}"];
+  systemd.network.networks."${cala-m-os.networking.network-name}".networkConfig = {
+    DNS = ["${cala-m-os.ip.vault}"];
+  };
 
   services.resolved = {
     enable = true;
