@@ -75,19 +75,44 @@
             ];
         };
 
+        # networking = {
+        #   interfaces.enp0s7 = {
+        #     ipv4.addresses = [
+        #       {
+        #         address = vm.ip;
+        #         prefixLength = 26;
+        #       }
+        #     ];
+        #   };
+        #   defaultGateway = {
+        #     address = cala-m-os.ip.gateway;
+        #     interface = "enp0s7";
+        #   };
+        # };
+
         networking = {
-          interfaces.enp0s7 = {
-            ipv4.addresses = [
-              {
-                address = vm.ip;
-                prefixLength = 26;
-              }
-            ];
-          };
-          defaultGateway = {
-            address = cala-m-os.ip.gateway;
-            interface = "enp0s7";
-          };
+          useNetworkd = true;
+          useDHCP = false;
+        };
+
+        systemd.network.networks."10-macvtap" = {
+          matchConfig.Name = "enp0s7";
+
+          address = [
+            "${vm.ip}/${toString 26}" # Use CIDR notation
+          ];
+
+          routes = [
+            {
+              Destination = "0.0.0.0/0";
+              Gateway = cala-m-os.ip.gateway;
+              GatewayOnLink = true;
+            }
+          ];
+
+          # networkConfig = {
+          #   DNS = [cala-m-os.ip.gateway];
+          # };
         };
       };
 
