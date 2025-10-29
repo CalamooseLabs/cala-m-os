@@ -132,6 +132,8 @@ in {
       DHCP = "no";
       LinkLocalAddressing = "no";
     };
+
+    address = [];
   };
 
   microvm.vms = vm_configs;
