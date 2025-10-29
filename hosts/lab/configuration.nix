@@ -35,7 +35,7 @@ in {
   networking.networkmanager.enable = lib.mkForce false;
 
   networking = {
-    interfaces.enp0s7 = {
+    interfaces.eno2 = {
       ipv4.addresses = [
         {
           address = cala-m-os.ip.lab;

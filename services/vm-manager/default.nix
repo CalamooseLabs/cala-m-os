@@ -86,7 +86,7 @@
           };
           defaultGateway = {
             address = cala-m-os.ip.gateway;
-            interface = "eth0";
+            interface = "enp0s7";
           };
         };
       };
