@@ -50,5 +50,10 @@ in {
 
   services.resolved.enable = false;
 
-  networking.nameservers = ["1.1.1.1" "1.0.0.1"];
+  environment.etc."resolv.conf" = {
+    mode = "0644";
+    text = ''
+      nameserver ${cala-m-os.ip.gateway}
+    '';
+  };
 }
