@@ -5,6 +5,20 @@
 }: {
   imports = [(modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")];
 
+  isoImage = {
+    isoLabel = "Cala-M-OS Installer";
+
+    volumeID = "CALA-M-OS";
+
+    splashImage = ../assets/cala-m-os_logo.png;
+
+    bootLoader = {
+      systemd-boot = {
+        loaderName = "Cala‑M‑OS Installer";
+      };
+    };
+  };
+
   nix.settings.experimental-features = ["nix-command" "flakes"];
   nixpkgs.config.allowUnfree = true;
 
