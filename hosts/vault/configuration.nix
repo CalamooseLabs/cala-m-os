@@ -49,4 +49,11 @@ in {
   };
 
   services.resolved.enable = false;
+
+  systemd.network.networks."19-docker" = {
+    matchConfig.Name = "veth*";
+    linkConfig = {
+      Unmanaged = true;
+    };
+  };
 }
