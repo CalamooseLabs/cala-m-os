@@ -80,26 +80,35 @@
           useDHCP = false;
         };
 
-        systemd.network.networks."${cala-m-os.networking.network-name}" = {
-          matchConfig.MACAddress = "02:00:00:00:00:${vm.macID}";
+        systemd.network.networks = {
+          "${cala-m-os.networking.network-name}" = {
+            matchConfig.MACAddress = "02:00:00:00:00:${vm.macID}";
 
-          address = [
-            "${vm.ip}/${toString 26}"
-          ];
+            address = [
+              "${vm.ip}/${toString 26}"
+            ];
 
-          routes = [
-            {
-              Destination = "0.0.0.0/0";
-              Gateway = cala-m-os.ip.gateway;
-              GatewayOnLink = true;
-            }
-          ];
+            routes = [
+              {
+                Destination = "0.0.0.0/0";
+                Gateway = cala-m-os.ip.gateway;
+                GatewayOnLink = true;
+              }
+            ];
 
-          networkConfig = {
-            DNS =
-              if vm ? dns
-              then vm.dns
-              else ["${cala-m-os.ip.gateway}"];
+            networkConfig = {
+              DNS =
+                if vm ? dns
+                then vm.dns
+                else ["${cala-m-os.ip.gateway}"];
+            };
+          };
+
+          "19-docker" = {
+            matchConfig.Name = "veth*";
+            linkConfig = {
+              Unmanaged = true;
+            };
           };
         };
       };

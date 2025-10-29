@@ -48,12 +48,5 @@ in {
     fsType = "nfs";
   };
 
-  services.resolved.enable = false;
-
-  systemd.network.networks."19-docker" = {
-    matchConfig.Name = "veth*";
-    linkConfig = {
-      Unmanaged = true;
-    };
-  };
+  # services.resolved.enable = false;
 }
