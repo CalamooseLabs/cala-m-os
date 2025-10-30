@@ -10,4 +10,16 @@ in {
     yubidev
     yubibackup
   ];
+  "qbit-password.age".publicKeys = [
+    yubiserver
+    yubinano
+    yubidev
+    yubibackup
+  ];
+  "proton-vpn.conf.age".publicKeys = [
+    yubiserver
+    yubinano
+    yubidev
+    yubibackup
+  ];
 }

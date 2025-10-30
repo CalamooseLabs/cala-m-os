@@ -55,36 +55,4 @@
       "credentials=${config.age.secrets.work_credentials.path}"
     ];
   };
-
-  services.qbittorrent-vpn = {
-    enable = true;
-
-    # Path to WireGuard config with private key included
-    wireguardConfigFile = config.age.secrets."proton_vpn.conf".path;
-
-    # Path to qBittorrent password hash
-    qbittorrentPasswordFile = config.age.secrets.admin_password.path;
-
-    webUI = {
-      port = 8080;
-      username = "admin";
-    };
-
-    downloads = {
-      path = "/data/qbit/downloads";
-      incompletePath = "/data/qbit/incomplete";
-    };
-
-    seedingLimits = {
-      maxRatio = 2.0;
-      maxSeedingDays = 7;
-      actionOnLimit = "remove";
-      enableAutoDelete = false;
-    };
-
-    speedLimits = {
-      globalUpload = 5120; # 5 MB/s
-      globalDownload = 10240; # 10 MB/s
-    };
-  };
 }

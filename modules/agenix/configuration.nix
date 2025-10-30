@@ -22,4 +22,10 @@
   ];
 
   age.ageBin = "PATH=$PATH:${lib.makeBinPath [pkgs.age-plugin-yubikey]} ${pkgs.age}/bin/age";
+
+  systemd.user.services.agenix = {
+    serviceConfig = {
+      Environment = "PATH=${pkgs.lib.makeBinPath [pkgs.age pkgs.age-plugin-yubikey]}";
+    };
+  };
 }

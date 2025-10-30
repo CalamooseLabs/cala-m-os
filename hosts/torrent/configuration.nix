@@ -3,7 +3,11 @@
 #   Torrent Management Server    #
 #                                #
 ##################################
-{cala-m-os, ...}: let
+{
+  cala-m-os,
+  config,
+  ...
+}: let
   import_users = ["server"];
 
   machine_type = "VM";
@@ -26,6 +30,9 @@ in {
         "qbit.${cala-m-os.fqdn}" = "localhost:8080";
       };
     })
+
+    # Import QBittorrent
+    ../../modules/qbittorrent/configuration.nix
   ];
 
   networking.hostName = "torrent";
@@ -81,15 +88,32 @@ in {
     fsType = "nfs";
   };
 
-  services.qbittorrent = {
+  services.qbittorrent-vpn = {
     enable = true;
-    openFirewall = true;
-    serverConfig = {
-      LegalNotice.Accepted = true;
-      Preferences = {
-        General.Locale = "en";
-      };
+
+    wireguardConfigFile = config.age.secrets."proton-vpn.conf".path;
+    qbittorrentPasswordFile = config.age.secrets."qbit-password".path;
+
+    webUI = {
+      port = 8080;
+      username = "admin";
     };
-    webuiPort = 8080;
+
+    downloads = {
+      path = "/data/qbit/downloads";
+      incompletePath = "/data/qbit/incomplete";
+    };
+
+    seedingLimits = {
+      maxRatio = 2.0;
+      maxSeedingDays = 45;
+      actionOnLimit = "remove";
+      enableAutoDelete = false;
+    };
+
+    speedLimits = {
+      globalUpload = 102400; # 100 MB/s
+      globalDownload = 1024000; # 1000 MB/s
+    };
   };
 }

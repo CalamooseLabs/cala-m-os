@@ -3,7 +3,6 @@
     secrets = {
       "admin_password" = {
         file = ./. + "/admin_password.age";
-        mode = "777";
       };
     };
     identityPaths = [

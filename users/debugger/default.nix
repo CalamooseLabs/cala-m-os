@@ -31,7 +31,6 @@
     "nh"
     "obs-studio"
     "pdf-editor"
-    "qbittorrent"
     "rawtherapee"
     "rebuild-config"
     "remote-desktop"
