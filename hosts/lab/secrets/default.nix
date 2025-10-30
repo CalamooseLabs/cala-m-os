@@ -6,7 +6,7 @@
       };
     };
     identityPaths = [
-      "/etc/nixos/modules/agenix/identities/yubi.key"
+      "/etc/nixos/modules/agenix/identities/server.key"
     ];
   };
 }

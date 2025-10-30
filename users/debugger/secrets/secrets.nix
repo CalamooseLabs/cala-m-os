@@ -6,4 +6,8 @@ in {
     yubinano
     yubibackup
   ];
+  "proton_vpn.conf.age".publicKeys = [
+    yubinano
+    yubibackup
+  ];
 }
