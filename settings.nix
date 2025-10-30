@@ -11,6 +11,7 @@
   # Lab Settings
   fqdn = "calamooselabs.com";
   networking = {
+    prefixLength = "26";
     network-name = "10-macvtap";
   };
 

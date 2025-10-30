@@ -35,7 +35,7 @@
             {
               type = "macvtap";
               id = "vm-${name}";
-              mac = "02:00:00:00:00:${vm.macID}";
+              mac = "02:00:00:00:00:${lib.last (lib.splitString "." cala-m-os.ip.${name})}";
               macvtap = {
                 mode = "bridge";
                 link = networkInterface;
@@ -82,10 +82,10 @@
 
         systemd.network.networks = {
           "${cala-m-os.networking.network-name}" = {
-            matchConfig.MACAddress = "02:00:00:00:00:${vm.macID}";
+            matchConfig.MACAddress = "02:00:00:00:00:${lib.last (lib.splitString "." cala-m-os.ip.${name})}";
 
             address = [
-              "${vm.ip}/${toString 26}"
+              "${cala-m-os.ip.${name}}/${cala-m-os.networking.prefixLength}"
             ];
 
             routes = [
