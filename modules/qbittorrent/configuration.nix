@@ -314,7 +314,9 @@ in {
     systemd.services.qbittorrent = {
       description = "qBittorrent BitTorrent Client in VPN";
       after = ["network-online.target" "wireguard-namespace.service"];
+      wants = ["network-online.target"]; # ADD THIS LINE
       requires = ["wireguard-namespace.service"];
+      bindsTo = ["wireguard-namespace.service"];
       wantedBy = ["multi-user.target"];
 
       preStart = let
