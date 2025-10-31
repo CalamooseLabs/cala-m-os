@@ -13,4 +13,5 @@
       source = config.age.secrets."NKCGateway.nmconnection".path;
     };
   };
+  systemd.services.agenix-rerun.before = ["NetworkManager.service"];
 }

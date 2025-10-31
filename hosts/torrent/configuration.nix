@@ -87,8 +87,8 @@ in {
   services.qbittorrent-vpn = {
     enable = true;
 
-    wireguardConfigFile = "/run/agenix/proton-vpn.conf";
-    qbittorrentPasswordFile = "/run/agenix/qbit-password";
+    wireguardConfigFile = "/run/hostsecrets/proton-vpn.conf";
+    qbittorrentPasswordFile = "/run/hostsecrets/qbit-password";
 
     webUI = {
       port = 8080;

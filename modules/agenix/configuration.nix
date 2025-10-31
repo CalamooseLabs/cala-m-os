@@ -26,7 +26,6 @@
   systemd.services.agenix-rerun = {
     description = "Rerun agenix decryption after boot";
     after = ["pcscd.service"];
-    before = ["NetworkManager.service"];
     requires = ["pcscd.service"];
     wantedBy = ["multi-user.target"];
 
