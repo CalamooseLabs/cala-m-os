@@ -84,6 +84,12 @@ in {
     fsType = "nfs";
   };
 
+  systemd.tmpfiles.rules = [
+    "d /data/qbit 0755 qbittorrent qbittorrent -"
+    "d /data/qbit/downloads 0755 qbittorrent qbittorrent -"
+    "d /data/qbit/incomplete 0755 qbittorrent qbittorrent -"
+  ];
+
   services.qbittorrent-vpn = {
     enable = true;
 
