@@ -54,6 +54,7 @@
           shares =
             [
               {
+                proto = "virtiofs";
                 tag = "agenix";
                 source = "/run/agenix";
                 mountPoint = "/run/hostsecrets";
