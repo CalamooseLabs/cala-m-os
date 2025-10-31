@@ -3,11 +3,7 @@
 #   Torrent Management Server    #
 #                                #
 ##################################
-{
-  cala-m-os,
-  config,
-  ...
-}: let
+{cala-m-os, ...}: let
   import_users = ["server"];
 
   machine_type = "VM";

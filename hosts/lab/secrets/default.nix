@@ -6,9 +6,7 @@
       };
       "qbit-password" = {
         file = ./. + "/qbit-password.age";
-        owner = "qbittorrent";
-        group = "qbittorrent";
-        mode = "770";
+        mode = "777";
       };
       "proton-vpn.conf" = {
         file = ./. + "/proton-vpn.conf.age";
