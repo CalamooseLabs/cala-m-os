@@ -310,11 +310,11 @@ in {
       };
     };
 
-    # **qBittorrent service - UNCHANGED**
+    # **qBittorrent service**
     systemd.services.qbittorrent = {
       description = "qBittorrent BitTorrent Client in VPN";
       after = ["network-online.target" "wireguard-namespace.service"];
-      wants = ["network-online.target"]; # ADD THIS LINE
+      wants = ["network-online.target"];
       requires = ["wireguard-namespace.service"];
       bindsTo = ["wireguard-namespace.service"];
       wantedBy = ["multi-user.target"];
@@ -343,7 +343,7 @@ in {
         mkdir -p ${cfg.downloads.path} ${cfg.downloads.incompletePath}
 
         # **Read password from file**
-        PASSWORD_HASH=$(cat ${cfg.qbittorrentPasswordFile})
+        PASSWORD_HASH=$(sudo cat ${cfg.qbittorrentPasswordFile})
 
         # **Generate qBittorrent configuration**
         cat > /var/lib/qbittorrent/qBittorrent/config/qBittorrent.conf <<EOF
