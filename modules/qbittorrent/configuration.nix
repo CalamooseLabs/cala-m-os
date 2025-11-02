@@ -300,6 +300,9 @@ in {
           ${pkgs.iptables}/bin/iptables -D FORWARD -o veth-host -j ACCEPT 2>/dev/null || true
 
           echo "Cleanup complete"
+
+          # **Read password from file**
+          PASSWORD_HASH=$(sudo cat ${cfg.qbittorrentPasswordFile})
         '';
 
         # Restart policy
@@ -343,7 +346,7 @@ in {
         mkdir -p ${cfg.downloads.path} ${cfg.downloads.incompletePath}
 
         # **Read password from file**
-        PASSWORD_HASH=$(sudo cat ${cfg.qbittorrentPasswordFile})
+        # PASSWORD_HASH=$(sudo cat ${cfg.qbittorrentPasswordFile})
 
         # **Generate qBittorrent configuration**
         cat > /var/lib/qbittorrent/qBittorrent/config/qBittorrent.conf <<EOF
