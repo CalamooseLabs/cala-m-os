@@ -33,7 +33,14 @@
     "torrent" = {
       devices = [];
       storage = 100;
-      shares = [];
+      shares = [
+        {
+          proto = "virtiofs";
+          tag = "acmecerts";
+          source = "/var/lib/acme/${cala-m-os.fqdn}";
+          mountPoint = "/mnt/acme";
+        }
+      ];
     };
     "studio" = {
       devices = ["rtx-4060" "pci-usb-controller-2"];

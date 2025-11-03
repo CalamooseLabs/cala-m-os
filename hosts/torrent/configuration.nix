@@ -23,7 +23,7 @@ in {
         "radarr.${cala-m-os.fqdn}" = "localhost:7878";
         "sonarr.${cala-m-os.fqdn}" = "localhost:8989";
         "prowlarr.${cala-m-os.fqdn}" = "localhost:9696";
-        "qbit.${cala-m-os.fqdn}" = "localhost:8080";
+        "qbit.${cala-m-os.fqdn}" = "10.200.200.2:8080";
       };
     })
 
