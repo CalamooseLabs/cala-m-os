@@ -360,7 +360,7 @@ in {
           else "-1";
       in ''
         # **Create necessary directories**
-        mkdir -p /var/lib/qbittorrent/{config,downloads,incomplete,logs}
+        mkdir -p /var/lib/qbittorrent/qBittorrent/{config,downloads,incomplete,logs}
         mkdir -p ${cfg.downloads.path} ${cfg.downloads.incompletePath}
 
         # **Read password from file**
@@ -433,7 +433,7 @@ in {
         # **Set proper ownership**
         chown -R qbittorrent:qbittorrent /var/lib/qbittorrent
         chown -R qbittorrent:qbittorrent ${cfg.downloads.path} ${cfg.downloads.incompletePath} || true
-        chmod 600 /var/lib/qbittorrent/config/qBittorrent.conf
+        chmod 600 /var/lib/qbittorrent/qBittorrent/config/qBittorrent.conf
       '';
 
       serviceConfig = {
