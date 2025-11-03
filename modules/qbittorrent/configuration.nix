@@ -300,9 +300,6 @@ in {
           ${pkgs.iptables}/bin/iptables -D FORWARD -o veth-host -j ACCEPT 2>/dev/null || true
 
           echo "Cleanup complete"
-
-          # **Read password from file**
-          PASSWORD_HASH=$(sudo cat ${cfg.qbittorrentPasswordFile})
         '';
 
         # Restart policy
@@ -313,12 +310,33 @@ in {
       };
     };
 
+    # **Password setup service**
+    systemd.services.qbittorrent-setup-password = {
+      description = "Setup qBittorrent password file";
+      after = ["network-online.target"];
+      wantedBy = ["qbittorrent.service"];
+      before = ["qbittorrent.service"];
+
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        ExecStart = pkgs.writeScript "setup-qbt-pass" ''
+          #!${pkgs.bash}/bin/bash
+          set -e
+          PASS_FILE="/var/lib/qbittorrent/password_hash"
+          cp ${cfg.qbittorrentPasswordFile} "$PASS_FILE"
+          chown qbittorrent:qbittorrent "$PASS_FILE"
+          chmod 600 "$PASS_FILE"
+        '';
+      };
+    };
+
     # **qBittorrent service**
     systemd.services.qbittorrent = {
       description = "qBittorrent BitTorrent Client in VPN";
-      after = ["network-online.target" "wireguard-namespace.service"];
+      after = ["network-online.target" "wireguard-namespace.service" "qbittorrent-setup-password.service"];
       wants = ["network-online.target"];
-      requires = ["wireguard-namespace.service"];
+      requires = ["wireguard-namespace.service" "qbittorrent-setup-password.service"];
       bindsTo = ["wireguard-namespace.service"];
       wantedBy = ["multi-user.target"];
 
@@ -346,7 +364,7 @@ in {
         mkdir -p ${cfg.downloads.path} ${cfg.downloads.incompletePath}
 
         # **Read password from file**
-        # PASSWORD_HASH=$(sudo cat ${cfg.qbittorrentPasswordFile})
+        PASSWORD_HASH=$(cat /var/lib/qbittorrent/password_hash)
 
         # **Generate qBittorrent configuration**
         cat > /var/lib/qbittorrent/qBittorrent/config/qBittorrent.conf <<EOF
@@ -394,7 +412,7 @@ in {
         WebUI\Enabled=true
         WebUI\Port=${toString cfg.webUI.port}
         WebUI\Username=${cfg.webUI.username}
-        WebUI\Password_PBKDF2=@ByteArray($PASSWORD_HASH)
+        WebUI\Password_PBKDF2=$PASSWORD_HASH
         WebUI\LocalHostAuth=false
         WebUI\AuthSubnetWhitelistEnabled=true
         WebUI\AuthSubnetWhitelist=10.200.200.0/24,127.0.0.1/32

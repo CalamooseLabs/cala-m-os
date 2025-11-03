@@ -6,7 +6,6 @@
       };
       "qbit-password" = {
         file = ./. + "/qbit-password.age";
-        mode = "777";
       };
       "proton-vpn.conf" = {
         file = ./. + "/proton-vpn.conf.age";
