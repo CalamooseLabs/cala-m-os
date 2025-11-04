@@ -15,4 +15,7 @@ in {
   # enable appimage support
   programs.appimage.enable = true;
   programs.appimage.binfmt = true;
+
+  programs.gamescope.enable = true;
+  programs.gamemode.enable = true;
 }
