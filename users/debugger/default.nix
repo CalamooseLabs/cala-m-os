@@ -40,6 +40,7 @@
     "scanner"
     "spotify"
     "ssh"
+    "steam"
     "stylix"
     # "tailscale"
     "virt-manager"
