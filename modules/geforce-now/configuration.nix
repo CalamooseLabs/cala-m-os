@@ -3,7 +3,7 @@
   programs.gamemode.enable = true;
 
   imports = [
-    inputs.flatpaks.nixosModules.default
+    inputs.nix-flatpak.nixosModules.nix-flatpak
     ./module.nix
   ];
 

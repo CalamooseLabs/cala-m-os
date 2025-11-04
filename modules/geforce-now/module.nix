@@ -13,43 +13,38 @@ in {
   config = mkIf cfg.enable {
     services.flatpak = {
       enable = true;
+      uninstallUnmanaged = true;
 
-      remotes = {
-        "flathub" = "https://dl.flathub.org/repo/flathub.flatpakrepo";
-        "GeForceNOW" = "https://international.download.nvidia.com/GFNLinux/flatpak/geforcenow.flatpakrepo";
-      };
-
-      packages = [
-        "GeForceNOW:app/com.nvidia.geforcenow/x86_64/stable"
+      remotes = [
+        {
+          name = "flathub";
+          location = "https://dl.flathub.org/repo/flathub.flatpakrepo";
+        }
+        {
+          name = "GeForceNOW";
+          location = "https://international.download.nvidia.com/GFNLinux/flatpak/geforcenow.flatpakrepo";
+        }
       ];
 
+      packages = [
+        {
+          appId = "org.freedesktop.Sdk//24.08";
+          origin = "flathub";
+        }
+        {
+          appId = "com.nvidia.geforcenow";
+          origin = "GeForceNOW";
+        }
+      ];
+
+      # Wayland-specific overrides for GeForce Now
       overrides = {
-        "global".Context = {
+        "com.nvidia.geforcenow".Context = {
           sockets = [
+            "wayland"
             "!x11"
             "!fallback-x11"
-            "wayland"
           ];
-        };
-
-        # Fix for window not opening on Wayland
-        "com.nvidia.geforcenow" = {
-          Environment = {
-            "GDK_BACKEND" = "wayland";
-            "XDG_SESSION_TYPE" = "wayland";
-            "__GLX_VENDOR_LIBRARY_NAME" = "nvidia";
-            "EGL_PLATFORM" = "wayland";
-          };
-          Context = {
-            sockets = [
-              "wayland"
-              "!x11"
-              "!fallback-x11"
-            ];
-            devices = [
-              "all"
-            ];
-          };
         };
       };
     };
