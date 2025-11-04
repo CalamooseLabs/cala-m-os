@@ -46,10 +46,10 @@
 
   environment.systemPackages = with pkgs; [
     cifs-utils
-    flatpak
+    # flatpak
   ];
 
-  services.flatpak.enable = true;
+  # services.flatpak.enable = true;
 
   fileSystems."/mnt/nkc" = {
     device = "//10.50.1.1/Data";
