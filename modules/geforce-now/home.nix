@@ -7,12 +7,12 @@
     inputs.flatpaks.homeModules.default
   ];
 
-  home.packages = [
-    pkgs.flatpak
-  ];
+  # home.packages = [
+  #   pkgs.flatpak
+  # ];
 
   services.flatpak = {
-    enable = true;
+    enable = false;
 
     remotes = {
       "flathub" = "https://dl.flathub.org/repo/flathub.flatpakrepo";
