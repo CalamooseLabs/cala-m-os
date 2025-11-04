@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 with lib; let
@@ -17,11 +16,11 @@ in {
 
       remotes = {
         "flathub" = "https://dl.flathub.org/repo/flathub.flatpakrepo";
-        "nvidia" = "https://nvidia.flatpakremote.org/repo/nvidia.flatpakrepo";
+        "GeForceNOW" = "https://international.download.nvidia.com/GFNLinux/flatpak/geforcenow.flatpakrepo";
       };
 
       packages = [
-        "nvidia:app/com.nvidia.geforcenow/x86_64/stable"
+        "GeForceNOW:app/com.nvidia.geforcenow/x86_64/stable"
       ];
 
       overrides = {
