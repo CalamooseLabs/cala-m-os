@@ -6,14 +6,10 @@
   services.flatpak = {
     enable = true;
 
-    remotes = [
-      {
-        "flathub" = "https://dl.flathub.org/repo/flathub.flatpakrepo";
-      }
-      {
-        "GeForceNOW" = "https://international.download.nvidia.com/GFNLinux/flatpak/geforcenow.flatpakrepo";
-      }
-    ];
+    remotes = {
+      "flathub" = "https://dl.flathub.org/repo/flathub.flatpakrepo";
+      "GeForceNOW" = "https://international.download.nvidia.com/GFNLinux/flatpak/geforcenow.flatpakrepo";
+    };
 
     packages = [
       "flathub:runtime/org.freedesktop.Sdk//24.08"
