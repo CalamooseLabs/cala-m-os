@@ -1,6 +1,14 @@
-{inputs, ...}: {
+{
+  inputs,
+  pkgs,
+  ...
+}: {
   imports = [
     inputs.flatpaks.homeModules.default
+  ];
+
+  home.packages = [
+    pkgs.flatpak
   ];
 
   services.flatpak = {
