@@ -17,7 +17,7 @@ in
 
     extraPkgs = pkgs:
       with pkgs; [
-        # Add necessary runtime dependencies
+        # Core dependencies
         gtk3
         glib
         nss
@@ -44,12 +44,37 @@ in
         fontconfig
         freetype
         zlib
+
+        # Additional Electron dependencies
+        libxkbcommon
+        mesa.drivers
+        vulkan-loader
+        libGL
+        libglvnd
+        egl-wayland
+        wayland
+        xorg.libxcb
+        xorg.libX11
+        xorg.libXext
+        xorg.libXi
+        xorg.libXrandr
+        xorg.libXrender
+        xorg.libXtst
+        xorg.libXcursor
+        xorg.libXdamage
+        xorg.libXcomposite
+        xorg.libXfixes
+        xorg.libXinerama
+        xorg.libXScrnSaver
+        xorg.libXxf86vm
+        xorg.xcbutilimage
+        xorg.xcbutilkeysyms
+        xorg.xcbutilrenderutil
+        xorg.xcbutilwm
       ];
 
     extraBuildCommands = ''
-      # Create an empty /etc/nixos directory to satisfy the app
       mkdir -p $out/etc/nixos
-      # Leave it empty - the app just needs the directory to exist
     '';
 
     meta = with lib; {
