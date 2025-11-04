@@ -17,7 +17,7 @@
 
     packages = [
       "flathub:runtime/org.freedesktop.Sdk//24.08"
-      "GeForceNOW:app/com.nvidia.geforcenow"
+      "GeForceNOW:app/com.nvidia.geforcenow//master"
     ];
 
     # Wayland-specific overrides for GeForce Now
