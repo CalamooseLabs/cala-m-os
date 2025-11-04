@@ -15,6 +15,7 @@
     "edit-config"
     "fingerprint-scanner"
     "fonts"
+    "geforce-now"
     "ghostty"
     "git"
     "gpg"

@@ -64,4 +64,6 @@ in {
 
   # Devbox can have manual
   documentation.enable = lib.mkForce true;
+
+  # programs.appimage.enable = true;
 }
