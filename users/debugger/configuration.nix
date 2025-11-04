@@ -44,7 +44,13 @@
     ];
   };
 
-  environment.systemPackages = [pkgs.cifs-utils];
+  environment.systemPackages = with pkgs; [
+    cifs-utils
+    flatpak
+  ];
+
+  services.flatpak.enable = true;
+
   fileSystems."/mnt/nkc" = {
     device = "//10.50.1.1/Data";
     fsType = "cifs";
