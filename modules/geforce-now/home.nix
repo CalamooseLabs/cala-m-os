@@ -1,38 +1,23 @@
 {inputs, ...}: {
-  # programs.gamescope.enable = true;
-  # programs.gamemode.enable = true;
-
   imports = [
-    inputs.nix-flatpak.homeManagerModules.nix-flatpak
-    # ./module.nix
+    inputs.flatpaks.homeModules.default
   ];
 
-  # services.geforce-now.enable = true;
   services.flatpak = {
     enable = true;
-    uninstallUnmanaged = true;
-    update.onActivation = true;
 
     remotes = [
       {
-        name = "flathub";
-        location = "https://dl.flathub.org/repo/flathub.flatpakrepo";
+        "flathub" = "https://dl.flathub.org/repo/flathub.flatpakrepo";
       }
       {
-        name = "GeForceNOW";
-        location = "https://international.download.nvidia.com/GFNLinux/flatpak/geforcenow.flatpakrepo";
+        "GeForceNOW" = "https://international.download.nvidia.com/GFNLinux/flatpak/geforcenow.flatpakrepo";
       }
     ];
 
     packages = [
-      {
-        appId = "org.freedesktop.Sdk//24.08";
-        origin = "flathub";
-      }
-      {
-        appId = "com.nvidia.geforcenow";
-        origin = "GeForceNOW";
-      }
+      "flathub:runtime/org.freedesktop.Sdk//24.08"
+      "GeForceNOW:app/com.nvidia.geforcenow"
     ];
 
     # Wayland-specific overrides for GeForce Now
@@ -40,19 +25,13 @@
       global = {
         # Force Wayland by default
         Context.sockets = ["wayland" "!x11" "!fallback-x11"];
-
+      };
+      "com.nvidia.geforcenow" = {
         Environment = {
           MESA_LOADER_DRIVER_OVERRIDE = "";
           VK_ICD_FILENAMES = "";
           ANV_DEBUG = "video-decode,video-encode";
         };
-      };
-      "com.nvidia.geforcenow".Context = {
-        sockets = [
-          "wayland"
-          "!x11"
-          "!fallback-x11"
-        ];
       };
     };
   };

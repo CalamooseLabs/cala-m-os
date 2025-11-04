@@ -14,7 +14,7 @@
     # Impermanence
     impermanence.url = "github:nix-community/impermanence";
 
-    nix-flatpak.url = "github:gmodena/nix-flatpak";
+    flatpaks.url = "github:in-a-dil-emma/declarative-flatpak/latest";
 
     # MicroVM
     microvm = {
