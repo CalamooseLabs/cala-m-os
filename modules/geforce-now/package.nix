@@ -11,10 +11,8 @@
     url = "https://github.com/hmlendea/gfn-electron/releases/download/v${version}/geforcenow-electron_${version}_linux.AppImage";
     sha256 = "n3ZsRXeFFidbqdtqzn3rHFtQiVjei5On1CtwKOwt7ac=";
   };
-
-  appimageContents = pkgs.appimageTools.extractType2 {inherit src version pname;};
 in
-  pkgs.appimageTools.wrapType2 rec {
+  pkgs.appimageTools.wrapType2 {
     inherit name src version pname;
 
     extraPkgs = pkgs:
