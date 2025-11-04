@@ -13,6 +13,7 @@
 
   services.flatpak = {
     enable = true;
+    forceRunOnActivation = true;
 
     remotes = {
       "flathub" = "https://dl.flathub.org/repo/flathub.flatpakrepo";
