@@ -16,14 +16,9 @@
     "/var/lib/flatpak/exports/bin"
   ];
 
-  # Add Flatpak share directories to XDG_DATA_DIRS (for desktop integration)
+  # Add Flatpak share directories to XDG_DATA_DIRS (as string)
   home.sessionVariables = {
-    XDG_DATA_DIRS = [
-      "$HOME/.local/share/flatpak/exports/share"
-      "/var/lib/flatpak/exports/share"
-      "/usr/share"
-      "/usr/local/share"
-    ];
+    XDG_DATA_DIRS = "$HOME/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/share:/usr/local/share:$XDG_DATA_DIRS";
   };
 
   services.flatpak = {
