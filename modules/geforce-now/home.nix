@@ -11,6 +11,11 @@
     pkgs.flatpak
   ];
 
+  home.sessionPath = [
+    "$HOME/.local/share/flatpak/exports/bin"
+    "/var/lib/flatpak/exports/bin"
+  ];
+
   services.flatpak = {
     enable = true;
     forceRunOnActivation = true;
