@@ -14,8 +14,8 @@
       };
 
       bind = [
-        "$mod, period, layoutmsg, move +col"
-        "$mod, comma, layoutmsg, move -col"
+        "$mod, period, layoutmsg, movewindowto r"
+        "$mod, comma, layoutmsg, movewindowto l"
       ];
 
       plugin = {
