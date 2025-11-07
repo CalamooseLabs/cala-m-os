@@ -11,14 +11,14 @@
     "bash"
     "bat"
     "btop"
-    "fonts"
+    # "fonts"
     "geforce-now"
     "ghostty"
     "git"
     "hyprland"
     "openssh"
     "steam"
-    "stylix"
+    # "stylix"
     "yubikey"
   ];
 in {
