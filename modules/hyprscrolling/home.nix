@@ -13,6 +13,11 @@
         layout = "scrolling";
       };
 
+      bind = [
+        "$mod, period, layoutmsg, move +col"
+        "$mod, comma, layoutmsg, move -col"
+      ];
+
       plugin = {
         hyprscrolling = {
           fullscreen_on_one_column = true;
