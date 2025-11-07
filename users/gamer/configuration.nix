@@ -1,8 +1,4 @@
-{username, ...}: {
-  pkgs,
-  cala-m-os,
-  ...
-}: {
+{username, ...}: {pkgs, ...}: {
   users.users."${username}" = {
     extraGroups = ["wheel" "networkmanager" "disk" "plugdev" "video" "audio" "kvm" "gamemode" "render"];
     openssh.authorizedKeys.keyFiles = [
@@ -49,8 +45,8 @@
     NIXPKGS_ALLOW_UNFREE = "1";
   };
 
-  system.activationScripts.setGamesPermissions = ''
-    # Set ownership global user
-    chown -R ${cala-m-os.globals.defaultUser}:${cala-m-os.globals.adminGroup} /mnt/games
-  '';
+  # system.activationScripts.setGamesPermissions = ''
+  #   # Set ownership global user
+  #   chown -R ${cala-m-os.globals.defaultUser}:${cala-m-os.globals.adminGroup} /mnt/games
+  # '';
 }
