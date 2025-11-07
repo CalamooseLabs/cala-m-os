@@ -31,8 +31,6 @@ in {
     ../../modules/qbittorrent/configuration.nix
   ];
 
-  networking.hostName = "torrent";
-
   services.radarr = {
     enable = true;
     openFirewall = true;

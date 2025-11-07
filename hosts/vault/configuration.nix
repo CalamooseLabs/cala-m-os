@@ -24,8 +24,6 @@ in {
     inputs.arion.nixosModules.arion
   ];
 
-  networking.hostName = "vault";
-
   # Enable Docker for Arion
   virtualisation.docker.enable = true;
   users.users."${cala-m-os.globals.defaultUser}".extraGroups = ["docker"];

@@ -25,8 +25,6 @@ in {
     })
   ];
 
-  networking.hostName = "media";
-
   services.plex = {
     enable = true;
     openFirewall = true;

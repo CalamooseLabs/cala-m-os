@@ -18,8 +18,6 @@ in {
     })
   ];
 
-  networking.hostName = lib.mkDefault "lanstation";
-
   # Audio Control
   security.rtkit.enable = true;
 

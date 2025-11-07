@@ -18,8 +18,6 @@ in {
     })
   ];
 
-  networking.hostName = "htpc";
-
   # Audio Control
   security.rtkit.enable = true;
 
