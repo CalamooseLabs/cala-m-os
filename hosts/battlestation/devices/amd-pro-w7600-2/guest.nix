@@ -1,5 +1,5 @@
 {...}: {
-  imports = [../../../../machines/modules/nvidia-gpu/configuration.nix];
+  imports = [../../../../machines/modules/amd-gpu/configuration.nix];
 
   microvm.devices = [
     {

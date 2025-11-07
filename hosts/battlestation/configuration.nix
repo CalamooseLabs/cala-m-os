@@ -60,10 +60,6 @@ in {
     enable32Bit = true;
   };
 
-  environment.variables = {
-    ROC_ENABLE_PRE_VEGA = "1";
-  };
-
   # Audio Control
   security.rtkit.enable = true;
 
