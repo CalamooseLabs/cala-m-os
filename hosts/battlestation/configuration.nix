@@ -75,7 +75,7 @@ in {
     wireplumber.enable = true;
   };
 
-  services.resolved = {
-    enable = true;
-  };
+  # services.resolved = {
+  #   enable = true;
+  # };
 }
