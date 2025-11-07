@@ -12,6 +12,7 @@
     "bat"
     "btop"
     "fonts"
+    "geforce-now"
     "ghostty"
     "git"
     "hyprland"

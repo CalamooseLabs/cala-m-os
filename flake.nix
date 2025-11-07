@@ -14,6 +14,7 @@
     # Impermanence
     impermanence.url = "github:nix-community/impermanence";
 
+    # Declarative Flatpak
     flatpaks.url = "github:in-a-dil-emma/declarative-flatpak/latest";
 
     # MicroVM
@@ -93,6 +94,7 @@
       };
   in {
     nixosConfigurations = {
+      battlestation = mkSystem "battlestation" {inherit self;};
       devbox = mkSystem "devbox" {};
       ephemeral = mkSystem "ephemeral" {};
       lab = mkSystem "lab" {inherit self;};

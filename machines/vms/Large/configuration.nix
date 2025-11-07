@@ -1,6 +1,6 @@
 {...}: let
   cores = 8;
-  memory = 32;
+  memory = 16;
 in {
   imports = [
     (import ../_core/configuration.nix {
