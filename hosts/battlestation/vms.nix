@@ -35,7 +35,7 @@
     "lanstation-4" = {
       modelOverride = "lanstation";
       ipOverride = "${cala-m-os.ip.lanstation-4}";
-      devices = ["amd-pro-w760-2" "pci-usb-controller-4"];
+      devices = ["amd-pro-w7600-2" "pci-usb-controller-4"];
       storage = 200; # GBs
       shareStore = false;
       dns = ["${cala-m-os.ip.vault}"];
