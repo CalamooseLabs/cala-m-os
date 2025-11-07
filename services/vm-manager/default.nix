@@ -28,7 +28,7 @@
   vm_configs =
     builtins.mapAttrs (name: vm: {
       config = {
-        imports = [../../hosts/${name}/configuration.nix] ++ (map (device: getDeviceFiles device "guest.nix") vm.devices);
+        imports = [../../hosts/${vm.hostOverride or name}/configuration.nix] ++ (map (device: getDeviceFiles device "guest.nix") vm.devices);
 
         microvm = {
           interfaces = [
@@ -82,10 +82,10 @@
 
         systemd.network.networks = {
           "${cala-m-os.networking.network-name}" = {
-            matchConfig.MACAddress = "02:00:00:00:00:${lib.last (lib.splitString "." cala-m-os.ip.${name})}";
+            matchConfig.MACAddress = "02:00:00:00:00:${lib.last (lib.splitString "." (vm.ipOverride or cala-m-os.ip.${name}))}";
 
             address = [
-              "${cala-m-os.ip.${name}}/${cala-m-os.networking.prefixLength}"
+              "${vm.ipOverride or cala-m-os.ip.${name}}/${cala-m-os.networking.prefixLength}"
             ];
 
             routes = [
@@ -111,6 +111,8 @@
             };
           };
         };
+
+        networking.hostName = lib.mkForce name;
       };
 
       specialArgs = {

@@ -16,20 +16,6 @@
         }
       ];
     };
-    "htpc" = {
-      devices = ["rtx-5090" "pci-usb-controller-1"];
-      storage = 100; # GBs
-      shareStore = false;
-      dns = ["${cala-m-os.ip.vault}"];
-      shares = [
-        {
-          proto = "virtiofs";
-          tag = "games";
-          source = "/vm-data";
-          mountPoint = "/mnt/games";
-        }
-      ];
-    };
     "torrent" = {
       devices = [];
       storage = 100;
@@ -43,7 +29,7 @@
       ];
     };
     "studio" = {
-      devices = ["rtx-4060" "pci-usb-controller-2"];
+      devices = ["rtx-4060" "pci-usb-controller-1"];
       storage = 100; # GBs
       shares = [
         {

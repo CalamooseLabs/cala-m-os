@@ -1,0 +1,64 @@
+{cala-m-os, ...}: let
+  vms = {
+    "lanstation-2" = {
+      modelOverride = "lanstation";
+      ipOverride = "${cala-m-os.ip.lanstation-2}";
+      devices = ["amd-9060-xt" "pci-usb-controller-1" "pci-usb-controller-2"];
+      storage = 200; # GBs
+      shareStore = false;
+      dns = ["${cala-m-os.ip.vault}"];
+      shares = [
+        {
+          proto = "virtiofs";
+          tag = "games";
+          source = "/vm-data";
+          mountPoint = "/mnt/games";
+        }
+      ];
+    };
+    "lanstation-3" = {
+      modelOverride = "lanstation";
+      ipOverride = "${cala-m-os.ip.lanstation-3}";
+      devices = ["amd-pro-w7600-1" "pci-usb-controller-3"];
+      storage = 200; # GBs
+      shareStore = false;
+      dns = ["${cala-m-os.ip.vault}"];
+      shares = [
+        {
+          proto = "virtiofs";
+          tag = "games";
+          source = "/vm-data";
+          mountPoint = "/mnt/games";
+        }
+      ];
+    };
+    "lanstation-4" = {
+      modelOverride = "lanstation";
+      ipOverride = "${cala-m-os.ip.lanstation-4}";
+      devices = ["amd-pro-w760-2" "pci-usb-controller-4"];
+      storage = 200; # GBs
+      shareStore = false;
+      dns = ["${cala-m-os.ip.vault}"];
+      shares = [
+        {
+          proto = "virtiofs";
+          tag = "games";
+          source = "/vm-data";
+          mountPoint = "/mnt/games";
+        }
+      ];
+    };
+  };
+
+  bridgeInterface = "eno2";
+in {
+  imports = [
+    ./secrets
+
+    (import ../../services/vm-manager/default.nix {
+      device_path = ./devices;
+      vms = vms;
+      networkInterface = bridgeInterface;
+    })
+  ];
+}

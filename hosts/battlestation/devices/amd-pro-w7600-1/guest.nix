@@ -1,0 +1,14 @@
+{...}: {
+  imports = [../../../../machines/modules/nvidia-gpu/configuration.nix];
+
+  microvm.devices = [
+    {
+      bus = "pci";
+      path = "0000:44:00.0"; # Pro W7600
+    }
+    {
+      bus = "pci";
+      path = "0000:44:00.1"; # Pro W7600 Audio
+    }
+  ];
+}

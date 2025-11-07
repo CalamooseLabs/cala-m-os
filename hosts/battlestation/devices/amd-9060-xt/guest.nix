@@ -4,11 +4,11 @@
   microvm.devices = [
     {
       bus = "pci";
-      path = "0000:01:00.0"; # RTX 5090
+      path = "0000:03:00.0"; # RX 9060 XT
     }
     {
       bus = "pci";
-      path = "0000:01:00.1"; # RTX 5090 Audio
+      path = "0000:03:00.1"; # RX 9060 XT Audio
     }
   ];
 }
