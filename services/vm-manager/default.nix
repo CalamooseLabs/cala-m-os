@@ -27,6 +27,7 @@
 
   vm_configs =
     builtins.mapAttrs (name: vm: {
+      autostart = vm.autostart or true;
       config = {
         imports = [../../hosts/${vm.hostOverride or name}/configuration.nix] ++ (map (device: getDeviceFiles device "guest.nix") vm.devices);
 
