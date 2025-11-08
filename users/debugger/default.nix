@@ -8,6 +8,7 @@
 
   modules = [
     "agenix"
+    "agenix-rerun"
     "bash"
     "bat"
     "btop"
