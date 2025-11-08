@@ -8,11 +8,7 @@
 #        AMD PRO W7600           #
 #                                #
 ##################################
-{
-  pkgs,
-  config,
-  ...
-}: {
+{pkgs, ...}: {
   imports = [
     # Hardware Config
     ./hardware-configuration.nix
@@ -42,7 +38,4 @@
         "1912:0015" # USB Controllers
       ])
   ];
-
-  boot.extraModulePackages = with config.boot.kernelPackages; [vendor-reset];
-  boot.kernelModules = ["vendor-reset"];
 }
