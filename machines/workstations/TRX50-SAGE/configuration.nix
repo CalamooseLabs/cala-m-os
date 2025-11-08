@@ -29,6 +29,8 @@
   boot.kernelParams = [
     "amd_iommu=on"
     "iommu=pt"
+    "nvidia-drm.modeset=1"
+    "video=efifb:off" # Disable EFI framebuffer to prevent AMD from claiming it
     ("vfio-pci.ids="
       + builtins.concatStringsSep "," [
         "1002:7590" # RX 9060 XT

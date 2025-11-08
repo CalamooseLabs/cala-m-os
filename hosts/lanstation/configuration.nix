@@ -48,6 +48,12 @@ in {
     "vfio"
     "vfio_iommu_type1"
     "vfio_pci"
+    "nvidia"
+    "nvidia_modeset"
+    "nvidia_uvm"
+    "nvidia_drm"
+    "nvidiafb"
+    "nouveau"
   ];
 
   # Only blacklist AMD GPU drivers
