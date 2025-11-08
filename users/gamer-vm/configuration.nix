@@ -1,4 +1,8 @@
-{username, ...}: {pkgs, ...}: {
+{username, ...}: {
+  pkgs,
+  cala-m-os,
+  ...
+}: {
   users.users."${username}" = {
     extraGroups = ["wheel" "networkmanager" "disk" "plugdev" "video" "audio" "kvm" "gamemode" "render"];
     openssh.authorizedKeys.keyFiles = [
@@ -28,10 +32,6 @@
 
   programs.steam.gamescopeSession.enable = true;
 
-  systemd.services.agenix.after = [
-    "basic.target"
-  ];
-
   environment.systemPackages = with pkgs; [
     protonup
     vulkan-loader
@@ -44,4 +44,9 @@
     STEAM_EXTRA_COMPAT_TOOLS_PATHS = "/home/${username}/.steam/root/compatibilitytools.d";
     NIXPKGS_ALLOW_UNFREE = "1";
   };
+
+  system.activationScripts.setGamesPermissions = ''
+    # Set ownership global user
+    chown -R ${cala-m-os.globals.defaultUser}:${cala-m-os.globals.adminGroup} /mnt/games
+  '';
 }

@@ -7,7 +7,6 @@
   uuid = builtins.baseNameOf (toString ./.);
 
   modules = [
-    "agenix"
     "bash"
     "bat"
     "btop"
@@ -17,7 +16,6 @@
     "hyprland"
     "openssh"
     "steam"
-    "yubikey"
   ];
 in {
   imports = [

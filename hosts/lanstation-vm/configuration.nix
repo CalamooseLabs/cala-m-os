@@ -4,7 +4,7 @@
 #                                #
 ##################################
 {lib, ...}: let
-  import_users = ["gamer"];
+  import_users = ["gamer-vm"];
 
   machine_type = "VM";
   machine_uuid = "Large";
