@@ -7,6 +7,7 @@
   uuid = builtins.baseNameOf (toString ./.);
 
   modules = [
+    "agenix"
     "bash"
     "bat"
     "btop"

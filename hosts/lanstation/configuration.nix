@@ -48,6 +48,7 @@ in {
     "vfio"
     "vfio_iommu_type1"
     "vfio_pci"
+    "vfio_virqfd"
     "nvidia"
     "nvidia_modeset"
     "nvidia_uvm"
@@ -56,9 +57,23 @@ in {
     "nouveau"
   ];
 
+  boot.initrd.kernelModules = [
+    # NVIDIA modules first (for host RTX 5090)
+    "nvidia"
+    "nvidia_modeset"
+    "nvidia_drm"
+    "nvidia_uvm"
+
+    # VFIO modules second (for AMD passthrough)
+    "vfio_pci"
+    "vfio"
+    "vfio_iommu_type1"
+  ];
+
   # Only blacklist AMD GPU drivers
   boot.blacklistedKernelModules = [
     "amdgpu"
+    "radeon"
   ];
 
   hardware.graphics = {
