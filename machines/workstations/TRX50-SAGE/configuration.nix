@@ -25,7 +25,11 @@
   boot.kernelParams = [
     "amd_iommu=on"
     "iommu=pt"
-    "nvidia-drm.modeset=1"
+    "nvidia.modeset=1"
+    "radeon.modeset=0"
+    "amdgpu.modeset=0"
+    "modprobe.blacklist=radeon"
+    "modprobe.blacklist=amdgpu"
     "video=efifb:off" # Disable EFI framebuffer to prevent AMD from claiming it
     ("vfio-pci.ids="
       + builtins.concatStringsSep "," [

@@ -58,12 +58,6 @@ in {
   ];
 
   boot.initrd.kernelModules = [
-    # NVIDIA modules first (for host RTX 5090)
-    # "nvidia"
-    # "nvidia_modeset"
-    # "nvidia_drm"
-    # "nvidia_uvm"
-
     # VFIO modules second (for AMD passthrough)
     "vfio_pci"
     "vfio"
