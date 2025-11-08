@@ -94,7 +94,7 @@
       };
   in {
     nixosConfigurations = {
-      battlestation = mkSystem "battlestation" {inherit self;};
+      lanstation = mkSystem "lanstation" {inherit self;};
       devbox = mkSystem "devbox" {};
       ephemeral = mkSystem "ephemeral" {};
       lab = mkSystem "lab" {inherit self;};
