@@ -33,7 +33,7 @@
   ];
 
   environment.systemPackages = with pkgs; [
-    protonup
+    # protonup
     vulkan-loader
     vulkan-validation-layers
     vulkan-tools
