@@ -38,17 +38,6 @@ in {
 
     # Enable writable overlay for building
     writableStoreOverlay = "/nix/.rw-store";
-
-    # Persistent volume for the overlay
-    volumes = [
-      {
-        image = "nix-store-overlay.img";
-        mountPoint = "/nix/.rw-store";
-        size = 51200; # 50GB
-        autoCreate = true;
-        fsType = "ext4";
-      }
-    ];
   };
 
   # services.resolved = {

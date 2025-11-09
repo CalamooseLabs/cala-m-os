@@ -44,13 +44,27 @@
             }
           ];
 
-          volumes = [
-            {
-              image = "${name}-vm.img";
-              mountPoint = "/";
-              size = vm.storage * 1024;
-            }
-          ];
+          volumes =
+            [
+              {
+                image = "${name}-vm.img";
+                mountPoint = "/";
+                size = vm.storage * 1024;
+              }
+            ]
+            ++ lib.optionals (
+              if vm ? storeOnDisk
+              then vm.storeOnDisk
+              else false
+            ) [
+              {
+                image = "nix-store-${name}.img";
+                mountPoint = "/nix/.rw-store";
+                size = 51200; # 50GB
+                autoCreate = true;
+                fsType = "ext4";
+              }
+            ];
 
           shares =
             [
