@@ -5,7 +5,8 @@
       enable32Bit = true;
     };
   };
-  services.xserver.videoDrivers = ["amdgpu"];
+  services.xserver.videoDrivers = ["modesetting"];
 
-  boot.kernelModules = ["amdgpu"];
+  hardware.enableRedistributableFirmware = true;
+  boot.initrd.kernelModules = ["amdgpu"];
 }

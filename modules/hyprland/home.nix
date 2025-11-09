@@ -28,7 +28,7 @@
       };
 
       misc = {
-        disable_hyprland_logo = lib.mkForce true;
+        # disable_hyprland_logo = lib.mkForce true;
         disable_splash_rendering = lib.mkForce true;
       };
 
