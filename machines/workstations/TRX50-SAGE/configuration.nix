@@ -8,7 +8,11 @@
 #        AMD PRO W7600           #
 #                                #
 ##################################
-{pkgs, ...}: {
+{
+  pkgs,
+  config,
+  ...
+}: {
   imports = [
     # Hardware Config
     ./hardware-configuration.nix
@@ -31,6 +35,8 @@
     "modprobe.blacklist=radeon"
     "modprobe.blacklist=amdgpu"
     "video=efifb:off" # Disable EFI framebuffer to prevent AMD from claiming it
+    "video=vesafb:off"
+    "video=simplefb:off"
     ("vfio-pci.ids="
       + builtins.concatStringsSep "," [
         "1002:7590" # RX 9060 XT
@@ -42,4 +48,7 @@
         "1912:0015" # USB Controllers
       ])
   ];
+
+  boot.extraModulePackages = with config.boot.kernelPackages; [vendor-reset];
+  boot.kernelModules = ["vendor-reset"];
 }
