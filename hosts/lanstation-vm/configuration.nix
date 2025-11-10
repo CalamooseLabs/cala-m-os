@@ -33,6 +33,10 @@ in {
     optimize.enable = false;
     balloon = lib.mkForce false;
 
+    kernelParams = [
+      "nokaslr"
+    ];
+
     # Use VM's own store disk as base
     storeOnDisk = true;
 
