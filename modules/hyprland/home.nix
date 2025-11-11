@@ -10,8 +10,6 @@
   wayland.windowManager.hyprland = {
     enable = true;
 
-    # package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-    # portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
     package = null;
     portalPackage = null;
 
@@ -28,8 +26,10 @@
       };
 
       misc = {
-        # disable_hyprland_logo = lib.mkForce true;
+        disable_hyprland_logo = lib.mkForce true;
         disable_splash_rendering = lib.mkForce true;
+        no_donation_nag = lib.mkForce true;
+        no_update_news = lib.mkForce true;
       };
 
       bindm = [
