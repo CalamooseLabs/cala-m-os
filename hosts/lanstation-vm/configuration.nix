@@ -33,11 +33,11 @@ in {
     optimize.enable = false;
     balloon = lib.mkForce false;
 
-    kernelParams = [
-      "nokaslr"
-      "amdgpu.dc=0" # Disable Display Core to prevent crash
-      "amdgpu.modeset=1" # Force kernel modesetting
-    ];
+    # kernelParams = [
+    #   "nokaslr"
+    #   "amdgpu.dc=0" # Disable Display Core to prevent crash
+    #   "amdgpu.modeset=1" # Force kernel modesetting
+    # ];
 
     # Use VM's own store disk as base
     storeOnDisk = true;

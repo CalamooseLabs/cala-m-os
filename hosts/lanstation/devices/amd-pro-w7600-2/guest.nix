@@ -4,11 +4,11 @@
   microvm.devices = [
     {
       bus = "pci";
-      path = "0000:85:00.0"; # Pro W7600
+      path = "0000:88:00.0"; # Pro W7600
     }
     {
       bus = "pci";
-      path = "0000:85:00.1"; # Pro W7600 Audio
+      path = "0000:88:00.1"; # Pro W7600 Audio
     }
   ];
 }

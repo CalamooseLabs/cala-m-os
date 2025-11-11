@@ -29,16 +29,16 @@
   boot.kernelParams = [
     "amd_iommu=on"
     "iommu=pt"
-    "nvidia.modeset=1"
-    "radeon.modeset=0"
-    "amdgpu.modeset=0"
-    "modprobe.blacklist=radeon"
-    "modprobe.blacklist=amdgpu"
-    "video=efifb:off" # Disable EFI framebuffer to prevent AMD from claiming it
-    "video=vesafb:off"
-    "video=simplefb:off"
-    "amdgpu.sg_display=0" # Helps with RDNA3 reset issues
-    "nokaslr"
+    # "nvidia.modeset=1"
+    # "radeon.modeset=0"
+    # "amdgpu.modeset=0"
+    # "modprobe.blacklist=radeon"
+    # "modprobe.blacklist=amdgpu"
+    # "video=efifb:off" # Disable EFI framebuffer to prevent AMD from claiming it
+    # "video=vesafb:off"
+    # "video=simplefb:off"
+    # "amdgpu.sg_display=0" # Helps with RDNA3 reset issues
+    # "nokaslr"
     ("vfio-pci.ids="
       + builtins.concatStringsSep "," [
         "1002:7590" # RX 9060 XT
@@ -51,6 +51,6 @@
       ])
   ];
 
-  boot.extraModulePackages = with config.boot.kernelPackages; [vendor-reset];
-  boot.kernelModules = ["vendor-reset"];
+  # boot.extraModulePackages = with config.boot.kernelPackages; [vendor-reset];
+  # boot.kernelModules = ["vendor-reset"];
 }

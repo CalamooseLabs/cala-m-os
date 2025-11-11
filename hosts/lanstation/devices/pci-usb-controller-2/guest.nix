@@ -2,7 +2,7 @@
   microvm.devices = [
     {
       bus = "pci";
-      path = "0000:89:00.0";
+      path = "0000:47:00.0";
     } # USB Controller
   ];
 }

@@ -49,15 +49,4 @@
     # Set ownership global user
     chown -R ${cala-m-os.globals.defaultUser}:${cala-m-os.globals.adminGroup} /mnt/games
   '';
-
-  # Disable greetd
-  services.greetd.enable = false;
-
-  # Enable GDM instead (better GPU passthrough support)
-  services.xserver = {
-    enable = true;
-    videoDrivers = ["amdgpu"];
-    displayManager.gdm.enable = true;
-    # Don't need a desktop manager if using Hyprland
-  };
 }
