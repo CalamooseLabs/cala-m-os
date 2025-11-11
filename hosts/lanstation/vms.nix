@@ -1,7 +1,7 @@
 {cala-m-os, ...}: let
   vms = {
     "lanstation-2" = {
-      autostart = true;
+      autostart = false;
       hostOverride = "lanstation-vm";
       ipOverride = "${cala-m-os.ip.lanstation-2}";
       devices = ["amd-9060-xt" "pci-usb-controller-1" "pci-usb-controller-2"];
@@ -19,7 +19,7 @@
       ];
     };
     "lanstation-3" = {
-      autostart = true;
+      autostart = false;
       hostOverride = "lanstation-vm";
       ipOverride = "${cala-m-os.ip.lanstation-3}";
       devices = ["amd-pro-w7600-1" "pci-usb-controller-3"];
@@ -37,7 +37,7 @@
       ];
     };
     "lanstation-4" = {
-      autostart = true;
+      autostart = false;
       hostOverride = "lanstation-vm";
       ipOverride = "${cala-m-os.ip.lanstation-4}";
       devices = ["amd-pro-w7600-2" "pci-usb-controller-4"];

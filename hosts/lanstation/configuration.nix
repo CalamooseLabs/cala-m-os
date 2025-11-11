@@ -58,7 +58,6 @@ in {
   ];
 
   boot.initrd.kernelModules = [
-    # VFIO modules second (for AMD passthrough)
     "vfio_pci"
     "vfio"
     "vfio_iommu_type1"
