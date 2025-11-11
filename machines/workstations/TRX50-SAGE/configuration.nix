@@ -33,7 +33,7 @@
         "1002:7480" # PRO W7600
         "1002:ab30" # PRO W7600 Audio
 
-        "1912:0015" # USB Controllers
+        # "1912:0015" # USB Controllers
       ])
   ];
 }
