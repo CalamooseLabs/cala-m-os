@@ -42,6 +42,7 @@ in {
       address = cala-m-os.ip.gateway;
       interface = "eno2";
     };
+    nameservers = ["10.10.10.1"];
   };
 
   boot.kernelModules = [
