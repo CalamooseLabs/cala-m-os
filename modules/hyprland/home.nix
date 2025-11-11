@@ -28,6 +28,9 @@
       misc = {
         disable_hyprland_logo = lib.mkForce true;
         disable_splash_rendering = lib.mkForce true;
+      };
+
+      ecosystem = {
         no_donation_nag = lib.mkForce true;
         no_update_news = lib.mkForce true;
       };
