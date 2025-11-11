@@ -33,7 +33,6 @@
   programs.steam.gamescopeSession.enable = true;
 
   environment.systemPackages = with pkgs; [
-    # protonup
     vulkan-loader
     vulkan-validation-layers
     vulkan-tools
