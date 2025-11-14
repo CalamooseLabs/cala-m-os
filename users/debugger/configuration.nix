@@ -12,7 +12,6 @@
       "disk"
       "plugdev"
       "dialout"
-      "docker"
     ];
   };
 

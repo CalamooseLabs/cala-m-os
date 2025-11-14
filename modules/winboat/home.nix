@@ -1,5 +1,6 @@
 {pkgs, ...}: {
   home.packages = [
-    pkgs.freerdp
+    # pkgs.freerdp
+    pkgs.winboat
   ];
 }
