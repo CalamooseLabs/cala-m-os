@@ -9,6 +9,7 @@
   modules = [
     "agenix"
     "agenix-boot"
+    "appimage"
     "bash"
     "bat"
     "btop"
