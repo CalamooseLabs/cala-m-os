@@ -50,6 +50,7 @@
     "vpn"
     "waybar"
     "wifi"
+    "winboat"
     "yazi"
     "yubikey"
     "zathura"
