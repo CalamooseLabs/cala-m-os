@@ -43,4 +43,47 @@
     STEAM_EXTRA_COMPAT_TOOLS_PATHS = "/home/${username}/.steam/root/compatibilitytools.d";
     NIXPKGS_ALLOW_UNFREE = "1";
   };
+
+  services.lanserver = {
+    enable = true;
+    port = 8080;
+    runAsRoot = true;
+    routes = [
+      {
+        path = "/shutdown";
+        method = "GET";
+        command = [
+          "echo 'Shutting down...'"
+          "shutdown 0"
+        ];
+      }
+      {
+        path = "/restart";
+        method = "GET";
+        command = [
+          "echo 'Restart...'"
+          "sudo reboot"
+        ];
+      }
+      {
+        path = "/status";
+        method = "POST";
+        data = {
+          serviceName = "string";
+        };
+        command = [
+          "sudo systemctl status $serviceName"
+        ];
+      }
+      {
+        path = "/start-vms";
+        method = "GET";
+        command = [
+          "sudo systemctl start microvm@lanstation-2.service"
+          "sudo systemctl start microvm@lanstation-3.service"
+          "sudo systemctl start microvm@lanstation-4.service"
+        ];
+      }
+    ];
+  };
 }
