@@ -52,7 +52,7 @@
     "vpn"
     "waybar"
     "wifi"
-    "winboat"
+    # "winboat"
     "yazi"
     "yubikey"
     "zathura"
