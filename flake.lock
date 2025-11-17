@@ -779,11 +779,11 @@
         "zed-editor": "zed-editor"
       },
       "locked": {
-        "lastModified": 1763419945,
-        "narHash": "sha256-vhjhaOAImI6l30LAvxFQFY3Z4ET/PCfHiTXifSE1Kfo=",
+        "lastModified": 1763420298,
+        "narHash": "sha256-5KcmFJruEx4rh7jUuULNpUCRnzWPHiTXiI95kpD3IYE=",
         "owner": "CalamooseLabs",
         "repo": "LanServer",
-        "rev": "0e469033ae89f62b7a6590ca6ae209bf9630754a",
+        "rev": "9713a23ee48294189845efbe673a9b2f84ca9d1b",
         "type": "github"
       },
       "original": {
