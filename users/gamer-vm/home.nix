@@ -1,7 +1,14 @@
-{...}: {pkgs, ...}: {
+{...}: {pkgs, ...}: let
+  gamescopeCommand = "gamescope -f --force-grab-cursor -e -H 2160 -W 3840 --expose-wayland -- steam -tenfoot";
+in {
   home.packages = [
     pkgs.usbutils
     pkgs.pciutils
+    (pkgs.writeShellScriptBin "start-gaming" ''
+      set -eux
+
+      bash -c '${gamescopeCommand}'
+    '')
   ];
 
   wayland.windowManager.hyprland = {
@@ -12,7 +19,7 @@
       ];
 
       exec-once = [
-        "gamescope -f --force-grab-cursor -e -H 2160 -W 3840 --expose-wayland -- steam -tenfoot"
+        "${gamescopeCommand}"
       ];
     };
   };

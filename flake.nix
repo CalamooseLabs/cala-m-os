@@ -63,6 +63,11 @@
       url = "github:CalamooseLabs/antlers/flakes?dir=flakes";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    lanserver = {
+      url = "github:CalamooseLabs/LanServer";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {

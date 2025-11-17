@@ -790,6 +790,27 @@
         "type": "github"
       }
     },
+    "lanserver": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "zed-editor": "zed-editor"
+      },
+      "locked": {
+        "lastModified": 1763415851,
+        "narHash": "sha256-IEI+gt0zkrjiQlindEKXdnovvNBulQJ7tLotCQaWAR0=",
+        "owner": "CalamooseLabs",
+        "repo": "LanServer",
+        "rev": "77346758ed532d6f285cc8318e2cbc851e257367",
+        "type": "github"
+      },
+      "original": {
+        "owner": "CalamooseLabs",
+        "repo": "LanServer",
+        "type": "github"
+      }
+    },
     "microvm": {
       "inputs": {
         "flake-utils": "flake-utils",
@@ -943,6 +964,7 @@
         "hyprland": "hyprland",
         "hyprland-plugins": "hyprland-plugins",
         "impermanence": "impermanence",
+        "lanserver": "lanserver",
         "microvm": "microvm",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs",
@@ -1176,6 +1198,30 @@
       "original": {
         "owner": "hyprwm",
         "repo": "xdg-desktop-portal-hyprland",
+        "type": "github"
+      }
+    },
+    "zed-editor": {
+      "inputs": {
+        "nixpkgs": [
+          "lanserver",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "dir": "flakes/zed-editor",
+        "lastModified": 1745955742,
+        "narHash": "sha256-5VJTJOpFDySjfEE3sD7RMd2YyMJ61Rix3I1w06L19VI=",
+        "owner": "CalamooseLabs",
+        "repo": "antlers",
+        "rev": "084a81cd85fa5a9c02836a179f414304b168a034",
+        "type": "github"
+      },
+      "original": {
+        "dir": "flakes/zed-editor",
+        "owner": "CalamooseLabs",
+        "ref": "flakes.zed-editor",
+        "repo": "antlers",
         "type": "github"
       }
     },
