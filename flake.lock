@@ -33,11 +33,11 @@
       },
       "locked": {
         "dir": "flakes",
-        "lastModified": 1745955754,
-        "narHash": "sha256-y4guI5kTP7E9U+mgIgDROSmGOTzHrBgSMNqe2vV/I0U=",
+        "lastModified": 1763486545,
+        "narHash": "sha256-/n0hsUzmlPit0uvDlLWxhdzoAcEpHD30QoR7XVMWsQ0=",
         "owner": "CalamooseLabs",
         "repo": "antlers",
-        "rev": "e5d6d76cb5a92fff62998c031eb2a6db42695576",
+        "rev": "1fa5fb264807a17b6576fdc3be623b61268f4217",
         "type": "github"
       },
       "original": {
@@ -511,11 +511,11 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1763481010,
-        "narHash": "sha256-ISQ66gegvFFPj905Y7tV0n+uLaj6mmsHtCvw4w2kWFQ=",
+        "lastModified": 1763484558,
+        "narHash": "sha256-/yIDQ43aqY1IaNgqwdRMlK6niSHSqT+gHjQZE01H54A=",
         "owner": "hyprwm",
         "repo": "Hyprland",
-        "rev": "e15409bbebf05e02f91031ce4f3430cc62eb00a5",
+        "rev": "e4b40abce649dc64fd645cbc4226f47ac9d32bd9",
         "type": "github"
       },
       "original": {
@@ -587,11 +587,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1763254333,
-        "narHash": "sha256-u1pRjMwSxb9Cj434lomk9r4NjTZxP7X1Xb5oIX70yZ8=",
+        "lastModified": 1763484609,
+        "narHash": "sha256-rkxg7+bWmgOxCf4B9ED+Z4SuOO46sbtz9qgIBrYfZRc=",
         "owner": "hyprwm",
         "repo": "hyprland-plugins",
-        "rev": "a2bf2df93467d11918068d19372ed42ea6bdba61",
+        "rev": "1bc5b0253fc950c46145713ccb46750aba56ea6f",
         "type": "github"
       },
       "original": {
@@ -830,11 +830,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1763435664,
-        "narHash": "sha256-iauLTpGaVaJiq4h1h058pA6MD0MsAZa0LflSfXo2rc8=",
+        "lastModified": 1763312402,
+        "narHash": "sha256-3YJkOBrFpmcusnh7i8GXXEyh7qZG/8F5z5+717550Hk=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "0ade817efdde79cbc46b624c849027335ebc25c5",
+        "rev": "85a6c4a07faa12aaccd81b36ba9bfc2bec974fa1",
         "type": "github"
       },
       "original": {
@@ -910,11 +910,11 @@
       },
       "locked": {
         "dir": "flakes/plex-desktop",
-        "lastModified": 1741640139,
-        "narHash": "sha256-G/b6lEmU+6e8hirLfau/5ew7+xJylJ8t93qBrJ29mpU=",
+        "lastModified": 1746209960,
+        "narHash": "sha256-Wi+nW0OUl2pdInKtO/RQ/JBp5jtAnDPLZWyy1jbDCO4=",
         "owner": "calamooselabs",
         "repo": "antlers",
-        "rev": "5e32d02d044e422d29a073a4d92436d5aea614e6",
+        "rev": "34b6b7f35933e0d947284e9c51472f8064f04181",
         "type": "github"
       },
       "original": {
@@ -1229,11 +1229,11 @@
       },
       "locked": {
         "dir": "flakes/zed-editor",
-        "lastModified": 1741640139,
-        "narHash": "sha256-G/b6lEmU+6e8hirLfau/5ew7+xJylJ8t93qBrJ29mpU=",
+        "lastModified": 1746209960,
+        "narHash": "sha256-Wi+nW0OUl2pdInKtO/RQ/JBp5jtAnDPLZWyy1jbDCO4=",
         "owner": "calamooselabs",
         "repo": "antlers",
-        "rev": "5e32d02d044e422d29a073a4d92436d5aea614e6",
+        "rev": "34b6b7f35933e0d947284e9c51472f8064f04181",
         "type": "github"
       },
       "original": {
