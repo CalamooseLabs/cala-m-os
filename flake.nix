@@ -66,7 +66,6 @@
 
     lanserver = {
       url = "github:CalamooseLabs/LanServer";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
