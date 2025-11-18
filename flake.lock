@@ -511,11 +511,11 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1763427561,
-        "narHash": "sha256-jARAMSNHOZ5RNYlBZ2wlE2pdujedylA5QDBuaQs3Vrk=",
+        "lastModified": 1763481010,
+        "narHash": "sha256-ISQ66gegvFFPj905Y7tV0n+uLaj6mmsHtCvw4w2kWFQ=",
         "owner": "hyprwm",
         "repo": "Hyprland",
-        "rev": "edc311544a54a06ce4acb759b4d9a30853695452",
+        "rev": "e15409bbebf05e02f91031ce4f3430cc62eb00a5",
         "type": "github"
       },
       "original": {
@@ -779,11 +779,11 @@
         "zed-editor": "zed-editor"
       },
       "locked": {
-        "lastModified": 1763480282,
-        "narHash": "sha256-ZF9koRP6O5+241BuoJwrepBEKxPFCwOrX5PsiIWi1bg=",
+        "lastModified": 1763482163,
+        "narHash": "sha256-NLyhMAxKX9nMt1W7wQJRzBce09E0NHAMJYyn/EAEBto=",
         "owner": "CalamooseLabs",
         "repo": "LanServer",
-        "rev": "53c13db034a348f73588d19b2f91c1407f749437",
+        "rev": "b346bdff2a5e7e261b2baaa2f1b77e106e1ee0c7",
         "type": "github"
       },
       "original": {
