@@ -15,6 +15,7 @@
     "ghostty"
     "git"
     "hyprland"
+    "lanserver"
     "openssh"
     "steam"
     "yubikey"
