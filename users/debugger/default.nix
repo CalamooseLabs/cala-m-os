@@ -29,6 +29,7 @@
     "imagemagick"
     "imv"
     "ios"
+    "lanserver"
     "lazygit"
     "neovim"
     "nh"

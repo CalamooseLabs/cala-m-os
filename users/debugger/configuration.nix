@@ -46,10 +46,7 @@
 
   environment.systemPackages = with pkgs; [
     cifs-utils
-    # flatpak
   ];
-
-  # services.flatpak.enable = true;
 
   fileSystems."/mnt/nkc" = {
     device = "//10.50.1.1/Data";
@@ -59,6 +56,29 @@
       "noauto"
       "x-systemd.idle-timeout=600"
       "credentials=${config.age.secrets.work_credentials.path}"
+    ];
+  };
+
+  services.lanserver = {
+    enable = true;
+    port = 8080;
+    runAsRoot = true;
+    localNetworkOnly = true;
+    routes = [
+      {
+        path = "/shutdown";
+        method = "GET";
+        command = [
+          "echo 'Shutting down...'"
+          "shutdown 0"
+        ];
+      }
+      {
+        path = "/status";
+        method = "POST";
+        data = {serviceName = "string";};
+        command = ["systemctl status $serviceName"];
+      }
     ];
   };
 }
