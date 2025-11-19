@@ -54,7 +54,7 @@
         method = "POST";
         data = {stationNumber = "string";};
         command = [
-          "sudo systemctl status microvm@lanstation-$stationNumber.service | grep -Po '(?<=Active: )\w+'"
+          "sudo systemctl status microvm@lanstation-$stationNumber.service | grep -Po '((in)?activ(e|ating))'"
         ];
       }
       {
