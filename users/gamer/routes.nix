@@ -50,28 +50,37 @@
         ];
       }
       {
-        path = "/vm/status/2";
-        method = "GET";
+        path = "/vm/status";
+        method = "POST";
+        data = {stationNumber = "string";};
         command = [
-          "sudo systemctl status microvm@lanstation-2.service | grep -Po '(?<=Active: )\w+'"
+          "sudo systemctl status microvm@lanstation-$stationNumber.service | grep -Po '(?<=Active: )\w+'"
         ];
       }
       {
-        path = "/vm/status/3";
-        method = "GET";
+        path = "/audio/source";
+        method = "POST";
+        data = {source = "string";};
         command = [
-          "sudo systemctl status microvm@lanstation-3.service | grep -Po '(?<=Active: )\w+'"
+          "stty -F /dev/ttyUSB0 115200 cs8 -cstopb -parenb && echo -n 's output audio $source!' > /dev/ttyUSB0"
         ];
       }
       {
-        path = "/vm/status/4";
-        method = "GET";
+        path = "/video/source";
+        method = "POST";
+        data = {source = "string";};
         command = [
-          "sudo systemctl status microvm@lanstation-4.service | grep -Po '(?<=Active: )\w+'"
+          "stty -F /dev/ttyUSB0 115200 cs8 -cstopb -parenb && echo -n 's in source $source!' > /dev/ttyUSB0"
+        ];
+      }
+      {
+        path = "/video/multiview";
+        method = "POST";
+        data = {mode = "string";};
+        command = [
+          "stty -F /dev/ttyUSB0 115200 cs8 -cstopb -parenb && echo -n 's multiview $mode!' > /dev/ttyUSB0"
         ];
       }
     ];
   };
 }
-# stty -F /dev/ttyUSB0 115200 cs8 -cstopb -parenb && echo -n "power 0!" > /dev/ttyUSB0
-
