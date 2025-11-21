@@ -25,7 +25,7 @@
     "hyprland"
     "hyprlock"
     "hyprpaper"
-    # "hyprscrolling"
+    "hyprscrolling"
     "imagemagick"
     "imv"
     "ios"
