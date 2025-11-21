@@ -1,3 +1,1 @@
-[
-  # (import ./yubikey-manager)
-]
+[]
