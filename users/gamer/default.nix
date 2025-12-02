@@ -16,6 +16,7 @@
     "git"
     "hyprland"
     "lanserver"
+    "nh"
     "openssh"
     "steam"
     "yubikey"

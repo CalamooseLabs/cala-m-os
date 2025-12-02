@@ -14,6 +14,16 @@ in {
       sudo systemctl start microvm@lanstation-3.service
       sudo systemctl start microvm@lanstation-4.service
     '')
+
+    (pkgs.writeShellScriptBin "rebuild-config" ''
+      set -eux
+
+      config_path="/etc/nixos"
+
+      git pull $config_path
+
+      nh os switch $config_path -H lanstation
+    '')
   ];
 
   wayland.windowManager.hyprland = {
