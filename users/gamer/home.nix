@@ -20,9 +20,13 @@ in {
 
       config_path="/etc/nixos"
 
-      git pull $config_path
+      pushd "$config_path" > /dev/null
+
+      git pull
 
       nh os switch $config_path -H lanstation
+
+      popd > /dev/null
     '')
   ];
 
