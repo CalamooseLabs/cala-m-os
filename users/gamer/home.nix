@@ -20,6 +20,7 @@ in {
     settings = {
       monitor = [
         "HDMI-A-1, 3840x2160@60,  0x0, 1" # 4K TV
+        ", preferred, auto, 1, mirror, HDMI-A-1" # Auto Mirror
       ];
 
       exec-once = [
