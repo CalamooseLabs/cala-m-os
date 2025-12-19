@@ -40,6 +40,7 @@
     "restore-config"
     "rofi"
     "scanner"
+    "solaar"
     "spotify"
     "ssh"
     "steam"

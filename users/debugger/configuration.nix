@@ -11,6 +11,7 @@
       "lp"
       "disk"
       "plugdev"
+      "input"
       "dialout"
     ];
   };
