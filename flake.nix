@@ -66,7 +66,7 @@
 
     # Logitech USBs
     solaar = {
-      url = "https://flakehub.com/f/Svenum/Solaar-Flake/0.1.5.tar.gz";
+      url = "https://flakehub.com/f/Svenum/Solaar-Flake/0.1.4.tar.gz";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
