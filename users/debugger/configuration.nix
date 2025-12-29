@@ -59,4 +59,6 @@
       "credentials=${config.age.secrets.work_credentials.path}"
     ];
   };
+
+  networking.firewall.allowedTCPPorts = [8080];
 }
