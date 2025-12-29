@@ -1,6 +1,6 @@
 ##################################
 #                                #
-#   Framework 12th Gen. Laptop   #
+#     Framework 16 AMD Laptop    #
 #                                #
 ##################################
 {
@@ -43,6 +43,14 @@
   '';
 
   boot.kernelParams = ["amdgpu.abmlevel=0"];
+
+  services.pipewire.wireplumber.extraConfig.no-ucm = {
+    "monitor.alsa.properties" = {
+      "alsa.use-ucm" = false;
+    };
+  };
+
+  hardware.enableAllFirmware = true;
 
   # Enable bluetooth
   hardware.bluetooth = {
