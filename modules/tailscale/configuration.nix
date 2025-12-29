@@ -25,7 +25,7 @@
   };
 
   # create a oneshot job to authenticate to Tailscale
-  # EXPIRES ON 12/11/2025
+  # EXPIRES ON 03/29/2026
   systemd.services.tailscale-autoconnect = {
     description = "Automatic connection to Tailscale";
 
