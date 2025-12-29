@@ -36,8 +36,6 @@
     nvidiaBusId = "PCI:194:0:0";
   };
 
-  inputmodule.enable = true;
-
   # Prevent backpack wake ups
   services.udev.extraRules = lib.mkAfter ''
     SUBSYSTEM=="usb", DRIVERS=="usb", ATTRS{idVendor}=="32ac", ATTRS{idProduct}=="0012", ATTR{power/wakeup}="disabled", ATTR{driver/1-1.1.1.4/power/wakeup}="disabled"
