@@ -16,7 +16,7 @@
   ];
 
   machine_type = "Workstation";
-  machine_uuid = "FW13-12XXP";
+  machine_uuid = "FW16-AMD-AI";
 in {
   imports = [
     # Common Core Config
