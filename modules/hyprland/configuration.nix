@@ -26,5 +26,5 @@
   };
 
   # Login Service
-  services.greetd.settings.default_session.command = "hyprland &> /dev/null";
+  services.greetd.settings.default_session.command = "start-hyprland &> /dev/null";
 }
