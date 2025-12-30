@@ -45,9 +45,9 @@ in {
   };
 
   # Mount usb drives
-  services.devmon.enable = true;
-  services.gvfs.enable = true;
-  services.udisks2.enable = true;
+  # services.devmon.enable = true;
+  # services.gvfs.enable = true;
+  # services.udisks2.enable = true;
 
   # Audio Control
   services.pulseaudio.enable = false;
