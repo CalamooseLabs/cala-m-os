@@ -11,9 +11,7 @@ in {
       monitor = [
         "${internalAMDDisplay}" # Laptop Screen
         "${internalNvidiaDisplay}"
-        "desc:Microstep MSI MP341CQ 0x00000077, 3440x1440@60, 2256x0, 1" # Work Widescreen
-        "desc:Microstep MSI G272QPF 0x01010101, 2560x1440@164.99, -1432x-1600, 1" # Office Left Monitor
-        "DP-6, 2560x1440@60,  1128x-1600, 1" # Office Right Monitor
+        "DP-9, 2560x1440@165, -640x-1600, 1" # Office Monitor
       ];
 
       # Repeated Binds
