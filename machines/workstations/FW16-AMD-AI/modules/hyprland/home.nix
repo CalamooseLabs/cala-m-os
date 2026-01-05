@@ -3,14 +3,16 @@
   pkgs,
   ...
 }: let
-  internalDisplay = "eDP-1, 2560x1600@165, 0x0, 1";
+  internalAMDDisplay = "eDP-1, 2560x1600@165, 0x0, 1";
+  internalNvidiaDisplay = "eDP-2, 2560x1600@165, 0x0, 1";
 in {
   wayland.windowManager.hyprland = {
     settings = {
       monitor = [
-        "${internalDisplay}" # Laptop Screen
+        "${internalAMDDisplay}" # Laptop Screen
+        "${internalNvidiaDisplay}"
         "desc:Microstep MSI MP341CQ 0x00000077, 3440x1440@60, 2256x0, 1" # Work Widescreen
-        "desc:Microstep MSI G272QPF 0x01010101, 2560x1440@120, -1432x-1600, 1" # Office Left Monitor
+        "desc:Microstep MSI G272QPF 0x01010101, 2560x1440@164.99, -1432x-1600, 1" # Office Left Monitor
         "DP-6, 2560x1440@60,  1128x-1600, 1" # Office Right Monitor
       ];
 
