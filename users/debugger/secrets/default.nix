@@ -8,8 +8,5 @@
         file = ./. + "/proton_vpn.conf.age";
       };
     };
-    identityPaths = [
-      "/etc/nixos/modules/agenix/identities/yubi.key"
-    ];
   };
 }
