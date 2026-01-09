@@ -2,9 +2,9 @@
   username =
     if isDefaultUser
     then cala-m-os.globals.defaultUser
-    else builtins.baseNameOf (toString ./.);
+    else baseNameOf (toString ./.);
 
-  uuid = builtins.baseNameOf (toString ./.);
+  uuid = baseNameOf (toString ./.);
 
   modules = [
     "agenix"
@@ -35,6 +35,7 @@
     "obs-studio"
     "orion"
     "pdf-editor"
+    "proton-pass"
     "rawtherapee"
     "rebuild-config"
     "remote-desktop"
