@@ -2,7 +2,7 @@
   username =
     if isDefaultUser
     then "hub"
-    else builtins.baseNameOf (toString ./.);
+    else baseNameOf (toString ./.);
 
   modules = [
   ];
