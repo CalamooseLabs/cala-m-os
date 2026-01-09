@@ -8,14 +8,17 @@
     # Specific Hardware Fixes
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
-    # Theming
-    stylix.url = "github:danth/stylix";
-
     # Impermanence
     impermanence.url = "github:nix-community/impermanence";
 
     # Declarative Flatpak
     flatpaks.url = "github:in-a-dil-emma/declarative-flatpak/latest";
+
+    # Theming
+    stylix = {
+      url = "github:danth/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # MicroVM
     microvm = {
