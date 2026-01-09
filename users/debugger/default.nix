@@ -33,6 +33,7 @@
     "neovim"
     "nh"
     "obs-studio"
+    "orion"
     "pdf-editor"
     "rawtherapee"
     "rebuild-config"
