@@ -15,6 +15,8 @@
     "ghostty"
     "git"
     "hyprland"
+    "hytale"
+    "minecraft"
     "openssh"
     "steam"
   ];
