@@ -15,6 +15,7 @@
     "btop"
     "direnv"
     "davinci-resolve"
+    "easyeffects"
     "edit-config"
     "fingerprint-scanner"
     "fonts"
