@@ -52,5 +52,8 @@
 
   services.pcscd.enable = true;
 
-  isoImage.squashfsCompression = "lz4";
+  isoImage = {
+    squashfsCompression = "lz4";
+    forceTextMode = true;
+  };
 }
