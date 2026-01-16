@@ -16,7 +16,7 @@
     ./public_keys/backup_id_ed25519_sk.pub
   ];
 
-  networking.hostName = lib.mkForce "cala-m-os_installer";
+  networking.hostName = lib.mkForce "cala-m-os-installer";
 
   environment.systemPackages = with pkgs; [
     disko

@@ -11,7 +11,7 @@
     "bash"
     "bat"
     "btop"
-    "davinci-resolve"
+    # "davinci-resolve"
     "easyeffects"
     "fonts"
     "ghostty"
