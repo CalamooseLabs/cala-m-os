@@ -124,6 +124,8 @@
       x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.alejandra;
     };
 
+    packages.x86_64-linux.default = self.nixosConfigurations.iso.config.system.build.isoImage;
+
     templates = import ./templates;
 
     devShells.${system}.default = import ./shell.nix {

@@ -22,7 +22,7 @@
 in {
   imports = [
     machine_hardware
-    "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
+    "${fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
     machine_disko
   ];
 

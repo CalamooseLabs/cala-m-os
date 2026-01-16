@@ -1,6 +1,7 @@
 {
   pkgs,
   modulesPath,
+  lib,
   ...
 }: {
   imports = [(modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")];
@@ -14,6 +15,8 @@
     ./public_keys/id_ed25519_sk.pub
     ./public_keys/backup_id_ed25519_sk.pub
   ];
+
+  networking.hostName = lib.mkForce "cala-m-os_installer";
 
   environment.systemPackages = with pkgs; [
     disko
@@ -48,4 +51,6 @@
   ];
 
   services.pcscd.enable = true;
+
+  isoImage.squashfsCompression = "lz4";
 }
