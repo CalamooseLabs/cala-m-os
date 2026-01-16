@@ -16,7 +16,7 @@
     "fonts"
     "ghostty"
     "hyprland"
-    "hyprlock"
+    # "hyprlock"
     "hyprpaper"
     "hyprscrolling"
     "imagemagick"
