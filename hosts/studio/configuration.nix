@@ -6,8 +6,8 @@
 {...}: let
   import_users = ["mixer"];
 
-  machine_type = "VM";
-  machine_uuid = "Small";
+  machine_type = "Workstation";
+  machine_uuid = "B850-MAX";
 in {
   imports = [
     # Common Core Config
