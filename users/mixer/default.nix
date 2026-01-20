@@ -15,6 +15,7 @@
     "easyeffects"
     "fonts"
     "ghostty"
+    "git"
     "hyprland"
     "hyprlock"
     "hyprpaper"
