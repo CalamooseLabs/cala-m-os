@@ -13,6 +13,9 @@
     ./hardware-configuration.nix
     ./disko.nix
     inputs.nixos-hardware.nixosModules.framework-16-amd-ai-300-series-nvidia
+
+    # Modules
+    ../../modules/nvidia-gpu/configuration.nix
   ];
 
   # Power saver for laptops
@@ -53,10 +56,7 @@
     };
 
     nvidia = {
-      modesetting.enable = true;
       powerManagement.enable = true;
-      open = true;
-      nvidiaSettings = true;
       prime = {
         offload.enable = true;
         amdgpuBusId = "PCI:195:0:0";

@@ -1,6 +1,7 @@
 {
   config,
   pkgs,
+  lib,
   ...
 }: {
   hardware = {
@@ -11,7 +12,7 @@
 
     nvidia = {
       modesetting.enable = true;
-      powerManagement.enable = false;
+      powerManagement.enable = lib.mkDefault false;
       open = true;
       # package = config.boot.kernelPackages.nvidiaPackages.stable;
       # Apply CachyOS kernel 6.19 patch to NVIDIA latest driver

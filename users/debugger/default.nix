@@ -14,7 +14,7 @@
     "bat"
     "btop"
     "direnv"
-    # "davinci-resolve"
+    "davinci-resolve"
     "easyeffects"
     "edit-config"
     "fingerprint-scanner"
