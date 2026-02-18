@@ -51,7 +51,7 @@
     "ssh"
     "steam"
     "stylix"
-    "tailscale"
+    # "tailscale"
     "virt-manager"
     "vivaldi"
     "vlc"
