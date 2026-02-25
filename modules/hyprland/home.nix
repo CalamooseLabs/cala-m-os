@@ -50,6 +50,7 @@
         "$mod, down, movefocus, d"
         "$mod, tab, cyclenext"
         "$mod, Q, killactive"
+        "$mod, F, fullscreen"
         "$mod, space, exec, pkill rofi || rofi -show drun -showicons"
       ];
     };
