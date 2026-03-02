@@ -62,8 +62,8 @@
         "$mod, F, fullscreen"
         "$mod, space, exec, pkill rofi || rofi -show drun -showicons"
 
-        "$mod, period, layoutmsg, movewindowto r"
-        "$mod, comma, layoutmsg, movewindowto l"
+        "$mod, period, layoutmsg, swapcol r"
+        "$mod, comma, layoutmsg, swapcol l"
       ];
     };
   };
