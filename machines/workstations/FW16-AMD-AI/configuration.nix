@@ -54,15 +54,6 @@
       enable = true;
       enable32Bit = true;
     };
-
-    nvidia = {
-      powerManagement.enable = true;
-      prime = {
-        offload.enable = true;
-        amdgpuBusId = "PCI:195:0:0";
-        nvidiaBusId = "PCI:194:0:0";
-      };
-    };
   };
 
   boot.kernelParams = ["nvidia-drm.modeset=1"];
