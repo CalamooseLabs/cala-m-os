@@ -64,6 +64,7 @@
 
         "$mod, period, layoutmsg, swapcol r"
         "$mod, comma, layoutmsg, swapcol l"
+        "$mod, slash, layoutmsg, promote"
       ];
     };
   };
