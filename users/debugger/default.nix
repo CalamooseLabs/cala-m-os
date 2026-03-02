@@ -27,7 +27,6 @@
     "hyprland"
     "hyprlock"
     "hyprpaper"
-    # "hyprscrolling"
     "hytale"
     "imagemagick"
     "imv"
