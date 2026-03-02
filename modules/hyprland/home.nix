@@ -20,6 +20,7 @@
 
     settings = {
       "$mod" = "SUPER";
+      layout = lib.mkDefault "scrolling";
 
       input = {
         numlock_by_default = true;
@@ -33,6 +34,11 @@
       ecosystem = {
         no_donation_nag = lib.mkForce true;
         no_update_news = lib.mkForce true;
+      };
+
+      scrolling = {
+        fullscreen_on_one_column = true;
+        focus_fit_method = 1;
       };
 
       bindm = [
@@ -52,6 +58,9 @@
         "$mod, Q, killactive"
         "$mod, F, fullscreen"
         "$mod, space, exec, pkill rofi || rofi -show drun -showicons"
+
+        "$mod, period, layoutmsg, movewindowto r"
+        "$mod, comma, layoutmsg, movewindowto l"
       ];
     };
   };
