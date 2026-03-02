@@ -20,7 +20,10 @@
 
     settings = {
       "$mod" = "SUPER";
-      layout = lib.mkDefault "scrolling";
+
+      general = {
+        layout = lib.mkDefault "scrolling";
+      };
 
       input = {
         numlock_by_default = true;
