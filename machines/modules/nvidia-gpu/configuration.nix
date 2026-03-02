@@ -1,8 +1,4 @@
-{
-  config,
-  lib,
-  ...
-}: {
+{config, ...}: {
   hardware = {
     graphics = {
       enable = true;
@@ -11,7 +7,7 @@
 
     nvidia = {
       modesetting.enable = true;
-      powerManagement.enable = lib.mkDefault false;
+      powerManagement.enable = false;
       open = true;
       package = config.boot.kernelPackages.nvidiaPackages.stable;
       nvidiaSettings = true;
