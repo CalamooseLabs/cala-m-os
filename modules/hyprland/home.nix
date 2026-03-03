@@ -65,8 +65,8 @@
         "$mod, period, layoutmsg, swapcol r"
         "$mod, comma, layoutmsg, swapcol l"
         "$mod, slash, layoutmsg, promote"
-        "$mod, =, layoutmsg, colresize +0.2"
-        "$mod, -, layoutmsg, colresize -0.2"
+        "$mod SHIFT, equal, layoutmsg, colresize +0.2"
+        "$mod SHIFT, minus, layoutmsg, colresize -0.2"
       ];
     };
   };
