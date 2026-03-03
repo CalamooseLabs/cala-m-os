@@ -14,6 +14,7 @@
 
     # Modules
     ../../modules/nvidia-gpu/configuration.nix
+    ../../modules/amd-cpu/configuration.nix
   ];
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
