@@ -9,9 +9,10 @@ in {
   wayland.windowManager.hyprland = {
     settings = {
       monitor = [
-        "${internalAMDDisplay}" # Laptop Screen
-        "${internalNvidiaDisplay}"
+        "${internalAMDDisplay}" # Laptop Screen (AMD iGPU)
+        "${internalNvidiaDisplay}" # Laptop Screen (Nvidia 5070 Module)
         "DP-9, 2560x1440@165, -640x-1600, 1" # Office Monitor
+        ", preferred, auto, 1, mirror, eDP-2" # Mirror by default
       ];
 
       # Repeated Binds
