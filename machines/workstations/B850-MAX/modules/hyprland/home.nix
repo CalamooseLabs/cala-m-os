@@ -7,7 +7,7 @@
     settings = {
       monitor = [
         "desc:Microstep MPG322UX OLED 0x01010101, 3840x2160@240, 0x0, 1, bitdepth, 10, cm, hdr, sdrbrightness, 1.2, sdrsaturation, 1.0"
-        ", preferred, auto, 1, mirror, desc:Microstep MPG322UX OLED 0x01010101" # Mirror if any other output detected
+        "HDMI-A-1, preferred, auto, 1, mirror, desc:Microstep MPG322UX OLED 0x01010101" # Mirror if any other output detected
       ];
 
       binde = let
