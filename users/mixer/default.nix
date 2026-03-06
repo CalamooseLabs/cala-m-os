@@ -19,6 +19,7 @@
     "hyprland"
     "hyprlock"
     "hyprpaper"
+    "hytale"
     "imagemagick"
     "imv"
     "minecraft"
