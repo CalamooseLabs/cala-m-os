@@ -56,7 +56,7 @@
     };
   };
 
-  boot.kernelParams = ["nvidia-drm.modeset=1"];
+  # boot.kernelParams = ["nvidia-drm.modeset=1"];
 
   services.pipewire.wireplumber.extraConfig.no-ucm = {
     "monitor.alsa.properties" = {
@@ -70,6 +70,11 @@
   hardware.bluetooth = {
     enable = true;
     powerOnBoot = true;
+  };
+
+  hardware.nvidia.prime = {
+    amdgpuBusId = "PCI:195:0:0";
+    nvidiaBusId = "PCI:194:0:0";
   };
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
