@@ -23,8 +23,12 @@
     package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
     # make sure to also set the portal package, so that they are in sync
     portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+    xwayland.enable = true;
   };
 
   # Login Service
+  systemd.services.greetd.environment = {
+    AQ_DRM_DEVICES = "/dev/dri/card0:/dev/dri/card1:/dev/dri/card2";
+  };
   services.greetd.settings.default_session.command = "start-hyprland &> /dev/null";
 }

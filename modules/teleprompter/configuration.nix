@@ -15,4 +15,8 @@
 
   # DisplayLink Manager service
   systemd.services.dlm.wantedBy = ["multi-user.target"];
+
+  environment.sessionVariables = {
+    AQ_DRM_DEVICES = "/dev/dri/card0:/dev/dri/card1:/dev/dri/card2";
+  };
 }
