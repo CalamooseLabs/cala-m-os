@@ -41,9 +41,13 @@
       INITIAL_INSTALL_MODE=1 nixos-install --flake /mnt/etc/nixos#$HOST_FLAKE --impure --no-root-password
       echo "Step Two Completed!"
       echo
-      echo "Step Three: Building Cala-M-OS"
-      nixos-enter -- nixos-rebuild boot --flake /etc/nixos#$HOST_FLAKE
+      echo  "Step Three: Prefetching"
+      nix-prefetch-url file:///etc/nixos/prefetch/displaylink-620.zip
       echo "Step Three Completed!"
+      echo
+      echo "Step Four: Building Cala-M-OS"
+      nixos-enter -- nixos-rebuild boot --flake /etc/nixos#$HOST_FLAKE
+      echo "Step Four Completed!"
       echo
       echo "Cala-M-OS has been sucessfully installed, please reboot the system."
       exit

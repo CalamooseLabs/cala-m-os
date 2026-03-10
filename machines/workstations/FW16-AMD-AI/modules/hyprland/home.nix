@@ -11,8 +11,11 @@ in {
       monitor = [
         "${internalAMDDisplay}" # Laptop Screen (AMD iGPU)
         "${internalNvidiaDisplay}" # Laptop Screen (Nvidia 5070 Module)
-        "DP-9, 2560x1440@165, -640x-1600, 1" # Office Monitor
-        ", preferred, auto, 1, mirror, eDP-2" # Mirror by default
+        "DP-9, 2560x1440@144, 0x-1600, 1" # Office Monitor
+        "DP-10, 2560x1440@144, 2560x-1600, 1" # Office Monitor
+        "DVI-I-1-1, preferred, auto, 1"
+        "DVI-I-1, preferred, auto, 1"
+        ", preferred, auto, 1"
       ];
 
       # Repeated Binds
