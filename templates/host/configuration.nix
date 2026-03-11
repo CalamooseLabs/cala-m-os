@@ -4,7 +4,7 @@
 #                                 #
 ###################################
 {...}: let
-  hostname = builtins.baseNameOf (toString ./.);
+  hostname = baseNameOf (toString ./.);
   users = [
     # Default User (name will be override to "hub")
     ""
@@ -14,7 +14,7 @@
   ];
 
   machine_type = "Workstation | VM";
-  machine_uuid = "TRX50-SAGE";
+  machine_uuid = "MACHINEXXXX";
 in {
   imports = [
     # Hardware Config

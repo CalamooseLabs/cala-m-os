@@ -4,7 +4,6 @@
 #                                 #
 ###################################
 {pkgs, ...}: let
-  hostname = baseNameOf (toString ./.);
   users = ["basic"];
 
   machine_type = "Workstation";
@@ -53,5 +52,5 @@ in {
   services.gvfs.enable = true;
   services.udisks2.enable = true;
 
-  networking.hostName = hostname;
+  networking.hostName = "simple";
 }

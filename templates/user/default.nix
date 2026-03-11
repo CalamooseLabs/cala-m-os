@@ -4,6 +4,8 @@
     then "hub"
     else baseNameOf (toString ./.);
 
+  uuid = baseNameOf (toString ./.);
+
   modules = [
   ];
 in {
@@ -11,6 +13,7 @@ in {
     (import ../_core {
       username = username;
       import_modules = modules;
+      uuid = uuid;
     })
   ];
 }

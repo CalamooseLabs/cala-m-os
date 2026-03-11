@@ -1,6 +1,6 @@
 ##################################
 #                                #
-#   Framework 12th Gen. Laptop   #
+#   Framework 11th Gen. Laptop   #
 #                                #
 ##################################
 {inputs, ...}: {
