@@ -14,8 +14,7 @@
     };
   };
 
-  services.xserver.videoDrivers = ["displaylink" "modesetting" "nvidia"];
-  # services.xserver.videoDrivers = ["nvidia"];
+  services.xserver.videoDrivers = ["nvidia"];
 
   boot.kernelModules = ["nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm"];
 
