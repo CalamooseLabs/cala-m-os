@@ -7,17 +7,23 @@
         scale_factor = 1.5;
       };
       clock = {
-        format = "%a %d %b %r";
+        format = "%a %d %b - %r";
       };
       modules = {
         left = ["Workspaces"];
         center = ["WindowTitle"];
-        right = ["SystemInfo" "Clock" "Settings"]; # Settings includes battery
+        right = ["Clock" "Settings"];
       };
 
-      # Configure battery display format
       settings = {
-        battery_format = "IconAndPercentage"; # Shows both icon and percentage
+        battery_format = "IconAndPercentage";
+        lock_cmd = "hyprlock &";
+        indicators = [
+          "Battery"
+          "Bluetooth"
+          "Network"
+          "Audio"
+        ];
       };
     };
   };
