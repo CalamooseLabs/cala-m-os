@@ -47,6 +47,7 @@
 
   environment.systemPackages = with pkgs; [
     cifs-utils
+    unzip
   ];
 
   fileSystems."/mnt/nkc" = {
