@@ -11,4 +11,6 @@
       }
     });
   '';
+
+  services.upower.enable = true;
 }
