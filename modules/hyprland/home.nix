@@ -59,7 +59,7 @@
         "$mod, down, movefocus, d"
         "$mod, tab, cyclenext"
         "$mod, Q, killactive"
-        "$mod, F, fullscreen"
+        "$mod SHIFT, F, fullscreen"
         "$mod, space, exec, pkill rofi || rofi -show drun -showicons"
 
         "$mod, period, layoutmsg, swapcol r"
