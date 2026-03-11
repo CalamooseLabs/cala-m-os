@@ -1,4 +1,5 @@
 {...}: {...}: {
-  home.packages = [
-  ];
+  services.easyeffects = {
+    preset = "FW13";
+  };
 }

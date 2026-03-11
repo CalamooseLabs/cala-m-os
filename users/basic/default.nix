@@ -8,9 +8,12 @@
     "agenix"
     "ashell"
     "bash"
+    "easyeffects"
+    "fingerprint-scanner"
     "fonts"
     "ghostty"
     "git"
+    "gpg"
     "hyprland"
     "hyprlock"
     "hyprpaper"
@@ -19,6 +22,7 @@
     "neovim"
     "nh"
     "nwg-dock"
+    "proton-pass"
     "rebuild-config"
     "rofi"
     "stylix"
@@ -26,6 +30,7 @@
     "steam"
     "vlc"
     "yubikey"
+    "zathura"
   ];
 in {
   imports = [
