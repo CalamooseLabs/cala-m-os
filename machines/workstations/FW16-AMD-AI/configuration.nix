@@ -56,7 +56,7 @@
     };
   };
 
-  # boot.kernelParams = ["nvidia-drm.modeset=1"];
+  boot.kernelParams = ["nvidia-drm.modeset=1"];
 
   services.pipewire.wireplumber.extraConfig.no-ucm = {
     "monitor.alsa.properties" = {
