@@ -1,33 +1,25 @@
-##################################
-#                                #
-#        Main Daily Laptop       #
-#                                #
-##################################
-{
-  lib,
-  pkgs,
-  ...
-}: let
-  import_users = [
-    # Default User
-    "debugger"
-
-    # Other Users
-  ];
+###################################
+#                                 #
+#          Simple Setup           #
+#                                 #
+###################################
+{pkgs, ...}: let
+  hostname = baseNameOf (toString ./.);
+  users = ["basic"];
 
   machine_type = "Workstation";
-  machine_uuid = "FW16-AMD-AI";
+  machine_uuid = "FW13-11XXP";
 in {
   imports = [
+    # Hardware Config
+
     # Common Core Config
-    (import ../_core/default.nix {
-      users_list = import_users;
+    (import ../_core/configuration.nix {
+      users_list = users;
       machine_type = machine_type;
       machine_uuid = machine_uuid;
     })
   ];
-
-  networking.hostName = "devbox";
 
   # Enable CUPS to print documents.
   services.avahi = {
@@ -56,11 +48,10 @@ in {
     pulse.enable = true;
   };
 
-  # Devbox can have manual
-  documentation.enable = lib.mkForce true;
+  # Mount usb drives
+  services.devmon.enable = true;
+  services.gvfs.enable = true;
+  services.udisks2.enable = true;
 
-  programs.appimage = {
-    enable = true;
-    binfmt = true;
-  };
+  networking.hostName = hostname;
 }
