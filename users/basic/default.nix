@@ -13,7 +13,6 @@
     "fonts"
     "ghostty"
     "git"
-    "gpg"
     "hyprland"
     "hyprlock"
     "hyprpaper"

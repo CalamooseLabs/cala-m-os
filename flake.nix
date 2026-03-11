@@ -111,6 +111,7 @@
       devbox = mkSystem "devbox" {};
       ephemeral = mkSystem "ephemeral" {};
       lab = mkSystem "lab" {inherit self;};
+      simple = mkSystem "simple" {};
       studio = mkSystem "studio" {};
 
       iso = nixpkgs.lib.nixosSystem {
