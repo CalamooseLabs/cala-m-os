@@ -14,6 +14,7 @@
     "fonts"
     "ghostty"
     "git"
+    "hypridle"
     "hyprland"
     "hyprlock"
     "hyprpaper"

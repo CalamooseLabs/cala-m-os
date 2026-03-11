@@ -7,12 +7,12 @@
         scale_factor = 1.5;
       };
       clock = {
-        format = "%a %d %b - %r";
+        format = "%a %d %b  -  %r";
       };
       modules = {
-        left = ["Workspaces"];
+        left = ["Clock"];
         center = ["WindowTitle"];
-        right = ["Clock" "Settings"];
+        right = ["Settings"];
       };
 
       settings = {

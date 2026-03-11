@@ -9,7 +9,6 @@ in {
     settings = {
       monitor = [
         "${internalDisplay}" # Laptop Screen
-        "DP-6, 2560x1440@60, -3088x-1504, 1" # Office Left Monitor
       ];
 
       # Repeated Binds
