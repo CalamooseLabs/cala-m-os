@@ -29,6 +29,7 @@
     "spotify"
     "steam"
     "vlc"
+    "wifi"
     "yubikey"
     "zathura"
   ];
