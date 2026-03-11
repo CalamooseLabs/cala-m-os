@@ -20,6 +20,7 @@
     "hyprpaper"
     "imv"
     "librewolf"
+    "nautilus"
     "neovim"
     "nh"
     "nwg-dock"
