@@ -9,8 +9,6 @@
     ./hardware-configuration.nix
     ./disko.nix
     inputs.nixos-hardware.nixosModules.framework-11th-gen-intel
-
-    ./modules/hyprland/configuration.nix
   ];
 
   # Power saver for laptops

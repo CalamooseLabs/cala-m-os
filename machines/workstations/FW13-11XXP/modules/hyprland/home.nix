@@ -9,6 +9,7 @@ in {
     settings = {
       monitor = [
         "${internalDisplay}" # Laptop Screen
+        ", preferred, auto, 1"
       ];
 
       # Repeated Binds
