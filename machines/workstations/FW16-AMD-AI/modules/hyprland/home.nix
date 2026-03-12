@@ -13,6 +13,7 @@ in {
         "${internalNvidiaDisplay}" # Laptop Screen (Nvidia 5070 Module)
         "DP-9, 2560x1440@144, 0x-1600, 1" # Office Monitor
         "DP-10, 2560x1440@144, 2560x-1600, 1" # Office Monitor
+        "DP-11, 2560x1440@144, 2560x0, 1" # Office Monitor
         ", preferred, auto, 1"
       ];
 
