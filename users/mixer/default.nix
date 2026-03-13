@@ -34,7 +34,7 @@
     "spotify"
     "steam"
     "streamdeck"
-    "teleprompter"
+    # "teleprompter"
     "vlc"
     "waybar"
     "yubikey"

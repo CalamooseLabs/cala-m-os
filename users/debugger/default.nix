@@ -51,7 +51,7 @@
     "steam"
     "stylix"
     # "tailscale"
-    "teleprompter"
+    # "teleprompter"
     "virt-manager"
     "vivaldi"
     "vlc"

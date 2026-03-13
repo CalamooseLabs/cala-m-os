@@ -72,10 +72,5 @@
     powerOnBoot = true;
   };
 
-  hardware.nvidia.prime = {
-    amdgpuBusId = "PCI:195:0:0";
-    nvidiaBusId = "PCI:194:0:0";
-  };
-
   boot.kernelPackages = pkgs.linuxPackages_latest;
 }
