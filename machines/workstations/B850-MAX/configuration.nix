@@ -19,6 +19,9 @@
 
   hardware.nvidia.prime = {
     offload.enable = true;
+
+    nvidiaBusId = "PCI:001:0:0";
+    amdgpuBusId = "PCI:014:0:0";
   };
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
