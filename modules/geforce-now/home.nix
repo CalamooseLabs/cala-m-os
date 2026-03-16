@@ -21,6 +21,7 @@
   config = {
     home.packages = [
       pkgs.flatpak
+      pkgs.chromium
     ];
 
     home.sessionPath = [
@@ -47,29 +48,29 @@
         "GeForceNOW:app/com.nvidia.geforcenow//master"
       ];
 
-      overrides = {
-        "com.nvidia.geforcenow" = {
-          Context = {
-            sockets = [
-              "!wayland"
-            ];
-          };
-          # Set proper environment variables based on GPU type
-          Environment = lib.mkMerge [
-            # Intel GPU configuration
-            (lib.mkIf (config.geforceNow.gpuType == "intel") {
-              VK_ICD_FILENAMES = "/run/opengl-driver/share/vulkan/icd.d/intel_icd.x86_64.json";
-              MESA_LOADER_DRIVER_OVERRIDE = "iris";
-              ANV_DEBUG = "video-decode,video-encode";
-            })
-            # NVIDIA GPU configuration
-            (lib.mkIf (config.geforceNow.gpuType == "nvidia") {
-              VK_ICD_FILENAMES = "/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json";
-              MESA_LOADER_DRIVER_OVERRIDE = "nvidia";
-            })
-          ];
-        };
-      };
+      # overrides = {
+      #   "com.nvidia.geforcenow" = {
+      #     Context = {
+      #       sockets = [
+      #         "!wayland"
+      #       ];
+      #     };
+      #     # Set proper environment variables based on GPU type
+      #     Environment = lib.mkMerge [
+      #       # Intel GPU configuration
+      #       (lib.mkIf (config.geforceNow.gpuType == "intel") {
+      #         VK_ICD_FILENAMES = "/run/opengl-driver/share/vulkan/icd.d/intel_icd.x86_64.json";
+      #         MESA_LOADER_DRIVER_OVERRIDE = "iris";
+      #         ANV_DEBUG = "video-decode,video-encode";
+      #       })
+      #       # NVIDIA GPU configuration
+      #       (lib.mkIf (config.geforceNow.gpuType == "nvidia") {
+      #         VK_ICD_FILENAMES = "/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json";
+      #         MESA_LOADER_DRIVER_OVERRIDE = "nvidia";
+      #       })
+      #     ];
+      #   };
+      # };
     };
   };
 }
