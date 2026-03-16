@@ -17,5 +17,9 @@
     ../../modules/amd-cpu/configuration.nix
   ];
 
+  hardware.nvidia.prime = {
+    offload.enable = true;
+  };
+
   boot.kernelPackages = pkgs.linuxPackages_latest;
 }
