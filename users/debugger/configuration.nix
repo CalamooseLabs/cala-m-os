@@ -13,6 +13,8 @@
       "plugdev"
       "input"
       "dialout"
+      "render"
+      "video"
     ];
   };
 
