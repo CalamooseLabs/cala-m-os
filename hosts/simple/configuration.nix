@@ -7,7 +7,7 @@
   users = ["basic"];
 
   machine_type = "Workstation";
-  machine_uuid = "FW13-11XXP";
+  machine_uuid = "FW13-12XXP";
 in {
   imports = [
     # Hardware Config

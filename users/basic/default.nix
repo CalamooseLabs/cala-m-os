@@ -30,6 +30,7 @@
     "stylix"
     "spotify"
     "steam"
+    "teleprompter"
     "vlc"
     "yubikey"
     "zathura"
