@@ -52,6 +52,7 @@
     "stylix"
     # "tailscale"
     "teleprompter"
+    "termusic"
     "virt-manager"
     "vivaldi"
     "vlc"
