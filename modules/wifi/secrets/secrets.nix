@@ -10,4 +10,16 @@ in {
     yubinano
     yubibackup
   ];
+  "NKCWiFi.nmconnection.age".publicKeys = [
+    yubinano
+    yubibackup
+  ];
+  "theisenair.nmconnection.age".publicKeys = [
+    yubinano
+    yubibackup
+  ];
+  "NETGEAR43.nmconnection.age".publicKeys = [
+    yubinano
+    yubibackup
+  ];
 }
