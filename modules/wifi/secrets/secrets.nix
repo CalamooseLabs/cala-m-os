@@ -6,4 +6,8 @@ in {
     yubinano
     yubibackup
   ];
+  "CalamooseLabs.nmconnection.age".publicKeys = [
+    yubinano
+    yubibackup
+  ];
 }

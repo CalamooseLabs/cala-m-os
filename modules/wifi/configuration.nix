@@ -7,6 +7,8 @@
     "NetworkManager/system-connections/Calamoose WiFi.nmconnection" = {
       source = config.age.secrets."CalamooseWiFi.nmconnection".path;
     };
+    "NetworkManager/system-connections/Calamoose Labs.nmconnection" = {
+      source = config.age.secrets."CalamooseLabs.nmconnection".path;
+    };
   };
-  # path = "/etc/NetworkManager/system-connections/Calamoose WiFi.nmconnection";
 }
