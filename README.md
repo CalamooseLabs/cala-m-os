@@ -16,11 +16,8 @@
 
 ## Features
 
-- **Hyprland**: For productivity and window management on majority of hosts.
-- **Split Users**: Keep in the flow with the current user task.
 - **Automated Setup**: Use `install-cala-m-os` for quick up and running.
 - **Security Key Secrets**: Using Yubikeys as hardware security keys to allow for signing, ssh, gpg and secret encryption behind agenix/age.
-- **Offline Work**: Works offline as well
 
 ---
 
