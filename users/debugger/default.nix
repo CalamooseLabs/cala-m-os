@@ -37,6 +37,7 @@
     "nh"
     "obs-studio"
     "orion"
+    "openswitcher"
     "pdf-editor"
     "proton-pass"
     "rawtherapee"
