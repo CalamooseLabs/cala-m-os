@@ -14,7 +14,7 @@ in {
         "DP-9, 2560x1440@144, 0x-1600, 1" # Office Monitor Left
         "DP-10, 2560x1440@144, 2560x-1600, 1" # Office Monitor Right
         "DP-11, 2560x1440@144, 2560x0, 1" # Office Monitor (Nvidia Output)
-        "desc:Microstep MPG322UX OLED 0x01010101, 3840x2160@240, 0x-1600, 1, bitdepth, 10, cm, hdr, sdrbrightness, 1.2, sdrsaturation, 1.0"
+        "desc:Microstep MPG322UX OLED 0x01010101, 3840x2160@240, 2560x0, 1, bitdepth, 10, cm, hdr, sdrbrightness, 1.2, sdrsaturation, 1.0"
         ", preferred, auto, 1"
       ];
 
