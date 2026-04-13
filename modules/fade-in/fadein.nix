@@ -3,49 +3,57 @@
   stdenv,
   autoPatchelfHook,
   makeWrapper,
-  qt5,
-  libGL,
-  fontconfig,
-  freetype,
-  xorg,
-  alsa-lib,
-  libpulseaudio,
-  cups,
-  zlib,
+  wrapGAppsHook,
+  # GTK3 dependencies
+  gtk3,
+  gdk-pixbuf,
+  pango,
+  cairo,
+  webkitgtk_4_1,
+  # Other dependencies
   glib,
+  fontconfig,
+  curl,
+  xorg,
+  libxkbcommon,
+  wayland,
+  util-linux,
 }:
-stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   pname = "fadein";
-  version = "5.0.11"; # Update to match your version
+  version = "5.0.11";
 
-  # Reference the local tar.gz file (relative to this .nix file)
   src = ./packages/fadein-linux-x64.tar.gz;
 
   nativeBuildInputs = [
     autoPatchelfHook
     makeWrapper
-    qt5.wrapQtAppsHook
+    wrapGAppsHook
   ];
 
   buildInputs = [
-    qt5.qtbase
-    qt5.qtsvg
-    qt5.qtmultimedia
-    qt5.qtwayland
-    libGL
-    fontconfig
-    freetype
-    xorg.libX11
-    xorg.libXrender
-    xorg.libXext
-    xorg.libXi
-    xorg.libxcb
-    alsa-lib
-    libpulseaudio
-    cups
-    zlib
+    # GTK3 stack
+    gtk3
+    gdk-pixbuf
+    pango
+    cairo
+    webkitgtk_4_1
+
+    # Core libs
     glib
-    stdenv.cc.cc.lib # For libstdc++
+    fontconfig
+    curl
+    libxkbcommon
+    wayland
+    util-linux # for libuuid
+
+    # X11
+    xorg.libX11
+    xorg.libSM
+    xorg.libICE
+
+    # Standard C++ lib
+    stdenv.cc.cc.lib
   ];
 
   sourceRoot = ".";
@@ -54,29 +62,33 @@ stdenv.mkDerivation {
   dontBuild = true;
 
   installPhase = ''
-    runHook preInstall
+        runHook preInstall
 
-    # Create directories
-    mkdir -p $out/bin
-    mkdir -p $out/share/fadein
-    mkdir -p $out/share/applications
-    mkdir -p $out/share/pixmaps
+        # The tar extracts to: fadein-linux-x86_64-5.0.11/usr/share/fadein/
+        mkdir -p $out/bin
+        mkdir -p $out/share/fadein
+        mkdir -p $out/share/applications
+        mkdir -p $out/share/icons
 
-    # Copy all files (adjust based on actual tar.gz structure)
-    # First, let's see what's in the archive - you may need to adjust these paths
-    cp -r * $out/share/fadein/ || true
+        # Copy application files from the extracted structure
+        cp -r fadein-linux-x86_64-${version}/usr/share/fadein/* $out/share/fadein/
 
-    # Find and link the main binary
-    if [ -f "$out/share/fadein/fadein" ]; then
-      chmod +x $out/share/fadein/fadein
-      ln -s $out/share/fadein/fadein $out/bin/fadein
-    elif [ -f "$out/share/fadein/FadeIn" ]; then
-      chmod +x $out/share/fadein/FadeIn
-      ln -s $out/share/fadein/FadeIn $out/bin/fadein
-    fi
+        # Make binary executable and create symlink
+        chmod +x $out/share/fadein/fadein
+        ln -s $out/share/fadein/fadein $out/bin/fadein
 
-    # Create desktop entry
-    cat > $out/share/applications/fadein.desktop << EOF
+        # Copy desktop file if it exists
+        if [ -d "fadein-linux-x86_64-${version}/usr/share/applications" ]; then
+          cp -r fadein-linux-x86_64-${version}/usr/share/applications/* $out/share/applications/ || true
+        fi
+
+        # Copy icons if they exist
+        if [ -d "fadein-linux-x86_64-${version}/usr/share/icons" ]; then
+          cp -r fadein-linux-x86_64-${version}/usr/share/icons/* $out/share/icons/ || true
+        fi
+
+        # Create desktop entry if not provided
+        cat > $out/share/applications/fadein.desktop << EOF
     [Desktop Entry]
     Type=Application
     Name=Fade In
@@ -88,8 +100,11 @@ stdenv.mkDerivation {
     MimeType=application/x-fadein;
     EOF
 
-    runHook postInstall
+        runHook postInstall
   '';
+
+  # Don't wrap twice - wrapGAppsHook handles GTK apps
+  dontWrapGApps = false;
 
   meta = with lib; {
     homepage = "https://www.fadeinpro.com";
