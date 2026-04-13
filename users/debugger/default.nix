@@ -17,6 +17,7 @@
     "davinci-resolve"
     "easyeffects"
     "edit-config"
+    "fade-in"
     "fingerprint-scanner"
     "fonts"
     "geforce-now"
