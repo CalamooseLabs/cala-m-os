@@ -19,6 +19,7 @@
     "edit-config"
     "fade-in"
     "fingerprint-scanner"
+    "flameshot"
     "fonts"
     "geforce-now"
     "ghostty"
