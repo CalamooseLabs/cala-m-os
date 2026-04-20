@@ -10,7 +10,7 @@
   <br />
 </h1>
 
-**Cala-M-OS** is multiple NixOS configurations for workstations, servers, and VMs.
+**Cala-M-OS** is multiple NixOS configurations for workstations, laptops, servers, and VMs.
 
 ---
 
