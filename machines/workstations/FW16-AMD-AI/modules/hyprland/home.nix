@@ -9,7 +9,7 @@ in {
   wayland.windowManager.hyprland = {
     settings = {
       monitor = [
-        "${internalAMDDisplay}" # Laptop Screen (AMD iGPU)
+        # "${internalAMDDisplay}" # Laptop Screen (AMD iGPU)
         "${internalNvidiaDisplay}" # Laptop Screen (Nvidia 5070 Module)
         "DP-9, 2560x1440@144, 0x-1600, 1" # Office Monitor Left
         "DP-10, 2560x1440@144, 2560x-1600, 1" # Office Monitor Right
@@ -40,9 +40,9 @@ in {
 
       bindl = [
         ", switch:on:Lid Switch, exec, hyprlock"
-        ", switch:on:Lid Switch, exec, hyprctl keyword monitor 'eDP-1, disable'"
+        # ", switch:on:Lid Switch, exec, hyprctl keyword monitor 'eDP-1, disable'"
         ", switch:on:Lid Switch, exec, hyprctl keyword monitor 'eDP-2, disable'"
-        ", switch:off:Lid Switch, exec, hyprctl keyword monitor '${internalAMDDisplay}'"
+        # ", switch:off:Lid Switch, exec, hyprctl keyword monitor '${internalAMDDisplay}'"
         ", switch:off:Lid Switch, exec, hyprctl keyword monitor '${internalNvidiaDisplay}'"
       ];
     };
