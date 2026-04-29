@@ -1,11 +1,14 @@
 {
   inputs,
   pkgs,
+  config,
   ...
 }: {
   imports = [
     inputs.stylix.nixosModules.stylix
   ];
+
+  gtk.gtk4.theme = config.gtk.theme;
 
   stylix = {
     enable = true;
