@@ -3,7 +3,7 @@
   pkgs,
   ...
 }: let
-  internalAMDDisplay = "eDP-1, 2560x1600@165, 0x0, 1";
+  # internalAMDDisplay = "eDP-1, 2560x1600@165, 0x0, 1";
   internalNvidiaDisplay = "eDP-2, 2560x1600@165, 0x0, 1";
 in {
   wayland.windowManager.hyprland = {
@@ -39,13 +39,13 @@ in {
         ", XF86MonBrightnessDown, exec, ${brightnessctl} set 5%-"
       ];
 
-      # bindl = [
-      #   ", switch:on:Lid Switch, exec, hyprlock"
-      #   # ", switch:on:Lid Switch, exec, hyprctl keyword monitor 'eDP-1, disable'"
-      #   ", switch:on:Lid Switch, exec, hyprctl keyword monitor 'eDP-2, disable'"
-      #   # ", switch:off:Lid Switch, exec, hyprctl keyword monitor '${internalAMDDisplay}'"
-      #   ", switch:off:Lid Switch, exec, hyprctl keyword monitor '${internalNvidiaDisplay}'"
-      # ];
+      bindl = [
+        ", switch:on:Lid Switch, exec, hyprlock"
+        # ", switch:on:Lid Switch, exec, hyprctl keyword monitor 'eDP-1, disable'"
+        ", switch:on:Lid Switch, exec, hyprctl keyword monitor 'eDP-2, disable'"
+        # ", switch:off:Lid Switch, exec, hyprctl keyword monitor '${internalAMDDisplay}'"
+        ", switch:off:Lid Switch, exec, hyprctl keyword monitor '${internalNvidiaDisplay}'"
+      ];
     };
   };
 }
