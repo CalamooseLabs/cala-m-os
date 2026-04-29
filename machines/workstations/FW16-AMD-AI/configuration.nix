@@ -32,21 +32,21 @@
   services.libinput.enable = true;
 
   # Thunderbolt
-  # Enable systemd in initrd
-  boot.initrd.systemd.enable = true;
+  # # Enable systemd in initrd
+  # boot.initrd.systemd.enable = true;
 
-  # Include bolt in initrd
-  boot.initrd.services.udev.packages = [pkgs.bolt];
-  boot.initrd.systemd.packages = [pkgs.bolt];
+  # # Include bolt in initrd
+  # boot.initrd.services.udev.packages = [pkgs.bolt];
+  # boot.initrd.systemd.packages = [pkgs.bolt];
 
-  # Alternative: Manual udev rule for authorization
-  boot.initrd.services.udev.rules = ''
-    ACTION=="add|change", SUBSYSTEM=="thunderbolt", \
-    ATTR{unique_id}=="<YOUR_DEVICE_UNIQUE_ID>", \
-    ATTR{authorized}="1"
-  '';
+  # # Alternative: Manual udev rule for authorization
+  # boot.initrd.services.udev.rules = ''
+  #   ACTION=="add|change", SUBSYSTEM=="thunderbolt", \
+  #   ATTR{unique_id}=="<YOUR_DEVICE_UNIQUE_ID>", \
+  #   ATTR{authorized}="1"
+  # '';
 
-  services.hardware.bolt.enable = true;
+  # services.hardware.bolt.enable = true;
 
   # Nvidia 5070
   hardware = {
@@ -72,19 +72,7 @@
     powerOnBoot = true;
   };
 
-  systemd.services.inhibit-sleep-after-resume = {
-    description = "Temporary sleep inhibitor after resume (workaround for double-suspend)";
-    wantedBy = ["post-resume.target"];
-    after = ["post-resume.target"];
-    serviceConfig.Type = "oneshot";
-    script = ''
-      ${pkgs.systemd}/bin/systemd-inhibit \
-        --mode=block \
-        --what=sleep:idle \
-        --why="Workaround: avoid immediate second suspend after resume" \
-        ${pkgs.coreutils}/bin/sleep 60
-    '';
-  };
+  services.logind.settings.Login.HandleLidSwitch = "ignore";
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
 }
