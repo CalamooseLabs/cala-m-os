@@ -171,6 +171,26 @@
         "type": "github"
       }
     },
+    "companion": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1773106734,
+        "narHash": "sha256-HO0Ljw+/saRA2AfZIzjRBmgfBw69sxnNb6eDK34AYxY=",
+        "owner": "noblepayne",
+        "repo": "bitfocus-companion-flake",
+        "rev": "e85fa400349eca2d5fbdcaadfd57b2925b9a8b24",
+        "type": "github"
+      },
+      "original": {
+        "owner": "noblepayne",
+        "repo": "bitfocus-companion-flake",
+        "type": "github"
+      }
+    },
     "darwin": {
       "inputs": {
         "nixpkgs": [
@@ -1005,6 +1025,7 @@
         "agenix": "agenix",
         "antlers": "antlers",
         "arion": "arion",
+        "companion": "companion",
         "disko": "disko",
         "flatpaks": "flatpaks",
         "home-manager": "home-manager_2",
