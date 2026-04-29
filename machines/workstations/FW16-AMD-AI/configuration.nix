@@ -72,5 +72,19 @@
     powerOnBoot = true;
   };
 
+  systemd.services.inhibit-sleep-after-resume = {
+    description = "Temporary sleep inhibitor after resume (workaround for double-suspend)";
+    wantedBy = ["post-resume.target"];
+    after = ["post-resume.target"];
+    serviceConfig.Type = "oneshot";
+    script = ''
+      ${pkgs.systemd}/bin/systemd-inhibit \
+        --mode=block \
+        --what=sleep:idle \
+        --why="Workaround: avoid immediate second suspend after resume" \
+        ${pkgs.coreutils}/bin/sleep 60
+    '';
+  };
+
   boot.kernelPackages = pkgs.linuxPackages_latest;
 }
