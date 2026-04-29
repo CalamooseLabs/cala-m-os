@@ -73,6 +73,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    companion = {
+      url = "github:noblepayne/bitfocus-companion-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     lanserver = {
       url = "github:CalamooseLabs/LanServer";
     };
