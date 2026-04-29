@@ -54,7 +54,6 @@
     "ssh"
     "steam"
     "stylix"
-    "tailscale"
     "termusic"
     "virt-manager"
     "vivaldi"
