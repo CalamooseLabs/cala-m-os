@@ -9,7 +9,7 @@
 
     systemd = {
       enable = true;
-      target = "hyprland-session.target"; # NOTE = hyprland/default.nix stops graphical-session.target and starts hyprland-session.target
+      targets = ["hyprland-session.target"];
     };
 
     settings = {
