@@ -62,5 +62,5 @@ Cala-M-OS is open-source software licensed under the MIT License.
 <p align="right">
   <br />
   <br />
-  <span>© 2025 Calamoose Labs, Inc.</span>&nbsp;<img src="./assets/logo.png" alt="Calamoose Labs Logo" height="15px">
+  <span>© 2026 Calamoose Labs, Inc.</span>&nbsp;<img src="./assets/logo.png" alt="Calamoose Labs Logo" height="15px">
 </p>
