@@ -5,11 +5,6 @@
 }: let
   zedSettings = {
     lsp = {
-      nix = {
-        binary = {
-          path_lookup = true;
-        };
-      };
       nil = {
         initialization_options = {
           formatting = {
@@ -39,7 +34,7 @@
     };
 
     languages = {
-      nix = {
+      "Nix" = {
         formatter = {
           external = {
             command = "alejandra";

@@ -1,4 +1,4 @@
-{...}: {
+{lib, ...}: {
   programs.zed-editor = {
     enable = true;
 
@@ -16,17 +16,10 @@
 
       vim_mode = true;
       autosave = "on_focus_change";
-      restore_on_startup = "none";
+      restore_on_startup = "empty_tab";
       confirm_quit = false;
       load_direnv = "shell_hook";
       auto_update = false;
-
-      edit_predictions_disabled_in = [
-      ];
-
-      features = {
-        edit_prediction_provider = "zed";
-      };
 
       hide_mouse = "on_typing";
       tab_size = 2;
@@ -39,6 +32,12 @@
         case_sensitive = false;
         include_ignored = false;
         regex = true;
+      };
+
+      theme = lib.mkForce {
+        mode = "system";
+        light = "One Light";
+        dark = "One Dark";
       };
 
       terminal = {
