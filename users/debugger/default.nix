@@ -50,7 +50,6 @@
     "rofi"
     "scanner"
     "solaar"
-    "spotify"
     "ssh"
     "steam"
     "stylix"
