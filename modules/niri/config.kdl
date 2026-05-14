@@ -1,0 +1,4 @@
+binds {
+    Mod+T { spawn "ghostty"; }
+    Mod+B { spawn "librewolf"; }
+}
