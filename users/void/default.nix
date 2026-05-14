@@ -12,6 +12,7 @@
     "bat"
     "btop"
     "git"
+    "ghostty"
     "neovim"
     "nh"
     "niri"
