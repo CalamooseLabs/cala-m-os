@@ -10,7 +10,7 @@
   machine_uuid = "ZIMA";
 in {
   imports = [
-    inputs.impermanence.nixosModules.impermanence
+    inputs.preservation.nixosModules.default
 
     # Common Core Config
     (import ../_core/default.nix {
@@ -22,17 +22,25 @@ in {
 
   networking.hostName = "ephemeral";
 
-  environment.persistence."/persistent" = {
+  preservation = {
     enable = true;
-    hideMounts = true;
-    directories = [
-      "/var/log"
-      "/etc/nixos"
-      "/var/lib/systemd/coredump"
-      "/var/lib/nixos"
-    ];
-    files = [
-      "/etc/machine-id"
-    ];
+
+    preserveAt."/persistent" = {
+      directories = [
+        "/etc/nixos"
+        "/var/lib/bluetooth"
+        {
+          directory = "/var/lib/nixos";
+          inInitrd = true;
+        }
+      ];
+
+      files = [
+        {
+          file = "/etc/machine-id";
+          inInitrd = true;
+        }
+      ];
+    };
   };
 }

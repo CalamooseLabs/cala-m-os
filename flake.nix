@@ -8,11 +8,11 @@
     # Specific Hardware Fixes
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
-    # Impermanence
-    impermanence.url = "github:nix-community/impermanence";
-
     # Declarative Flatpak
     flatpaks.url = "github:in-a-dil-emma/declarative-flatpak/latest";
+
+    # Preservation
+    preservation.url = "github:nix-community/preservation";
 
     # Theming
     stylix = {

@@ -14,9 +14,12 @@
     "git"
     "neovim"
     "nh"
+    "niri"
     "openssh"
     "rebuild-config"
     "restore-config"
+    "teleprompter"
+    "waybar"
   ];
 in {
   imports = [

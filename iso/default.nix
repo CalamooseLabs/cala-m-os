@@ -43,6 +43,7 @@
       echo
       echo  "Step Three: Prefetching"
       nix-prefetch-url file:///etc/nixos/prefetch/displaylink-620.zip
+      nixos-enter -- nix-prefetch-url file:///etc/nixos/prefetch/displaylink-620.zip
       echo "Step Three Completed!"
       echo
       echo "Step Four: Building Cala-M-OS"
