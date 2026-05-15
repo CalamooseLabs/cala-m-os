@@ -15,6 +15,8 @@
 
     xwayland.enable = true;
 
+    configType = "hyprlang";
+
     extraConfig = ''
     '';
 
