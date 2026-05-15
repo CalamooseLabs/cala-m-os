@@ -53,6 +53,7 @@
     "ssh"
     "steam"
     "stylix"
+    "teleprompter"
     "termusic"
     "virt-manager"
     "vivaldi"
