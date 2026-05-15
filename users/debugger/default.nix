@@ -12,7 +12,7 @@
     "appimage"
     "bash"
     "bat"
-    "bitfocus-companion"
+    # "bitfocus-companion"
     "btop"
     "direnv"
     "davinci-resolve"
