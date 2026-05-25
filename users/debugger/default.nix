@@ -36,6 +36,7 @@
     "ios"
     "lazygit"
     "minecraft"
+    "nbtedit"
     "neovim"
     "nh"
     "obs-studio"
