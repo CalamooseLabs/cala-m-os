@@ -53,6 +53,7 @@ in
       pkgs.alejandra
       pkgs.nixd
       pkgs.nil
+      pkgs.claude-code
       (inputs.antlers.packages.x86_64-linux.zed-editor zedSettings)
     ];
 

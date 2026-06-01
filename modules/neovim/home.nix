@@ -15,7 +15,7 @@
       bufferline-nvim
     ];
 
-    extraLuaConfig = ''
+    initLua = ''
       -- Your existing settings (converted to Lua)
       vim.opt.number = true
       vim.opt.relativenumber = true

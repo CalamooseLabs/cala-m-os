@@ -93,6 +93,7 @@
     pkgs = import nixpkgs {
       system = system;
       overlays = import ./overlays;
+      config.allowUnfree = true;
     };
     cala-m-os = import ./settings.nix;
     initialInstallMode = builtins.getEnv "INITIAL_INSTALL_MODE" == "1";
