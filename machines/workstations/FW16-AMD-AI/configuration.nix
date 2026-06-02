@@ -31,23 +31,6 @@
   # Enable touchpad support (enabled default in most desktopManager).
   services.libinput.enable = true;
 
-  # Thunderbolt
-  # # Enable systemd in initrd
-  # boot.initrd.systemd.enable = true;
-
-  # # Include bolt in initrd
-  # boot.initrd.services.udev.packages = [pkgs.bolt];
-  # boot.initrd.systemd.packages = [pkgs.bolt];
-
-  # # Alternative: Manual udev rule for authorization
-  # boot.initrd.services.udev.rules = ''
-  #   ACTION=="add|change", SUBSYSTEM=="thunderbolt", \
-  #   ATTR{unique_id}=="<YOUR_DEVICE_UNIQUE_ID>", \
-  #   ATTR{authorized}="1"
-  # '';
-
-  # services.hardware.bolt.enable = true;
-
   # Nvidia 5070
   hardware = {
     graphics = {

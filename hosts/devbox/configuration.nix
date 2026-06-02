@@ -39,6 +39,7 @@ in {
   services.printing = {
     enable = true;
     drivers = with pkgs; [
+      canon-cups-ufr2
       cups-filters
       cups-browsed
     ];
