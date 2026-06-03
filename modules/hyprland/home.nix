@@ -62,7 +62,7 @@
         "$mod, tab, cyclenext"
         "$mod, Q, killactive"
         "$mod SHIFT, F, fullscreen"
-        "$mod, space, exec, pkill rofi || rofi -show drun -showicons"
+        "$mod, space, exec, pkill rofi || rofi-persona"
 
         "$mod, period, layoutmsg, swapcol r"
         "$mod, comma, layoutmsg, swapcol l"

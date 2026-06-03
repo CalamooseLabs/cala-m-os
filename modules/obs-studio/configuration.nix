@@ -18,6 +18,7 @@
       wlrobs
       obs-pipewire-audio-capture
       droidcam-obs
+      obs-multi-rtmp
     ];
   };
 

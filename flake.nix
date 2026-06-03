@@ -119,6 +119,7 @@
       lab = mkSystem "lab" {inherit self;};
       simple = mkSystem "simple" {};
       studio = mkSystem "studio" {};
+      streambox = mkSystem "streambox" {};
 
       iso = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs;};

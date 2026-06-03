@@ -50,7 +50,20 @@
       nixos-enter -- nixos-rebuild boot --flake /etc/nixos#$HOST_FLAKE
       echo "Step Four Completed!"
       echo
-      echo "Cala-M-OS has been sucessfully installed, please reboot the system."
+      echo "Step Five: Setting User Passwords"
+      read -rsp "Enter password for hub and root: " PASSWORD
+      echo
+      read -rsp "Confirm password: " PASSWORD_CONFIRM
+      echo
+      if [ "$PASSWORD" != "$PASSWORD_CONFIRM" ]; then
+        echo "Error: Passwords do not match!"
+        exit 1
+      fi
+      printf '%s\n' "hub:$PASSWORD" "root:$PASSWORD" | nixos-enter -- chpasswd
+      unset PASSWORD PASSWORD_CONFIRM
+      echo "Step Five Completed!"
+      echo
+      echo "Cala-M-OS has been successfully installed, please reboot the system."
       exit
     '')
   ];

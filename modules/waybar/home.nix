@@ -1,4 +1,11 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  osConfig,
+  lib,
+  ...
+}: let
+  switching = osConfig.userSwitching.enable or false;
+in {
   # Let it try to start a few more times
   systemd.user.services.waybar = {
     Unit.StartLimitBurst = 30;
@@ -18,7 +25,9 @@
         position = "top";
         modules-left = ["wlr/workspaces"];
         modules-center = ["custom/music"];
-        modules-right = ["pulseaudio" "network" "backlight" "battery" "clock" "custom/power"];
+        modules-right =
+          lib.optional switching "custom/persona"
+          ++ ["pulseaudio" "network" "backlight" "battery" "clock" "custom/power"];
 
         "wlr/workspaces" = {
           disable-scroll = true;
@@ -82,6 +91,16 @@
           tooltip = false;
           on-click = "powermenu";
           format = "襤";
+        };
+      }
+      // lib.optionalAttrs switching {
+        "custom/persona" = {
+          exec = "persona-status";
+          interval = 2;
+          format = "{}";
+          tooltip = false;
+          on-click = "exit-user";
+          return-type = "";
         };
       };
     };

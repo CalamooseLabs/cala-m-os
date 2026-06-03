@@ -11,7 +11,18 @@
   ...
 }: let
   usersPath = ../../users;
-  defaultUser = lib.elemAt users_list 0;
+
+  # Multi-user: 2+ users in the list → hub switcher profile is auto-inserted as
+  # the primary user and the listed users become real named system users.
+  # Single-user: the one user is mapped to the hub username as before.
+  isMultiUser = builtins.length users_list > 1;
+
+  effectiveUsersList =
+    if isMultiUser
+    then ["hub"] ++ users_list
+    else users_list;
+
+  defaultUser = lib.elemAt effectiveUsersList 0;
 
   isDefaultUser = name: name == defaultUser;
   getUsers = name:
@@ -20,7 +31,7 @@
       isDefaultUser = isDefaultUser name;
     };
 
-  user_imports = map getUsers users_list;
+  user_imports = map getUsers effectiveUsersList;
 
   isVM = machine_type == "VM" || machine_type == "vm";
   machine_root =
@@ -41,6 +52,7 @@ in {
         machine_path = machine_path;
       })
       machine_configuration
+      ../../modules/user-switching/configuration.nix
     ]
     ++ user_imports
     ++ lib.optional (machine_type != "VM") ./non-vm.nix;
@@ -114,4 +126,8 @@ in {
 
   # Original State Version
   system.stateVersion = "24.11"; # Do not change
+}
+// lib.optionalAttrs isMultiUser {
+  userSwitching.enable = true;
+  userSwitching.switchableUsers = users_list;
 }
