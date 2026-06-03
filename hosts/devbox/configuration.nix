@@ -9,10 +9,7 @@
   ...
 }: let
   import_users = [
-    # Default User
     "debugger"
-
-    # Other Users
   ];
 
   machine_type = "Workstation";

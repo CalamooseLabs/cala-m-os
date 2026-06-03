@@ -1,8 +1,4 @@
-{isDefaultUser, ...}: {...}: let
-  username =
-    if isDefaultUser
-    then "hub"
-    else baseNameOf (toString ./.);
+{isDefaultUser, ...}: let
   uuid = baseNameOf (toString ./.);
 
   modules = [
@@ -36,11 +32,19 @@
     "zathura"
   ];
 in {
-  imports = [
-    (import ../_core {
-      username = username;
-      import_modules = modules;
-      uuid = uuid;
-    })
-  ];
+  inherit modules;
+  module = {...}: let
+    username =
+      if isDefaultUser
+      then "hub"
+      else uuid;
+  in {
+    imports = [
+      (import ../_core {
+        username = username;
+        import_modules = modules;
+        uuid = uuid;
+      })
+    ];
+  };
 }

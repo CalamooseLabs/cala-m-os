@@ -210,13 +210,15 @@ in {
       ];
 
       environment.systemPackages = [
-        change-user
-        swap-user
         exit-user
         pkgs.jq
       ];
 
-      home-manager.users.${hubUser}.home.packages = [rofi-persona];
+      home-manager.users.${hubUser}.home.packages = [
+        change-user
+        swap-user
+        rofi-persona
+      ];
     })
   ];
 }

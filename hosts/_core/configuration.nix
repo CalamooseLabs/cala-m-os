@@ -11,6 +11,7 @@
   ...
 }: let
   usersPath = ../../users;
+  modulesPath = toString ../../modules;
 
   # Multi-user: 2+ users in the list → hub switcher profile is auto-inserted as
   # the primary user and the listed users become real named system users.
@@ -25,13 +26,16 @@
   defaultUser = lib.elemAt effectiveUsersList 0;
 
   isDefaultUser = name: name == defaultUser;
-  getUsers = name:
+  getUserDef = name:
     import (toString (usersPath + "/${name}/default.nix")) {
       inherit inputs lib;
       isDefaultUser = isDefaultUser name;
     };
 
-  user_imports = map getUsers effectiveUsersList;
+  userDefs = map getUserDef effectiveUsersList;
+  user_imports = map (d: d.module) userDefs;
+  allModuleNames = lib.unique (lib.concatLists (map (d: d.modules) userDefs));
+  system_config_imports = map (name: import (modulesPath + "/${name}/configuration.nix")) allModuleNames;
 
   isVM = machine_type == "VM" || machine_type == "vm";
   machine_root =
@@ -48,6 +52,7 @@ in {
   imports =
     [
       inputs.disko.nixosModules.disko
+      inputs.stylix.nixosModules.stylix
       (import ./home.nix {
         machine_path = machine_path;
       })
@@ -55,6 +60,7 @@ in {
       ../../modules/user-switching/configuration.nix
     ]
     ++ user_imports
+    ++ system_config_imports
     ++ lib.optional (machine_type != "VM") ./non-vm.nix;
 
   # Boot loader

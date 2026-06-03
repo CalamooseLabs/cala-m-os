@@ -19,7 +19,6 @@
 
   makeModuleConfigs = name: filename: import (modules_path + "/${name}/${filename}");
 
-  config_imports = map (name: makeModuleConfigs name "configuration.nix") import_modules;
   home_imports = map (name: makeModuleConfigs name "home.nix") import_modules;
 in {
   imports =
@@ -27,8 +26,7 @@ in {
       ./secrets
       (import ./configuration.nix {username = username;}) # Core Config
       (import user_configuration {username = username;}) # User Config
-    ]
-    ++ config_imports;
+    ];
 
   home-manager.users = {
     "${username}" = {
