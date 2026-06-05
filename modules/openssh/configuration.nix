@@ -5,7 +5,7 @@
       PasswordAuthentication = false;
       PermitRootLogin = "prohibit-password";
       PubkeyAuthentication = true;
-      SetEnv = ["TERM=xterm-256color"];
+      SetEnv = "TERM=xterm-256color";
     };
   };
 }
