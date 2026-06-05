@@ -941,11 +941,11 @@
         "zed-editor": "zed-editor_2"
       },
       "locked": {
-        "lastModified": 1780695315,
-        "narHash": "sha256-HEli9jfbXZsuLna54uYq+KfksCevXQ+iwISyluW3FQQ=",
+        "lastModified": 1780696514,
+        "narHash": "sha256-0uP8+q+nDHHiuhOE5hk7pJ7b80f1TIIs0a6Awbi3m/0=",
         "owner": "CalamooseLabs",
         "repo": "OpenReturn",
-        "rev": "263a58e70f5cdccfb86cb4e150417276b1322208",
+        "rev": "154703d1a3bb000eadd7f3c624f2f9b3eb5fc368",
         "type": "github"
       },
       "original": {
