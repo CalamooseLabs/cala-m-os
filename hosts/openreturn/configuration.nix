@@ -5,11 +5,7 @@
 #   SSH access + OpenReturn TTY  #
 #                                #
 ##################################
-{
-  lib,
-  cala-m-os,
-  ...
-}: let
+{...}: let
   import_users = ["server"];
   machine_type = "Workstation";
   machine_uuid = "MS-01";
@@ -24,15 +20,4 @@ in {
   ];
 
   networking.hostName = "openreturn";
-
-  # OpenReturn runs directly on TTY via autologin
-  # services.greetd.settings = {
-  #   initial_session = {
-  #     command = "openreturn";
-  #     user = cala-m-os.globals.defaultUser;
-  #   };
-  #   default_session.command = lib.mkForce "sudo openreturn --host 0.0.0.0 --port 80";
-  # };
-
-  # services.openreturn.enable = lib.mkForce false;
 }
