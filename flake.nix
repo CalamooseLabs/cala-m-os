@@ -81,6 +81,11 @@
     lanserver = {
       url = "github:CalamooseLabs/LanServer";
     };
+
+    openreturn = {
+      url = "github:CalamooseLabs/OpenReturn";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {

@@ -917,6 +917,27 @@
         "type": "github"
       }
     },
+    "openreturn": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "zed-editor": "zed-editor_2"
+      },
+      "locked": {
+        "lastModified": 1780679561,
+        "narHash": "sha256-u4oG+7NpzO1CcjZoZTRsXr8nK+Gjr82ZVK0FIWFZqPo=",
+        "owner": "CalamooseLabs",
+        "repo": "OpenReturn",
+        "rev": "9263b4c4b555a0bc5258b8bcf0f4eb6859c85bd1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "CalamooseLabs",
+        "repo": "OpenReturn",
+        "type": "github"
+      }
+    },
     "plex-desktop-flake": {
       "inputs": {
         "nixpkgs": [
@@ -994,6 +1015,7 @@
         "microvm": "microvm",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_2",
+        "openreturn": "openreturn",
         "preservation": "preservation",
         "solaar": "solaar",
         "stylix": "stylix"
@@ -1296,6 +1318,30 @@
         "dir": "flakes/zed-editor",
         "owner": "calamooselabs",
         "ref": "master",
+        "repo": "antlers",
+        "type": "github"
+      }
+    },
+    "zed-editor_2": {
+      "inputs": {
+        "nixpkgs": [
+          "openreturn",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "dir": "flakes/zed-editor",
+        "lastModified": 1763486553,
+        "narHash": "sha256-1bmlyqpTEDC+Bpu7n47vaoSThSggMbgBaJ/mvbrdttI=",
+        "owner": "CalamooseLabs",
+        "repo": "antlers",
+        "rev": "db8969c971163c8437a0a9309c9495439a00f548",
+        "type": "github"
+      },
+      "original": {
+        "dir": "flakes/zed-editor",
+        "owner": "CalamooseLabs",
+        "ref": "flakes.zed-editor",
         "repo": "antlers",
         "type": "github"
       }
