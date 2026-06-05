@@ -31,6 +31,8 @@ in {
       command = "openreturn";
       user = cala-m-os.globals.defaultUser;
     };
-    default_session.command = lib.mkForce "openreturn";
+    default_session.command = lib.mkForce "sudo openreturn --host 0.0.0.0 --port 80";
   };
+
+  services.openreturn.enable = lib.mkForce false;
 }
