@@ -33,6 +33,7 @@
     "neovim"
     "nh"
     "obs-studio"
+    "openreturn"
     "orion"
     "openswitcher"
     "pdf-editor"
