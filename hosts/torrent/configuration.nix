@@ -15,6 +15,7 @@ in {
       users_list = import_users;
       machine_type = machine_type;
       machine_uuid = machine_uuid;
+      extra_user_modules = {server = ["radarr" "sonarr" "prowlarr" "qbittorrent"];};
     })
 
     # Caddy SSL
@@ -26,61 +27,7 @@ in {
         "qbit.${cala-m-os.fqdn}" = "10.200.200.2:8080";
       };
     })
-
-    # Import QBittorrent
-    ../../modules/qbittorrent/configuration.nix
   ];
-
-  services.radarr = {
-    enable = true;
-    openFirewall = true;
-    settings = {
-      update.mechanism = "external";
-      server = {
-        port = 7878;
-        bindaddress = "*";
-      };
-    };
-  };
-
-  fileSystems."/mnt/backups/radarr" = {
-    device = "${cala-m-os.nfs.server}${cala-m-os.nfs.backup.radarr}";
-    fsType = "nfs";
-  };
-
-  services.sonarr = {
-    enable = true;
-    openFirewall = true;
-    settings = {
-      update.mechanism = "external";
-      server = {
-        port = 8989;
-        bindaddress = "*";
-      };
-    };
-  };
-
-  fileSystems."/mnt/backups/sonarr" = {
-    device = "${cala-m-os.nfs.server}${cala-m-os.nfs.backup.sonarr}";
-    fsType = "nfs";
-  };
-
-  services.prowlarr = {
-    enable = true;
-    openFirewall = true;
-    settings = {
-      update.mechanism = "external";
-      server = {
-        port = 9696;
-        bindaddress = "*";
-      };
-    };
-  };
-
-  fileSystems."/mnt/backups/prowlarr" = {
-    device = "${cala-m-os.nfs.server}${cala-m-os.nfs.backup.prowlarr}";
-    fsType = "nfs";
-  };
 
   systemd.tmpfiles.rules = [
     "d /data/qbit 0755 qbittorrent qbittorrent -"

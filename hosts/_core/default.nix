@@ -2,6 +2,7 @@
   users_list,
   machine_type,
   machine_uuid,
+  extra_user_modules ? {},
   ...
 }: {initialInstallMode, ...}: {
   imports =
@@ -17,6 +18,7 @@
         users_list = users_list;
         machine_type = machine_type;
         machine_uuid = machine_uuid;
+        extra_user_modules = extra_user_modules;
       })
     ];
 }

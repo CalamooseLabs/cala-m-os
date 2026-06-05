@@ -14,13 +14,14 @@
 }: let
   import_users = ["streamer"];
   machine_type = "Workstation";
-  machine_uuid = "MS-01";
+  machine_uuid = "MS-02";
 in {
   imports = [
     (import ../_core/default.nix {
       users_list = import_users;
       machine_type = machine_type;
       machine_uuid = machine_uuid;
+      extra_user_modules = {};
     })
   ];
 

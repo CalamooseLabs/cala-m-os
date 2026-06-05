@@ -2,6 +2,7 @@
   users_list,
   machine_type,
   machine_uuid,
+  extra_user_modules ? {},
   ...
 }: {
   inputs,
@@ -37,6 +38,26 @@
   allModuleNames = lib.unique (lib.concatLists (map (d: d.modules) userDefs));
   system_config_imports = map (name: import (modulesPath + "/${name}/configuration.nix")) allModuleNames;
 
+  # Extra per-host modules keyed by user profile name
+  getExtraModuleNames = profileName: extra_user_modules.${profileName} or [];
+  allExtraModuleNames = lib.unique (lib.concatLists (map getExtraModuleNames effectiveUsersList));
+  # Only import configuration.nix for modules not already covered by user defs
+  newExtraModuleNames = lib.subtractLists allModuleNames allExtraModuleNames;
+  extra_system_config_imports = map (name: import (modulesPath + "/${name}/configuration.nix")) newExtraModuleNames;
+
+  # Username for a profile — mirrors users/_core/default.nix logic
+  getUserName = profileName:
+    if isDefaultUser profileName
+    then cala-m-os.globals.defaultUser
+    else profileName;
+
+  # Extra home-manager imports per profile, only when home.nix exists
+  makeExtraHomeImports = profileName:
+    lib.concatMap (name: let
+      path = modulesPath + "/${name}/home.nix";
+    in lib.optional (builtins.pathExists path) (import path))
+    (getExtraModuleNames profileName);
+
   isVM = machine_type == "VM" || machine_type == "vm";
   machine_root =
     ../../machines
@@ -61,7 +82,18 @@ in {
     ]
     ++ user_imports
     ++ system_config_imports
+    ++ extra_system_config_imports
     ++ lib.optional (machine_type != "VM") ./non-vm.nix;
+
+  # Inject extra home-manager modules per user
+  home-manager.users = lib.mkMerge (map (profileName: let
+    username = getUserName profileName;
+    extraHomeImports = makeExtraHomeImports profileName;
+  in
+    lib.optionalAttrs (extraHomeImports != []) {
+      "${username}".imports = extraHomeImports;
+    })
+  effectiveUsersList);
 
   # Boot loader
   boot = {
