@@ -1,6 +1,6 @@
 {inputs, ...}: {
   imports = [
-    inputs.openreturn.nixosModules.openreturn
+    inputs.openreturn.nixosModules.default
   ];
 
   services.openreturn = {
