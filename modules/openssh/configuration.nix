@@ -1,4 +1,6 @@
-{...}: {
+{pkgs, ...}: {
+  environment.systemPackages = [pkgs.ncurses];
+
   services.openssh = {
     enable = true;
     settings = {
