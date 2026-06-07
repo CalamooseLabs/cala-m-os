@@ -5,7 +5,7 @@
 #   SSH access + OpenReturn TTY  #
 #                                #
 ##################################
-{...}: let
+{lib, ...}: let
   import_users = ["server"];
   machine_type = "Workstation";
   machine_uuid = "MS-01";
@@ -16,8 +16,11 @@ in {
       machine_type = machine_type;
       machine_uuid = machine_uuid;
       extra_user_modules = {server = ["openreturn"];};
+      enable_secrets = false;
     })
   ];
 
   networking.hostName = "openreturn";
+
+  services.greetd.enable = lib.mkForce false;
 }

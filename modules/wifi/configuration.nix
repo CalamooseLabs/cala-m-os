@@ -1,9 +1,7 @@
-{config, ...}: {
-  imports = [
-    ./secrets
-  ];
+{config, lib, enable_secrets ? true, ...}: {
+  imports = lib.optional enable_secrets ./secrets;
 
-  environment.etc = {
+  environment.etc = lib.mkIf enable_secrets {
     "NetworkManager/system-connections/Calamoose WiFi.nmconnection" = {
       source = config.age.secrets."CalamooseWiFi.nmconnection".path;
     };

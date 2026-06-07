@@ -1,11 +1,11 @@
 {
   pkgs,
   config,
+  lib,
+  enable_secrets ? true,
   ...
 }: {
-  imports = [
-    ./secrets
-  ];
+  imports = lib.optional enable_secrets ./secrets;
 
   nixpkgs.overlays = [
     (import ./overlay.nix)
@@ -26,7 +26,7 @@
 
   # create a oneshot job to authenticate to Tailscale
   # EXPIRES ON 03/29/2026
-  systemd.services.tailscale-autoconnect = {
+  systemd.services.tailscale-autoconnect = lib.mkIf enable_secrets {
     description = "Automatic connection to Tailscale";
     after = ["network-pre.target" "tailscale.service"];
     wants = ["network-pre.target" "tailscale.service"];

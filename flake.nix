@@ -125,7 +125,7 @@
       simple = mkSystem "simple" {};
       studio = mkSystem "studio" {};
       streambox = mkSystem "streambox" {};
-      openreturn = mkSystem "openreturn" {};
+      openreturn = mkSystem "openreturn" {enable_secrets = false;};
 
       iso = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs;};

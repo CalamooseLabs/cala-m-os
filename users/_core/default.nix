@@ -4,7 +4,7 @@
   uuid,
   user_home ? null,
   ...
-}: {...}: let
+}: {lib, enable_secrets ? true, ...}: let
   user_home_path =
     if user_home == null
     then "/home/${username}"
@@ -22,8 +22,8 @@
   home_imports = map (name: makeModuleConfigs name "home.nix") import_modules;
 in {
   imports =
-    [
-      ./secrets
+    (lib.optional enable_secrets ./secrets)
+    ++ [
       (import ./configuration.nix {username = username;}) # Core Config
       (import user_configuration {username = username;}) # User Config
     ];
