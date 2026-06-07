@@ -1,12 +1,11 @@
 ##################################
 #                                #
-#        OpenReturn Server       #
-#      Minisforum MS-01          #
-#   SSH access + OpenReturn TTY  #
+#        LiveData Server         #
 #                                #
 ##################################
-{lib, ...}: let
+{...}: let
   import_users = ["server"];
+
   machine_type = "VM";
   machine_uuid = "X-Small";
 in {
@@ -15,11 +14,9 @@ in {
       users_list = import_users;
       machine_type = machine_type;
       machine_uuid = machine_uuid;
-      extra_user_modules = {server = ["openreturn"];};
+      extra_user_modules = {server = ["livedata"];};
     })
   ];
 
-  networking.hostName = "openreturn";
-
-  services.greetd.enable = lib.mkForce false;
+  networking.hostName = "livedata";
 }

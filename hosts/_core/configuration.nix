@@ -9,7 +9,6 @@
   lib,
   cala-m-os,
   pkgs,
-  enable_secrets ? true,
   ...
 }: let
   usersPath = ../../users;
@@ -37,22 +36,13 @@
   userDefs = map getUserDef effectiveUsersList;
   user_imports = map (d: d.module) userDefs;
   allModuleNames = lib.unique (lib.concatLists (map (d: d.modules) userDefs));
-  secretsModules = ["agenix" "agenix-boot"];
-  filteredModuleNames =
-    if enable_secrets
-    then allModuleNames
-    else lib.subtractLists secretsModules allModuleNames;
-  system_config_imports = map (name: import (modulesPath + "/${name}/configuration.nix")) filteredModuleNames;
+  system_config_imports = map (name: import (modulesPath + "/${name}/configuration.nix")) allModuleNames;
 
   # Extra per-host modules keyed by user profile name
   getExtraModuleNames = profileName: extra_user_modules.${profileName} or [];
   allExtraModuleNames = lib.unique (lib.concatLists (map getExtraModuleNames effectiveUsersList));
-  # Only import configuration.nix for modules not already covered by user defs, filtering secrets if disabled
-  filteredExtraModuleNames =
-    if enable_secrets
-    then allExtraModuleNames
-    else lib.subtractLists secretsModules allExtraModuleNames;
-  newExtraModuleNames = lib.subtractLists filteredModuleNames filteredExtraModuleNames;
+  # Only import configuration.nix for modules not already covered by user defs
+  newExtraModuleNames = lib.subtractLists allModuleNames allExtraModuleNames;
   extra_system_config_imports = map (name: import (modulesPath + "/${name}/configuration.nix")) newExtraModuleNames;
 
   # Username for a profile — mirrors users/_core/default.nix logic

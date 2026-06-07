@@ -109,6 +109,7 @@
         specialArgs =
           {
             inherit inputs cala-m-os initialInstallMode;
+            enable_secrets = true;
           }
           // extraSpecialArgs;
         modules = [
@@ -126,6 +127,7 @@
       studio = mkSystem "studio" {};
       streambox = mkSystem "streambox" {};
       openreturn = mkSystem "openreturn" {enable_secrets = false;};
+      livedata = mkSystem "livedata" {};
 
       iso = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs;};

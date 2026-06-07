@@ -45,6 +45,18 @@
       storage = 100;
       shares = [];
     };
+    "openreturn" = {
+      mac = "02:00:00:00:00:20";
+      devices = [];
+      storage = 20;
+      shares = [];
+    };
+    "livedata" = {
+      mac = "02:00:00:00:00:25";
+      devices = [];
+      storage = 20;
+      shares = [];
+    };
   };
 
   bridgeInterface = "eno2";

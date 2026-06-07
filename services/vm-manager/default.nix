@@ -26,7 +26,16 @@
   host_files = map (device: getDeviceFiles device "host.nix") uniqueDevices;
 
   vm_configs =
-    builtins.mapAttrs (name: vm: {
+    builtins.mapAttrs (name: vm: let
+      hasStaticIp = cala-m-os.ip ? ${name};
+      h = builtins.hashString "sha256" name;
+      mac =
+        if vm ? mac
+        then vm.mac
+        else if hasStaticIp
+        then "02:00:00:00:00:${lib.last (lib.splitString "." cala-m-os.ip.${name})}"
+        else "02:${builtins.substring 0 2 h}:${builtins.substring 2 2 h}:${builtins.substring 4 2 h}:${builtins.substring 6 2 h}:${builtins.substring 8 2 h}";
+    in {
       autostart = vm.autostart or true;
       config = {
         imports = [../../hosts/${vm.hostOverride or name}/configuration.nix] ++ (map (device: getDeviceFiles device "guest.nix") vm.devices);
@@ -36,7 +45,7 @@
             {
               type = "macvtap";
               id = "vm-${name}";
-              mac = "02:00:00:00:00:${lib.last (lib.splitString "." cala-m-os.ip.${name})}";
+              inherit mac;
               macvtap = {
                 mode = "bridge";
                 link = networkInterface;
@@ -95,37 +104,32 @@
           useDHCP = false;
         };
 
-        systemd.network.networks = {
-          "${cala-m-os.networking.network-name}" = {
-            matchConfig.MACAddress = "02:00:00:00:00:${lib.last (lib.splitString "." (vm.ipOverride or cala-m-os.ip.${name}))}";
-
-            address = [
-              "${vm.ipOverride or cala-m-os.ip.${name}}/${cala-m-os.networking.prefixLength}"
-            ];
-
-            routes = [
-              {
-                Destination = "0.0.0.0/0";
-                Gateway = cala-m-os.ip.gateway;
-                GatewayOnLink = true;
+        systemd.network.networks =
+          {
+            "${cala-m-os.networking.network-name}" =
+              if hasStaticIp
+              then {
+                matchConfig.MACAddress = mac;
+                address = ["${vm.ipOverride or cala-m-os.ip.${name}}/${cala-m-os.networking.prefixLength}"];
+                routes = [
+                  {
+                    Destination = "0.0.0.0/0";
+                    Gateway = cala-m-os.ip.gateway;
+                    GatewayOnLink = true;
+                  }
+                ];
+                networkConfig.DNS = vm.dns or ["${cala-m-os.ip.gateway}"];
               }
-            ];
+              else {
+                matchConfig.MACAddress = mac;
+                networkConfig.DHCP = "yes";
+              };
 
-            networkConfig = {
-              DNS =
-                if vm ? dns
-                then vm.dns
-                else ["${cala-m-os.ip.gateway}"];
+            "19-docker" = {
+              matchConfig.Name = "veth*";
+              linkConfig.Unmanaged = true;
             };
           };
-
-          "19-docker" = {
-            matchConfig.Name = "veth*";
-            linkConfig = {
-              Unmanaged = true;
-            };
-          };
-        };
 
         networking.hostName = lib.mkForce name;
       };

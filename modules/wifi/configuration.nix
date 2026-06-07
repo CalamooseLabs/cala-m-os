@@ -1,5 +1,5 @@
 {config, lib, enable_secrets ? true, ...}: {
-  imports = lib.optional enable_secrets ./secrets;
+  imports = [./secrets];
 
   environment.etc = lib.mkIf enable_secrets {
     "NetworkManager/system-connections/Calamoose WiFi.nmconnection" = {
