@@ -3,23 +3,24 @@
   config,
   ...
 }: {
+  hardware.decklink.enable = true;
+
+  # v4l2loopback for virtual camera
   boot.extraModulePackages = with config.boot.kernelPackages; [
     v4l2loopback
-    decklink
   ];
-  boot.kernelModules = ["v4l2loopback" "blackmagic"];
+  boot.kernelModules = ["v4l2loopback"];
   boot.extraModprobeConfig = ''
     options v4l2loopback devices=1 video_nr=1 card_label="OBS Cam" exclusive_caps=1
   '';
 
-  environment.systemPackages = [pkgs.blackmagic-desktop-video];
-
-  # udev rules so DeckLink devices are accessible without root
-  services.udev.packages = [pkgs.blackmagic-desktop-video];
-
+  # OBS with decklink support enabled
   programs.obs-studio = {
     enable = true;
     enableVirtualCamera = true;
+    package = pkgs.obs-studio.override {
+      decklinkSupport = true;
+    };
     plugins = with pkgs.obs-studio-plugins; [
       wlrobs
       obs-pipewire-audio-capture
@@ -27,6 +28,9 @@
       obs-multi-rtmp
     ];
   };
+
+  # udev rules (already included by hardware.decklink.enable, but doesn't hurt)
+  services.udev.packages = [pkgs.blackmagic-desktop-video];
 
   # Open SRT port for camera streaming
   networking.firewall.allowedTCPPorts = [9998];
