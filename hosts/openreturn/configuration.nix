@@ -1,7 +1,6 @@
 ##################################
 #                                #
 #        OpenReturn Server       #
-#      Minisforum MS-01          #
 #   SSH access + OpenReturn TTY  #
 #                                #
 ##################################
