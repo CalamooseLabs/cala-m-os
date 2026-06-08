@@ -15,7 +15,10 @@
   import_users = ["streamer"];
   machine_type = "Workstation";
   machine_uuid = "MS-02";
+  enable_secrets = false;
 in {
+  _module.args.enable_secrets = enable_secrets;
+
   imports = [
     (import ../_core/default.nix {
       users_list = import_users;

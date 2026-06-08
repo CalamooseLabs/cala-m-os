@@ -1,8 +1,10 @@
-{username, ...}: {config, ...}: {
-  users.users = {
-    "${username}" = {
-      isNormalUser = true;
-      hashedPasswordFile = config.age.secrets.admin_password.path or "/run/hostsecrets/admin_password";
-    };
+{
+  username,
+  enable_secrets ? true,
+  ...
+}: {config, lib, ...}: {
+  users.users."${username}" = {
+    isNormalUser = true;
+    hashedPasswordFile = lib.mkIf enable_secrets config.age.secrets.admin_password.path;
   };
 }

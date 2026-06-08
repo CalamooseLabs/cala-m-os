@@ -8,7 +8,10 @@
   import_users = ["server"];
   machine_type = "VM";
   machine_uuid = "X-Small";
+  enable_secrets = false;
 in {
+  _module.args.enable_secrets = enable_secrets;
+
   imports = [
     (import ../_core/default.nix {
       users_list = import_users;
