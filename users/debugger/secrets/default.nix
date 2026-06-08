@@ -1,5 +1,5 @@
-{lib, enable_secrets ? true, ...}: {
-  age = lib.mkIf enable_secrets {
+{lib, config, ...}: {
+  age = lib.mkIf config.calamoose.enableSecrets {
     secrets = {
       "work_credentials" = {
         file = ./. + "/work_credentials.age";

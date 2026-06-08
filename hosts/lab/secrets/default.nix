@@ -1,5 +1,5 @@
-{lib, enable_secrets ? true, ...}: {
-  age = lib.mkIf enable_secrets {
+{lib, config, ...}: {
+  age = lib.mkIf config.calamoose.enableSecrets {
     secrets = {
       "cloudflare-token" = {
         file = ./. + "/cloudflare-token.age";

@@ -10,7 +10,7 @@
   machine_uuid = "MS-01";
   enable_secrets = false;
 in {
-  _module.args.enable_secrets = enable_secrets;
+  calamoose.enableSecrets = enable_secrets;
 
   imports = [
     (import ../_core/default.nix {

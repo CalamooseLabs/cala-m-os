@@ -2,18 +2,18 @@
   pkgs,
   inputs,
   lib,
-  enable_secrets ? true,
+  config,
   ...
 }: {
-  imports = lib.optional enable_secrets inputs.agenix.nixosModules.default;
+  imports = lib.optional config.calamoose.enableSecrets inputs.agenix.nixosModules.default;
 
-  environment.systemPackages = lib.mkIf enable_secrets [
+  environment.systemPackages = lib.mkIf config.calamoose.enableSecrets [
     inputs.agenix.packages."x86_64-linux".default
     pkgs.age
     pkgs.age-plugin-yubikey
   ];
 
-  age = lib.mkIf enable_secrets {
+  age = lib.mkIf config.calamoose.enableSecrets {
     identityPaths = [
       "${toString ./.}/identities/server.key"
       "${toString ./.}/identities/yubi.key"

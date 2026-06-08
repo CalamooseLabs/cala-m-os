@@ -1,9 +1,9 @@
-{config, lib, enable_secrets ? true, ...}: {
+{config, lib, ...}: {
   imports = [./secrets];
 
   networking.firewall.checkReversePath = "loose";
 
-  environment.etc = lib.mkIf enable_secrets {
+  environment.etc = lib.mkIf config.calamoose.enableSecrets {
     "NetworkManager/system-connections/CasaMos VPN.nmconnection" = {
       source = config.age.secrets."CasaMosVPN.nmconnection".path;
     };
@@ -11,5 +11,5 @@
       source = config.age.secrets."NKCGateway.nmconnection".path;
     };
   };
-  systemd.services.agenix-rerun.before = lib.mkIf enable_secrets ["NetworkManager.service"];
+  systemd.services.agenix-rerun.before = lib.mkIf config.calamoose.enableSecrets ["NetworkManager.service"];
 }

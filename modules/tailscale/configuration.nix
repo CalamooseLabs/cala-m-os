@@ -2,7 +2,6 @@
   pkgs,
   config,
   lib,
-  enable_secrets ? true,
   ...
 }: {
   imports = [./secrets];
@@ -26,7 +25,7 @@
 
   # create a oneshot job to authenticate to Tailscale
   # EXPIRES ON 03/29/2026
-  systemd.services.tailscale-autoconnect = lib.mkIf enable_secrets {
+  systemd.services.tailscale-autoconnect = lib.mkIf config.calamoose.enableSecrets {
     description = "Automatic connection to Tailscale";
     after = ["network-pre.target" "tailscale.service"];
     wants = ["network-pre.target" "tailscale.service"];

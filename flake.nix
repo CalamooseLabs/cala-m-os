@@ -114,7 +114,6 @@
         modules = [
           ./hosts/${hostname}/configuration.nix
           {nixpkgs.overlays = import ./overlays;}
-          {_module.args.enable_secrets = nixpkgs.lib.mkDefault true;}
         ];
       };
   in {
