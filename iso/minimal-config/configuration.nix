@@ -21,6 +21,7 @@
   machine_disko = import (toString (machine_path + "/disko.nix"));
 in {
   imports = [
+    ../../hosts/_core/options.nix
     machine_hardware
     "${fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
     machine_disko

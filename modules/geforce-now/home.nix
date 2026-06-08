@@ -1,11 +1,18 @@
 {
   inputs,
   pkgs,
+  lib,
   ...
 }: {
   imports = [
     inputs.flatpaks.homeModules.default
   ];
+
+  options.geforceNow.gpuType = lib.mkOption {
+    type = lib.types.enum ["intel" "nvidia" "amd"];
+    default = "amd";
+    description = "GPU type for GeForce NOW optimization";
+  };
 
   config = {
     home.packages = [

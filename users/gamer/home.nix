@@ -5,6 +5,7 @@
 }: let
   gamescopeCommand = "gamescope -f --force-grab-cursor -e -H 2160 -W 3840 --expose-wayland -- steam -tenfoot";
 in {
+  geforceNow.gpuType = "nvidia";
   home.packages = [
     pkgs.usbutils
     pkgs.pciutils
