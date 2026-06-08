@@ -70,14 +70,9 @@
 
   machine_configuration = import (toString (machine_path + "/configuration.nix"));
 in {
-  options.calamoose.enableSecrets = lib.mkOption {
-    type = lib.types.bool;
-    default = true;
-    description = "Whether to load agenix secrets on this host.";
-  };
-
   imports =
     [
+      ./options.nix
       inputs.disko.nixosModules.disko
       inputs.stylix.nixosModules.stylix
       (import ./home.nix {

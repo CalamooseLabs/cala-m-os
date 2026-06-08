@@ -15,9 +15,8 @@
   import_users = ["streamer"];
   machine_type = "Workstation";
   machine_uuid = "MS-02";
-  enable_secrets = false;
 in {
-  calamoose.enableSecrets = enable_secrets;
+  calamoose.enableSecrets = false;
 
   imports = [
     (import ../_core/default.nix {

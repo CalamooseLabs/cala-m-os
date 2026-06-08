@@ -8,9 +8,8 @@
   import_users = ["server"];
   machine_type = "Workstation";
   machine_uuid = "MS-01";
-  enable_secrets = false;
 in {
-  calamoose.enableSecrets = enable_secrets;
+  calamoose.enableSecrets = false;
 
   imports = [
     (import ../_core/default.nix {
