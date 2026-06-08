@@ -5,7 +5,7 @@
   config,
   ...
 }: {
-  imports = lib.optional config.calamoose.enableSecrets inputs.agenix.nixosModules.default;
+  imports = [inputs.agenix.nixosModules.default];
 
   environment.systemPackages = lib.mkIf config.calamoose.enableSecrets [
     inputs.agenix.packages."x86_64-linux".default
