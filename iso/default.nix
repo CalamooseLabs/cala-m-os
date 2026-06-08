@@ -18,10 +18,26 @@
 
   networking.hostName = lib.mkForce "cala-m-os-installer";
 
+  programs.bash.enableCompletion = true;
+
   environment.systemPackages = with pkgs; [
     disko
     git
     neovim
+    (pkgs.writeTextFile {
+      name = "install-cala-m-os-completion";
+      destination = "/share/bash-completion/completions/install-cala-m-os";
+      text = ''
+        _install_cala_m_os() {
+          local cur="''${COMP_WORDS[COMP_CWORD]}"
+          if [[ "''${COMP_CWORD}" -eq 1 ]]; then
+            local hosts="lanstation devbox ephemeral lab simple studio streambox openreturn livedata"
+            COMPREPLY=($(compgen -W "$hosts" -- "$cur"))
+          fi
+        }
+        complete -F _install_cala_m_os install-cala-m-os
+      '';
+    })
     (pkgs.writeShellScriptBin "install-cala-m-os" ''
       set -eu
 
