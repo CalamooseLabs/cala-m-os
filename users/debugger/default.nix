@@ -9,7 +9,6 @@
     "bat"
     "btop"
     "direnv"
-    # "davinci-resolve"
     "easyeffects"
     "edit-config"
     "fade-in"
