@@ -26,5 +26,23 @@ in {
     ]
     ++ lib.optional (!initialInstallMode) ./vms.nix;
 
+  networking.networkmanager.enable = lib.mkForce false;
+
+  networking = {
+    interfaces.eno2 = {
+      ipv4.addresses = [
+        {
+          address = "10.1.10.40";
+          prefixLength = 26;
+        }
+      ];
+    };
+    defaultGateway = {
+      address = "10.1.10.1";
+      interface = "enp88s0";
+    };
+    nameservers = ["10.1.10.1"];
+  };
+
   networking.hostName = "livedata";
 }
