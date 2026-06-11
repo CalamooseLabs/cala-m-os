@@ -29,7 +29,7 @@ in {
   networking.networkmanager.enable = lib.mkForce false;
 
   networking = {
-    interfaces.eno2 = {
+    interfaces.enp88s0 = {
       ipv4.addresses = [
         {
           address = "10.1.10.40";
