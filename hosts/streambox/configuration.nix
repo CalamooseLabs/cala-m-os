@@ -1,8 +1,10 @@
 ##################################
 #                                #
-#         Stream Box             #
-#      NVIDIA RTX Pro 4000       #
-#     OBS-only kiosk session     #
+#          Stream Box            #
+#       NVIDIA RTX Pro 4000      #
+#      Blackmagic Quad HDMI      #
+#             OBS                #
+#     Davinci Resolve Studio     #
 #                                #
 ##################################
 {
@@ -14,7 +16,7 @@
 }: let
   import_users = ["streamer"];
   machine_type = "Workstation";
-  machine_uuid = "MS-02";
+  machine_uuid = "TRX50-SAGE";
 in {
   calamoose.enableSecrets = false;
 
@@ -35,7 +37,8 @@ in {
       command = "${pkgs.cage}/bin/cage -s -- ${config.programs.obs-studio.finalPackage}/bin/obs";
       user = cala-m-os.globals.defaultUser;
     };
-    default_session.command = lib.mkForce
+    default_session.command =
+      lib.mkForce
       "${pkgs.cage}/bin/cage -s -- ${config.programs.obs-studio.finalPackage}/bin/obs";
   };
 
@@ -49,5 +52,12 @@ in {
     alsa.support32Bit = true;
     pulse.enable = true;
     wireplumber.enable = true;
+    jack.enable = true;
   };
+
+  hardware.pulseaudio.enable = false;
+
+  boot.extraModprobeConfig = ''
+    options snd_usb_audio vid=0x1235 pid=0x8218 device_setup=1
+  '';
 }

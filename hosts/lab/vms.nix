@@ -28,35 +28,6 @@
         }
       ];
     };
-    "studio" = {
-      devices = ["rtx-4060" "pci-usb-controller-1"];
-      storage = 100; # GBs
-      shares = [
-        {
-          source = "/run/opengl-driver";
-          mountPoint = "/run/opengl-driver";
-          tag = "opengl";
-          proto = "virtiofs";
-        }
-      ];
-    };
-    "vault" = {
-      devices = [];
-      storage = 100;
-      shares = [];
-    };
-    "openreturn" = {
-      mac = "02:00:00:00:00:20";
-      devices = [];
-      storage = 20;
-      shares = [];
-    };
-    "livedata" = {
-      mac = "02:00:00:00:00:25";
-      devices = [];
-      storage = 20;
-      shares = [];
-    };
   };
 
   bridgeInterface = "eno2";

@@ -1,27 +1,24 @@
 ##################################
 #                                #
-#           Lab Server           #
-#                                #
-#     Used for the Following:    #
-#     - Plex Server              #
-#     - Torrent Manager          #
+#        Lan Station Host        #
 #                                #
 ##################################
 {
   lib,
-  initialInstallMode,
   cala-m-os,
+  initialInstallMode,
   ...
 }: let
-  users = ["server"];
+  import_users = ["gamer"];
 
   machine_type = "Workstation";
-  machine_uuid = "MS-02";
+  machine_uuid = "TRX50-SAGE";
 in {
   imports =
     [
+      # Common Core Config
       (import ../_core/default.nix {
-        users_list = users;
+        users_list = import_users;
         machine_type = machine_type;
         machine_uuid = machine_uuid;
         extra_user_modules = {};
@@ -29,7 +26,7 @@ in {
     ]
     ++ lib.optional (!initialInstallMode) ./vms.nix;
 
-  networking.hostName = "lab";
+  networking.hostName = "lanstation-1";
 
   networking.networkmanager.enable = lib.mkForce false;
 
@@ -37,7 +34,7 @@ in {
     interfaces.eno2 = {
       ipv4.addresses = [
         {
-          address = cala-m-os.ip.lab;
+          address = cala-m-os.ip.lanstation-1;
           prefixLength = 26;
         }
       ];
@@ -46,23 +43,32 @@ in {
       address = cala-m-os.ip.gateway;
       interface = "eno2";
     };
+    nameservers = ["10.10.10.1"];
   };
 
   boot.kernelModules = [
     "vfio"
     "vfio_iommu_type1"
     "vfio_pci"
-  ];
-
-  # Only blacklist NVIDIA GPU drivers
-  boot.blacklistedKernelModules = [
+    "vfio_virqfd"
     "nvidia"
     "nvidia_modeset"
     "nvidia_uvm"
     "nvidia_drm"
     "nvidiafb"
     "nouveau"
-    "snd_hda_intel"
+  ];
+
+  boot.initrd.kernelModules = [
+    "vfio_pci"
+    "vfio"
+    "vfio_iommu_type1"
+  ];
+
+  # Only blacklist AMD GPU drivers
+  boot.blacklistedKernelModules = [
+    "amdgpu"
+    "radeon"
   ];
 
   hardware.graphics = {
@@ -70,7 +76,18 @@ in {
     enable32Bit = true;
   };
 
-  environment.variables = {
-    ROC_ENABLE_PRE_VEGA = "1";
+  # Audio Control
+  security.rtkit.enable = true;
+
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+    wireplumber.enable = true;
   };
+
+  # services.resolved = {
+  #   enable = true;
+  # };
 }

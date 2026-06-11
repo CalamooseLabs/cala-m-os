@@ -1,32 +1,29 @@
 ##################################
 #                                #
-#        Lan Station Host        #
+#           Lan Station          #
 #                                #
 ##################################
 {
   lib,
   cala-m-os,
-  initialInstallMode,
   ...
 }: let
   import_users = ["gamer"];
 
   machine_type = "Workstation";
-  machine_uuid = "TRX50-SAGE";
+  machine_uuid = "B760-PLUS";
 in {
-  imports =
-    [
-      # Common Core Config
-      (import ../_core/default.nix {
-        users_list = import_users;
-        machine_type = machine_type;
-        machine_uuid = machine_uuid;
-        extra_user_modules = {};
-      })
-    ]
-    ++ lib.optional (!initialInstallMode) ./vms.nix;
+  imports = [
+    # Common Core Config
+    (import ../_core/default.nix {
+      users_list = import_users;
+      machine_type = machine_type;
+      machine_uuid = machine_uuid;
+      extra_user_modules = {};
+    })
+  ];
 
-  networking.hostName = "lanstation-1";
+  networking.hostName = "lanstation";
 
   networking.networkmanager.enable = lib.mkForce false;
 
@@ -65,12 +62,6 @@ in {
     "vfio_iommu_type1"
   ];
 
-  # Only blacklist AMD GPU drivers
-  boot.blacklistedKernelModules = [
-    "amdgpu"
-    "radeon"
-  ];
-
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
@@ -86,8 +77,4 @@ in {
     pulse.enable = true;
     wireplumber.enable = true;
   };
-
-  # services.resolved = {
-  #   enable = true;
-  # };
 }

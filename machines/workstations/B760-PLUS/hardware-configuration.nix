@@ -1,3 +1,4 @@
+# Generated hardware config — replace with output of `nixos-generate-config` on target hardware
 {
   config,
   lib,

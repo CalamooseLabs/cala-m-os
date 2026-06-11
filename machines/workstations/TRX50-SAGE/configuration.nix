@@ -5,7 +5,7 @@
 #    64GB ECC DDR5 6000 CL32     #
 #   RTX 5090 Founders Edition    #
 #          RX 9060 XT            #
-#        AMD PRO W7600           #
+#                 #
 #                                #
 ##################################
 {pkgs, ...}: {
