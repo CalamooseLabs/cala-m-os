@@ -1,7 +1,7 @@
 ##################################
 #                                #
-#        OpenReturn Server       #
-#   SSH access + OpenReturn TTY  #
+#        QuorumCall Server       #
+#   SSH access + QuorumCall TTY  #
 #                                #
 ##################################
 {lib, ...}: let
@@ -16,11 +16,11 @@ in {
       users_list = import_users;
       machine_type = machine_type;
       machine_uuid = machine_uuid;
-      extra_user_modules = {server = ["openreturn"];};
+      extra_user_modules = {server = ["quorumcall"];};
     })
   ];
 
-  networking.hostName = "openreturn";
+  networking.hostName = "quorumcall";
 
   services.greetd.enable = lib.mkForce false;
 }
