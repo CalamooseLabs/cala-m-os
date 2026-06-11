@@ -12,7 +12,7 @@
     };
   };
 
-  bridgeInterface = "eno0";
+  bridgeInterface = "enp88s0";
 in {
   imports = [
     ./secrets
