@@ -1,5 +1,5 @@
-{inputs, ...}: {
-  imports = [inputs.companion.nixosModules.default];
-
-  programs.companion.enable = true;
+{pkgs, ...}: {
+  environment.systemPackages = [
+    pkgs.bitfocus-companion
+  ];
 }
