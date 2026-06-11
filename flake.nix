@@ -67,23 +67,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Logitech USBs
-    solaar = {
-      url = "https://flakehub.com/f/Svenum/Solaar-Flake/0.1.4.tar.gz";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    companion = {
-      url = "github:noblepayne/bitfocus-companion-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    lanserver = {
-      url = "github:CalamooseLabs/LanServer";
-    };
-
     openreturn = {
       url = "github:CalamooseLabs/OpenReturn";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    quorumcall = {
+      url = "github:CalamooseLabs/QuorumCall";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
