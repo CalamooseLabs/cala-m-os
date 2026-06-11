@@ -15,8 +15,6 @@
   bridgeInterface = "enp88s0";
 in {
   imports = [
-    ./secrets
-
     (import ../../services/vm-manager/default.nix {
       device_path = ./devices;
       vms = vms;
