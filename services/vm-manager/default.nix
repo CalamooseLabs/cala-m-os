@@ -27,13 +27,15 @@
 
   vm_configs =
     builtins.mapAttrs (name: vm: let
-      hasStaticIp = cala-m-os.ip ? ${name};
+      staticIp = vm.ipOverride or (cala-m-os.ip.${name} or null);
+      hasStaticIp = staticIp != null;
+      gateway = vm.gatewayOverride or cala-m-os.ip.gateway;
       h = builtins.hashString "sha256" name;
       mac =
         if vm ? mac
         then vm.mac
         else if hasStaticIp
-        then "02:00:00:00:00:${lib.last (lib.splitString "." cala-m-os.ip.${name})}"
+        then "02:00:00:00:00:${lib.last (lib.splitString "." staticIp)}"
         else "02:${builtins.substring 0 2 h}:${builtins.substring 2 2 h}:${builtins.substring 4 2 h}:${builtins.substring 6 2 h}:${builtins.substring 8 2 h}";
     in {
       autostart = vm.autostart or true;
@@ -110,15 +112,15 @@
               if hasStaticIp
               then {
                 matchConfig.MACAddress = mac;
-                address = ["${vm.ipOverride or cala-m-os.ip.${name}}/${cala-m-os.networking.prefixLength}"];
+                address = ["${staticIp}/${cala-m-os.networking.prefixLength}"];
                 routes = [
                   {
                     Destination = "0.0.0.0/0";
-                    Gateway = cala-m-os.ip.gateway;
+                    Gateway = gateway;
                     GatewayOnLink = true;
                   }
                 ];
-                networkConfig.DNS = vm.dns or ["${cala-m-os.ip.gateway}"];
+                networkConfig.DNS = vm.dns or ["${gateway}"];
               }
               else {
                 matchConfig.MACAddress = mac;
