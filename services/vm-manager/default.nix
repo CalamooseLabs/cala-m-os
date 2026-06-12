@@ -3,6 +3,7 @@
   vms,
   networkInterface,
 }: {
+  config,
   lib,
   inputs,
   initialInstallMode,
@@ -78,7 +79,7 @@
             ];
 
           shares =
-            [
+            lib.optionals config.calamoose.enableSecrets [
               {
                 proto = "virtiofs";
                 tag = "agenix";
