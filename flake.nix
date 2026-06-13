@@ -113,8 +113,8 @@
       ephemeral = mkSystem "ephemeral" {};
       lab = mkSystem "lab" {inherit self;};
       simple = mkSystem "simple" {};
+      battlestation = mkSystem "battlestation" {};
       studio = mkSystem "studio" {};
-      streambox = mkSystem "streambox" {};
       openreturn = mkSystem "openreturn" {};
       livedata = mkSystem "livedata" {};
 

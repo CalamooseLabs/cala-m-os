@@ -1,8 +1,4 @@
 {
-  device_path,
-  vms,
-  networkInterface,
-}: {
   config,
   lib,
   inputs,
@@ -10,38 +6,109 @@
   cala-m-os,
   ...
 }: let
-  getDeviceFiles = device: filename: import (device_path + "/${device}/${filename}");
+  cfg = config.services.cala-vm-manager;
 
-  allDevices = builtins.concatLists (builtins.attrValues (
-    builtins.mapAttrs (name: vm: vm.devices) vms
-  ));
+  getDeviceFiles = device: filename: import (cfg.devicePath + "/${device}/${filename}");
 
-  uniqueDevices = builtins.attrNames (
-    builtins.listToAttrs (map (d: {
-        name = d;
-        value = true;
-      })
-      allDevices)
-  );
+  vmModule = lib.types.submodule {
+    options = {
+      storage = lib.mkOption {
+        type = lib.types.ints.positive;
+        description = "Root volume size in GB.";
+      };
 
-  host_files = map (device: getDeviceFiles device "host.nix") uniqueDevices;
+      devices = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [];
+        description = "Device names (under devicePath) to pass through to this guest.";
+      };
+
+      shares = lib.mkOption {
+        type = lib.types.listOf lib.types.attrs;
+        default = [];
+        description = "Extra microvm.shares entries for this guest.";
+      };
+
+      autostart = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Whether the guest starts automatically with the host.";
+      };
+
+      shareStore = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Share the host /nix/store with the guest (read-only).";
+      };
+
+      storeOnDisk = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Give the guest a writable on-disk nix store volume.";
+      };
+
+      hostOverride = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Host config to build this guest from, when it differs from the VM's attribute name.";
+      };
+
+      ipOverride = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Static IP to assign, overriding any lookup in settings.nix.";
+      };
+
+      gatewayOverride = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Gateway to use, overriding the default from settings.nix.";
+      };
+
+      dns = lib.mkOption {
+        type = lib.types.nullOr (lib.types.listOf lib.types.str);
+        default = null;
+        description = "DNS servers for the guest; defaults to the gateway when null.";
+      };
+
+      mac = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Explicit MAC address; derived from the IP or name when null.";
+      };
+    };
+  };
 
   vm_configs =
     builtins.mapAttrs (name: vm: let
-      staticIp = vm.ipOverride or (cala-m-os.ip.${name} or null);
+      staticIp =
+        if vm.ipOverride != null
+        then vm.ipOverride
+        else (cala-m-os.ip.${name} or null);
       hasStaticIp = staticIp != null;
-      gateway = vm.gatewayOverride or cala-m-os.ip.gateway;
+      gateway =
+        if vm.gatewayOverride != null
+        then vm.gatewayOverride
+        else cala-m-os.ip.gateway;
       h = builtins.hashString "sha256" name;
       mac =
-        if vm ? mac
+        if vm.mac != null
         then vm.mac
         else if hasStaticIp
         then "02:00:00:00:00:${lib.last (lib.splitString "." staticIp)}"
         else "02:${builtins.substring 0 2 h}:${builtins.substring 2 2 h}:${builtins.substring 4 2 h}:${builtins.substring 6 2 h}:${builtins.substring 8 2 h}";
     in {
-      autostart = vm.autostart or true;
+      autostart = vm.autostart;
       config = {
-        imports = [../../hosts/${vm.hostOverride or name}/configuration.nix] ++ (map (device: getDeviceFiles device "guest.nix") vm.devices);
+        imports =
+          [
+            ../../hosts/${
+              if vm.hostOverride != null
+              then vm.hostOverride
+              else name
+            }/configuration.nix
+          ]
+          ++ (map (device: getDeviceFiles device "guest.nix") vm.devices);
 
         microvm = {
           interfaces = [
@@ -51,7 +118,7 @@
               inherit mac;
               macvtap = {
                 mode = "bridge";
-                link = networkInterface;
+                link = cfg.networkInterface;
               };
             }
           ];
@@ -64,11 +131,7 @@
                 size = vm.storage * 1024;
               }
             ]
-            ++ lib.optionals (
-              if vm ? storeOnDisk
-              then vm.storeOnDisk
-              else false
-            ) [
+            ++ lib.optionals vm.storeOnDisk [
               {
                 image = "nix-store-${name}.img";
                 mountPoint = "/nix/.rw-store";
@@ -88,11 +151,7 @@
               }
             ]
             ++ vm.shares
-            ++ lib.optionals (
-              if vm ? shareStore
-              then vm.shareStore
-              else true
-            ) [
+            ++ lib.optionals vm.shareStore [
               {
                 source = "/nix/store";
                 mountPoint = "/nix/.ro-store";
@@ -107,32 +166,34 @@
           useDHCP = false;
         };
 
-        systemd.network.networks =
-          {
-            "${cala-m-os.networking.network-name}" =
-              if hasStaticIp
-              then {
-                matchConfig.MACAddress = mac;
-                address = ["${staticIp}/${cala-m-os.networking.prefixLength}"];
-                routes = [
-                  {
-                    Destination = "0.0.0.0/0";
-                    Gateway = gateway;
-                    GatewayOnLink = true;
-                  }
-                ];
-                networkConfig.DNS = vm.dns or ["${gateway}"];
-              }
-              else {
-                matchConfig.MACAddress = mac;
-                networkConfig.DHCP = "yes";
-              };
-
-            "19-docker" = {
-              matchConfig.Name = "veth*";
-              linkConfig.Unmanaged = true;
+        systemd.network.networks = {
+          "${cala-m-os.networking.network-name}" =
+            if hasStaticIp
+            then {
+              matchConfig.MACAddress = mac;
+              address = ["${staticIp}/${cala-m-os.networking.prefixLength}"];
+              routes = [
+                {
+                  Destination = "0.0.0.0/0";
+                  Gateway = gateway;
+                  GatewayOnLink = true;
+                }
+              ];
+              networkConfig.DNS =
+                if vm.dns != null
+                then vm.dns
+                else ["${gateway}"];
+            }
+            else {
+              matchConfig.MACAddress = mac;
+              networkConfig.DHCP = "yes";
             };
+
+          "19-docker" = {
+            matchConfig.Name = "veth*";
+            linkConfig.Unmanaged = true;
           };
+        };
 
         networking.hostName = lib.mkForce name;
       };
@@ -141,25 +202,48 @@
         inherit inputs cala-m-os initialInstallMode;
       };
     })
-    vms;
+    cfg.vms;
 in {
-  imports = [inputs.microvm.nixosModules.host] ++ host_files;
+  imports = [inputs.microvm.nixosModules.host];
 
-  systemd.network.networks."${cala-m-os.networking.network-name}-noip" = {
-    matchConfig.Name = "vm-*";
+  options.services.cala-vm-manager = {
+    enable = lib.mkEnableOption "MicroVM host management for Cala-M-OS guests";
 
-    linkConfig = {
-      Unmanaged = true;
-      RequiredForOnline = false;
+    devicePath = lib.mkOption {
+      type = lib.types.path;
+      description = "Directory holding per-device host.nix/guest.nix passthrough modules.";
     };
 
-    networkConfig = {
-      DHCP = false;
-      LinkLocalAddressing = false;
+    networkInterface = lib.mkOption {
+      type = lib.types.str;
+      example = "eno2";
+      description = "Host interface the guests' macvtap bridges attach to.";
     };
 
-    address = [];
+    vms = lib.mkOption {
+      type = lib.types.attrsOf vmModule;
+      default = {};
+      description = "MicroVM guests to define on this host, keyed by name.";
+    };
   };
 
-  microvm.vms = vm_configs;
+  config = lib.mkIf cfg.enable {
+    systemd.network.networks."${cala-m-os.networking.network-name}-noip" = {
+      matchConfig.Name = "vm-*";
+
+      linkConfig = {
+        Unmanaged = true;
+        RequiredForOnline = false;
+      };
+
+      networkConfig = {
+        DHCP = false;
+        LinkLocalAddressing = false;
+      };
+
+      address = [];
+    };
+
+    microvm.vms = vm_configs;
+  };
 }

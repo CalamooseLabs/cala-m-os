@@ -34,18 +34,27 @@
 
   tokenPath = config.age.secrets.cloudflare-token.path;
 in {
-  imports = [
-    ./secrets
+  imports =
+    [
+      ./secrets
+      ../../services/vm-manager
+      ../../services/certs
+    ]
+    ++ (import ../../services/vm-manager/host-imports.nix {
+      devicePath = ./devices;
+      inherit vms;
+    });
 
-    (import ../../services/vm-manager/default.nix {
-      device_path = ./devices;
-      vms = vms;
-      networkInterface = bridgeInterface;
-    })
+  services.cala-vm-manager = {
+    enable = true;
+    devicePath = ./devices;
+    networkInterface = bridgeInterface;
+    inherit vms;
+  };
 
-    (import ../../services/certs/default.nix {
-      domain = cala-m-os.fqdn;
-      tokenPath = tokenPath;
-    })
-  ];
+  services.cala-certs = {
+    enable = true;
+    domain = cala-m-os.fqdn;
+    inherit tokenPath;
+  };
 }

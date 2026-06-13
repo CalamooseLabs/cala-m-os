@@ -27,7 +27,7 @@
     lanstation-2 = "10.10.10.42";
     lanstation-3 = "10.10.10.43";
     lanstation-4 = "10.10.10.44";
-    studio = "10.10.10.30";
+    battlestation = "10.10.10.30";
   };
 
   # NAS NFS Paths

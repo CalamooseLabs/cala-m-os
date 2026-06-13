@@ -24,11 +24,17 @@
 
   bridgeInterface = "enp88s0";
 in {
-  imports = [
-    (import ../../services/vm-manager/default.nix {
-      device_path = ./devices;
-      vms = vms;
-      networkInterface = bridgeInterface;
-    })
-  ];
+  imports =
+    [../../services/vm-manager]
+    ++ (import ../../services/vm-manager/host-imports.nix {
+      devicePath = ./devices;
+      inherit vms;
+    });
+
+  services.cala-vm-manager = {
+    enable = true;
+    devicePath = ./devices;
+    networkInterface = bridgeInterface;
+    inherit vms;
+  };
 }

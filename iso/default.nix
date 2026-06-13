@@ -31,7 +31,7 @@
         _install_cala_m_os() {
           local cur="''${COMP_WORDS[COMP_CWORD]}"
           if [[ "''${COMP_CWORD}" -eq 1 ]]; then
-            local hosts="lanstation devbox ephemeral lab simple studio streambox openreturn livedata"
+            local hosts="lanstation devbox ephemeral lab simple battlestation studio openreturn livedata"
             COMPREPLY=($(compgen -W "$hosts" -- "$cur"))
           fi
         }

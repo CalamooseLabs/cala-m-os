@@ -1,44 +1,61 @@
 {
-  domain,
-  tokenPath,
-}: {
+  config,
   cala-m-os,
   lib,
   ...
-}: {
-  # Disable all DNS Caching
-  services.resolved = {
-    enable = true;
-    dnssec = "false";
-    domains = ["~."];
-    fallbackDns = ["1.1.1.1" "8.8.8.8"];
-    extraConfig = ''
-      Cache=no
-      CacheFromLocalhost=no
-    '';
-  };
+}: let
+  cfg = config.services.cala-certs;
+in {
+  options.services.cala-certs = {
+    enable = lib.mkEnableOption "ACME wildcard certificates via Cloudflare DNS (with DNS-cache hardening)";
 
-  networking.nameservers = ["1.1.1.1" "8.8.8.8"];
+    domain = lib.mkOption {
+      type = lib.types.str;
+      example = "example.com";
+      description = "Base domain to request a certificate for (a wildcard *.domain is also issued).";
+    };
 
-  services.nscd.enable = lib.mkForce false;
-  system.nssModules = lib.mkForce [];
-  networking.networkmanager.dns = lib.mkForce "none";
-
-  # Create Certs
-  security.acme = {
-    acceptTerms = true;
-    useRoot = true;
-    defaults.email = cala-m-os.globals.defaultEmail;
-
-    certs."${domain}" = {
-      domain = domain;
-      dnsProvider = "cloudflare";
-      environmentFile = tokenPath;
-      dnsPropagationCheck = true;
-      extraDomainNames = ["*.${domain}"];
-      group = "caddy";
+    tokenPath = lib.mkOption {
+      type = lib.types.str;
+      description = "Path to the environment file holding the Cloudflare API token.";
     };
   };
 
-  services.caddy.enable = true;
+  config = lib.mkIf cfg.enable {
+    # Disable all DNS Caching
+    services.resolved = {
+      enable = true;
+      dnssec = "false";
+      domains = ["~."];
+      fallbackDns = ["1.1.1.1" "8.8.8.8"];
+      extraConfig = ''
+        Cache=no
+        CacheFromLocalhost=no
+      '';
+    };
+
+    networking.nameservers = ["1.1.1.1" "8.8.8.8"];
+
+    services.nscd.enable = lib.mkForce false;
+    system.nssModules = lib.mkForce [];
+    networking.networkmanager.dns = lib.mkForce "none";
+
+    # Create Certs
+    security.acme = {
+      acceptTerms = true;
+      useRoot = true;
+      defaults.email = cala-m-os.globals.defaultEmail;
+
+      certs."${cfg.domain}" = {
+        domain = cfg.domain;
+        dnsProvider = "cloudflare";
+        environmentFile = cfg.tokenPath;
+        dnsPropagationCheck = true;
+        extraDomainNames = ["*.${cfg.domain}"];
+        group = "caddy";
+      };
+    };
+
+    services.caddy.enable = true;
+  };
 }

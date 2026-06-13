@@ -19,10 +19,13 @@ in {
     })
 
     # Caddy SSL
-    (import ../../services/caddy/default.nix {
-      reverse_proxies = {
-        "plex.${cala-m-os.fqdn}" = "localhost:32400";
-      };
-    })
+    ../../services/caddy
   ];
+
+  services.cala-caddy = {
+    enable = true;
+    reverseProxies = {
+      "plex.${cala-m-os.fqdn}" = "localhost:32400";
+    };
+  };
 }
