@@ -12,6 +12,8 @@
 
 **Cala-M-OS** is multiple NixOS configurations for workstations, laptops, servers, and VMs
 
+> 📖 **Full technical documentation lives in the [Wiki](../../wiki)** (source under [`wiki/`](./wiki)): architecture, the configuration hierarchy, hosts, machines, modules, services, user switching, secrets, MicroVMs, and the installer — with Mermaid diagrams throughout.
+
 ---
 
 ## Features

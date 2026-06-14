@@ -5,7 +5,7 @@
 }: let
   vms = {
     "media" = {
-      devices = ["arc-a310"];
+      devices = ["arc-b50"];
       storage = 100; # GBs
       shares = [
         {

@@ -33,6 +33,9 @@
           if [[ "''${COMP_CWORD}" -eq 1 ]]; then
             local hosts="lanstation devbox ephemeral lab simple battlestation studio openreturn livedata"
             COMPREPLY=($(compgen -W "$hosts" -- "$cur"))
+          elif [[ "''${COMP_CWORD}" -eq 2 ]]; then
+            local machines="A520M-ITX B760-PLUS B850-MAX FW13-11XXP FW13-12XXP FW16-AMD-AI MS-01 MS-02 TRX50-SAGE ZIMA X-Small Small Medium Large"
+            COMPREPLY=($(compgen -W "$machines" -- "$cur"))
           fi
         }
         complete -F _install_cala_m_os install-cala-m-os
@@ -41,11 +44,24 @@
     (pkgs.writeShellScriptBin "install-cala-m-os" ''
       set -eu
 
-      if [ -z "$1" ]; then
-        echo "Usage: $0 <flake>"
+      if [ -z "''${1:-}" ]; then
+        echo "Usage: $0 <flake> [machine]"
+        echo "  <flake>    host configuration to install (e.g. devbox)"
+        echo "  [machine]  optional machine to build onto instead of the host's"
+        echo "             default (e.g. MS-01). Persisted for future rebuilds."
         exit 1
       fi
       HOST_FLAKE=$1
+
+      # Optional machine override (e.g. build 'devbox' onto an 'MS-01' machine).
+      # Exported so disko (which evaluates the flake with --impure) and the
+      # install passes all resolve to the overridden machine.
+      MACHINE_OVERRIDE=''${2:-}
+      export MACHINE_OVERRIDE
+      if [ -n "$MACHINE_OVERRIDE" ]; then
+        echo "Machine override: building '$HOST_FLAKE' onto machine '$MACHINE_OVERRIDE'"
+        echo
+      fi
 
       echo "Step One: Erasing and Formatting Disk"
       disko --mode destroy,format,mount --flake github:CalamooseLabs/cala-m-os#$HOST_FLAKE --yes-wipe-all-disks
@@ -62,8 +78,13 @@
       nixos-enter -- nix-prefetch-url file:///etc/nixos/prefetch/displaylink-620.zip
       echo "Step Three Completed!"
       echo
+      # Persist the machine override so future rebuilds on this box keep
+      # targeting the overridden machine (the env var is gone after install).
+      if [ -n "$MACHINE_OVERRIDE" ]; then
+        printf '{\n  %s = "%s";\n}\n' "$HOST_FLAKE" "$MACHINE_OVERRIDE" > /mnt/etc/nixos/machine-override.nix
+      fi
       echo "Step Four: Building Cala-M-OS"
-      nixos-enter -- nixos-rebuild boot --flake /etc/nixos#$HOST_FLAKE
+      nixos-enter -- env MACHINE_OVERRIDE="$MACHINE_OVERRIDE" nixos-rebuild boot --flake /etc/nixos#$HOST_FLAKE --impure
       echo "Step Four Completed!"
       echo
       echo "Step Five: Setting User Passwords"

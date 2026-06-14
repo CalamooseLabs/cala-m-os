@@ -9,6 +9,7 @@
   lib,
   cala-m-os,
   pkgs,
+  machineOverride ? "",
   ...
 }: let
   usersPath = ../../users;
@@ -55,118 +56,116 @@
   makeExtraHomeImports = profileName:
     lib.concatMap (name: let
       path = modulesPath + "/${name}/home.nix";
-    in lib.optional (builtins.pathExists path) (import path))
+    in
+      lib.optional (builtins.pathExists path) (import path))
     (getExtraModuleNames profileName);
 
-  isVM = machine_type == "VM" || machine_type == "vm";
-  machine_root =
-    ../../machines
-    + (
-      if isVM
-      then "/vms"
-      else "/workstations"
-    );
-  machine_path = toString (machine_root + "/${machine_uuid}");
+  machine = import ../../machines/resolve.nix {
+    inherit machine_type machine_uuid machineOverride;
+  };
+  isVM = machine.isVM;
+  machine_path = machine.path;
 
-  machine_configuration = import (toString (machine_path + "/configuration.nix"));
-in {
-  imports =
-    [
-      ./options.nix
-      inputs.disko.nixosModules.disko
-      inputs.stylix.nixosModules.stylix
-      (import ./home.nix {
-        machine_path = machine_path;
+  machine_configuration = import (machine_path + "/configuration.nix");
+in
+  {
+    imports =
+      [
+        ./options.nix
+        inputs.disko.nixosModules.disko
+        inputs.stylix.nixosModules.stylix
+        (import ./home.nix {
+          machine_path = machine_path;
+        })
+        machine_configuration
+        ../../modules/user-switching/configuration.nix
+      ]
+      ++ user_imports
+      ++ system_config_imports
+      ++ extra_system_config_imports
+      ++ lib.optional (!isVM) ./non-vm.nix;
+
+    # Inject extra home-manager modules per user
+    home-manager.users = lib.mkMerge (map (profileName: let
+      username = getUserName profileName;
+      extraHomeImports = makeExtraHomeImports profileName;
+    in
+      lib.optionalAttrs (extraHomeImports != []) {
+        "${username}".imports = extraHomeImports;
       })
-      machine_configuration
-      ../../modules/user-switching/configuration.nix
-    ]
-    ++ user_imports
-    ++ system_config_imports
-    ++ extra_system_config_imports
-    ++ lib.optional (machine_type != "VM") ./non-vm.nix;
+    effectiveUsersList);
 
-  # Inject extra home-manager modules per user
-  home-manager.users = lib.mkMerge (map (profileName: let
-    username = getUserName profileName;
-    extraHomeImports = makeExtraHomeImports profileName;
-  in
-    lib.optionalAttrs (extraHomeImports != []) {
-      "${username}".imports = extraHomeImports;
-    })
-  effectiveUsersList);
+    # Boot loader
+    boot = {
+      loader = {
+        timeout = lib.mkForce 0;
+        systemd-boot.enable = true;
+        efi.canTouchEfiVariables = true;
+      };
 
-  # Boot loader
-  boot = {
-    loader = {
-      timeout = lib.mkForce 0;
-      systemd-boot.enable = true;
-      efi.canTouchEfiVariables = true;
+      plymouth = {
+        enable = lib.mkDefault true;
+      };
+
+      kernelParams = [
+        "quiet"
+        "splash"
+        "boot.shell_on_fail"
+        "loglevel=3"
+        "rd.systemd.show_status=false"
+        "rd.udev.log_level=3"
+        "udev.log_priority=3"
+      ];
+
+      # Trying to move this to disko
+      tmp.useTmpfs = true;
+
+      consoleLogLevel = 0;
+      initrd.verbose = false;
     };
 
-    plymouth = {
-      enable = lib.mkDefault true;
-    };
+    # Remove manuals, as we google everything anyways
+    documentation.enable = lib.mkDefault false;
 
-    kernelParams = [
-      "quiet"
-      "splash"
-      "boot.shell_on_fail"
-      "loglevel=3"
-      "rd.systemd.show_status=false"
-      "rd.udev.log_level=3"
-      "udev.log_priority=3"
-    ];
+    # Enable Firewall
+    networking.firewall.enable = true;
 
-    # Trying to move this to disko
-    tmp.useTmpfs = true;
+    # Set Colorado timezone
+    time.timeZone = "${cala-m-os.globals.TZ}";
 
-    consoleLogLevel = 0;
-    initrd.verbose = false;
-  };
+    # Garbage Collection & Flakes
+    nix = {
+      gc = {
+        automatic = true;
+        dates = "daily";
+        options = "--delete-older-than 3d";
+      };
 
-  # Remove manuals, as we google everything anyways
-  documentation.enable = lib.mkDefault false;
-
-  # Enable Firewall
-  networking.firewall.enable = true;
-
-  # Set Colorado timezone
-  time.timeZone = "${cala-m-os.globals.TZ}";
-
-  # Garbage Collection & Flakes
-  nix = {
-    gc = {
-      automatic = true;
-      dates = "daily";
-      options = "--delete-older-than 3d";
-    };
-
-    settings = {
-      auto-optimise-store = lib.mkDefault false;
-      experimental-features = ["nix-command" "flakes"];
-      trusted-users = ["root" "@wheel" cala-m-os.globals.defaultUser];
-    };
-  };
-
-  # Login Service
-  services.greetd = {
-    enable = lib.mkDefault true;
-    settings = {
-      default_session = {
-        user = lib.mkForce "${cala-m-os.globals.defaultUser}";
-        command = lib.mkDefault "${pkgs.bash}/bin/bash";
+      settings = {
+        auto-optimise-store = lib.mkDefault false;
+        experimental-features = ["nix-command" "flakes"];
+        trusted-users = ["root" "@wheel" cala-m-os.globals.defaultUser];
       };
     };
-  };
 
-  # Finer grain privileged process control
-  security.polkit.enable = true;
+    # Login Service
+    services.greetd = {
+      enable = lib.mkDefault true;
+      settings = {
+        default_session = {
+          user = lib.mkForce "${cala-m-os.globals.defaultUser}";
+          command = lib.mkDefault "${pkgs.bash}/bin/bash";
+        };
+      };
+    };
 
-  # Original State Version
-  system.stateVersion = "24.11"; # Do not change
-}
-// lib.optionalAttrs isMultiUser {
-  userSwitching.enable = true;
-  userSwitching.switchableUsers = users_list;
-}
+    # Finer grain privileged process control
+    security.polkit.enable = true;
+
+    # Original State Version
+    system.stateVersion = "24.11"; # Do not change
+  }
+  // lib.optionalAttrs isMultiUser {
+    userSwitching.enable = true;
+    userSwitching.switchableUsers = users_list;
+  }

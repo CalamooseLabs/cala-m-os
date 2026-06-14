@@ -5,20 +5,15 @@
 }: {
   lib,
   pkgs,
+  machineOverride ? "",
   ...
 }: let
-  isVM = machine_type == "VM" || machine_type == "vm";
-  machine_root =
-    ../../machines
-    + (
-      if isVM
-      then "/vms"
-      else "/workstations"
-    );
-  machine_path = toString (machine_root + "/${machine_uuid}");
+  machine = import ../../machines/resolve.nix {
+    inherit machine_type machine_uuid machineOverride;
+  };
 
-  machine_hardware = import (toString (machine_path + "/hardware-configuration.nix"));
-  machine_disko = import (toString (machine_path + "/disko.nix"));
+  machine_hardware = import (machine.path + "/hardware-configuration.nix");
+  machine_disko = import (machine.path + "/disko.nix");
 in {
   imports = [
     ../../hosts/_core/options.nix

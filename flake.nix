@@ -93,12 +93,25 @@
     cala-m-os = import ./settings.nix;
     initialInstallMode = builtins.getEnv "INITIAL_INSTALL_MODE" == "1";
 
-    mkSystem = hostname: extraSpecialArgs:
+    # Persistent per-host machine overrides (see machine-override.nix).
+    machineOverrides = import ./machine-override.nix;
+
+    mkSystem = hostname: extraSpecialArgs: let
+      # Live override (installer) takes precedence over the persisted file.
+      envOverride = builtins.getEnv "MACHINE_OVERRIDE";
+      fileOverride = machineOverrides.${hostname} or null;
+      machineOverride =
+        if envOverride != ""
+        then envOverride
+        else if fileOverride != null
+        then fileOverride
+        else "";
+    in
       nixpkgs.lib.nixosSystem {
         inherit system;
         specialArgs =
           {
-            inherit inputs cala-m-os initialInstallMode;
+            inherit inputs cala-m-os initialInstallMode machineOverride;
           }
           // extraSpecialArgs;
         modules = [
