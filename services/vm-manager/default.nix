@@ -84,12 +84,12 @@
       staticIp =
         if vm.ipOverride != null
         then vm.ipOverride
-        else (cala-m-os.ip.${name} or null);
+        else (cala-m-os.ip.lab.${name} or null);
       hasStaticIp = staticIp != null;
       gateway =
         if vm.gatewayOverride != null
         then vm.gatewayOverride
-        else cala-m-os.ip.gateway;
+        else cala-m-os.ip.lab.gateway;
       h = builtins.hashString "sha256" name;
       mac =
         if vm.mac != null

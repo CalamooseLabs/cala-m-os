@@ -29,7 +29,7 @@ in {
     })
   ];
 
-  networking.hostName = "studio";
+  networking.hostName = "broadcast";
 
   # Auto-login and launch OBS directly via cage (Wayland kiosk compositor)
   services.greetd.settings = {

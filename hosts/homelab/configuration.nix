@@ -1,10 +1,11 @@
 ##################################
 #                                #
-#           Lab Server           #
+#         Homelab Server         #
 #                                #
 #     Used for the Following:    #
 #     - Plex Server              #
 #     - Torrent Manager          #
+#     - *arr Suite               #
 #                                #
 ##################################
 {
@@ -29,7 +30,7 @@ in {
     ]
     ++ lib.optional (!initialInstallMode) ./vms.nix;
 
-  networking.hostName = "lab";
+  networking.hostName = "homelab";
 
   networking.networkmanager.enable = lib.mkForce false;
 
@@ -37,13 +38,13 @@ in {
     interfaces.eno2 = {
       ipv4.addresses = [
         {
-          address = cala-m-os.ip.lab;
-          prefixLength = 26;
+          address = cala-m-os.ip.lab.homelab;
+          prefixLength = cala-m-os.ip.lab.prefixLength;
         }
       ];
     };
     defaultGateway = {
-      address = cala-m-os.ip.gateway;
+      address = cala-m-os.ip.lab.gateway;
       interface = "eno2";
     };
   };

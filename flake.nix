@@ -124,10 +124,10 @@
       lanstation = mkSystem "lanstation" {inherit self;};
       devbox = mkSystem "devbox" {};
       ephemeral = mkSystem "ephemeral" {};
-      lab = mkSystem "lab" {inherit self;};
+      homelab = mkSystem "homelab" {inherit self;};
       simple = mkSystem "simple" {};
       battlestation = mkSystem "battlestation" {};
-      studio = mkSystem "studio" {};
+      broadcast = mkSystem "broadcast" {};
       openreturn = mkSystem "openreturn" {};
       livedata = mkSystem "livedata" {};
 

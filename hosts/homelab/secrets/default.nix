@@ -1,4 +1,8 @@
-{lib, config, ...}: {
+{
+  lib,
+  config,
+  ...
+}: {
   age = lib.mkIf config.calamoose.enableSecrets {
     secrets = {
       "cloudflare-token" = {

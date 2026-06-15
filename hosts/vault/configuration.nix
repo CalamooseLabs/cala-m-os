@@ -52,7 +52,7 @@ in {
   environment.etc."resolv.conf" = {
     mode = "0644";
     text = ''
-      nameserver ${cala-m-os.ip.gateway}
+      nameserver ${cala-m-os.ip.lab.gateway}
     '';
   };
 }

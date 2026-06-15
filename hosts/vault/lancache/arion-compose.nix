@@ -16,7 +16,7 @@
           CACHE_INDEX_SIZE = "250m"; # 250MB per 1TB of cache
           CACHE_MAX_AGE = "3650d"; # ~10 years
           MIN_FREE_DISK = "10g";
-          UPSTREAM_DNS = "${cala-m-os.ip.gateway}";
+          UPSTREAM_DNS = "${cala-m-os.ip.lab.gateway}";
           TZ = "${cala-m-os.globals.TZ}";
         };
         volumes = [
@@ -37,9 +37,9 @@
         ];
         environment = {
           USE_GENERIC_CACHE = "true";
-          LANCACHE_IP = "${cala-m-os.ip.vault}";
-          DNS_BIND_IP = "${cala-m-os.ip.vault}";
-          UPSTREAM_DNS = "${cala-m-os.ip.gateway}";
+          LANCACHE_IP = "${cala-m-os.ip.lab.vault}";
+          DNS_BIND_IP = "${cala-m-os.ip.lab.vault}";
+          UPSTREAM_DNS = "${cala-m-os.ip.lab.gateway}";
         };
         restart = "unless-stopped";
       };

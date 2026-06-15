@@ -17,17 +17,30 @@
 
   # IP Address Table
   ip = {
-    gateway = "10.10.10.1";
-    lab = "10.10.10.15";
-    media = "10.10.10.10";
-    torrent = "10.10.10.35";
-    vault = "10.10.10.45";
-    htpc = "10.10.10.40";
-    lanstation-1 = "10.10.10.41";
-    lanstation-2 = "10.10.10.42";
-    lanstation-3 = "10.10.10.43";
-    lanstation-4 = "10.10.10.44";
-    battlestation = "10.10.10.30";
+    # Lab subnet — homelab / streaming-services (Plex, qBittorrent, *arrs)
+    lab = {
+      subnet = "10.10.10.0/26";
+      prefixLength = 26;
+      gateway = "10.10.10.1";
+      homelab = "10.10.10.15";
+      media = "10.10.10.10";
+      torrent = "10.10.10.35";
+      vault = "10.10.10.45";
+      htpc = "10.10.10.40";
+      lanstation-1 = "10.10.10.41";
+      lanstation-2 = "10.10.10.42";
+      lanstation-3 = "10.10.10.43";
+      lanstation-4 = "10.10.10.44";
+      battlestation = "10.10.10.30";
+    };
+
+    # Studio subnet — live broadcast / OBS + device control (streamdeck, teleprompters)
+    studio = {
+      subnet = "10.1.10.0/26";
+      prefixLength = 26;
+      gateway = "10.1.10.1";
+      broadcast = "10.1.10.15";
+    };
   };
 
   # NAS NFS Paths

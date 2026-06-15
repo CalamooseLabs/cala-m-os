@@ -10,6 +10,7 @@
 }: let
   import_users = [
     "debugger"
+    "basic"
   ];
 
   machine_type = "Workstation";

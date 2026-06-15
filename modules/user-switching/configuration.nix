@@ -40,6 +40,21 @@
     _load_hyprpaper ${targetHome} ${targetHome}
   '';
 
+  # Full environment for the active persona. Expects $TARGET to be set.
+  # useUserPackages installs each user's apps + .desktop files into
+  # /etc/profiles/per-user/<user>, NOT into their home, so HOME/XDG_*_HOME
+  # alone leave rofi drun showing hub's apps. XDG_DATA_DIRS and PATH must
+  # point at the persona's per-user profile for drun to list and launch them.
+  personaEnv = ''
+    export HOME="/home/$TARGET"
+    export XDG_CONFIG_HOME="$HOME/.config"
+    export XDG_DATA_HOME="$HOME/.local/share"
+    export XDG_CACHE_HOME="$HOME/.cache"
+    export XDG_STATE_HOME="$HOME/.local/state"
+    export XDG_DATA_DIRS="/etc/profiles/per-user/$TARGET/share:''${XDG_DATA_DIRS:-/run/current-system/sw/share}"
+    export PATH="/etc/profiles/per-user/$TARGET/bin:$PATH"
+  '';
+
   change-user = pkgs.writeShellScriptBin "change-user" ''
     set -eu
     STATE="/run/user/$(id -u)/hub-switch"
@@ -74,12 +89,13 @@
     # --- Waybar ---
     pkill -x waybar 2>/dev/null || true
     sleep 0.3
-    HOME="$TARGET_HOME" \
-    XDG_CONFIG_HOME="$TARGET_HOME/.config" \
-    WAYLAND_DISPLAY="''${WAYLAND_DISPLAY:-wayland-1}" \
-    XDG_RUNTIME_DIR="''${XDG_RUNTIME_DIR:-/run/user/$(id -u)}" \
-    waybar &
-    disown $!
+    (
+      ${personaEnv}
+      export WAYLAND_DISPLAY="''${WAYLAND_DISPLAY:-wayland-1}"
+      export XDG_RUNTIME_DIR="''${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+      waybar &
+      disown $!
+    )
 
     echo "Switched to '$TARGET' (full). Run exit-user to return to ${hubUser}."
   '';
@@ -168,12 +184,8 @@
     STATE="/run/user/$(id -u)/hub-switch"
     if [ -f "$STATE" ]; then
       TARGET=$(sed -n '1p' "$STATE")
-      exec env \
-        HOME="/home/$TARGET" \
-        XDG_CONFIG_HOME="/home/$TARGET/.config" \
-        XDG_DATA_HOME="/home/$TARGET/.local/share" \
-        XDG_CACHE_HOME="/home/$TARGET/.cache" \
-        rofi -show drun
+      ${personaEnv}
+      exec rofi -show drun
     else
       exec rofi -show drun
     fi

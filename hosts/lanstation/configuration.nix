@@ -31,13 +31,13 @@ in {
     interfaces.eno2 = {
       ipv4.addresses = [
         {
-          address = cala-m-os.ip.lanstation-1;
+          address = cala-m-os.ip.lab.lanstation-1;
           prefixLength = 26;
         }
       ];
     };
     defaultGateway = {
-      address = cala-m-os.ip.gateway;
+      address = cala-m-os.ip.lab.gateway;
       interface = "eno2";
     };
     nameservers = ["10.10.10.1"];
