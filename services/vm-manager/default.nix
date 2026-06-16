@@ -200,6 +200,14 @@
 
       specialArgs = {
         inherit inputs cala-m-os initialInstallMode;
+        # Guests are always resolved as their declared machine_type ("VM"), so
+        # there is no machine override. Supplying it here externally (rather than
+        # letting it fall back to _module.args) is also load-bearing: _core's
+        # configuration.nix consults machineOverride while computing `imports`,
+        # which only terminates when the arg comes from specialArgs — otherwise
+        # resolving it requires `config`, which requires `imports`: infinite
+        # recursion. The top-level mkSystem passes it for the same reason.
+        machineOverride = "";
       };
     })
     cfg.vms;

@@ -32,6 +32,21 @@ in {
     };
   };
 
+  # Media library NFS shares (mirrors the Plex/media host) so the *arr suite can
+  # import completed downloads into the library. The per-service backup shares
+  # are mounted by the radarr/sonarr/prowlarr modules.
+  boot.supportedFilesystems = ["nfs"];
+
+  fileSystems."/media/movies" = {
+    device = "${cala-m-os.nfs.server}${cala-m-os.nfs.media.movies}";
+    fsType = "nfs";
+  };
+
+  fileSystems."/media/tv-shows" = {
+    device = "${cala-m-os.nfs.server}${cala-m-os.nfs.media.tv-shows}";
+    fsType = "nfs";
+  };
+
   systemd.tmpfiles.rules = [
     "d /data/qbit 0755 qbittorrent qbittorrent -"
     "d /data/qbit/downloads 0755 qbittorrent qbittorrent -"

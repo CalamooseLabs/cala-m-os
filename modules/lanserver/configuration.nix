@@ -1,5 +1,5 @@
 {inputs, ...}: {
   imports = [
-    inputs.lanserver.nixosModules.lanserver
+    inputs.antlers.nixosModules.lanserver
   ];
 }

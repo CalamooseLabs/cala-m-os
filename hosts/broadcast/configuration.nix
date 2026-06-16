@@ -17,6 +17,13 @@
   import_users = ["streamer"];
   machine_type = "Workstation";
   machine_uuid = "TRX50-SAGE";
+
+  # OBS's obs-nvenc helper does a bare dlopen("libnvidia-encode.so.1"), which
+  # isn't on any ldconfig path on NixOS. Expose the driver libs so NVENC probes.
+  obsLauncher = pkgs.writeShellScript "obs-kiosk" ''
+    export LD_LIBRARY_PATH=/run/opengl-driver/lib''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+    exec ${config.programs.obs-studio.finalPackage}/bin/obs
+  '';
 in {
   calamoose.enableSecrets = false;
 
@@ -34,12 +41,12 @@ in {
   # Auto-login and launch OBS directly via cage (Wayland kiosk compositor)
   services.greetd.settings = {
     initial_session = {
-      command = "${pkgs.cage}/bin/cage -s -- ${config.programs.obs-studio.finalPackage}/bin/obs";
+      command = "${pkgs.cage}/bin/cage -s -- ${obsLauncher}";
       user = cala-m-os.globals.defaultUser;
     };
     default_session.command =
       lib.mkForce
-      "${pkgs.cage}/bin/cage -s -- ${config.programs.obs-studio.finalPackage}/bin/obs";
+      "${pkgs.cage}/bin/cage -s -- ${obsLauncher}";
   };
 
   environment.systemPackages = [pkgs.cage];

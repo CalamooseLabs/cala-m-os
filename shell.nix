@@ -142,7 +142,7 @@ in
       pkgs.nil
       pkgs.claude-code
       flash-iso
-      (inputs.antlers.packages.x86_64-linux.zed-editor zedSettings)
+      (inputs.antlers.lib.x86_64-linux.mkZedWrapper zedSettings)
     ];
 
     shellHook = ''

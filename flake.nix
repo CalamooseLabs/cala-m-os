@@ -63,7 +63,7 @@
 
     # Calamoose Labs
     antlers = {
-      url = "github:CalamooseLabs/antlers/flakes?dir=flakes";
+      url = "github:CalamooseLabs/antlers";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -141,6 +141,26 @@
     formatter = {
       x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.alejandra;
     };
+
+    # Per-host evaluation checks (run by `nix flake check`, or individually with
+    # `nix build .#checks.x86_64-linux.<host>`). Forcing each host's
+    # `toplevel.drvPath` fully evaluates its module tree — options, assertions,
+    # removed/renamed-option errors, and infinite recursion — which is the class
+    # of bug that is otherwise only found at rebuild time. Discarding the string
+    # context means the check itself is just an `echo`, so this evaluates the
+    # systems without realising (building) them. The microvm guests (media,
+    # torrent) are validated transitively through `homelab`, whose evaluation
+    # forces their toplevels via the vm-manager restart triggers.
+    checks.${system} =
+      builtins.mapAttrs (
+        name: cfg:
+          pkgs.runCommand "eval-${name}" {
+            drv = builtins.unsafeDiscardStringContext cfg.config.system.build.toplevel.drvPath;
+          } ''
+            echo "$drv" > $out
+          ''
+      )
+      self.nixosConfigurations;
 
     packages.x86_64-linux.default = self.nixosConfigurations.iso.config.system.build.isoImage;
 

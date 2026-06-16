@@ -314,6 +314,7 @@ in {
     systemd.services.qbittorrent-setup-password = {
       description = "Setup qBittorrent password file";
       after = ["network-online.target"];
+      wants = ["network-online.target"];
       wantedBy = ["qbittorrent.service"];
       before = ["qbittorrent.service"];
 

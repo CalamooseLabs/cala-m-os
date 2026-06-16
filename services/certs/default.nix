@@ -25,13 +25,15 @@ in {
     # Disable all DNS Caching
     services.resolved = {
       enable = true;
-      dnssec = "false";
-      domains = ["~."];
-      fallbackDns = ["1.1.1.1" "8.8.8.8"];
-      extraConfig = ''
-        Cache=no
-        CacheFromLocalhost=no
-      '';
+      # All Resolve-section keys live under settings.Resolve; the older top-level
+      # dnssec/domains/fallbackDns/extraConfig options are deprecated/removed.
+      settings.Resolve = {
+        DNSSEC = "false";
+        Domains = ["~."];
+        FallbackDNS = ["1.1.1.1" "8.8.8.8"];
+        Cache = "no";
+        CacheFromLocalhost = "no";
+      };
     };
 
     networking.nameservers = ["1.1.1.1" "8.8.8.8"];

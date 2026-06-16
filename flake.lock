@@ -27,23 +27,18 @@
       "inputs": {
         "nixpkgs": [
           "nixpkgs"
-        ],
-        "plex-desktop-flake": "plex-desktop-flake",
-        "zed-editor-flake": "zed-editor-flake"
+        ]
       },
       "locked": {
-        "dir": "flakes",
-        "lastModified": 1763486545,
-        "narHash": "sha256-/n0hsUzmlPit0uvDlLWxhdzoAcEpHD30QoR7XVMWsQ0=",
+        "lastModified": 1781448662,
+        "narHash": "sha256-FlOH+cWv1VzZzN9vsdxh+SJbxzNyeaQv38IfqVk6TgQ=",
         "owner": "CalamooseLabs",
         "repo": "antlers",
-        "rev": "1fa5fb264807a17b6576fdc3be623b61268f4217",
+        "rev": "8e949c2b2ed5e48133c64cd20fdbfa65242967be",
         "type": "github"
       },
       "original": {
-        "dir": "flakes",
         "owner": "CalamooseLabs",
-        "ref": "flakes",
         "repo": "antlers",
         "type": "github"
       }
@@ -881,30 +876,6 @@
         "type": "github"
       }
     },
-    "plex-desktop-flake": {
-      "inputs": {
-        "nixpkgs": [
-          "antlers",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "dir": "flakes/plex-desktop",
-        "lastModified": 1746209960,
-        "narHash": "sha256-Wi+nW0OUl2pdInKtO/RQ/JBp5jtAnDPLZWyy1jbDCO4=",
-        "owner": "calamooselabs",
-        "repo": "antlers",
-        "rev": "34b6b7f35933e0d947284e9c51472f8064f04181",
-        "type": "github"
-      },
-      "original": {
-        "dir": "flakes/plex-desktop",
-        "owner": "calamooselabs",
-        "ref": "master",
-        "repo": "antlers",
-        "type": "github"
-      }
-    },
     "pre-commit-hooks": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -1201,30 +1172,6 @@
         "dir": "flakes/zed-editor",
         "owner": "CalamooseLabs",
         "ref": "flakes.zed-editor",
-        "repo": "antlers",
-        "type": "github"
-      }
-    },
-    "zed-editor-flake": {
-      "inputs": {
-        "nixpkgs": [
-          "antlers",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "dir": "flakes/zed-editor",
-        "lastModified": 1746209960,
-        "narHash": "sha256-Wi+nW0OUl2pdInKtO/RQ/JBp5jtAnDPLZWyy1jbDCO4=",
-        "owner": "calamooselabs",
-        "repo": "antlers",
-        "rev": "34b6b7f35933e0d947284e9c51472f8064f04181",
-        "type": "github"
-      },
-      "original": {
-        "dir": "flakes/zed-editor",
-        "owner": "calamooselabs",
-        "ref": "master",
         "repo": "antlers",
         "type": "github"
       }
