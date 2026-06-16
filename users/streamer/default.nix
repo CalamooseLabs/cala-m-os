@@ -4,6 +4,7 @@
   modules = [
     "agenix"
     "bash"
+    "bitfocus-companion"
     "fonts"
     "obs-studio"
     "openssh"
