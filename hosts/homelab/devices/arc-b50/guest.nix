@@ -6,11 +6,7 @@
   microvm.devices = [
     {
       bus = "pci";
-      path = "0000:44:00.0"; # Arc B50
-    }
-    {
-      bus = "pci";
-      path = "0000:45:00.0"; # Arc B50 Audio
+      path = "0000:03:00.0"; # Arc B50
     }
   ];
 }
