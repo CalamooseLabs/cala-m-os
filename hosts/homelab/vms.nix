@@ -30,7 +30,7 @@
     };
   };
 
-  bridgeInterface = "eno2";
+  bridgeInterface = "eno1";
 
   tokenPath = config.age.secrets.cloudflare-token.path;
 in {
