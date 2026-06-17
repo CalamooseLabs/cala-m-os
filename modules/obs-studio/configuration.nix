@@ -27,6 +27,7 @@
       obs-aitum-multistream
       obs-backgroundremoval
       obs-pipewire-audio-capture
+      obs-vertical-canvas
       droidcam-obs
     ];
   };
