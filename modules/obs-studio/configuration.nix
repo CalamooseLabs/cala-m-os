@@ -20,13 +20,14 @@
     enableVirtualCamera = true;
     package = pkgs.obs-studio.override {
       decklinkSupport = true;
+      cudaSupport = true;
     };
     plugins = with pkgs.obs-studio-plugins; [
       wlrobs
+      obs-aitum-multistream
       obs-backgroundremoval
       obs-pipewire-audio-capture
       droidcam-obs
-      obs-multi-rtmp
     ];
   };
 
