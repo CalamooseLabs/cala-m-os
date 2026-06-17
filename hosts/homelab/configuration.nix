@@ -45,7 +45,7 @@ in {
     };
     defaultGateway = {
       address = cala-m-os.ip.lab.gateway;
-      interface = "eno2";
+      interface = "eno1";
     };
   };
 
@@ -55,23 +55,13 @@ in {
     "vfio_pci"
   ];
 
-  # Only blacklist NVIDIA GPU drivers
+  # Only blacklist Intel ARC B50 GPU drivers
   boot.blacklistedKernelModules = [
-    "nvidia"
-    "nvidia_modeset"
-    "nvidia_uvm"
-    "nvidia_drm"
-    "nvidiafb"
-    "nouveau"
-    "snd_hda_intel"
+    "xe"
   ];
 
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
-  };
-
-  environment.variables = {
-    ROC_ENABLE_PRE_VEGA = "1";
   };
 }
