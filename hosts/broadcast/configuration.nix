@@ -62,7 +62,7 @@ in {
     jack.enable = true;
   };
 
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
 
   boot.extraModprobeConfig = ''
     options snd_usb_audio vid=0x1235 pid=0x8218 device_setup=1
