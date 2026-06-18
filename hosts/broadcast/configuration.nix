@@ -10,6 +10,8 @@
 {
   config,
   pkgs,
+  lib,
+  initialInstallMode,
   ...
 }: let
   import_users = ["streamer"];
@@ -39,8 +41,6 @@
     ${pkgs.systemd}/bin/systemctl poweroff
   '';
 in {
-  calamoose.enableSecrets = false;
-
   imports = [
     (import ../_core/default.nix {
       users_list = import_users;
@@ -50,37 +50,48 @@ in {
     })
   ];
 
-  networking.hostName = "broadcast";
+  config = lib.mkMerge [
+    {
+      calamoose.enableSecrets = false;
 
-  # niri (enabled via the streamer user's modules) auto-logs in through greetd
-  # and spawns OBS at startup. obs-kiosk wraps OBS with the NVENC library path.
-  environment.systemPackages = [obsLauncher];
+      networking.hostName = "broadcast";
+    }
 
-  # Power button: gracefully stop OBS, then power off. Let logind ignore the key
-  # so acpid can run the graceful handler instead of an instant poweroff.
-  services.logind.settings.Login.HandlePowerKey = "ignore";
-  services.acpid = {
-    enable = true;
-    handlers.power-button = {
-      event = "button/power.*";
-      action = "${gracefulPowerOff}";
-    };
-  };
+    # Workstation-only runtime config. Skipped during the minimal installer pass
+    # (INITIAL_INSTALL_MODE=1), where programs.obs-studio isn't enabled and its
+    # finalPackage is null — building obsLauncher then fails to evaluate.
+    (lib.mkIf (!initialInstallMode) {
+      # niri (enabled via the streamer user's modules) auto-logs in through greetd
+      # and spawns OBS at startup. obs-kiosk wraps OBS with the NVENC library path.
+      environment.systemPackages = [obsLauncher];
 
-  # Audio for OBS streaming and monitoring
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    wireplumber.enable = true;
-    jack.enable = true;
-  };
+      # Power button: gracefully stop OBS, then power off. Let logind ignore the key
+      # so acpid can run the graceful handler instead of an instant poweroff.
+      services.logind.settings.Login.HandlePowerKey = "ignore";
+      services.acpid = {
+        enable = true;
+        handlers.power-button = {
+          event = "button/power.*";
+          action = "${gracefulPowerOff}";
+        };
+      };
 
-  services.pulseaudio.enable = false;
+      # Audio for OBS streaming and monitoring
+      security.rtkit.enable = true;
+      services.pipewire = {
+        enable = true;
+        alsa.enable = true;
+        alsa.support32Bit = true;
+        pulse.enable = true;
+        wireplumber.enable = true;
+        jack.enable = true;
+      };
 
-  boot.extraModprobeConfig = ''
-    options snd_usb_audio vid=0x1235 pid=0x8218 device_setup=1
-  '';
+      services.pulseaudio.enable = false;
+
+      boot.extraModprobeConfig = ''
+        options snd_usb_audio vid=0x1235 pid=0x8218 device_setup=1
+      '';
+    })
+  ];
 }
