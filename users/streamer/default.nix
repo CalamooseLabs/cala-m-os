@@ -8,6 +8,7 @@
     "fonts"
     "obs-studio"
     "openssh"
+    "teleprompter"
   ];
 in {
   inherit modules;
