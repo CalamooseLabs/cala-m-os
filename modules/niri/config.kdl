@@ -1,4 +1,4 @@
-spawn-at-startup "obsLauncher"
+spawn-at-startup "obs-kiosk"
 
 binds {
   Mod+T { spawn "ghostty"; }
