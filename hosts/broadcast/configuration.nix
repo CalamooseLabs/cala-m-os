@@ -9,9 +9,7 @@
 ##################################
 {
   config,
-  lib,
   pkgs,
-  cala-m-os,
   ...
 }: let
   import_users = ["streamer"];
@@ -20,9 +18,25 @@
 
   # OBS's obs-nvenc helper does a bare dlopen("libnvidia-encode.so.1"), which
   # isn't on any ldconfig path on NixOS. Expose the driver libs so NVENC probes.
-  obsLauncher = pkgs.writeShellScript "obs-kiosk" ''
+  # niri spawns this at startup (see users/streamer/niri.kdl).
+  obsLauncher = pkgs.writeShellScriptBin "obs-kiosk" ''
     export LD_LIBRARY_PATH=/run/opengl-driver/lib''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-    exec ${config.programs.obs-studio.finalPackage}/bin/obs
+    exec ${config.programs.obs-studio.finalPackage}/bin/obs "$@"
+  '';
+
+  # Hitting the power button should let OBS finalize any active recording/stream
+  # before the machine powers off, rather than yanking power mid-write.
+  gracefulPowerOff = pkgs.writeShellScript "graceful-poweroff" ''
+    # Politely ask OBS to quit (it stops recording/streaming and saves on SIGINT).
+    ${pkgs.procps}/bin/pkill -INT -x obs || true
+
+    # Give OBS up to 20s to flush and exit before powering off.
+    for _ in $(${pkgs.coreutils}/bin/seq 1 20); do
+      ${pkgs.procps}/bin/pgrep -x obs > /dev/null || break
+      ${pkgs.coreutils}/bin/sleep 1
+    done
+
+    ${pkgs.systemd}/bin/systemctl poweroff
   '';
 in {
   calamoose.enableSecrets = false;
@@ -38,18 +52,20 @@ in {
 
   networking.hostName = "broadcast";
 
-  # Auto-login and launch OBS directly via cage (Wayland kiosk compositor)
-  services.greetd.settings = {
-    initial_session = {
-      command = "${pkgs.cage}/bin/cage -s -- ${obsLauncher}";
-      user = cala-m-os.globals.defaultUser;
-    };
-    default_session.command =
-      lib.mkForce
-      "${pkgs.cage}/bin/cage -s -- ${obsLauncher}";
-  };
+  # niri (enabled via the streamer user's modules) auto-logs in through greetd
+  # and spawns OBS at startup. obs-kiosk wraps OBS with the NVENC library path.
+  environment.systemPackages = [obsLauncher];
 
-  environment.systemPackages = [pkgs.cage];
+  # Power button: gracefully stop OBS, then power off. Let logind ignore the key
+  # so acpid can run the graceful handler instead of an instant poweroff.
+  services.logind.settings.Login.HandlePowerKey = "ignore";
+  services.acpid = {
+    enable = true;
+    handlers.power-button = {
+      event = "button/power.*";
+      action = "${gracefulPowerOff}";
+    };
+  };
 
   # Audio for OBS streaming and monitoring
   security.rtkit.enable = true;

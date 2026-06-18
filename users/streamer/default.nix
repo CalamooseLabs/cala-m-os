@@ -6,6 +6,7 @@
     "bash"
     "bitfocus-companion"
     "fonts"
+    "niri"
     "obs-studio"
     "openssh"
     "teleprompter"
