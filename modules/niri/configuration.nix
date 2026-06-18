@@ -19,5 +19,7 @@
   };
 
   # Login Service
-  services.greetd.settings.default_session.command = "niri &> /dev/null";
+  # NOTE(debug): logging temporarily un-silenced to diagnose the DisplayLink/evdi
+  # output not being driven. Revert to "niri &> /dev/null" once resolved.
+  services.greetd.settings.default_session.command = "RUST_LOG=niri=debug,smithay=debug niri &> /tmp/niri-debug.log";
 }
