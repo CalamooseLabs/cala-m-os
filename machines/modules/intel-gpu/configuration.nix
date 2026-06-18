@@ -1,15 +1,30 @@
 {pkgs, ...}: {
   hardware.graphics = {
-    # Populate /run/opengl-driver/lib so Plex (and others) can hardware-transcode
-    # on the passed-through GPU.
+    # Populate /run/opengl-driver/lib for VAAPI/QSV — used both for Plex
+    # hardware transcode and (on broadcast) for niri to render the DisplayLink
+    # teleprompter on the Arc A310.
     enable = true;
 
     extraPackages = with pkgs; [
       intel-media-driver
       intel-compute-runtime
       intel-gpu-tools
+      vpl-gpu-rt # oneVPL runtime (QuickSync) for Arc
     ];
   };
 
   hardware.intel-gpu-tools.enable = true;
+
+  # GuC/HuC firmware for Arc (i915)
+  hardware.enableRedistributableFirmware = true;
+
+  environment.sessionVariables.LIBVA_DRIVER_NAME = "iHD";
+
+  # Stable symlink to the Intel render node so a compositor can be pinned to the
+  # Intel GPU via render-drm-device (renderD* numbering is not stable across
+  # boots / multi-GPU). Matches nothing until an Intel GPU is present, so it is
+  # safe to import anywhere.
+  services.udev.extraRules = ''
+    SUBSYSTEM=="drm", KERNEL=="renderD*", SUBSYSTEMS=="pci", ATTRS{vendor}=="0x8086", SYMLINK+="dri/intel-render"
+  '';
 }

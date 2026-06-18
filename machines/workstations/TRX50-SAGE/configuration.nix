@@ -13,7 +13,8 @@
     ./disko.nix
 
     # Modules
-    ../../modules/nvidia-gpu/configuration.nix
+    ../../modules/nvidia-gpu/configuration.nix # RTX PRO 4000 Blackwell — OBS/NVENC
+    ../../modules/intel-gpu/configuration.nix # Arc A310 — niri display + DisplayLink teleprompter
   ];
 
   boot = {
