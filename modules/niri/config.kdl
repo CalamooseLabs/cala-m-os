@@ -1,9 +1,0 @@
-spawn-at-startup "librewolf"
-
-binds {
-  Mod+T { spawn "ghostty"; }
-  Mod+B { spawn "librewolf"; }
-  Mod+Shift+F { fullscreen-window; }
-  Mod+F { maximize-column; }
-  Mod+M { maximize-window-to-edges; }
-}
