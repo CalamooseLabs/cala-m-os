@@ -29,19 +29,6 @@ in {
 
   networking.hostName = "broadcast";
 
-  # Auto-login and launch OBS directly via cage (Wayland kiosk compositor)
-  # services.greetd.settings = {
-  #   initial_session = {
-  #     command = "${pkgs.cage}/bin/cage -s -- ${obsLauncher}";
-  #     user = cala-m-os.globals.defaultUser;
-  #   };
-  #   default_session.command =
-  #     lib.mkForce
-  #     "${pkgs.cage}/bin/cage -s -- ${obsLauncher}";
-  # };
-
-  # environment.systemPackages = [pkgs.cage];
-
   # Audio for OBS streaming and monitoring
   security.rtkit.enable = true;
   services.pipewire = {
