@@ -39,6 +39,7 @@
     "rawtherapee"
     "rebuild-config"
     "remote-desktop"
+    "remote-kvm"
     "restore-config"
     "rofi"
     "scanner"
