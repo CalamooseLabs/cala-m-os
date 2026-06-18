@@ -7,7 +7,6 @@
     "appimage"
     "bash"
     "bat"
-    "bitfocus-companion"
     "btop"
     "direnv"
     "easyeffects"
