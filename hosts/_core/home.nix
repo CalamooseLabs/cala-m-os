@@ -23,6 +23,10 @@ in {
       # Declarative niri config: provides `programs.niri.settings` (Nix → KDL)
       # without managing the package, which stays on nixpkgs via the niri module.
       inputs.niri-flake.homeModules.config
+      # Validate the generated KDL against the same nixpkgs niri the system
+      # actually runs; the home module otherwise defaults to niri-stable, which
+      # lags nixpkgs and rejects newer actions (e.g. maximize-window-to-edges).
+      ({pkgs, ...}: {programs.niri.package = pkgs.niri;})
       {
         # Let Home Manager install and manage itself.
         programs.home-manager.enable = true;
