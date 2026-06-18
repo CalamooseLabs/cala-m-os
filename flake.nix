@@ -37,12 +37,6 @@
       inputs.hyprland.follows = "hyprland";
     };
 
-    # Niri (declarative Nix config for the niri compositor)
-    niri-flake = {
-      url = "github:sodiboo/niri-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # Disk Partitioning Tool
     disko = {
       url = "github:nix-community/disko";

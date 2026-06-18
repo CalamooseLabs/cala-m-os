@@ -1,15 +1,14 @@
-{config, ...}: {
-  programs.niri.settings = {
-    spawn-at-startup = [
-      {argv = ["librewolf"];}
-    ];
+{
+  config,
+  pkgs,
+  ...
+}: let
+  obsLauncher = pkgs.writeShellScript "obs-kiosk" ''
+    export LD_LIBRARY_PATH=/run/opengl-driver/lib''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+    exec ${config.programs.obs-studio.finalPackage}/bin/obs
+  '';
+in {
+  home.packages = [obsLauncher];
 
-    binds = with config.lib.niri.actions; {
-      "Mod+T".action = spawn "ghostty";
-      "Mod+B".action = spawn "librewolf";
-      "Mod+Shift+F".action = fullscreen-window;
-      "Mod+F".action = maximize-column;
-      "Mod+M".action = maximize-window-to-edges;
-    };
-  };
+  xdg.configFile."niri/config.kdl".source = ./config.kdl;
 }
