@@ -10,6 +10,7 @@
   machine_uuid = "Small";
 in {
   calamoose.enableSecrets = false;
+  calamoose.version = "0.1.0-alpha";
 
   imports = [
     (import ../_core/default.nix {

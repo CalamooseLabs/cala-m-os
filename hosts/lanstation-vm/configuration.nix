@@ -13,6 +13,8 @@
   machine_type = "VM";
   machine_uuid = "Large";
 in {
+  calamoose.version = "1.0.0";
+
   imports = [
     # Common Core Config
     (import ../_core/default.nix {

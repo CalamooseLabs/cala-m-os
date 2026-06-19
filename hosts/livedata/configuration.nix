@@ -14,6 +14,7 @@
   machine_uuid = "MS-01";
 in {
   calamoose.enableSecrets = false;
+  calamoose.version = "1.0.0-alpha";
 
   imports =
     [

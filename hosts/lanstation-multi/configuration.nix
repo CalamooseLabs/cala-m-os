@@ -14,6 +14,8 @@
   machine_type = "Workstation";
   machine_uuid = "TRX50-SAGE";
 in {
+  calamoose.version = "1.0.0";
+
   imports =
     [
       # Common Core Config

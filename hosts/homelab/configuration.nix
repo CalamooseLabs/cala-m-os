@@ -19,6 +19,8 @@
   machine_type = "Workstation";
   machine_uuid = "MS-02";
 in {
+  calamoose.version = "2.0.0-beta";
+
   imports =
     [
       (import ../_core/default.nix {

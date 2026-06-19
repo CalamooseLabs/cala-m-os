@@ -63,6 +63,14 @@
         echo
       fi
 
+      # Read this host's version mark from the flake (best-effort).
+      FLAKE="github:CalamooseLabs/cala-m-os"
+      VERSION=$(nix eval --raw --impure "$FLAKE#nixosConfigurations.$HOST_FLAKE.config.calamoose.version" 2>/dev/null || echo "unknown")
+      echo "=================================================="
+      echo " Installing Cala-M-OS host '$HOST_FLAKE' — version $VERSION"
+      echo "=================================================="
+      echo
+
       echo "Step One: Erasing and Formatting Disk"
       disko --mode destroy,format,mount --flake github:CalamooseLabs/cala-m-os#$HOST_FLAKE --yes-wipe-all-disks
       echo "Step One Completed!"
@@ -100,7 +108,10 @@
       unset PASSWORD PASSWORD_CONFIRM
       echo "Step Five Completed!"
       echo
-      echo "Cala-M-OS has been successfully installed, please reboot the system."
+      echo "=================================================="
+      echo " Cala-M-OS host '$HOST_FLAKE' — version $VERSION installed."
+      echo " Please reboot the system."
+      echo "=================================================="
       exit
     '')
   ];

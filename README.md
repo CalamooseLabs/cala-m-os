@@ -18,8 +18,12 @@
 
 ## Features
 
+- **One flake, many machines**: laptops, desktops, servers, SBCs, and MicroVMs all built from a single configuration.
 - **Automated Setup**: Use `install-cala-m-os` for quick up and running.
 - **Security Key Secrets**: Using Yubikeys as hardware security keys to allow for signing, ssh, gpg and secret encryption behind agenix/age.
+- **MicroVM guests**: services like Plex and the media-automation suite run as declarative MicroVMs managed by their host.
+- **Impermanence**: select hosts boot from a tmpfs root and persist only what's declared (via `preservation`).
+- **Themed desktops**: Hyprland / niri sessions styled consistently through Stylix.
 
 ---
 
@@ -37,9 +41,9 @@
 
 #### GPG Signing key(s)
 
-1. Copy Yubikey's GPG secret key into home directory: `sudo cp /run/agenix/yubigpg.asc`
+1. Copy Yubikey's GPG secret key into home directory: `sudo cp /run/agenix/yubigpg.asc ~/`
 
-2. Change owner to self: `sudo chown ccalamos:users yubigpg.asc`
+2. Change owner to self: `sudo chown hub:users yubigpg.asc`
 
 3. Import to GPG: `gpg --import yubigpg.asc`
 
@@ -56,6 +60,64 @@
 4. Rename to `id_ed25519_sk` & `id_ed25519_sk.pub`
 
 5. Add to ssh-agent: `ssh-add ~/.ssh/id_ed25519_sk`
+
+## Hosts
+
+Hosts are built with `sudo nixos-rebuild switch --flake .#<host>`. Physical machines run
+on real hardware; **MicroVM guests** run on a host through its `cala-vm-manager` service
+(sizes defined under `machines/vms/`). Each host's `calamoose.version` is surfaced in
+`nixos-version` and the boot-menu entry.
+
+### Physical machines
+
+| Host | Machine | User | Version | Role |
+|------|---------|------|---------|------|
+| `devbox` | Framework 16 (AMD, RTX 5070) | `debugger` | `2.1.0` | Main daily laptop — dev, printing, OBS |
+| `battlestation` | AM5 desktop (B850) | `mixer` | `2.0.0` | Desktop workstation |
+| `lanstation` | Intel desktop (B760) | `gamer` | `1.0.0` | LAN gaming station — NVIDIA VFIO passthrough |
+| `broadcast` | Threadripper (TRX50-SAGE) | `streamer` | `1.0.0-beta` | Live stream box — RTX Pro 4000, Blackmagic Quad HDMI, OBS |
+| `homelab` | Minisforum MS-02 | `server` | `2.0.0-beta` | Homelab VM host — runs `media` + `torrent` |
+| `livedata` | Minisforum MS-01 | `server` | `1.0.0-alpha` | App/VM host — runs `openreturn` + `quorumcall` |
+| `simple` | Framework 13 | `basic` | `1.0.0` | Minimal desktop setup |
+| `viber` | Zima | `developer` | `0.0.1-alpha` | Headless TTY dev box — impermanent root |
+| `ephemeral` | Zima | `void` | `0.0.1-beta` | Throwaway lab machine — impermanent root |
+
+### MicroVM guests
+
+| Guest | Size | User | Version | Runs on | Role |
+|-------|------|------|---------|---------|------|
+| `media` | Small | `server` | `0.9.0-beta` | `homelab` | Plex media server (Caddy SSL) |
+| `torrent` | X-Small | `server` | `0.9.0-beta` | `homelab` | Radarr / Sonarr / Prowlarr + qBittorrent (VPN) |
+| `openreturn` | Small | `server` | `0.1.0-alpha` | `livedata` | OpenReturn TTY app server |
+| `quorumcall` | Small | `server` | `0.1.0-alpha` | `livedata` | QuorumCall TTY app server |
+| `lanstation-vm` | Large | `gamer-vm` | `1.0.0` | `lanstation` | Per-seat gaming VM (`lanstation-2/3/4`) |
+| `htpc` | Large | `gamer` | `0.0.1-beta` | — | Home theater PC (defined, not yet deployed) |
+| `vault` | Small | `server` | `0.0.1-beta` | — | LanCache via Arion/Docker (defined, not yet deployed) |
+
+> **Notes** — The `lanstation` family has three configs: `lanstation` (single-GPU
+> station), `lanstation-multi` (TRX50 multi-GPU VM host serving `lanstation-1`…`4`), and
+> `lanstation-vm` (the per-seat gaming guest). `openreturn` and `quorumcall` are also
+> exposed as standalone flake outputs in addition to running as `livedata` guests. `iso`
+> is the custom installer image (see [Getting Started](#getting-started)).
+
+## Common Commands
+
+```bash
+# Rebuild and switch the current host
+sudo nixos-rebuild switch --flake .#<host>
+
+# Evaluate every host without building (catches option/eval errors)
+nix flake check
+
+# Format all Nix files
+alejandra .
+
+# Enter the dev shell (alejandra, nixd, nil, claude-code, …)
+nix develop
+
+# Build the installer ISO
+nix build .#nixosConfigurations.iso.config.system.build.isoImage
+```
 
 ## Architecture
 

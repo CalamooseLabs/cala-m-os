@@ -18,10 +18,27 @@
   programs.obs-studio = {
     enable = true;
     enableVirtualCamera = true;
-    package = pkgs.obs-studio.override {
-      decklinkSupport = true;
-      cudaSupport = true;
-    };
+    package = let
+      baseObs = pkgs.obs-studio.override {
+        decklinkSupport = true;
+        cudaSupport = true;
+      };
+    in
+      # NVIDIA's EGL explicit-sync path (wp_linux_drm_syncobj) commits a
+      # wl_surface with no acquire point set, which Hyprland/niri reject with
+      # a fatal Wayland protocol error — crashing OBS when a projector opens
+      # (and on capture-source teardown). Disabling explicit sync for OBS only
+      # is the upstream-attested fix (obsproject/obs-studio#11022, #12007).
+      # Vendor-agnostic and OBS-scoped, so it's safe across devbox (Hyprland,
+      # plain obs) and broadcast (the obs-kiosk PRIME wrapper execs finalPackage).
+      pkgs.symlinkJoin {
+        name = "obs-studio-nosync";
+        paths = [baseObs];
+        nativeBuildInputs = [pkgs.makeWrapper];
+        postBuild = ''
+          wrapProgram $out/bin/obs --set __NV_DISABLE_EXPLICIT_SYNC 1
+        '';
+      };
     plugins = with pkgs.obs-studio-plugins; [
       wlrobs
       obs-aitum-multistream

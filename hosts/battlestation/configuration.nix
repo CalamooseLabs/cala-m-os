@@ -9,6 +9,8 @@
   machine_type = "Workstation";
   machine_uuid = "B850-MAX";
 in {
+  calamoose.version = "2.0.0";
+
   imports = [
     # Common Core Config
     (import ../_core/default.nix {

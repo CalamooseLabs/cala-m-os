@@ -25,6 +25,7 @@
     (lib.unique (lib.attrValues config.services.github-repo-puller.repos));
 in {
   calamoose.enableSecrets = true;
+  calamoose.version = "0.0.1-alpha";
 
   imports = [
     inputs.preservation.nixosModules.default

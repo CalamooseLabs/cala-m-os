@@ -9,6 +9,8 @@
   machine_type = "Workstation";
   machine_uuid = "FW13-12XXP";
 in {
+  calamoose.version = "1.0.0";
+
   imports = [
     # Hardware Config
 

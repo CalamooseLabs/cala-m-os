@@ -15,6 +15,8 @@
   machine_type = "Workstation";
   machine_uuid = "FW16-AMD-AI";
 in {
+  calamoose.version = "2.1.0";
+
   imports = [
     # Common Core Config
     (import ../_core/default.nix {

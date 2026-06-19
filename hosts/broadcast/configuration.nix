@@ -12,6 +12,7 @@
   machine_uuid = "TRX50-SAGE";
 in {
   calamoose.enableSecrets = false;
+  calamoose.version = "1.0.0-beta";
 
   imports = [
     (import ../_core/default.nix {

@@ -9,6 +9,8 @@
   machine_type = "VM";
   machine_uuid = "Small";
 in {
+  calamoose.version = "0.9.0-beta";
+
   imports = [
     # Common Core Config
     (import ../_core/default.nix {
