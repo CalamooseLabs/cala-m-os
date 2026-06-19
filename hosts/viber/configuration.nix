@@ -9,6 +9,7 @@
   lib,
   config,
   cala-m-os,
+  initialInstallMode,
   ...
 }: let
   import_users = ["developer"];
@@ -47,7 +48,8 @@ in {
   services.greetd.enable = lib.mkForce false;
 
   # ZIMA root is tmpfs (impermanent) — keep system state + dev essentials + repos.
-  preservation = {
+  # Skip in the minimal installer (no `hub` user exists to anchor home paths).
+  preservation = lib.mkIf (!initialInstallMode) {
     enable = true;
     preserveAt."/persistent" = {
       directories = [
