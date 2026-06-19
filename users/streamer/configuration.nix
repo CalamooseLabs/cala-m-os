@@ -51,4 +51,7 @@
   systemd.services.agenix.after = [
     "basic.target"
   ];
+
+  # Bind the Companion admin UI to this box's NIC (the first IP on enp66s0).
+  services.bitfocus-companion.adminInterface = "enp66s0";
 }

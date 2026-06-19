@@ -6,11 +6,7 @@
 #             OBS                #
 #                                #
 ##################################
-{
-  # config,
-  # pkgs,
-  ...
-}: let
+{...}: let
   import_users = ["streamer"];
   machine_type = "Workstation";
   machine_uuid = "TRX50-SAGE";
@@ -27,9 +23,6 @@ in {
   ];
 
   networking.hostName = "broadcast";
-
-  # Bind the Companion admin UI to this box's NIC (the first IP on enp66s0).
-  services.bitfocus-companion.adminInterface = "enp66s0";
 
   # Audio for OBS streaming and monitoring
   security.rtkit.enable = true;
