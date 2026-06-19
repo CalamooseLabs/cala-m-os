@@ -31,6 +31,10 @@
     user_pref("security.insecure_field_warning.contextual.enabled", false);
     user_pref("security.warn_submit_secure_to_insecure", false);
 
+    // Always allow media autoplay — the KVM video stream must start without a click.
+    user_pref("media.autoplay.default", 0); // 0 = allow audio + video
+    user_pref("media.autoplay.blocking_policy", 0);
+
     // Dark mode: force dark UI theme and tell web content to render dark.
     user_pref("ui.systemUsesDarkTheme", 1);
     user_pref("layout.css.prefers-color-scheme.content-override", 0); // 0 = dark

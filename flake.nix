@@ -130,6 +130,7 @@
       broadcast = mkSystem "broadcast" {};
       openreturn = mkSystem "openreturn" {};
       livedata = mkSystem "livedata" {};
+      viber = mkSystem "viber" {};
 
       iso = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs;};
