@@ -4,7 +4,6 @@
 #       NVIDIA RTX Pro 4000      #
 #      Blackmagic Quad HDMI      #
 #             OBS                #
-#     Davinci Resolve Studio     #
 #                                #
 ##################################
 {
@@ -28,6 +27,9 @@ in {
   ];
 
   networking.hostName = "broadcast";
+
+  # Bind the Companion admin UI to this box's NIC (the first IP on enp66s0).
+  services.bitfocus-companion.adminInterface = "enp66s0";
 
   # Audio for OBS streaming and monitoring
   security.rtkit.enable = true;

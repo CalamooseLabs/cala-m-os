@@ -6,19 +6,26 @@
 }: let
   cfg = config.services.bitfocus-companion;
 
+  # --admin-interface and --admin-address are mutually exclusive in Companion:
+  # passing both is rejected, and the interface takes precedence when set.
+  adminBindArgs =
+    if cfg.adminInterface != null
+    then ["--admin-interface" cfg.adminInterface]
+    else ["--admin-address" cfg.adminAddress];
+
   # Build the argument list from the configured options, omitting unset values.
   args =
     [
       "--admin-port"
       (toString cfg.adminPort)
-      "--admin-address"
-      cfg.adminAddress
+    ]
+    ++ adminBindArgs
+    ++ [
       "--config-dir"
       cfg.configDir
       "--log-level"
       cfg.logLevel
     ]
-    ++ lib.optionals (cfg.adminInterface != null) ["--admin-interface" cfg.adminInterface]
     ++ lib.optionals (cfg.extraModulePath != null) ["--extra-module-path" cfg.extraModulePath]
     ++ lib.optionals (cfg.machineId != null) ["--machine-id" cfg.machineId]
     ++ lib.optional cfg.disableAdminPassword "--disable-admin-password"
