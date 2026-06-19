@@ -14,7 +14,7 @@
   boot.supportedFilesystems = ["nfs"];
 
   fileSystems."/mnt/backups/sonarr" = {
-    device = "${cala-m-os.nfs.server}${cala-m-os.nfs.backup.sonarr}";
+    device = "${cala-m-os.nfs.server}:${cala-m-os.nfs.backup.sonarr}";
     fsType = "nfs";
   };
 }

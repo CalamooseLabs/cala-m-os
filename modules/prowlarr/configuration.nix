@@ -14,7 +14,7 @@
   boot.supportedFilesystems = ["nfs"];
 
   fileSystems."/mnt/backups/prowlarr" = {
-    device = "${cala-m-os.nfs.server}${cala-m-os.nfs.backup.prowlarr}";
+    device = "${cala-m-os.nfs.server}:${cala-m-os.nfs.backup.prowlarr}";
     fsType = "nfs";
   };
 }

@@ -47,6 +47,9 @@ in {
   # TTY-only: no greeter / compositor.
   services.greetd.enable = lib.mkForce false;
 
+  # Auto-login on the console TTY — drop straight into a shell, no password prompt.
+  services.getty.autologinUser = owner;
+
   # ZIMA root is tmpfs (impermanent) — keep system state + dev essentials + repos.
   # Skip in the minimal installer (no `hub` user exists to anchor home paths).
   preservation = lib.mkIf (!initialInstallMode) {

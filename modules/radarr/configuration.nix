@@ -14,7 +14,7 @@
   boot.supportedFilesystems = ["nfs"];
 
   fileSystems."/mnt/backups/radarr" = {
-    device = "${cala-m-os.nfs.server}${cala-m-os.nfs.backup.radarr}";
+    device = "${cala-m-os.nfs.server}:${cala-m-os.nfs.backup.radarr}";
     fsType = "nfs";
   };
 }
