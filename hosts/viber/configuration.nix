@@ -20,9 +20,12 @@
 
   # Repo target folders (relative to the user's home) come from the developer
   # profile's services.github-repo-puller.repos — persist them so the clones survive.
+  # The option only exists outside initialInstallMode (minimal installer skips the
+  # user modules), so guard against it being absent.
   repoDirs =
-    map (d: lib.removePrefix homePrefix d)
-    (lib.unique (lib.attrValues config.services.github-repo-puller.repos));
+    lib.optionals (config.services ? github-repo-puller)
+    (map (d: lib.removePrefix homePrefix d)
+      (lib.unique (lib.attrValues config.services.github-repo-puller.repos)));
 in {
   calamoose.enableSecrets = true;
   calamoose.version = "0.0.1-alpha";
