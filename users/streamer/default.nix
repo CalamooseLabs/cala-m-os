@@ -6,7 +6,7 @@
     "bash"
     "bitfocus-companion"
     "fonts"
-    "niri"
+    "hyprland"
     "obs-studio"
     "openssh"
     "teleprompter"

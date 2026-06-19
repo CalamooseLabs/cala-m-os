@@ -26,5 +26,7 @@
   # safe to import anywhere.
   services.udev.extraRules = ''
     SUBSYSTEM=="drm", KERNEL=="renderD*", SUBSYSTEMS=="pci", ATTRS{vendor}=="0x8086", SYMLINK+="dri/intel-render"
+    SUBSYSTEM=="drm", KERNEL=="card[0-9]*", SUBSYSTEMS=="pci", ATTRS{vendor}=="0x8086", SYMLINK+="dri/intel-card"
+    SUBSYSTEM=="drm", KERNEL=="card[0-9]*", DRIVERS=="evdi", SYMLINK+="dri/displaylink-card"
   '';
 }

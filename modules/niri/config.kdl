@@ -1,3 +1,10 @@
+// Pin niri's renderer to the Intel Arc A310 (stable symlink from the intel-gpu
+// udev rule). Keeps niri from defaulting to the nvidia GPU, which cannot render
+// into the LINEAR buffers the DisplayLink/evdi teleprompter requires.
+debug {
+    render-drm-device "/dev/dri/intel-render"
+}
+
 spawn-at-startup "obs-kiosk"
 
 binds {
