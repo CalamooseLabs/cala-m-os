@@ -45,12 +45,36 @@
 in {
   home.packages = [
     (pkgs.writeShellScriptBin "remote-kvm" ''
-      set -eux
+      set -eu
 
-      kvm_url="http://broadcast.thecompany.inc"
+      # Which KVM to open. Defaults to broadcast.
+      target="''${1:-broadcast}"
 
-      # Dedicated, throwaway-ish profile so the main profile stays untouched.
-      profile="$HOME/.local/share/remote-kvm/profile"
+      case "$target" in
+        homelab)
+          dns_url="http://kvm.calamos.family/"
+          ip_url="http://10.10.10.26/"
+          ;;
+        broadcast)
+          dns_url="http://broadcast.thecompany.inc"
+          ip_url="http://10.1.10.5"
+          ;;
+        *)
+          echo "usage: remote-kvm [homelab|broadcast]" >&2
+          exit 1
+          ;;
+      esac
+
+      # Probe the DNS hostname: if it responds we're on that KVM's network and
+      # use the DNS URL; if it doesn't, we're off-network so fall back to the IP.
+      if ${pkgs.curl}/bin/curl --silent --output /dev/null --connect-timeout 3 "$dns_url"; then
+        kvm_url="$dns_url"
+      else
+        kvm_url="$ip_url"
+      fi
+
+      # Dedicated, throwaway-ish profile (per target) so the main profile stays untouched.
+      profile="$HOME/.local/share/remote-kvm/$target"
       mkdir -p "$profile/chrome"
       install -m644 ${userChrome} "$profile/chrome/userChrome.css"
       install -m644 ${userJs} "$profile/user.js"
