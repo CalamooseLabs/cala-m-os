@@ -1,8 +1,11 @@
-{...}: {
+{pkgs, ...}: {
   imports = [../../../../machines/modules/intel-gpu/configuration.nix];
 
-  # TODO: confirm the Arc B50 PCIe addresses on the host (`lspci -nn | grep -i vga`)
-  # — the values below are carried over from the A310 and need verifying.
+  # The microVM guest otherwise boots the nixpkgs default kernel (6.18.x). That
+  # already supports Battlemage (xe, device 8086:e212), so this is headroom, not
+  # a fix — it pins the guest to match the host (linuxPackages_latest) for parity.
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
   microvm.devices = [
     {
       bus = "pci";

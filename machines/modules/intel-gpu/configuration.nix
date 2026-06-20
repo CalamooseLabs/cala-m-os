@@ -15,7 +15,8 @@
 
   hardware.intel-gpu-tools.enable = true;
 
-  # GuC/HuC firmware for Arc (i915)
+  # GuC/HuC firmware for Intel GPUs. Battlemage (Arc B50, xe driver) loads
+  # xe/bmg_guc_70.bin + xe/bmg_huc.bin; older Arc/iGPU use the i915/ blobs.
   hardware.enableRedistributableFirmware = true;
 
   environment.sessionVariables.LIBVA_DRIVER_NAME = "iHD";

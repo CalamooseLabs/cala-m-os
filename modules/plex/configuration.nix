@@ -22,6 +22,12 @@ in {
     openFirewall = true;
   };
 
+  # The plex daemon runs as the dedicated `plex` user, which upstream adds to no
+  # supplementary groups. Render nodes are 0666 so /dev/dri/renderD* is already
+  # reachable, but grant render+video explicitly so HW transcode on the passed-
+  # through Arc B50 cannot be blocked by a non-default render-node permission.
+  users.users.plex.extraGroups = ["render" "video"];
+
   boot.supportedFilesystems = ["nfs"];
 
   fileSystems."/media/movies" = {

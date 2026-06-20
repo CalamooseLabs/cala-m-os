@@ -57,6 +57,11 @@ in {
     "vfio_pci"
   ];
 
+  # Enable Intel VT-d explicitly so VFIO can map the B50 into the guest.
+  # Passthrough already works on this platform without it, but make it
+  # deterministic. Merges with _core's quiet/splash kernelParams.
+  boot.kernelParams = ["intel_iommu=on" "iommu=pt"];
+
   # Only blacklist Intel ARC B50 GPU drivers
   boot.blacklistedKernelModules = [
     "xe"

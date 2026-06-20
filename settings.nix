@@ -2,6 +2,7 @@
   # Globals
   globals = {
     defaultUser = "hub";
+    userGroup = "users";
     adminGroup = "wheel";
     defaultEmail = "it@calamos.family";
     fullName = "Cole J. Calamos";

@@ -49,6 +49,8 @@
     "stylix"
     "teleprompter"
     "termusic"
+    "vibe"
+    "vibe-server"
     "virt-manager"
     "vivaldi"
     "vlc"
