@@ -11,6 +11,7 @@
     "gpg-key-import"
     "nh"
     "openssh"
+    "ssh-key-import"
     "yubikey"
     "zed-editor"
   ];

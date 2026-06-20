@@ -20,11 +20,18 @@
     }
   ];
 
-  # Public GitHub repos to clone on this box, grouped into subfolders.
-  services.github-repo-puller = {
+  # Public GitHub repos clonable on this box, grouped into subfolders.
+  # Run `github-repo-puller` to clone/fast-forward them on demand.
+  programs.github-repo-puller = {
     enable = true;
     repos = {
       "github:CalamooseLab/OpenReturn" = "/home/${username}/nkc";
     };
   };
+
+  # Ship the `ssh-key-import` helper (extract the Yubikey resident SSH keys).
+  programs.ssh-key-import.enable = true;
+
+  # Ship the `gpg-key-import` helper (import the Yubikey GPG public key).
+  programs.gpg-key-import.enable = true;
 }

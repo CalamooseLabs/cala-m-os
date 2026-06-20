@@ -39,7 +39,20 @@
 
 ### Key Installation
 
-#### GPG Signing key(s)
+Hosts that carry the `developer` profile (e.g. `viber`) ship two commands that
+automate the steps below — these are **programs you run on demand**, not boot
+services, since each needs the Yubikey + PIN (+ a touch). Run them once after a
+fresh install:
+
+```bash
+gpg-key-import   # import the Yubikey GPG public key into your keyring
+ssh-key-import   # download the Yubikey resident SSH keys into ~/.ssh
+```
+
+Both are idempotent and safe to re-run. The manual steps they replace are kept
+below for hosts without the modules.
+
+#### GPG Signing key(s) — manual
 
 1. Copy Yubikey's GPG secret key into home directory: `sudo cp /run/agenix/yubigpg.asc ~/`
 
@@ -49,7 +62,7 @@
 
 4. Delete key: `rm yubigpg.asc`
 
-#### SSH Keys
+#### SSH Keys — manual
 
 1. Go into SSH directory: `cd ~/.ssh`
 
