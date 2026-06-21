@@ -30,7 +30,7 @@
     # the installer's Step One resolves it offline. Defaults (flake ref, clone
     # URL, version attr, /mnt + /etc/nixos paths, hub/root passwords) match this
     # ISO, so no overrides are needed.
-    inputs.antlers.packages.${pkgs.system}.install-cala-m-os
+    inputs.antlers.packages.${pkgs.stdenv.hostPlatform.system}.install-cala-m-os
   ];
 
   services.pcscd.enable = true;

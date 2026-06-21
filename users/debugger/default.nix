@@ -4,6 +4,7 @@
   modules = [
     "agenix"
     "agenix-boot"
+    "antlers"
     "appimage"
     "bash"
     "bat"

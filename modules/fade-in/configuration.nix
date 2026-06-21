@@ -8,7 +8,7 @@
   # Fade In screenwriting app — now from the antlers flake (relocated from the
   # former ./fadein.nix + ./packages/ tarball).
   environment.systemPackages = [
-    inputs.antlers.packages.${pkgs.system}.fadein
+    inputs.antlers.packages.${pkgs.stdenv.hostPlatform.system}.fadein
   ];
 
   # Screenwriting fonts

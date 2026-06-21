@@ -7,7 +7,7 @@
   # plex-backup/plex-restore now ship from the antlers scripts collection. The
   # script defaults (data dir /var/lib/plex, backup /mnt/backup, plex:plex,
   # plex.service, :32400, retention 7) match this host, so no overrides needed.
-  plexBackup = inputs.antlers.packages.${pkgs.system}.plex-backup;
+  plexBackup = inputs.antlers.packages.${pkgs.stdenv.hostPlatform.system}.plex-backup;
 in {
   imports = [inputs.antlers.nixosModules.antlers-scripts];
 

@@ -8,5 +8,5 @@
   # (like plex-desktop) rather than through programs.antlers-scripts. Renamed from
   # the old `chromium` wrapper so it no longer shadows pkgs.chromium — invoke it as
   # `chromium-ephemeral [url]`.
-  home.packages = [inputs.antlers.packages.${pkgs.system}.chromium-ephemeral];
+  home.packages = [inputs.antlers.packages.${pkgs.stdenv.hostPlatform.system}.chromium-ephemeral];
 }
