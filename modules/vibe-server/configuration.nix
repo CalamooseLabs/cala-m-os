@@ -10,6 +10,8 @@
     port = 8080;
     user = cala-m-os.globals.defaultUser;
     group = cala-m-os.globals.userGroup;
+    protectHome = false;
+    localNetworkOnly = true;
     directories = [
       {
         name = "antlers";
