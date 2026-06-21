@@ -12,24 +12,6 @@
     group = cala-m-os.globals.userGroup;
     protectHome = false;
     localNetworkOnly = true;
-    directories = [
-      {
-        name = "antlers";
-        path = "/home/hub/01 - Projects/calamooselabs/antlers";
-      }
-      {
-        name = "cala-m-os";
-        path = "/etc/nixos";
-      }
-      {
-        name = "OpenReturn";
-        path = "/home/hub/01 - Projects/nkc/OpenReturn";
-      }
-      {
-        name = "OpenReturn-UI";
-        path = "/home/hub/01 - Projects/nkc/OpenReturn-UI";
-      }
-    ];
     openFirewall = true;
   };
 }
