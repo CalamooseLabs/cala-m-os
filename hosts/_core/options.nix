@@ -19,6 +19,24 @@
     '';
   };
 
+  options.calamoose.hardlinkLayout = lib.mkOption {
+    type = lib.types.bool;
+    default = false;
+    description = ''
+      Media import layout for hosts running qBittorrent + the *arr suite.
+
+      false (default): qBittorrent downloads to local disk and the library is
+      NFS-mounted per folder, so an *arr import copies the file across
+      filesystems into the NAS.
+
+      true: a single NFS mount of the library root (nfs.media.root) holds both
+      downloads and the library, so *arr imports become instant hardlinks (no
+      data copied). Requires the NAS to export the library root with a
+      Downloads/ dir writable by the qbittorrent uid, and the *arr root folders
+      / remote-path mappings reconfigured to the shared mount.
+    '';
+  };
+
   # Surface the host version in `nixos-version` / the boot menu entry.
   config.system.nixos.tags = ["cala-${config.calamoose.version}"];
 }

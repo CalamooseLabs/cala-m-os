@@ -37,6 +37,8 @@ in {
   networking.networkmanager.enable = lib.mkForce false;
 
   networking = {
+    # Host management traffic lives on the 2.5GbE port (eno2), shared with the
+    # torrent VM. eno1 (10GbE) is reserved for the media VM's macvtap bridge.
     interfaces.eno2 = {
       ipv4.addresses = [
         {
@@ -45,10 +47,15 @@ in {
         }
       ];
     };
+    # eno1 carries no host IP; bring the link up but suppress DHCP so the host
+    # doesn't grab a stray lease on 10.10.10.0/26 that would collide with eno2.
+    # The media VM's macvtap parent needs this interface up.
+    interfaces.eno1.useDHCP = false;
     defaultGateway = {
       address = cala-m-os.ip.lab.gateway;
-      interface = "eno1";
+      interface = "eno2";
     };
+    nameservers = [cala-m-os.ip.lab.gateway];
   };
 
   boot.kernelModules = [

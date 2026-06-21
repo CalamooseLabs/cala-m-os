@@ -76,6 +76,25 @@
         default = null;
         description = "Explicit MAC address; derived from the IP or name when null.";
       };
+
+      networkInterface = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Host interface this guest's macvtap bridge attaches to; falls back to services.cala-vm-manager.networkInterface when null.";
+      };
+
+      egressRateLimit = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        example = "1500M";
+        description = ''
+          Cap this guest's egress (TX) with a Token Bucket Filter on its primary
+          network. The value is the systemd-networkd `Rate=` in bits/s — "1500M"
+          is 1.5 Gbit/s. Stops bulk writes (e.g. *arr imports copied to the NFS
+          library) from saturating shared storage and starving other readers.
+          Null disables shaping. Burst/latency are sized automatically.
+        '';
+      };
     };
   };
 
@@ -118,7 +137,10 @@
               inherit mac;
               macvtap = {
                 mode = "bridge";
-                link = cfg.networkInterface;
+                link =
+                  if vm.networkInterface != null
+                  then vm.networkInterface
+                  else cfg.networkInterface;
               };
             }
           ];
@@ -168,25 +190,38 @@
 
         systemd.network.networks = {
           "${cala-m-os.networking.network-name}" =
-            if hasStaticIp
-            then {
-              matchConfig.MACAddress = mac;
-              address = ["${staticIp}/${cala-m-os.networking.prefixLength}"];
-              routes = [
-                {
-                  Destination = "0.0.0.0/0";
-                  Gateway = gateway;
-                  GatewayOnLink = true;
-                }
-              ];
-              networkConfig.DNS =
-                if vm.dns != null
-                then vm.dns
-                else ["${gateway}"];
-            }
-            else {
-              matchConfig.MACAddress = mac;
-              networkConfig.DHCP = "yes";
+            (
+              if hasStaticIp
+              then {
+                matchConfig.MACAddress = mac;
+                address = ["${staticIp}/${cala-m-os.networking.prefixLength}"];
+                routes = [
+                  {
+                    Destination = "0.0.0.0/0";
+                    Gateway = gateway;
+                    GatewayOnLink = true;
+                  }
+                ];
+                networkConfig.DNS =
+                  if vm.dns != null
+                  then vm.dns
+                  else ["${gateway}"];
+              }
+              else {
+                matchConfig.MACAddress = mac;
+                networkConfig.DHCP = "yes";
+              }
+            )
+            // lib.optionalAttrs (vm.egressRateLimit != null) {
+              # Shape transmit so a bulk NFS write burst can't saturate the link
+              # (and the storage behind it). Burst ≈ rate/HZ headroom; the queue
+              # is bounded by latency so backlog can't grow unbounded.
+              tokenBucketFilterConfig = {
+                Parent = "root";
+                Rate = vm.egressRateLimit;
+                BurstBytes = "2M";
+                LatencySec = "50ms";
+              };
             };
 
           "19-docker" = {

@@ -48,6 +48,12 @@
   nfs = {
     server = "nas.calamos.family";
     media = {
+      # Shared filesystem root holding both downloads and the library. Mounting
+      # this once (instead of per-folder) lets the *arr suite hardlink imports
+      # rather than copy across filesystems — see calamoose.hardlinkLayout. The
+      # NAS must export this with a Downloads/ dir writable by the qbittorrent uid.
+      root = "/mnt/Media Library";
+      downloads = "/mnt/Media Library/Downloads";
       movies = "/mnt/Media Library/Movies";
       tv-shows = "/mnt/Media Library/TV-Shows";
       lancache = "/mnt/Media Library/Cache";
