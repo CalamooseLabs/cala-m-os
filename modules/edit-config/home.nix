@@ -1,10 +1,8 @@
-{pkgs, ...}: {
-  home.packages = [
-    (pkgs.writeShellScriptBin "edit-config" ''
-      set -eux
-
-      # Run zeditor to edit the NixOS configuration
-      direnv exec /etc/nixos bash -c 'zeditor /etc/nixos'
-    '')
-  ];
+{inputs, ...}: {
+  # `edit-config` (antlers): open the NixOS config in zeditor via `direnv exec`.
+  imports = [inputs.antlers.homeManagerModules.antlers-scripts];
+  programs.antlers-scripts = {
+    enable = true;
+    edit-config.enable = true;
+  };
 }

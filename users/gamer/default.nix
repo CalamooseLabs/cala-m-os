@@ -18,6 +18,7 @@
     "openssh"
     "rofi"
     "steam"
+    "stylix"
     "waybar"
     "yubikey"
   ];

@@ -1,22 +1,16 @@
 {
   cala-m-os,
+  inputs,
   pkgs,
   ...
 }: let
-  # plex-backup — scheduled snapshot of identity + databases to the NAS.
-  plexBackup = pkgs.writeShellApplication {
-    name = "plex-backup";
-    runtimeInputs = with pkgs; [coreutils findutils util-linux sqlite];
-    text = builtins.readFile ./backup.sh;
-  };
-
-  # plex-restore — rebuild server state from the NAS backup share.
-  plexRestore = pkgs.writeShellApplication {
-    name = "plex-restore";
-    runtimeInputs = with pkgs; [coreutils findutils util-linux systemd curl gnugrep];
-    text = builtins.readFile ./restore.sh;
-  };
+  # plex-backup/plex-restore now ship from the antlers scripts collection. The
+  # script defaults (data dir /var/lib/plex, backup /mnt/backup, plex:plex,
+  # plex.service, :32400, retention 7) match this host, so no overrides needed.
+  plexBackup = inputs.antlers.packages.${pkgs.system}.plex-backup;
 in {
+  imports = [inputs.antlers.nixosModules.antlers-scripts];
+
   services.plex = {
     enable = true;
     openFirewall = true;
@@ -45,8 +39,15 @@ in {
     fsType = "nfs";
   };
 
-  # Admin tooling: snapshot the server, and restore it after a rebuild.
-  environment.systemPackages = [plexBackup plexRestore];
+  # Admin tooling: snapshot the server (plex-backup), and restore it after a
+  # rebuild (plex-restore). Installed via the antlers scripts module.
+  programs.antlers-scripts = {
+    enable = true;
+    plex = {
+      backup.enable = true;
+      restore.enable = true;
+    };
+  };
 
   # Daily backup of Preferences.xml + the Plex databases to the NAS share.
   systemd.services.plex-backup = {

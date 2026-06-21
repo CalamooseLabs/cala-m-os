@@ -1,11 +1,10 @@
 {
   cala-m-os,
-  pkgs,
-  lib,
+  inputs,
   ...
-}: let
-  arrRestore = import ../arr-restore/restore.nix {inherit pkgs lib;};
-in {
+}: {
+  imports = [inputs.antlers.nixosModules.antlers-scripts];
+
   services.radarr = {
     enable = true;
     openFirewall = true;
@@ -26,14 +25,14 @@ in {
   };
 
   # radarr-restore — rebuild state from the newest backup zip on the NAS share
-  # (Radarr writes its own scheduled backups there). Mirrors plex-restore.
-  environment.systemPackages = [
-    (arrRestore {
-      app = "radarr";
-      db = "radarr.db";
-      dataDir = "/var/lib/radarr/.config/Radarr";
+  # (Radarr writes its own scheduled backups there). From the antlers scripts
+  # collection (the generic arr-restore tool, instantiated for radarr).
+  programs.antlers-scripts = {
+    enable = true;
+    arr-restore.instances.radarr = {
       port = 7878;
-      backup = "/mnt/backups/radarr";
-    })
-  ];
+      dataDir = "/var/lib/radarr/.config/Radarr";
+      backupDir = "/mnt/backups/radarr";
+    };
+  };
 }

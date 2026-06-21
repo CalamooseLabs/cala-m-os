@@ -1,29 +1,17 @@
 {
+  inputs,
   config,
-  pkgs,
   lib,
   ...
 }: let
   cfg = config.programs.github-repo-puller;
-
-  repoMap =
-    lib.concatStringsSep "\n"
-    (lib.mapAttrsToList (ref: dir: "${ref} ${dir}") cfg.repos);
-
-  puller = pkgs.writeShellApplication {
-    name = "github-repo-puller";
-    runtimeInputs = with pkgs; [git curl jq coreutils];
-    text = ''
-      if [ "$(id -u)" -eq 0 ]; then
-        echo "Run github-repo-puller as your user, not root — the clones must be owned by you." >&2
-        exit 1
-      fi
-
-      REPO_MAP=${lib.escapeShellArg repoMap}
-      ${builtins.readFile ./github-repo-puller.sh}
-    '';
-  };
 in {
+  # github-repo-puller now ships from the antlers scripts collection. This module
+  # keeps the `programs.github-repo-puller` facade (enable + repos) and delegates
+  # the install to antlers. hosts/ai reads `.repos` to persist the clone dirs, so
+  # the option must stay defined here.
+  imports = [inputs.antlers.nixosModules.antlers-scripts];
+
   options.programs.github-repo-puller = {
     enable = lib.mkEnableOption "the github-repo-puller command (clone/fast-forward configured GitHub repos on demand)";
 
@@ -43,6 +31,12 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = [puller];
+    programs.antlers-scripts = {
+      enable = true;
+      github-repo-puller = {
+        enable = true;
+        repos = cfg.repos;
+      };
+    };
   };
 }

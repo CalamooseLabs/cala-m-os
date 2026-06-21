@@ -11,18 +11,23 @@
     presets = {
       "Antlers" = {
         directories = ["/home/hub/01 - Projects/calamooselabs/antlers"];
+        pushRequiresTouch = true;
       };
       "Cala-M-OS" = {
         directories = ["/etc/nixos"];
+        pushRequiresTouch = true;
       };
       "OpenReturn" = {
         directories = ["/home/hub/01 - Projects/nkc/OpenReturn" "/home/hub/01 - Projects/nkc/OpenReturn-UI"];
+        pushRequiresTouch = true;
       };
       "Kintsugi" = {
         directories = ["/home/hub/01 - Projects/calamooselabs/kintsugi"];
+        pushRequiresTouch = true;
       };
       "CalamooseLabs" = {
         directories = ["/etc/nixos" "/home/hub/01 - Projects/calamooselabs/antlers"];
+        pushRequiresTouch = true;
       };
     };
   };

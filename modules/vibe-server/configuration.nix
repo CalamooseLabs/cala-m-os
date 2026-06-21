@@ -13,5 +13,6 @@
     protectHome = false;
     localNetworkOnly = true;
     openFirewall = true;
+    commitPush.enable = true;
   };
 }

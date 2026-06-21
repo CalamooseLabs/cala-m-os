@@ -1,9 +1,15 @@
-{pkgs, ...}: let
-  fadein = pkgs.callPackage ./fadein.nix {};
-in {
+{
+  inputs,
+  pkgs,
+  ...
+}: {
   nixpkgs.config.allowUnfree = true;
 
-  environment.systemPackages = [fadein];
+  # Fade In screenwriting app — now from the antlers flake (relocated from the
+  # former ./fadein.nix + ./packages/ tarball).
+  environment.systemPackages = [
+    inputs.antlers.packages.${pkgs.system}.fadein
+  ];
 
   # Screenwriting fonts
   fonts.packages = with pkgs; [

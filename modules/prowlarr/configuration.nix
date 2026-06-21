@@ -1,11 +1,10 @@
 {
   cala-m-os,
-  pkgs,
-  lib,
+  inputs,
   ...
-}: let
-  arrRestore = import ../arr-restore/restore.nix {inherit pkgs lib;};
-in {
+}: {
+  imports = [inputs.antlers.nixosModules.antlers-scripts];
+
   services.prowlarr = {
     enable = true;
     openFirewall = true;
@@ -26,16 +25,16 @@ in {
   };
 
   # prowlarr-restore — rebuild state from the newest backup zip on the NAS share
-  # (Prowlarr writes its own scheduled backups there). Mirrors plex-restore.
+  # (Prowlarr writes its own scheduled backups there). From the antlers scripts
+  # collection (the generic arr-restore tool, instantiated for prowlarr).
   # dataDir resolves through systemd's DynamicUser StateDirectory symlink; the
   # script chowns restored files to match the dir's (runtime-allocated) owner.
-  environment.systemPackages = [
-    (arrRestore {
-      app = "prowlarr";
-      db = "prowlarr.db";
-      dataDir = "/var/lib/prowlarr";
+  programs.antlers-scripts = {
+    enable = true;
+    arr-restore.instances.prowlarr = {
       port = 9696;
-      backup = "/mnt/backups/prowlarr";
-    })
-  ];
+      dataDir = "/var/lib/prowlarr";
+      backupDir = "/mnt/backups/prowlarr";
+    };
+  };
 }

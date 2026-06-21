@@ -1,15 +1,10 @@
-{pkgs, ...}: {
-  home.packages = [
-    (pkgs.writeShellScriptBin "rebuild-config" ''
-      set -eux
-
-      config_path="/etc/nixos"
-
-      if [ -n "$(git -C $config_path status --porcelain)" ]; then
-        lazygit -p $config_path
-      fi
-
-      nh os switch $config_path
-    '')
-  ];
+{inputs, ...}: {
+  # `rebuild-config` now ships from the antlers scripts collection: lazygit (when
+  # the tree is dirty) then `nh os switch`. configPath defaults to /etc/nixos;
+  # override with programs.antlers-scripts.rebuild-config.configPath if needed.
+  imports = [inputs.antlers.homeManagerModules.antlers-scripts];
+  programs.antlers-scripts = {
+    enable = true;
+    rebuild-config.enable = true;
+  };
 }

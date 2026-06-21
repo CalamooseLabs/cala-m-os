@@ -1,28 +1,12 @@
-{pkgs, ...}: {
-  home.packages = [
-    (pkgs.writeShellScriptBin "chromium" ''
-      set -eu
-
-      # Non-persistent: every launch gets a fresh, throwaway profile that is
-      # deleted when the browser exits. Nothing — history, cookies, cache,
-      # logins — survives across runs. Prefer the per-user tmpfs runtime dir
-      # so it never touches persistent storage.
-      profile="$(mktemp -d "''${XDG_RUNTIME_DIR:-/tmp}/chromium-ephemeral.XXXXXX")"
-      trap 'rm -rf "$profile"' EXIT
-
-      # ungoogled-chromium already strips Google's telemetry, sync and tracking
-      # integrations at build time; the flags below silence the remaining
-      # background chatter and first-run/crash nags. Args ("$@") pass through,
-      # so `chromium <url>` works.
-      ${pkgs.ungoogled-chromium}/bin/chromium \
-        --user-data-dir="$profile" \
-        --no-first-run \
-        --no-default-browser-check \
-        --disable-session-crashed-bubble \
-        --disable-background-networking \
-        --disable-breakpad \
-        --no-pings \
-        "$@"
-    '')
-  ];
+{
+  inputs,
+  pkgs,
+  ...
+}: {
+  # `chromium-ephemeral` (antlers): ungoogled-chromium with a throwaway, deleted-
+  # on-exit profile. A zero-config wrapper, so it's consumed as a plain package
+  # (like plex-desktop) rather than through programs.antlers-scripts. Renamed from
+  # the old `chromium` wrapper so it no longer shadows pkgs.chromium — invoke it as
+  # `chromium-ephemeral [url]`.
+  home.packages = [inputs.antlers.packages.${pkgs.system}.chromium-ephemeral];
 }

@@ -6,6 +6,7 @@
     "bash"
     "bat"
     "btop"
+    "chromium"
     "ghostty"
     "git"
     "neovim"

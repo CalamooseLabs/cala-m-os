@@ -1,18 +1,12 @@
 {...}: {pkgs, ...}: {
+  # Browser on this ephemeral lab box is the antlers `chromium-ephemeral`
+  # (throwaway profile), enabled via the "chromium" module in ./default.nix.
+  # Replaced programs.librewolf — its pinned build was flagged insecure, and a
+  # throwaway-profile browser fits an impermanent machine. (The old librewolf
+  # force-installed a teleprompter-mirror Firefox addon; chromium can't, so that
+  # browser overlay is dropped — the standalone `teleprompter` app still ships.)
   home.packages = [
     pkgs.usbutils
     pkgs.pciutils
   ];
-
-  programs.librewolf = {
-    enable = true;
-    policies = {
-      ExtensionSettings = {
-        "{8098af5e-6cd0-48df-9870-60be72d7089a}" = {
-          install_url = "https://addons.mozilla.org/firefox/downloads/latest/teleprompter-mirror/latest.xpi";
-          installation_mode = "force_installed";
-        };
-      };
-    };
-  };
 }

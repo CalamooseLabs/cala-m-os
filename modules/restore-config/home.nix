@@ -1,15 +1,8 @@
-{pkgs, ...}: {
-  home.packages = [
-    (pkgs.writeShellScriptBin "restore-config" ''
-      set -eux
-
-      config_path="/etc/nixos"
-
-      sudo nix-store --verify --repair
-      nh os switch $config_path
-
-      # Reset network manager
-      sudo systemctl restart NetworkManager
-    '')
-  ];
+{inputs, ...}: {
+  # `restore-config` (antlers): repair the Nix store, `nh os switch`, restart NM.
+  imports = [inputs.antlers.homeManagerModules.antlers-scripts];
+  programs.antlers-scripts = {
+    enable = true;
+    restore-config.enable = true;
+  };
 }

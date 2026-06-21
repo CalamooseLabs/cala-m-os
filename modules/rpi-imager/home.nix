@@ -1,10 +1,8 @@
-{pkgs, ...}: {
-  # Install rpi-imager with a wrapper that sets environment variables
-  home.packages = [
-    (pkgs.writeShellScriptBin "pi-imager" ''
-      export QT_STYLE_OVERRIDE=fusion
-      export QT_QPA_PLATFORM=wayland
-      exec ${pkgs.rpi-imager}/bin/rpi-imager "$@"
-    '')
-  ];
+{inputs, ...}: {
+  # `pi-imager` (antlers): Raspberry Pi Imager with the Wayland/fusion Qt env set.
+  imports = [inputs.antlers.homeManagerModules.antlers-scripts];
+  programs.antlers-scripts = {
+    enable = true;
+    pi-imager.enable = true;
+  };
 }
