@@ -4,7 +4,7 @@
 #                                #
 ##################################
 {...}: let
-  import_users = ["mixer"];
+  import_users = ["gamer"];
 
   machine_type = "Workstation";
   machine_uuid = "B850-MAX";

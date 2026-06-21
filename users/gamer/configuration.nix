@@ -1,6 +1,4 @@
 {username, ...}: {pkgs, ...}: {
-  imports = [./routes.nix];
-
   users.users."${username}" = {
     extraGroups = ["wheel" "networkmanager" "disk" "plugdev" "video" "audio" "kvm" "gamemode" "render" "dialout"];
     openssh.authorizedKeys.keyFiles = [

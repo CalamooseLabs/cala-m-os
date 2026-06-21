@@ -42,7 +42,7 @@ in {
     })
   ];
 
-  networking.hostName = "viber";
+  networking.hostName = "ai";
 
   # TTY-only: no greeter / compositor.
   services.greetd.enable = lib.mkForce false;

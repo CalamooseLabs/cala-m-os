@@ -11,11 +11,14 @@
     "git"
     "hyprland"
     "hytale"
-    "lanserver"
+    "librewolf"
     "minecraft"
+    "neovim"
     "nh"
     "openssh"
+    "rofi"
     "steam"
+    "waybar"
     "yubikey"
   ];
 in {

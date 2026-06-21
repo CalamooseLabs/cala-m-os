@@ -7,8 +7,6 @@
   import_users = ["server"];
 
   machine_type = "VM";
-  # Medium (6 vCPU / 16 GB) — headroom for any CPU-bound Plex transcode steps
-  # (HDR tone-mapping, image-subtitle burn-in) alongside B50 HW decode/encode.
   machine_uuid = "Medium";
 in {
   calamoose.version = "0.9.0-beta";

@@ -8,7 +8,7 @@
   pkgs,
   ...
 }: let
-  import_users = ["gamer-vm"];
+  import_users = ["gamer"];
 
   machine_type = "VM";
   machine_uuid = "Large";
