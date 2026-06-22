@@ -10,7 +10,6 @@
     "obs-studio"
     "openssh"
     "teleprompter"
-    "waybar"
   ];
 in {
   inherit modules;

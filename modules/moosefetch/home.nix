@@ -37,4 +37,6 @@
       "colors"
     ];
   };
+
+  programs.bash.initExtra = "moosefetch";
 }
