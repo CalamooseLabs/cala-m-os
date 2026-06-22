@@ -65,8 +65,5 @@
 
   networking.firewall.allowedTCPPorts = [8080 8000];
 
-  # Provision a spare Yubikey from this one (clone OpenPGP git-signing/SSH keys;
-  # fresh FIDO2 + age identities). NOTE: requires an antlers newer than the pinned
-  # flake.lock — push antlers and `nix flake update antlers` before this evaluates.
-  programs.yubikey-clone.enable = true;
+  programs.yubikey-provision.enable = true;
 }
