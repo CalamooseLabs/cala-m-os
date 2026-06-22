@@ -3,11 +3,14 @@
     # Autostart the OBS kiosk (the niri module's spawn-at-startup equivalent).
     exec-once = ["obs-kiosk"];
 
-    # Pin the compositor's primary renderer to the Intel Arc A310 and include the
-    # DisplayLink (evdi) card, so Hyprland renders LINEAR buffers the teleprompter
-    # can scan out. nvidia is intentionally excluded here — it stays free for OBS
-    # NVENC. Stable symlinks come from the intel-gpu module's udev rules.
-    env = ["AQ_DRM_DEVICES,/dev/dri/intel-card:/dev/dri/displaylink-card"];
+    # NOTE: the primary-renderer pinning (AQ_DRM_DEVICES → Intel Arc A310 + the
+    # DisplayLink/evdi card, nvidia excluded for OBS NVENC) now lives in
+    # hosts/broadcast/configuration.nix as environment.sessionVariables. Aquamarine
+    # reads AQ_DRM_DEVICES once, when the DRM backend starts; an in-config `env=`
+    # here is honored on first launch but is NOT re-applied on a Hyprland config
+    # reload (the first-launch guard), so a reload could silently leave the
+    # renderer unpinned. Exporting it in the session env (present before the
+    # compositor execs) makes the pinning reload-immune.
 
     # Force fullscreen surfaces through composition instead of direct scanout.
     # OBS is PRIME-offloaded to the RTX PRO 4000, so its window buffers are
