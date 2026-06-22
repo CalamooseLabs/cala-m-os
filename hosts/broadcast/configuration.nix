@@ -37,14 +37,22 @@ in {
   environment.sessionVariables = {
     AQ_DRM_DEVICES = "/dev/dri/intel-card:/dev/dri/displaylink-card";
 
-    # evdi/DisplayLink does not support non-blocking ATOMIC page-flips. Aquamarine's
-    # atomic commit to the prompter's CRTC fails once at modeset with EBUSY ("atomic
-    # drm request: failed to commit: Device or resource busy", flags ATOMIC_NONBLOCK
-    # PAGE_FLIP_EVENT); the non-blocking flip never returns a completion event, so the
-    # output stalls and presents nothing — permanently black even though it is enabled
-    # and correctly modeset with LINEAR buffers. Force the legacy DRM API, which evdi
-    # supports. Global (also moves the Arc-driven JetKVM to legacy KMS, which is fine).
-    AQ_NO_ATOMIC = "1";
+    # The teleprompter is a multi-GPU SECONDARY scanout: Hyprland renders on the Arc,
+    # then Aquamarine imports that buffer straight onto the evdi CRTC (per aquamarine
+    # PR#25 evdi gets primary={}/rendererRequired=false, so it's a direct drmModeAddFB2,
+    # no blit/CPU copy). evdi planes are LINEAR-only, but the discrete Arc A310 (DG2)
+    # renders in Tile4/Y-tiled modifiers, so the tiled buffer fails to cross-import to
+    # the evdi plane → connector enabled+modeset but the panel stays black ("Buffer
+    # failed to import to KMS"). AQ_NO_MODIFIERS forces the AddFB2-WITHOUT-modifiers
+    # path so the import succeeds. (devbox works because its AMD iGPU primary emits
+    # LINEAR-friendly buffers that cross-import cleanly.) NOTE: AQ_NO_ATOMIC was tried
+    # and removed — it is "heavily not recommended", never un-blacks a panel, and the
+    # legacy path lacks the per-plane atomic semantics this cross-GPU hand-off needs.
+    AQ_NO_MODIFIERS = "1";
+
+    # evdi has no real GPU sync timeline; an explicit fence on the cross-GPU buffer may
+    # never signal and present a blank frame. Disable explicit sync on mgpu buffers.
+    AQ_MGPU_NO_EXPLICIT = "1";
   };
 
   # Audio for OBS streaming and monitoring
