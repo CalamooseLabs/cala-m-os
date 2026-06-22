@@ -13,7 +13,7 @@
         {
           proto = "virtiofs";
           tag = "games";
-          source = "/vm-data";
+          source = "/recordings";
           mountPoint = "/mnt/games";
         }
       ];
@@ -31,7 +31,7 @@
         {
           proto = "virtiofs";
           tag = "games";
-          source = "/vm-data";
+          source = "/recordings";
           mountPoint = "/mnt/games";
         }
       ];
@@ -49,7 +49,7 @@
         {
           proto = "virtiofs";
           tag = "games";
-          source = "/vm-data";
+          source = "/recordings";
           mountPoint = "/mnt/games";
         }
       ];

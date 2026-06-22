@@ -41,7 +41,7 @@
               size = "100%";
               content = {
                 type = "mdraid";
-                name = "vm-data";
+                name = "recordings";
               };
             };
           };
@@ -58,7 +58,7 @@
               size = "100%";
               content = {
                 type = "mdraid";
-                name = "vm-data";
+                name = "recordings";
               };
             };
           };
@@ -68,13 +68,13 @@
 
     # mdadm RAID 0 Array Configuration
     mdadm = {
-      vm-data = {
+      recordings = {
         type = "mdadm";
         level = 0; # RAID 0 (striping)
         content = {
           type = "filesystem";
           format = "xfs"; # XFS for best performance
-          mountpoint = "/vm-data";
+          mountpoint = "/recordings";
           mountOptions = [
             "defaults"
             "noatime"

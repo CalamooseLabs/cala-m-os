@@ -34,7 +34,18 @@ in {
   # does not re-apply config `env=` on reload — the session var is present before
   # the compositor execs and survives reloads. Order matters: intel-card is first,
   # so the Arc is the primary renderer.
-  environment.sessionVariables.AQ_DRM_DEVICES = "/dev/dri/intel-card:/dev/dri/displaylink-card";
+  environment.sessionVariables = {
+    AQ_DRM_DEVICES = "/dev/dri/intel-card:/dev/dri/displaylink-card";
+
+    # evdi/DisplayLink does not support non-blocking ATOMIC page-flips. Aquamarine's
+    # atomic commit to the prompter's CRTC fails once at modeset with EBUSY ("atomic
+    # drm request: failed to commit: Device or resource busy", flags ATOMIC_NONBLOCK
+    # PAGE_FLIP_EVENT); the non-blocking flip never returns a completion event, so the
+    # output stalls and presents nothing — permanently black even though it is enabled
+    # and correctly modeset with LINEAR buffers. Force the legacy DRM API, which evdi
+    # supports. Global (also moves the Arc-driven JetKVM to legacy KMS, which is fine).
+    AQ_NO_ATOMIC = "1";
+  };
 
   # Audio for OBS streaming and monitoring
   security.rtkit.enable = true;
