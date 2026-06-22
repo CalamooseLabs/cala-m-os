@@ -27,8 +27,8 @@
         layout = lib.mkDefault "scrolling";
 
         # Custom feel: more breathing room + a thin accent-gradient border.
-        gaps_in = 5;
-        gaps_out = 12;
+        gaps_in = 2;
+        gaps_out = 8;
         border_size = 2;
         # cyan -> green accent gradient (matches the waybar accents). mkForce to
         # win over stylix's hyprland border theming.
@@ -43,8 +43,8 @@
       # --- Custom window look ------------------------------------------------
       decoration = {
         rounding = 10;
-        active_opacity = 0.96;
-        inactive_opacity = 0.90;
+        active_opacity = 1.0;
+        inactive_opacity = 0.94;
 
         blur = {
           enabled = true;
@@ -74,6 +74,10 @@
           "windows, 1, 5, wind, slide"
           "windowsIn, 1, 5, overshot, slide"
           "windowsOut, 1, 4, smoothOut, slide"
+          # windowsMove governs the reflow when the waybar strip is reclaimed on
+          # collapse/expand — a touch slower so windows visibly glide up/down to
+          # fill the space instead of snapping.
+          "windowsMove, 1, 6, wind"
           "border, 1, 8, default"
           "fade, 1, 6, default"
           "workspaces, 1, 5, wind"
@@ -82,14 +86,17 @@
 
       # Tasteful rules for the windows Hyprland spawns: common dialogs float,
       # picture-in-picture floats + stays pinned.
+      #
+      # Hyprland 0.55 retired the old `windowrule = <effect>, <matcher>` /
+      # windowrulev2 syntax. Matchers are now `match:<prop> <regex>`, effects
+      # take explicit values (`float on`), and several effects can share a line.
       windowrule = [
-        "float, class:^(pavucontrol)$"
-        "float, class:^(nm-connection-editor)$"
-        "float, class:^(org.gnome.Calculator)$"
-        "float, title:^(Open File)(.*)$"
-        "float, title:^(Save File)(.*)$"
-        "float, title:^(Picture-in-Picture)$"
-        "pin, title:^(Picture-in-Picture)$"
+        "match:class ^(pavucontrol)$, float on"
+        "match:class ^(nm-connection-editor)$, float on"
+        "match:class ^(org.gnome.Calculator)$, float on"
+        "match:title ^(Open File)(.*)$, float on"
+        "match:title ^(Save File)(.*)$, float on"
+        "match:title ^(Picture-in-Picture)$, float on, pin on"
       ];
 
       misc = {
@@ -124,6 +131,8 @@
         "$mod, Q, killactive"
         "$mod SHIFT, F, fullscreen"
         "$mod, space, exec, pkill rofi || rofi-persona"
+        # toggle the collapsible waybar (pairs with cala.waybar.collapse)
+        "$mod, W, exec, cala-waybar-collapse"
 
         "$mod, period, layoutmsg, swapcol r"
         "$mod, comma, layoutmsg, swapcol l"

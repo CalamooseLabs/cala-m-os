@@ -41,7 +41,11 @@
   # so it never reserves space; starts hidden (expanded is the default state).
   capConfig = pkgs.writeText "waybar-cap-config.jsonc" (builtins.toJSON {
     name = "cap";
-    layer = "top";
+    # Overlay, NOT top: while collapsed the main bar goes invisible but its
+    # surface stays mapped on the "top" layer across the whole strip. On "top"
+    # the cap stacks *under* it, so clicks on the handle hit the dead main bar
+    # (only the keybind worked). Overlay sits above "top" -> the ❮ is clickable.
+    layer = "overlay";
     position = "top";
     exclusive = false;
     passthrough = false;
@@ -67,15 +71,18 @@
     window#waybar.cap {
       background: transparent;
     }
+    /* Identical to the bar's left end cap (#custom-collapse), just the arrow
+       pointing the other way (❮ = pull the bar back out). */
     #custom-cap {
       background: rgba(30, 33, 35, 0.92);
-      color: #c9d05c;
+      color: #b8b8b8;
       margin: 6px 0;
       padding: 4px 16px;
       border-radius: 18px 0 0 18px;
+      transition: color 200ms ease;
     }
     #custom-cap:hover {
-      color: #eeeeee;
+      color: #73cef4;
     }
   '';
 

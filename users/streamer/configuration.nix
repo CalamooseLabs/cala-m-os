@@ -1,8 +1,4 @@
-{username, ...}: {
-  config,
-  pkgs,
-  ...
-}: {
+{username, ...}: {...}: {
   # OBS kiosk launcher — now the shared modules/obs-kiosk (deduped with niri).
   imports = [../../modules/obs-kiosk/configuration.nix];
 
@@ -44,5 +40,6 @@
   services.bitfocus-companion = {
     adminInterface = "enp66s0";
     openFirewall = true;
+    user = "${username}";
   };
 }
