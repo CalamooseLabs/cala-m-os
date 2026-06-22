@@ -29,6 +29,9 @@ in {
 
   networking.hostName = "devbox";
 
+  # Drifting (animated) lockscreen background on the laptop.
+  cala.lockscreen.background = "static";
+
   # Enable CUPS to print documents.
   services.avahi = {
     enable = true;

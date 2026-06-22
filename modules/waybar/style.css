@@ -1,70 +1,84 @@
+/* Right-docked bar — flush against the right screen edge (flat right end),
+   rounded left cap. The music capsule is the leftmost element: it slides out
+   to the left while a track is playing and tucks back to a slim rounded cap
+   when idle. The slide is a GTK CSS transition on the capsule's min-width,
+   toggled by the "playing"/"stopped" class the exec script emits. */
+
 * {
-  font-size: 17px;
+  font-family: "MesloLGS NF";
+  font-size: 15px;
   min-height: 0;
 }
 
 window#waybar {
   background: transparent;
-  margin: 5px 5px;
 }
 
-#workspaces {
-  border-radius: 1rem;
-  margin: 5px 0px;
-  margin-left: 1rem;
-}
-
-#workspaces button {
-  border-radius: 1rem;
-  padding: 0.5rem;
-}
-
-#workspaces button.active {
-  border-radius: 1rem;
-}
-
-#workspaces button:hover {
-  border-radius: 1rem;
-}
-
+/* shared pill body: same background, no horizontal gaps, floats 6px from top */
 #custom-music,
-#tray,
+#custom-persona,
+#clock,
+#pulseaudio,
 #network,
 #backlight,
-#clock,
 #battery,
-#pulseaudio,
-#custom-lock,
 #custom-power {
-  padding: 0.5rem 1rem;
-  margin: 5px 0;
+  background: rgba(30, 33, 35, 0.92);
+  margin: 6px 0;
+  padding: 4px 11px;
+  color: #cdd6d4;
 }
 
-#clock {
-  border-radius: 0px 1rem 1rem 0px;
-  margin-right: 1rem;
-}
-
-#backlight,
-#battery {
-  border-radius: 0;
-}
-
-#pulseaudio {
-  border-radius: 1rem 0px 0px 1rem;
-  margin-left: 1rem;
-}
-
+/* the rounded left cap = the now-playing capsule (animated) */
 #custom-music {
-  border-radius: 1rem;
+  border-radius: 18px 0 0 18px;
+  color: #c9d05c;
+  transition:
+    min-width 380ms cubic-bezier(0.25, 0.1, 0.25, 1),
+    padding 380ms cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+#custom-music.playing {
+  min-width: 200px;
+  padding: 4px 16px 4px 18px;
+}
+#custom-music.stopped {
+  min-width: 0;
+  padding: 4px 4px 4px 12px; /* slim rounded cap, the space char stays hidden */
 }
 
+/* flat, flush right end = the power button */
 #custom-power {
-  margin-right: 1rem;
-  border-radius: 1rem;
+  border-radius: 0;
+  margin-right: 0;
+  padding: 4px 15px;
+  color: #f43753;
 }
 
-#tray {
-  margin-right: 1rem;
-  border-radius: 1rem;
+/* subtle dividers between groups (now-playing | clock | stats) */
+#clock,
+#pulseaudio {
+  border-left: 1px solid rgba(238, 238, 238, 0.1);
+}
+
+/* the clock is the bright focal element */
+#clock {
+  color: #eeeeee;
+  font-weight: bold;
+}
+
+/* accent-colored status glyphs (each Waybar module is a single color) */
+#pulseaudio {
+  color: #eeeeee;
+}
+#network {
+  color: #73cef4;
+}
+#backlight {
+  color: #ffc24b;
+}
+#battery {
+  color: #c9d05c;
+}
+#custom-persona {
+  color: #b8b8b8;
 }
