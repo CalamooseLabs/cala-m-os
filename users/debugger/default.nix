@@ -60,6 +60,7 @@
     "wifi"
     "yazi"
     "yubikey"
+    "yubikey-clone"
     "zathura"
     "zed-editor"
   ];
