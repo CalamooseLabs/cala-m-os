@@ -30,6 +30,7 @@
     "ios"
     "lazygit"
     "minecraft"
+    "moosefetch"
     "neovim"
     "nh"
     "obs-studio"
