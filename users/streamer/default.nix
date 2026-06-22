@@ -7,6 +7,7 @@
     "bitfocus-companion"
     "fonts"
     "hyprland"
+    "moosefetch"
     "obs-studio"
     "openssh"
     "teleprompter"
