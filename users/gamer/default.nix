@@ -13,6 +13,7 @@
     "hyprland"
     "hytale"
     "minecraft"
+    "moosefetch"
     "neovim"
     "nh"
     "openssh"

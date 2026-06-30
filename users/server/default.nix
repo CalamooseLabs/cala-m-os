@@ -7,6 +7,7 @@
     "bat"
     "btop"
     "git"
+    "moosefetch"
     "neovim"
     "nh"
     "openssh"

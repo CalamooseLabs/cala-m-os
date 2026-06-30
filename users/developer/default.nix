@@ -9,6 +9,7 @@
     "github-repo-puller"
     "gpg"
     "gpg-key-import"
+    "moosefetch"
     "nh"
     "openssh"
     "ssh-key-import"

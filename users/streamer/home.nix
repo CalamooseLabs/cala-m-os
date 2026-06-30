@@ -3,6 +3,12 @@
     # Autostart the OBS kiosk (the niri module's spawn-at-startup equivalent).
     exec-once = ["obs-kiosk"];
 
+    # Mirror the teleprompter horizontally (transform 4 = flipped) so text reads
+    # correctly through the beam-splitter glass. Position keeps it to the right of
+    # the JetKVM (HDMI-A-1 at 0x0). evdi has no hardware transform, so Hyprland
+    # renders the flip in composition — fine for the prompter's low-motion content.
+    monitor = ["DVI-I-1, 1920x1080@60, 1920x0, 1, transform, 4"];
+
     # NOTE: the primary-renderer pinning (AQ_DRM_DEVICES → AMD GPU + the
     # DisplayLink/evdi card, nvidia excluded for OBS NVENC) now lives in
     # hosts/broadcast/configuration.nix as environment.sessionVariables. Aquamarine
