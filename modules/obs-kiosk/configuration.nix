@@ -1,8 +1,8 @@
 # Shared obs-kiosk launcher — deduplicated from modules/niri and users/streamer
-# (both imported the same script). PRIME-offloads OBS (compositing + NVENC) onto
-# the discrete NVIDIA RTX PRO 4000 while the AMD GPU drives the desktop +
-# DisplayLink teleprompter. This is welded to that dual-GPU studio box (hardcoded
-# /run/opengl-driver paths + NVIDIA glvnd), so it stays in the config rather than
+# (both imported the same script). Runs OBS on the AMD GPU (same renderer as the
+# compositor, so the preview + capture sources import cleanly) and lets NVENC
+# encode on the NVIDIA card via libnvidia-encode. This is welded to that studio
+# box (hardcoded /run/opengl-driver path), so it stays in the config rather than
 # moving to the portable antlers collection.
 #
 # Usage:
@@ -88,14 +88,16 @@
 
         export LD_LIBRARY_PATH=/run/opengl-driver/lib''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 
-        # PRIME render offload: run OBS (compositing + NVENC) on the NVIDIA RTX PRO
-        # 4000, while the AMD GPU drives the desktop + DisplayLink teleprompter.
-        # NVENC itself works regardless; this keeps OBS's own GL rendering off the
-        # weak Arc and avoids a cross-GPU readback.
-        export __NV_PRIME_RENDER_OFFLOAD=1
-        export __GLX_VENDOR_LIBRARY_NAME=nvidia
-        nvjson=$(ls /run/opengl-driver/share/glvnd/egl_vendor.d/*nvidia*.json 2>/dev/null | head -1 || true)
-        if [ -n "$nvjson" ]; then export __EGL_VENDOR_LIBRARY_FILENAMES="$nvjson"; fi
+        # Render OBS on the AMD GPU — the SAME GPU the compositor renders on — so
+        # OBS's preview surface and screen-capture sources stay same-vendor and
+        # import into the AMD-composited desktop cleanly. (The old
+        # __NV_PRIME_RENDER_OFFLOAD made OBS render on the NVIDIA card while the
+        # desktop renders on AMD; those nvidia buffers could not be imported back to
+        # the AMD compositor → black OBS preview and black capture sources — the
+        # same cross-vendor wall that blocks nvidia→evdi.) NVENC is unaffected: OBS's
+        # NVENC encoder talks to the NVIDIA card directly via libnvidia-encode (kept
+        # on LD_LIBRARY_PATH above), independent of which GPU OBS renders on — so
+        # hardware encoding stays available while the preview works.
 
         exec ${config.programs.obs-studio.finalPackage}/bin/obs
       '')
