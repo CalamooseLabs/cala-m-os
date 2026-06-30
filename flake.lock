@@ -782,6 +782,26 @@
         "type": "github"
       }
     },
+    "multichat": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1782848900,
+        "narHash": "sha256-8YFnfM83H7InR5gN7z+DTUElMeVpMEUf6ctsU86BZk8=",
+        "owner": "The-Company-Inc-Nerds",
+        "repo": "multichat",
+        "rev": "20188062480ccb93d5c0b7d8a322d8f454e60509",
+        "type": "github"
+      },
+      "original": {
+        "owner": "The-Company-Inc-Nerds",
+        "repo": "multichat",
+        "type": "github"
+      }
+    },
     "nixos-hardware": {
       "inputs": {
         "nixpkgs": "nixpkgs"
@@ -945,6 +965,7 @@
         "hyprland": "hyprland",
         "hyprland-plugins": "hyprland-plugins",
         "microvm": "microvm",
+        "multichat": "multichat",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_2",
         "openreturn": "openreturn",

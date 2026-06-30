@@ -8,6 +8,7 @@
     "fonts"
     "hyprland"
     "moosefetch"
+    "multichat"
     "obs-studio"
     "openssh"
     "teleprompter"

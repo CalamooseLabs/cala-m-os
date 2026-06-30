@@ -19,7 +19,6 @@ in {
       users_list = import_users;
       machine_type = machine_type;
       machine_uuid = machine_uuid;
-      extra_user_modules = {};
     })
   ];
 
