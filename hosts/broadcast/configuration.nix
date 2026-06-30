@@ -25,35 +25,23 @@ in {
 
   networking.hostName = "broadcast";
 
-  # Pin Hyprland's (Aquamarine) primary renderer to the Intel Arc A310 and include
-  # the DisplayLink (evdi) card, so the compositor renders LINEAR buffers the
-  # teleprompter can scan out. NVIDIA (RTX PRO 4000) is intentionally excluded — it
-  # stays free for OBS NVENC. Stable symlinks come from the intel-gpu module's udev
-  # rules. This lives in the session environment (not Hyprland's in-config `env=`)
-  # because Aquamarine reads AQ_DRM_DEVICES once at DRM-backend start and Hyprland
-  # does not re-apply config `env=` on reload — the session var is present before
-  # the compositor execs and survives reloads. Order matters: intel-card is first,
-  # so the Arc is the primary renderer.
-  environment.sessionVariables = {
-    AQ_DRM_DEVICES = "/dev/dri/intel-card:/dev/dri/displaylink-card";
-
-    # The teleprompter is a multi-GPU SECONDARY scanout: Hyprland renders on the Arc,
-    # then Aquamarine imports that buffer straight onto the evdi CRTC (per aquamarine
-    # PR#25 evdi gets primary={}/rendererRequired=false, so it's a direct drmModeAddFB2,
-    # no blit/CPU copy). evdi planes are LINEAR-only, but the discrete Arc A310 (DG2)
-    # renders in Tile4/Y-tiled modifiers, so the tiled buffer fails to cross-import to
-    # the evdi plane → connector enabled+modeset but the panel stays black ("Buffer
-    # failed to import to KMS"). AQ_NO_MODIFIERS forces the AddFB2-WITHOUT-modifiers
-    # path so the import succeeds. (devbox works because its AMD iGPU primary emits
-    # LINEAR-friendly buffers that cross-import cleanly.) NOTE: AQ_NO_ATOMIC was tried
-    # and removed — it is "heavily not recommended", never un-blacks a panel, and the
-    # legacy path lacks the per-plane atomic semantics this cross-GPU hand-off needs.
-    AQ_NO_MODIFIERS = "1";
-
-    # evdi has no real GPU sync timeline; an explicit fence on the cross-GPU buffer may
-    # never signal and present a blank frame. Disable explicit sync on mgpu buffers.
-    AQ_MGPU_NO_EXPLICIT = "1";
-  };
+  # Pin Hyprland's (Aquamarine) primary renderer to the AMD GPU and include the
+  # DisplayLink (evdi) card. WHY THIS WORKS ON AMD BUT NOT THE OLD ARC: Aquamarine
+  # special-cases evdi as a NON-multigpu output (primary={}, rendererRequired=false,
+  # PR#25) and hands it the primary renderer's buffer directly — it never does the
+  # LINEAR blit it reserves for multigpu outputs. So the primary GPU must NATIVELY
+  # produce evdi-importable (LINEAR-friendly) scanout buffers. AMD does (this is the
+  # exact path that works on devbox's AMD iGPU); a discrete Intel Arc / NVIDIA hands
+  # evdi a tiled buffer its LINEAR-only plane rejects → black, and NO AQ_* env var
+  # changes that (AQ_NO_MODIFIERS / AQ_MGPU_NO_EXPLICIT only touch the multigpu path
+  # evdi never enters — they were removed as no-op confounders). NVIDIA (RTX PRO
+  # 4000) is intentionally excluded from the device list so it stays free for OBS
+  # NVENC, which uses PRIME render-offload independent of the compositor's DRM set.
+  # Stable symlinks: amd-card from the amd-gpu module, displaylink-card from the
+  # teleprompter module. This lives in the session env (not Hyprland's in-config
+  # `env=`) because Aquamarine reads AQ_DRM_DEVICES once at DRM-backend start and
+  # does not re-apply config `env=` on reload. Order matters: amd-card first = primary.
+  environment.sessionVariables.AQ_DRM_DEVICES = "/dev/dri/amd-card:/dev/dri/displaylink-card";
 
   # Audio for OBS streaming and monitoring
   security.rtkit.enable = true;

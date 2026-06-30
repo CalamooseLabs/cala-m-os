@@ -1,6 +1,6 @@
 # Shared obs-kiosk launcher — deduplicated from modules/niri and users/streamer
 # (both imported the same script). PRIME-offloads OBS (compositing + NVENC) onto
-# the discrete NVIDIA RTX PRO 4000 while the Arc A310 drives the desktop +
+# the discrete NVIDIA RTX PRO 4000 while the AMD GPU drives the desktop +
 # DisplayLink teleprompter. This is welded to that dual-GPU studio box (hardcoded
 # /run/opengl-driver paths + NVIDIA glvnd), so it stays in the config rather than
 # moving to the portable antlers collection.
@@ -89,7 +89,7 @@
         export LD_LIBRARY_PATH=/run/opengl-driver/lib''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 
         # PRIME render offload: run OBS (compositing + NVENC) on the NVIDIA RTX PRO
-        # 4000, while the Arc A310 drives the desktop + DisplayLink teleprompter.
+        # 4000, while the AMD GPU drives the desktop + DisplayLink teleprompter.
         # NVENC itself works regardless; this keeps OBS's own GL rendering off the
         # weak Arc and avoids a cross-GPU readback.
         export __NV_PRIME_RENDER_OFFLOAD=1

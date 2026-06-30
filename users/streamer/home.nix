@@ -3,7 +3,7 @@
     # Autostart the OBS kiosk (the niri module's spawn-at-startup equivalent).
     exec-once = ["obs-kiosk"];
 
-    # NOTE: the primary-renderer pinning (AQ_DRM_DEVICES → Intel Arc A310 + the
+    # NOTE: the primary-renderer pinning (AQ_DRM_DEVICES → AMD GPU + the
     # DisplayLink/evdi card, nvidia excluded for OBS NVENC) now lives in
     # hosts/broadcast/configuration.nix as environment.sessionVariables. Aquamarine
     # reads AQ_DRM_DEVICES once, when the DRM backend starts; an in-config `env=`
@@ -14,12 +14,13 @@
 
     # Force fullscreen surfaces through composition instead of direct scanout.
     # OBS is PRIME-offloaded to the RTX PRO 4000, so its window buffers are
-    # nvidia block-linear dmabufs. A composited window is fine (Arc samples it,
-    # then copies to a LINEAR buffer for the evdi prompter), but an OBS fullscreen
-    # projector is eligible for direct scanout — Hyprland would try to scan the
-    # nvidia-tiled buffer straight onto the evdi plane, which is LINEAR-only, so
-    # the modifier intersection is empty and the prompter goes black. Disabling
-    # direct scanout keeps the projector on the working composition→LINEAR path.
+    # nvidia block-linear dmabufs. A composited window is fine (the AMD GPU samples
+    # it, then copies to a LINEAR buffer for the evdi prompter), but an OBS
+    # fullscreen projector is eligible for direct scanout — Hyprland would try to
+    # scan the nvidia-tiled buffer straight onto the evdi plane, which is
+    # LINEAR-only, so the modifier intersection is empty and the prompter goes
+    # black. Disabling direct scanout keeps the projector on the working
+    # composition→LINEAR path.
     render.direct_scanout = 0;
   };
 }
