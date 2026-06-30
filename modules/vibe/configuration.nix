@@ -29,6 +29,18 @@
         directories = ["/etc/nixos" "/home/hub/01 - Projects/calamooselabs/antlers"];
         pushRequiresTouch = true;
       };
+      "MultiChat" = {
+        directories = ["/home/hub/01 - Projects/thecompanyinc/multichat"];
+        pushRequiresTouch = true;
+      };
+      "TheCobblemonInitiative" = {
+        directories = ["/home/hub/01 - Projects/thecompanyinc/the-cobblemon-initiative"];
+        pushRequiresTouch = true;
+      };
+      "QuorumCall" = {
+        directories = ["/home/hub/01 - Projects/nkc/QuorumCall"];
+        pushRequiresTouch = true;
+      };
     };
   };
 }
