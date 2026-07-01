@@ -25,7 +25,7 @@
 
   # create a oneshot job to authenticate to Tailscale
   # EXPIRES ON 03/29/2026
-  systemd.services.tailscale-autoconnect = lib.mkIf config.calamoose.enableSecrets {
+  systemd.services.tailscale-autoconnect = lib.mkIf config.calamoose._secretsEnabled {
     description = "Automatic connection to Tailscale";
     after = ["network-pre.target" "tailscale.service"];
     wants = ["network-pre.target" "tailscale.service"];
@@ -44,7 +44,7 @@
       fi
 
       # read the pre-auth key from the decrypted secret
-      authkey=$(cat /run/agenix/tailscale-preauth-key)
+      authkey=$(cat ${config.calamoose.secrets."tailscale-preauth-key".path})
 
       # otherwise authenticate with tailscale
       ${tailscale}/bin/tailscale up -authkey "$authkey"

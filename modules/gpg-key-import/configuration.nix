@@ -28,13 +28,15 @@ in {
 
   # Ship the command only when explicitly enabled AND secrets (the yubigpg.asc
   # secret) exist — without the secret there is nothing to import.
-  config = lib.mkIf (cfg.enable && config.calamoose.enableSecrets) {
+  config = lib.mkIf (cfg.enable && config.calamoose._secretsEnabled) {
     programs.antlers-scripts = {
       enable = true;
       gpg-key-import = {
         enable = true;
         keyId = cfg.keyId;
-        # keyFile defaults to /run/agenix/yubigpg.asc (unchanged).
+        # Point at the backend-neutral path (agenix -> /run/agenix, online ->
+        # /run/proton-secrets) instead of the antlers default of /run/agenix.
+        keyFile = config.calamoose.secrets."yubigpg.asc".path;
       };
     };
   };

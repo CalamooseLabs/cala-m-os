@@ -1,6 +1,10 @@
-{username, ...}: {config, lib, ...}: {
+{username, ...}: {
+  config,
+  lib,
+  ...
+}: {
   users.users."${username}" = {
     isNormalUser = true;
-    hashedPasswordFile = lib.mkIf config.calamoose.enableSecrets config.age.secrets.admin_password.path;
+    hashedPasswordFile = lib.mkIf config.calamoose._secretsEnabled config.calamoose.secrets.admin_password.path;
   };
 }

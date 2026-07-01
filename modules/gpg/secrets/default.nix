@@ -1,9 +1,7 @@
-{lib, config, ...}: {
-  age = lib.mkIf config.calamoose.enableSecrets {
-    secrets = {
-      "yubigpg.asc" = {
-        file = ./. + "/yubigpg.asc.age";
-      };
-    };
+# Backend-neutral secret declarations (see modules/secrets/configuration.nix).
+{...}: {
+  calamoose.secrets."yubigpg.asc" = {
+    agenixFile = ./yubigpg.asc.age;
+    reference = "pass://REPLACE_ME/yubigpg.asc";
   };
 }

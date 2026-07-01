@@ -1,9 +1,7 @@
-{lib, config, ...}: {
-  age = lib.mkIf config.calamoose.enableSecrets {
-    secrets = {
-      "tailscale-preauth-key" = {
-        file = ./. + "/tailscale-preauth-key.age";
-      };
-    };
+# Backend-neutral secret declarations (see modules/secrets/configuration.nix).
+{...}: {
+  calamoose.secrets."tailscale-preauth-key" = {
+    agenixFile = ./tailscale-preauth-key.age;
+    reference = "pass://REPLACE_ME/tailscale-preauth-key";
   };
 }

@@ -72,6 +72,7 @@ in
     imports =
       [
         ./options.nix
+        ../../modules/secrets/configuration.nix
         inputs.disko.nixosModules.disko
         inputs.stylix.nixosModules.stylix
         (import ./home.nix {

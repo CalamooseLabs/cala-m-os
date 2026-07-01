@@ -42,7 +42,7 @@
   # guests share this with the homelab host. The media VM overrides to eno1.
   bridgeInterface = "eno2";
 
-  tokenPath = config.age.secrets.cloudflare-token.path;
+  tokenPath = config.calamoose.secrets.cloudflare-token.path;
 in {
   imports =
     [

@@ -164,11 +164,17 @@
             ];
 
           shares =
-            lib.optionals config.calamoose.enableSecrets [
+            lib.optionals config.calamoose._secretsEnabled [
               {
                 proto = "virtiofs";
                 tag = "agenix";
-                source = "/run/agenix";
+                # Backend-aware: share whichever runtime dir holds the decrypted
+                # host secrets. tag + mountPoint are unchanged so guests keep using
+                # /run/hostsecrets/* regardless of backend.
+                source =
+                  if config.calamoose._secretsBackend == "proton-pass"
+                  then "/run/proton-secrets"
+                  else "/run/agenix";
                 mountPoint = "/run/hostsecrets";
               }
             ]

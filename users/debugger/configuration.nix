@@ -59,7 +59,7 @@
       "x-systemd.automount"
       "noauto"
       "x-systemd.idle-timeout=600"
-      "credentials=${config.age.secrets.work_credentials.path}"
+      "credentials=${config.calamoose.secrets.work_credentials.path}"
     ];
   };
 
