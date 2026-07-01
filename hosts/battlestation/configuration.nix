@@ -9,6 +9,7 @@
   machine_type = "Workstation";
   machine_uuid = "B850-MAX";
 in {
+  calamoose.enableSecrets = false;
   calamoose.version = "2.0.0";
 
   imports = [
