@@ -15,6 +15,5 @@
       source = config.calamoose.secrets."NKCGateway.nmconnection".path;
     };
   };
-  # agenix-specific ordering (no agenix-rerun unit exists under the online backend).
   systemd.services.agenix-rerun.before = lib.mkIf (config.calamoose._secretsBackend == "agenix") ["NetworkManager.service"];
 }

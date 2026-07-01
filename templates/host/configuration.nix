@@ -20,10 +20,11 @@ in {
     # Hardware Config
 
     # Common Core Config
-    (import ../_core/configuration.nix {
+    (import ../_core/default.nix {
       users_list = users;
       machine_type = machine_type;
       machine_uuid = machine_uuid;
+      extra_user_modules = {};
     })
   ];
 

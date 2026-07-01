@@ -45,6 +45,8 @@ Each `name` resolves to `modules/<name>/{configuration,home}.nix`. No paths, no 
 
 > Generated from `modules/` — grouped by role. All ship both files; "system" / "home" notes which half carries the substance.
 
+> **Wired vs. available.** Listing here does **not** mean a module is active. A module is only *wired* when some `users/<profile>/default.nix` names it. Many entries below are *available/shelf* — present in `modules/` but not enrolled by any user (e.g. `davinci-resolve`, `plex-desktop`, `winboat`, `bottles`, `yt-dlp`, `tailscale`, `proton-vpn`, `abiword`, `libreoffice`). They cost nothing until a profile opts in.
+
 ### Shell / terminal / CLI
 `bash`, `ghostty` (terminal; sets `TERMINAL=ghostty`), `ttyd`, `btop`, `bat`, `direnv`, `nh` (nix helper), `sc-im`, `lf`, `yazi`
 
@@ -64,7 +66,9 @@ Each `name` resolves to `modules/<name>/{configuration,home}.nix`. No paths, no 
 `tailscale`, `proton-vpn`, `vpn`, `wifi`, `bridge-internet` (dnsmasq + nftables NAT bridge), `lanserver`, `remote-desktop`, `ssh`, `openssh`
 
 ### Security / secrets / identity
-`agenix`, `agenix-boot`, `sops`, `gpg`, `yubikey`, `proton-pass`, `user-switching`
+`agenix`, `agenix-boot` (currently a no-op), `gpg`, `yubikey`, `proton-pass`, `user-switching`
+
+> **agenix** (Yubikey-backed) is the **only** secret backend in this flake — there is no `sops`.
 
 ### Media / entertainment
 `spotify`, `termusic`, `vlc`, `obs-studio`, `davinci-resolve`, `rawtherapee`, `imagemagick`, `plex`, `plex-desktop`, `geforce-now` (gamescope+gamemode+flatpak; exposes `geforceNow.gpuType`), `steam`, `minecraft`, `hytale`, `winboat`, `bottles`, `yt-dlp`

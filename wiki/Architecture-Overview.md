@@ -87,7 +87,7 @@ flowchart LR
 - **`machine_type`** (`Workstation` | `VM`) selects the hardware source and whether workstation-only settings (`non-vm.nix`: unfree, store auto-optimise, `/etc/nixos` permissions, NetworkManager) apply.
 - **`users_list` length** decides single- vs multi-user. With 2+ users, the `hub` switcher profile is auto-prepended and the [[persona switching system|User-Switching]] turns on.
 
-> All nine flake-wired hosts are currently **single-user**. The multi-user machinery is fully implemented and ready, but no wired host triggers it today (the unwired `lanstation-multi` is the multi-NIC VM-host variant). See [[Hosts|Hosts]].
+> All ten flake-wired hosts (plus the `iso` installer) are currently **single-user**. The multi-user machinery is fully implemented and ready, but no wired host triggers it today. See [[Hosts|Hosts]].
 
 ---
 

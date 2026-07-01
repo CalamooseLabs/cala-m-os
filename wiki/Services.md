@@ -60,7 +60,7 @@ services.cala-caddy = {
 
 **Behavior:** disables DNS caching (`services.resolved` with `Cache=no`, forces `nscd` off, NM DNS `none`), then `security.acme` requests `<domain>` + `*.<domain>` via the `cloudflare` provider, email from `cala-m-os.globals.defaultEmail`, cert group `caddy`. Also enables upstream `services.caddy` (so the `caddy` group exists for the cert).
 
-**Usage** (`hosts/lab/vms.nix`):
+**Usage** (`hosts/homelab/vms.nix`):
 
 ```nix
 services.cala-certs = {

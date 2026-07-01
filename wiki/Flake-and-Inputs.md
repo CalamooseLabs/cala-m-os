@@ -49,7 +49,7 @@ mkSystem = hostname: extraSpecialArgs:
 | Concern | Behavior |
 |--------|----------|
 | `hostname` | Selects `./hosts/<hostname>/configuration.nix` as the only top-level module |
-| `extraSpecialArgs` | Merged over the base args; used to pass `self` to the two hosts that need it (`lanstation`, `lab`) |
+| `extraSpecialArgs` | Merged over the base args; used to pass `self` to the two hosts that need it (`lanstation`, `homelab`) |
 | `specialArgs` | Always provides `inputs`, `cala-m-os` (= `settings.nix`), and `initialInstallMode` |
 | `system` | Hard-coded `x86_64-linux` (no `flake-utils`) |
 | overlays | Applied via an inline module (`nixpkgs.overlays = import ./overlays`) |
@@ -63,14 +63,14 @@ Everything else (home-manager, disko, stylix, the machine/user/module tree) is p
 ```mermaid
 flowchart LR
   flake["flake.nix outputs"]
-  flake --> nc["nixosConfigurations<br/>9 hosts + iso"]
+  flake --> nc["nixosConfigurations<br/>10 hosts + iso"]
   flake --> fmt["formatter → alejandra"]
   flake --> pkg["packages.default → installer ISO image"]
   flake --> tpl["templates → host / module / user / secret"]
   flake --> dev["devShells.default → shell.nix"]
 ```
 
-- **`nixosConfigurations`** — `lanstation`, `devbox`, `ephemeral`, `lab`, `simple`, `battlestation`, `studio`, `openreturn`, `livedata`, plus `iso`. The `iso` is built directly (not via `mkSystem`) and gets only `inputs` in `specialArgs`. See [[Hosts|Hosts]].
+- **`nixosConfigurations`** — `lanstation`, `devbox`, `ephemeral`, `homelab`, `simple`, `battlestation`, `broadcast`, `openreturn`, `livedata`, `ai`, plus `iso`. The `iso` is built directly (not via `mkSystem`) and gets only `inputs` in `specialArgs`. See [[Hosts|Hosts]].
 - **`formatter`** → `alejandra` (so `nix fmt` ≡ `alejandra .`).
 - **`packages.x86_64-linux.default`** → `nixosConfigurations.iso.config.system.build.isoImage`, so `nix build` builds the ISO.
 - **`templates`** → imported from `./templates` (see below).

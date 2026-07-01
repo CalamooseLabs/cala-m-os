@@ -4,7 +4,7 @@ VM hosts run their guests as [microvm.nix](https://github.com/microvm-nix/microv
 
 ```mermaid
 flowchart TD
-  HOST["VM host (e.g. lab, livedata)"] --> VMS["vms.nix<br/>vms = { name = {…} }"]
+  HOST["VM host (e.g. homelab, livedata)"] --> VMS["vms.nix<br/>vms = { name = {…} }"]
   VMS --> MGR["services.cala-vm-manager"]
   VMS --> HI["host-imports.nix<br/>(static device host.nix)"]
   MGR --> CFG["microvm.vms.&lt;name&gt;"]
@@ -110,12 +110,12 @@ flowchart LR
 
 ## Per-device passthrough files
 
-`devicePath` (e.g. `hosts/lab/devices/`) holds one directory per device, each with:
+`devicePath` (e.g. `hosts/homelab/devices/`) holds one directory per device, each with:
 
 - **`host.nix`** — host-side setup (VFIO binding, IOMMU). A top-level host import.
 - **`guest.nix`** — guest-side `microvm.devices` PCI paths + any GPU module. Imported into the guest config.
 
-Example (`hosts/lab/devices/arc-b50/guest.nix`):
+Example (`hosts/homelab/devices/arc-b50/guest.nix`):
 
 ```nix
 {...}: {
@@ -169,7 +169,7 @@ flowchart TD
 - **Root volume** `<name>-vm.img` sized `storage * 1024` MB.
 - **Writable store** `nix-store-<name>.img` (50 GB) when `storeOnDisk`.
 - **agenix share** read-only `/run/agenix → /run/hostsecrets` (gated on `enableSecrets`) — see [[Secrets & Security|Secrets-and-Security]].
-- **Custom shares** from `vm.shares` (e.g. lab shares `/var/lib/acme/<fqdn> → /mnt/acme` for the media/torrent guests so Caddy can read certs).
+- **Custom shares** from `vm.shares` (e.g. homelab shares `/var/lib/acme/<fqdn> → /mnt/acme` for the media/torrent guests so Caddy can read certs).
 - **Read-only store** `/nix/store → /nix/.ro-store` when `shareStore` (default).
 
 The manager passes `inputs`, `cala-m-os`, `initialInstallMode` into each guest's `specialArgs`, so guests see the same flags as the host.
@@ -180,8 +180,8 @@ The manager passes `inputs`, `cala-m-os`, `initialInstallMode` into each guest's
 
 | Host | NIC | Guests |
 |------|-----|--------|
-| `lab` | `eno2` | `media` (Plex, passthrough `arc-b50` iGPU), `torrent` (\*arr + qBittorrent/VPN) |
+| `homelab` | `eno2` | `media` (Plex, passthrough `arc-b50` iGPU), `torrent` (\*arr + qBittorrent/VPN) |
 | `livedata` | `enp88s0` | `openreturn`, `quorumcall` (10.1.10.0/24, custom gateway/DNS) |
-| `lanstation-multi` | `eno2` | GPU/USB-passthrough gaming VMs (`amd-9060-xt`, `pci-usb-controller-*`) — unwired |
+| `lanstation` | `eno2` | one GPU-passthrough gaming VM (WIP — `vms.nix` not yet imported) |
 
 See [[Hosts|Hosts]] for the guest directory list.

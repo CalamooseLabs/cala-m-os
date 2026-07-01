@@ -1,6 +1,6 @@
 ##################################
 #                                #
-#   Torrent Management Server    #
+#   Gaming Desktop + Stream Src  #
 #                                #
 ##################################
 {...}: let
