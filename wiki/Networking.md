@@ -12,7 +12,7 @@ The primary LAN is **`10.10.10.0/26`** (prefix length `26` in `settings.nix`). S
 |---------|-----------|
 | `10.10.10.1` | gateway |
 | `10.10.10.10` | media (Plex) guest |
-| `10.10.10.15` | lab |
+| `10.10.10.15` | homelab |
 | `10.10.10.30` | battlestation |
 | `10.10.10.35` | torrent guest |
 | `10.10.10.40` | htpc |

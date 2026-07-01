@@ -15,14 +15,15 @@ A **user profile** is a directory under `users/` that declares which [[modules|M
 | `_core` | Shared profile machinery (not a user) |
 | `hub` | The always-present switcher / session user; thinnest interactive profile |
 | `basic` | Lightweight desktop persona |
-| `debugger` | The most comprehensive (~55 modules); used by `devbox` |
-| `gamer`, `gamer-vm` | Gaming personas (the latter for VM guests) |
-| `mixer` | A/V persona (`battlestation`) |
-| `server` | Headless server persona (`lab`, `livedata`, `openreturn`) |
-| `streamer` | OBS/streaming persona (`studio`) |
+| `debugger` | The most comprehensive (~63 modules); used by `devbox` |
+| `gamer` | Gaming persona (also used by VM guests) |
+| `mixer` | A/V persona (defined but currently unused by any host) |
+| `server` | Headless server persona (`homelab`, `livedata`, `openreturn`, `quorumcall`, `media`, `torrent`, `vault`) |
+| `streamer` | OBS/streaming persona (`broadcast`) |
+| `developer` | Headless TTY dev persona (`ai`) |
 | `void` | Minimal persona (`ephemeral`) |
 
-**Stub placeholders** (only `.gitkeep`): `creator`, `developer`, `switcher`, `writer`.
+**Stub placeholders** (only `.gitkeep`): `creator`, `switcher`, `writer`.
 
 A profile directory may contain: `default.nix` (entry), `configuration.nix` (system-level user specifics), `home.nix` (home overrides), `secrets/` (agenix), `public_keys/` (SSH), and occasionally extras like `routes.nix`.
 

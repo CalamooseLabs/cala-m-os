@@ -1,7 +1,7 @@
 ##################################
 #                                #
-#       Minisforum MS-02         #
-#      NVIDIA RTX 5090FE         #
+#     ASUS PRIME B760-PLUS       #
+#      NVIDIA RTX 5090 FE        #
 #                                #
 ##################################
 {pkgs, ...}: {

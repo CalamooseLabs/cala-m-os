@@ -35,7 +35,7 @@ The ISO is also the flake's `packages.default`. `flash-iso` is documented in [[F
 - Hostname `cala-m-os-installer`; `forceTextMode`; `lz4` squashfs.
 - Packages: `disko`, `git`, `neovim`, a bash-completion script, and the `install-cala-m-os` script.
 - **Bash completion** completes the host argument from a static list:
-  `lanstation devbox ephemeral lab simple battlestation studio openreturn livedata`.
+  `lanstation devbox ephemeral homelab simple battlestation broadcast openreturn livedata ai`.
 
 > The `iso` config is built directly (not via `mkSystem`) and gets only `inputs` in `specialArgs` — no `cala-m-os`, no `initialInstallMode`.
 
@@ -104,7 +104,7 @@ flowchart LR
 ```
 
 It also:
-- **gates VM stacks**: `lib.optional (!initialInstallMode) ./vms.nix` on `lab`, `livedata`, `lanstation-multi` — VMs (which depend on host secrets) are skipped on the first pass.
+- **gates VM stacks**: `lib.optional (!initialInstallMode) ./vms.nix` on `homelab` and `livedata` — VMs (which depend on host secrets) are skipped on the first pass.
 - **propagates into guests**: `cala-vm-manager` re-injects `initialInstallMode` into each guest's `specialArgs`.
 
 This is what lets a brand-new machine reach a bootable state **before** the Yubikey-backed secrets and VMs come online. The second pass (env var unset) builds everything.

@@ -38,13 +38,15 @@ flowchart LR
 | `networking.prefixLength` | `"26"` | Subnet prefix (/26) as a string |
 | `networking.network-name` | `"10-macvtap"` | Name of the macvtap systemd-network definition |
 
+Domain roles: `calamos.family` is the personal domain (and the NAS, `nas.calamos.family`); `calamooselabs.com` (`fqdn`) is the lab/company FQDN used for ACME/Caddy. `calamoose.version` is a free-form, human-set mark with no versioning scheme — it's surfaced in the boot tag.
+
 ## `ip` — static address table (10.10.10.0/26)
 
 | Key | Address | Host |
 |-----|---------|------|
 | `ip.gateway` | `10.10.10.1` | Default gateway |
 | `ip.media` | `10.10.10.10` | media (Plex) guest |
-| `ip.lab` | `10.10.10.15` | lab host |
+| `ip.lab` | `10.10.10.15` | homelab host |
 | `ip.battlestation` | `10.10.10.30` | battlestation |
 | `ip.torrent` | `10.10.10.35` | torrent guest |
 | `ip.htpc` | `10.10.10.40` | HTPC |

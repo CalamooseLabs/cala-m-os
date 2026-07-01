@@ -39,7 +39,7 @@
 
 ### Key Installation
 
-Hosts that carry the `developer` profile (e.g. `viber`) ship two commands that
+Hosts that carry the `developer` profile (e.g. `ai`) ship two commands that
 automate the steps below — these are **programs you run on demand**, not boot
 services, since each needs the Yubikey + PIN (+ a touch). Run them once after a
 fresh install:
@@ -86,32 +86,32 @@ on real hardware; **MicroVM guests** run on a host through its `cala-vm-manager`
 | Host | Machine | User | Version | Role |
 |------|---------|------|---------|------|
 | `devbox` | Framework 16 (AMD, RTX 5070) | `debugger` | `2.1.0` | Main daily laptop — dev, printing, OBS |
-| `battlestation` | AM5 desktop (B850) | `mixer` | `2.0.0` | Desktop workstation |
-| `lanstation` | Intel desktop (B760) | `gamer` | `1.0.0` | LAN gaming station — NVIDIA VFIO passthrough |
+| `battlestation` | AM5 desktop (B850) | `gamer` | `2.0.0` | Gaming desktop — also the game/stream source |
+| `lanstation` | Intel desktop (B760) | `gamer` | `1.0.0` | LAN gaming station — RTX 5090 host; splits into a GPU-passthrough gaming VM (WIP) |
 | `broadcast` | Threadripper (TRX50-SAGE) | `streamer` | `1.0.0-beta` | Live stream box — RTX Pro 4000, Blackmagic Quad HDMI, OBS |
 | `homelab` | Minisforum MS-02 | `server` | `2.0.0-beta` | Homelab VM host — runs `media` + `torrent` |
 | `livedata` | Minisforum MS-01 | `server` | `1.0.0-alpha` | App/VM host — runs `openreturn` + `quorumcall` |
 | `simple` | Framework 13 | `basic` | `1.0.0` | Minimal desktop setup |
-| `viber` | Zima | `developer` | `0.0.1-alpha` | Headless TTY dev box — impermanent root |
+| `ai` | Zima | `developer` | `0.0.1-alpha` | Headless TTY dev box (impermanent root) — runs background Claude sessions |
 | `ephemeral` | Zima | `void` | `0.0.1-beta` | Throwaway lab machine — impermanent root |
 
 ### MicroVM guests
 
 | Guest | Size | User | Version | Runs on | Role |
 |-------|------|------|---------|---------|------|
-| `media` | Small | `server` | `0.9.0-beta` | `homelab` | Plex media server (Caddy SSL) |
+| `media` | Medium | `server` | `0.9.0-beta` | `homelab` | Plex media server (Caddy SSL) |
 | `torrent` | X-Small | `server` | `0.9.0-beta` | `homelab` | Radarr / Sonarr / Prowlarr + qBittorrent (VPN) |
 | `openreturn` | Small | `server` | `0.1.0-alpha` | `livedata` | OpenReturn TTY app server |
 | `quorumcall` | Small | `server` | `0.1.0-alpha` | `livedata` | QuorumCall TTY app server |
-| `lanstation-vm` | Large | `gamer-vm` | `1.0.0` | `lanstation` | Per-seat gaming VM (`lanstation-2/3/4`) |
-| `htpc` | Large | `gamer` | `0.0.1-beta` | — | Home theater PC (defined, not yet deployed) |
-| `vault` | Small | `server` | `0.0.1-beta` | — | LanCache via Arion/Docker (defined, not yet deployed) |
+| `lanstation-vm` | Large | `gamer` | `1.0.0` | `lanstation` | GPU-passthrough gaming guest (WIP) |
+| `htpc` | Large | `gamer` | `0.0.1-beta` | — | Home theater PC — controller gaming (defined, not yet deployed) |
+| `vault` | Small | `server` | `0.0.1-beta` | — | Local Steam cache via Arion/Docker — intended `lanstation` guest (not yet deployed) |
 
-> **Notes** — The `lanstation` family has three configs: `lanstation` (single-GPU
-> station), `lanstation-multi` (TRX50 multi-GPU VM host serving `lanstation-1`…`4`), and
-> `lanstation-vm` (the per-seat gaming guest). `openreturn` and `quorumcall` are also
-> exposed as standalone flake outputs in addition to running as `livedata` guests. `iso`
-> is the custom installer image (see [Getting Started](#getting-started)).
+> **Notes** — `lanstation` is the RTX 5090 host that will split into a GPU-passthrough
+> gaming VM using the `lanstation-vm` guest config (WIP — its `vms.nix` is not yet wired
+> in). `openreturn` and `quorumcall` are also exposed as standalone flake outputs in
+> addition to running as `livedata` guests. `iso` is the custom installer image (see
+> [Getting Started](#getting-started)).
 
 ## Common Commands
 
@@ -171,8 +171,9 @@ Split into the two kinds of machines we build:
 
 ### `modules/` — programs
 
-The lightweight layer: a program plus its settings, or a shell script. Each module has
-an optional `configuration.nix` (system-level) and/or `home.nix` (home-manager).
+The lightweight layer: a program plus its settings, or a shell script. Each module ships
+both a `configuration.nix` (system-level) and a `home.nix` (home-manager) — one may be a
+near-empty stub.
 
 ### `services/` — the heavy, host-driven units
 

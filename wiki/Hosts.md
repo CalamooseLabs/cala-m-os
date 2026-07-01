@@ -15,15 +15,16 @@ These are the machines declared in `flake.nix` under `nixosConfigurations` (buil
 | `lanstation` | `B760-PLUS` | Workstation | `gamer` | on | VFIO/VM host; receives `self`; static NICs (NetworkManager forced off) |
 | `devbox` | `FW16-AMD-AI` | Workstation | `debugger` | on | Framework 16 + NVIDIA 5070; printing; docs forced on |
 | `ephemeral` | `ZIMA` | Workstation | `void` | on | Zima Board 2 SBC |
-| `lab` | `MS-02` | Workstation | `server` | on | MicroVM host (media + torrent guests); ACME certs; receives `self` |
+| `homelab` | `MS-02` | Workstation | `server` | on | MicroVM host (media + torrent guests); ACME certs; receives `self` |
 | `simple` | `FW13-12XXP` | Workstation | `basic` | on | Framework 13 (12th-gen Intel); imports `_core/configuration.nix` directly |
-| `battlestation` | `B850-MAX` | Workstation | `mixer` | on | Ryzen 9800X3D + RTX 5090; PipeWire |
-| `studio` | `TRX50-SAGE` | Workstation | `streamer` | **off** | Threadripper; OBS kiosk via greetd+cage; RTX Pro 4000 |
+| `battlestation` | `B850-MAX` | Workstation | `gamer` | on | Ryzen 9800X3D + RTX 5090; PipeWire |
+| `broadcast` | `TRX50-SAGE` | Workstation | `streamer` | **off** | Threadripper; OBS kiosk via greetd+cage; RTX Pro 4000 |
 | `openreturn` | `Small` | **VM** | `server` | **off** | MicroVM guest for the OpenReturn service |
 | `livedata` | `MS-01` | Workstation | `server` | **off** | MicroVM host (openreturn + quorumcall guests) |
+| `ai` | `ZIMA` | Workstation | `developer` | on | Headless TTY dev box (impermanent root); runs background Claude sessions |
 | `iso` | — | — | — | — | Custom installer image; built directly (not via `mkSystem`) |
 
-`lanstation` and `lab` are the only hosts that receive `self` in `specialArgs`. Hosts with `calamoose.enableSecrets = false` build without needing Yubikey-decryptable secrets — see [[Secrets & Security|Secrets-and-Security]].
+`lanstation` and `homelab` are the only hosts that receive `self` in `specialArgs`. Hosts with `calamoose.enableSecrets = false` build without needing Yubikey-decryptable secrets — see [[Secrets & Security|Secrets-and-Security]].
 
 > **All wired hosts are single-user today.** Each `users_list` has exactly one profile, so the [[persona switching|User-Switching]] feature is not active on any of them. The machinery is ready the moment a host lists two or more profiles.
 
@@ -37,15 +38,15 @@ These are the machines declared in `flake.nix` under `nixosConfigurations` (buil
 
 | Dir | Type | Built by | Role |
 |-----|------|----------|------|
-| `media` | VM `Small` | `lab` | Plex media server |
-| `torrent` | VM `X-Small` | `lab` | \*arr stack + qBittorrent over VPN |
+| `media` | VM `Medium` | `homelab` | Plex media server |
+| `torrent` | VM `X-Small` | `homelab` | \*arr stack + qBittorrent over VPN |
 | `quorumcall` | VM `Small` | `livedata` | QuorumCall service |
 | `htpc` | VM `Large` | (planned) | Home-theater PC |
-| `vault` | VM `Small` | (planned) | Secrets/storage |
+| `vault` | VM `Small` | (planned) | Local Steam cache (Arion lancache) |
 
 > A guest's hostname is set by the manager via `networking.hostName = lib.mkForce <name>`. The `openreturn` guest reuses the flake host `openreturn` via `hostOverride`. See [[MicroVMs|MicroVMs]].
 
-**Other variants / WIP:** `lanstation-multi` (multi-NIC VM host — the multi-user example), `lanstation-vm` (guest config used via `hostOverride`), `ai`, `travel`. These exist on disk but aren't currently wired.
+**Other variants / WIP:** `lanstation-vm` (GPU-passthrough gaming guest config used via `hostOverride` — `lanstation` will split into one such VM, but does not yet import its `vms.nix`). This exists on disk but isn't currently wired.
 
 ---
 
@@ -53,7 +54,7 @@ These are the machines declared in `flake.nix` under `nixosConfigurations` (buil
 
 ```nix
 {cala-m-os, ...}: let
-  import_users = ["mixer"];
+  import_users = ["gamer"];
   machine_type = "Workstation";
   machine_uuid = "B850-MAX";
 in {
@@ -87,7 +88,7 @@ The `!initialInstallMode` guard keeps VMs out of the minimal first install pass.
 
 ### Special host behaviors worth knowing
 
-- **`studio`** runs OBS as a kiosk: greetd's session launches `cage -s -- obs` instead of a shell.
+- **`broadcast`** runs OBS as a kiosk: greetd's session launches `cage -s -- obs` instead of a shell.
 - **`lanstation`** forces `networking.networkmanager.enable = lib.mkForce false` (static interface config) — overriding the `non-vm.nix` default.
 - **`simple`** bypasses `_core/default.nix` and imports `_core/configuration.nix` directly (so no install-mode switch).
 - **`devbox`** sets `documentation.enable = lib.mkForce true`.

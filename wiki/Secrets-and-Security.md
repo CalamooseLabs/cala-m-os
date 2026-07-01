@@ -60,7 +60,7 @@ agenix decrypts to `/run/agenix/<name>`; consumers read `config.age.secrets.<nam
 
 Declared in `hosts/_core/options.nix` (default `true`). Every secret-consuming block is wrapped in `lib.mkIf config.calamoose.enableSecrets`, so flipping it to `false` skips all secret registration, the agenix install, and the VM secret share.
 
-**Hosts with `enableSecrets = false`:** `studio`, `openreturn`, `quorumcall`, `livedata`. These build without needing a decryptable Yubikey present.
+**Hosts with `enableSecrets = false`:** `broadcast`, `openreturn`, `quorumcall`, `livedata`. These build without needing a decryptable Yubikey present.
 
 ---
 
@@ -75,9 +75,9 @@ Declared in `hosts/_core/options.nix` (default `true`). Every secret-consuming b
 | `tailscale-preauth-key` | `modules/tailscale/secrets/` | `tailscale up --authkey` |
 | `CalamooseWiFi` / `CalamooseLabs` / `NKCWiFi` / `theisenair` / `NETGEAR43` `.nmconnection` | `modules/wifi/secrets/` | NetworkManager system connections |
 | `CasaMosVPN` / `NKCGateway` `.nmconnection` | `modules/vpn/secrets/` | NetworkManager VPN connections |
-| `cloudflare-token` | `hosts/lab/secrets/` | `cala-certs` DNS-01 token |
-| `qbit-password` | `hosts/lab/secrets/` | torrent VM (via virtiofs → `/run/hostsecrets`) |
-| `proton-vpn.conf` | `hosts/lab/secrets/` | torrent VM WireGuard (via virtiofs) |
+| `cloudflare-token` | `hosts/homelab/secrets/` | `cala-certs` DNS-01 token |
+| `qbit-password` | `hosts/homelab/secrets/` | torrent VM (via virtiofs → `/run/hostsecrets`) |
+| `proton-vpn.conf` | `hosts/homelab/secrets/` | torrent VM WireGuard (via virtiofs) |
 
 ---
 
@@ -106,7 +106,7 @@ wireguardConfigFile     = "/run/hostsecrets/proton-vpn.conf";
 qbittorrentPasswordFile = "/run/hostsecrets/qbit-password";
 ```
 
-(`lab` decrypts those `hosts/lab/secrets/` items and shares them down.) See [[MicroVMs|MicroVMs]].
+(`homelab` decrypts those `hosts/homelab/secrets/` items and shares them down.) See [[MicroVMs|MicroVMs]].
 
 ---
 

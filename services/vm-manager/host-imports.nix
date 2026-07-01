@@ -15,4 +15,12 @@
     })
     allDevices));
 in
-  map (device: devicePath + "/${device}/host.nix") uniqueDevices
+  map (
+    device: let
+      p = devicePath + "/${device}/host.nix";
+    in
+      if builtins.pathExists p
+      then p
+      else throw "cala-vm-manager: VM device '${device}' has no ${toString p} — reconcile the `devices` list in the host's vms.nix against the dirs under its devices/ folder."
+  )
+  uniqueDevices

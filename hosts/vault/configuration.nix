@@ -43,7 +43,7 @@ in {
   boot.supportedFilesystems = ["nfs"];
 
   fileSystems."/mnt/cache" = {
-    device = "${cala-m-os.nfs.server}${cala-m-os.nfs.media.lancache}";
+    device = "${cala-m-os.nfs.server}:${cala-m-os.nfs.media.lancache}";
     fsType = "nfs";
   };
 
