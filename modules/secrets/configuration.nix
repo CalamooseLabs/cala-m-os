@@ -41,6 +41,17 @@
         example = "pass://SHARE_ID/ITEM_ID/password";
         description = "Proton Pass pass:// reference for the online backend.";
       };
+      vaultName = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        example = "Cala-M-OS";
+        description = "Proton Pass vault-name selector (online backend; use with itemTitle instead of a pass:// reference).";
+      };
+      itemTitle = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Proton Pass item-title selector (online backend; use with vaultName).";
+      };
       field = lib.mkOption {
         type = lib.types.nullOr lib.types.str;
         default = null;
@@ -99,15 +110,17 @@ in {
       services.proton-secrets = {
         enable = true;
         secrets = lib.mapAttrs (_name: s:
-          {reference = s.reference;}
+          (lib.optionalAttrs (s.reference != null) {reference = s.reference;})
+          // (lib.optionalAttrs (s.vaultName != null) {vaultName = s.vaultName;})
+          // (lib.optionalAttrs (s.itemTitle != null) {itemTitle = s.itemTitle;})
           // (lib.optionalAttrs (s.field != null) {field = s.field;})
           // ownerAttrs s)
         cfg;
       };
       assertions =
         lib.mapAttrsToList (name: s: {
-          assertion = s.reference != null;
-          message = "calamoose.secrets.\"${name}\": reference (pass://…) is required for the online (proton-pass) backend.";
+          assertion = s.reference != null || (s.vaultName != null && s.itemTitle != null);
+          message = "calamoose.secrets.\"${name}\": set `reference` (pass://…) or both `vaultName` and `itemTitle` for the online (proton-pass) backend.";
         })
         cfg;
       # Permit just the unfree Proton Pass CLI (server hosts don't set allowUnfree).
