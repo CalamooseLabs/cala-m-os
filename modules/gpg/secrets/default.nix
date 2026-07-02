@@ -2,11 +2,10 @@
 {...}: {
   calamoose.secrets."yubigpg.asc" = {
     agenixFile = ./yubigpg.asc.age;
-    # Online backend: Proton Pass vault "Cala-M-OS", item "yubigpg.asc" — a Secure
-    # Note whose body is the exported public key. If the note body isn't returned
-    # cleanly, set `field` to the field that holds it — verify with:
-    #   pass-cli item view --vault-name Cala-M-OS --item-title yubigpg.asc --output json
+    # Online backend: Proton Pass vault "Cala-M-OS", item "yubigpg.asc",
+    # value (the exported public key) stored in a custom field named "secret".
     vaultName = "Cala-M-OS";
     itemTitle = "yubigpg.asc";
+    field = "secret";
   };
 }
