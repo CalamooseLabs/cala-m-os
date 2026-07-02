@@ -789,11 +789,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1782848900,
-        "narHash": "sha256-8YFnfM83H7InR5gN7z+DTUElMeVpMEUf6ctsU86BZk8=",
+        "lastModified": 1782955441,
+        "narHash": "sha256-M0xlmGuE34AJlg1wRiUVLXUpQbll9AbpVEMq6qJKVlo=",
         "owner": "The-Company-Inc-Nerds",
         "repo": "multichat",
-        "rev": "20188062480ccb93d5c0b7d8a322d8f454e60509",
+        "rev": "be638001acb0b1cf7994c25df342760cacd26d78",
         "type": "github"
       },
       "original": {
