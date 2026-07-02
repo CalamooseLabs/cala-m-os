@@ -28,8 +28,21 @@
     (map (d: lib.removePrefix homePrefix d)
       (lib.unique (lib.attrValues config.programs.github-repo-puller.repos)));
 in {
-  calamoose.enableSecrets = true;
+  # Online (Proton Pass) secrets — fetched at activation. This host consumes two
+  # secrets; fill their pass:// references before deploying (offline hosts ignore
+  # these, so it is safe to set them in the shared files):
+  #   users/_core/secrets/default.nix -> admin_password (users.users.hub.hashedPasswordFile)
+  #   modules/gpg/secrets/default.nix -> yubigpg.asc    (gpg-key-import keyFile)
+  calamoose.enableSecrets = "online";
   calamoose.version = "0.0.1-alpha";
+
+  # Re-mint a Proton session from the installer-seeded PAT. Essential on a fresh
+  # first boot: the fs session copied off the ISO won't match this host's newly
+  # generated machine-id, and (being impermanent) the session dir starts empty.
+  # Gated so the minimal-install pass — which does not import the proton-secrets
+  # module — never sees this option.
+  services.proton-secrets.patFile =
+    lib.mkIf (!initialInstallMode) "/var/lib/proton-pass-cli/pat";
 
   imports = [
     inputs.preservation.nixosModules.default
@@ -86,6 +99,13 @@ in {
         {
           directory = "/var/lib/nixos";
           inInitrd = true;
+        }
+        # Persist the Proton Pass session (+ the installer-seeded PAT) so online
+        # secrets keep working across reboots on this tmpfs-root host. The secrets
+        # themselves live on ramfs (/run/proton-secrets) and are re-fetched each boot.
+        {
+          directory = "/var/lib/proton-pass-cli";
+          mode = "0700";
         }
       ];
       # SSH host keys are NOT listed here — sshd owns them directly at
