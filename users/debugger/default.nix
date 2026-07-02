@@ -31,7 +31,6 @@
     "lazygit"
     "minecraft"
     "moosefetch"
-    "multichat"
     "neovim"
     "nh"
     "obs-studio"
