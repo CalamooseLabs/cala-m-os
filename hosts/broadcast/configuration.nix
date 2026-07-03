@@ -11,7 +11,13 @@
   machine_type = "Workstation";
   machine_uuid = "TRX50-SAGE";
 in {
-  calamoose.enableSecrets = false;
+  # Online (Proton Pass) secrets — fetched at activation. Consumed here:
+  #   users/_core/secrets/default.nix -> admin_password (hub hashedPasswordFile)
+  #   modules/multichat/secrets       -> youtube-api-key (multichat apiKeyFile)
+  # Persistent host: the Proton session lives in /var/lib/proton-pass-cli, so no
+  # patFile is needed — bootstrap once (needs network + a live session at
+  # activation, or the rebuild aborts): sudo proton-secrets login
+  calamoose.enableSecrets = "online";
   calamoose.version = "1.0.1-beta";
 
   imports = [

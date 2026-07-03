@@ -1,18 +1,29 @@
 # multichat — combined Twitch + YouTube live chat viewer.
 #
-# Attached to the broadcast (stream) host only, via its `extra_user_modules`
-# (see hosts/broadcast/configuration.nix). The YouTube API key is deliberately
-# NOT set here: the service starts keyless and the key is supplied at runtime,
-# then persisted under systemd's StateDirectory (/var/lib/multichat), surviving
-# restarts/reboots. On the broadcast host run:
+# Attached to the broadcast (stream) host only (streamer user profile). The
+# YouTube Data API key is sourced from the secrets facade: on hosts running a
+# secrets backend (broadcast → online/Proton Pass) it is wired to
+# youtube.apiKeyFile below, which the upstream module stages into the service
+# via systemd LoadCredential (private tmpfs, mode 0400). Provision the value in
+# Proton Pass — see modules/multichat/secrets/default.nix.
+#
+# When no secrets backend is active the file is left unset and the service
+# starts keyless; the key can then be supplied at runtime and persisted under
+# systemd's StateDirectory (/var/lib/multichat):
 #
 #     multichat set-youtube-key <KEY>
 #
 # (the `multichat` CLI is on PATH via the upstream module). Twitch needs no
 # credentials and starts immediately.
-{inputs, ...}: {
+{
+  inputs,
+  lib,
+  config,
+  ...
+}: {
   imports = [
     inputs.multichat.nixosModules.default
+    ./secrets
   ];
 
   services.multichat = {
@@ -28,8 +39,15 @@
     openFirewall = true;
 
     twitch.channels = ["thecompanyinc"];
-    youtube.channels = [
-      {channelId = "UCP3z2Yd_oe3b2Jnj3gaLsgA";}
-    ];
+    youtube = {
+      channels = [
+        {channelId = "UCP3z2Yd_oe3b2Jnj3gaLsgA";}
+      ];
+      # Resolved secret path (/run/proton-secrets/youtube-api-key on broadcast).
+      # Gated so hosts with secrets off start keyless (runtime set-youtube-key).
+      apiKeyFile =
+        lib.mkIf config.calamoose._secretsEnabled
+        config.calamoose.secrets."youtube-api-key".path;
+    };
   };
 }

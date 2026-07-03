@@ -78,7 +78,7 @@ Flake outputs (built with `nixos-rebuild ... --flake .#<host>`):
 | `ephemeral` | ZIMA | `void` | Throwaway impermanent test box (niri) |
 | `battlestation` | B850-MAX | `gamer` | Gaming desktop + stream source |
 | `lanstation` | B760-PLUS | `gamer` | RTX 5090 host; VFIO — splits into a GPU-passthrough gaming VM (WIP) |
-| `broadcast` | TRX50-SAGE | `streamer` | OBS live-stream box; RTX Pro 4000 + AMD GPU (evdi teleprompter); `enableSecrets=false` |
+| `broadcast` | TRX50-SAGE | `streamer` | OBS live-stream box; RTX Pro 4000 + AMD GPU (evdi teleprompter); `enableSecrets="online"` (Proton Pass: admin_password + multichat youtube-api-key) |
 | `homelab` | MS-02 | `server` | Homelab VM host (media + torrent); owns agenix secrets + cala-certs |
 | `livedata` | MS-01 | `server` | Client app/VM host (openreturn + quorumcall); `enableSecrets=false` |
 | `openreturn` | Small VM | `server` | OpenReturn app; standalone output *and* a `livedata` guest |
