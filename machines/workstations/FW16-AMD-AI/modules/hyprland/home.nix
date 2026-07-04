@@ -3,14 +3,33 @@
   pkgs,
   ...
 }: let
-  # internalAMDDisplay = "eDP-1, 2560x1600@165, 0x0, 1";
-  internalNvidiaDisplay = "eDP-2, 2560x1600@165, 0x0, 1";
+  # Lid handling that finds the internal panel by name instead of hardcoding
+  # eDP-2 — the kernel enumerates it as eDP-1 with the AMD iGPU and eDP-2 with
+  # the dGPU module, so a fixed name silently no-ops on the other config and
+  # leaves windows stranded after undocking. `monitors all` is used so the panel
+  # is still resolvable while it is disabled (lid shut).
+  laptop-panel = pkgs.writeShellApplication {
+    name = "laptop-panel";
+    runtimeInputs = [pkgs.jq];
+    text = ''
+      name="$(hyprctl monitors all -j | jq -r '[.[] | select(.name | test("eDP"))][0].name')"
+      [ -n "$name" ] && [ "$name" != "null" ] || exit 0
+      case "''${1:-}" in
+        off) hyprctl keyword monitor "$name, disable" ;;
+        on) hyprctl keyword monitor "$name, 2560x1600@165, 0x0, 1" ;;
+      esac
+    '';
+  };
 in {
+  home.packages = [laptop-panel];
   wayland.windowManager.hyprland = {
     settings = {
       monitor = [
-        # "${internalAMDDisplay}" # Laptop Screen (AMD iGPU)
-        "${internalNvidiaDisplay}" # Laptop Screen (Nvidia 5070 Module)
+        # Internal panel matched by EDID description, not connector name: the
+        # kernel enumerates it as eDP-1 (AMD iGPU) or eDP-2 (dGPU module), but
+        # the physical BOE panel reports the same desc either way, so one rule
+        # covers both. 2560x1600@165 native.
+        "desc:BOE NE160QDM-NZ6, 2560x1600@165, 0x0, 1"
         # "desc:Microstep MPG322UX OLED 0x01010101, 3840x2160@240, -3840x0, 1, bitdepth, 10, cm, hdr, sdrbrightness, 1.2, sdrsaturation, 1.0"
         "desc:Microstep MPG322UX OLED 0x01010101, 3840x2160@240, -3840x0, 1"
         ", preferred, auto, 1"
@@ -38,10 +57,8 @@ in {
 
       bindl = [
         ", switch:on:Lid Switch, exec, hyprlock"
-        # ", switch:on:Lid Switch, exec, hyprctl keyword monitor 'eDP-1, disable'"
-        ", switch:on:Lid Switch, exec, hyprctl keyword monitor 'eDP-2, disable'"
-        # ", switch:off:Lid Switch, exec, hyprctl keyword monitor '${internalAMDDisplay}'"
-        ", switch:off:Lid Switch, exec, hyprctl keyword monitor '${internalNvidiaDisplay}'"
+        ", switch:on:Lid Switch, exec, ${lib.getExe laptop-panel} off"
+        ", switch:off:Lid Switch, exec, ${lib.getExe laptop-panel} on"
       ];
     };
   };

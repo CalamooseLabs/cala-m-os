@@ -2,9 +2,46 @@
   lib,
   pkgs,
   ...
-}: {
+}: let
+  # $mod SHIFT R rescue: yank every window + the cursor back onto the internal
+  # laptop panel. For when an external monitor is unplugged (e.g. undocking with
+  # the lid shut) and windows are left running on a display that no longer
+  # exists. The panel is found by name (eDP*) so it works whether the kernel
+  # enumerates it as eDP-1 (AMD iGPU) or eDP-2 (dGPU module); falls back to the
+  # first monitor on a deskop with no eDP.
+  rescue-to-panel = pkgs.writeShellApplication {
+    name = "rescue-to-panel";
+    runtimeInputs = [pkgs.jq];
+    text = ''
+      edp="$(hyprctl monitors -j | jq -r '[.[] | select(.name | test("eDP"))][0].name // .[0].name')"
+      [ -n "$edp" ] || exit 0
+
+      hyprctl dispatch focusmonitor "$edp"
+      ws="$(hyprctl monitors -j | jq -r --arg m "$edp" '.[] | select(.name == $m) | .activeWorkspace.id')"
+
+      # Re-home every real workspace (id > 0 skips special) so none stay bound
+      # to a monitor that no longer exists.
+      hyprctl workspaces -j | jq -r '.[] | select(.id > 0) | .id' | while read -r w; do
+        hyprctl dispatch moveworkspacetomonitor "$w" "$edp" || true
+      done
+
+      # Pull every window onto the visible workspace so nothing stays hidden.
+      hyprctl clients -j | jq -r '.[].address' | while read -r a; do
+        hyprctl dispatch movetoworkspacesilent "$ws,address:$a" || true
+      done
+
+      # Warp focus + cursor to the panel center so input follows.
+      hyprctl dispatch focusmonitor "$edp"
+      if read -r cx cy < <(hyprctl monitors -j | jq -r --arg m "$edp" \
+        '.[] | select(.name == $m) | "\(.x + (.width / .scale / 2 | floor)) \(.y + (.height / .scale / 2 | floor))"'); then
+        hyprctl dispatch movecursor "$cx" "$cy"
+      fi
+    '';
+  };
+in {
   home.packages = [
     pkgs.wl-clipboard
+    rescue-to-panel
   ];
 
   wayland.windowManager.hyprland = {
@@ -133,6 +170,8 @@
         "$mod, space, exec, pkill rofi || rofi-persona"
         # toggle the collapsible waybar (pairs with cala.waybar.collapse)
         "$mod, W, exec, cala-waybar-collapse"
+        # rescue: pull all windows + cursor back onto the internal laptop panel
+        "$mod SHIFT, R, exec, ${lib.getExe rescue-to-panel}"
 
         "$mod, period, layoutmsg, swapcol r"
         "$mod, comma, layoutmsg, swapcol l"
