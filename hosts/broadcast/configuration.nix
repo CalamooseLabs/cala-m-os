@@ -19,6 +19,7 @@ in {
   #   users/_core/secrets/default.nix -> admin_password (hub hashedPasswordFile)
   #   modules/multichat/secrets       -> youtube-api-key (multichat apiKeyFile)
   calamoose.enableSecrets = "online";
+  calamoose.version = "1.0.1-beta";
 
   # Re-mint a Proton session from the installer-seeded PAT (same pattern as `ai`).
   # The fs-provider session is bound to the machine-id, so the session the ISO
@@ -28,20 +29,26 @@ in {
   # a valid session; the installer seeds it to /var/lib/proton-pass-cli/pat when you
   # supply a PAT at the prompt (or pre-provision one with `flash-iso --with-pat`).
   # Once minted, the session persists here (persistent root), so later boots reuse
-  # it and never touch the PAT again. Gated off during the minimal-install pass,
-  # which does not import the proton-secrets module. (Without a seeded PAT you can
-  # still bootstrap by hand on the running host: `sudo proton-secrets login`.)
-  services.proton-secrets.patFile =
-    lib.mkIf (!initialInstallMode) "/var/lib/proton-pass-cli/pat";
-  calamoose.version = "1.0.1-beta";
-
-  imports = [
-    (import ../_core/default.nix {
-      users_list = import_users;
-      machine_type = machine_type;
-      machine_uuid = machine_uuid;
-    })
-  ];
+  # it and never touch the PAT again. (Without a seeded PAT you can still bootstrap
+  # by hand on the running host: `sudo proton-secrets login`.)
+  #
+  # Applied as a conditional import — NOT
+  # `services.proton-secrets.patFile = mkIf (!initialInstallMode) …` — because the
+  # option-existence check fires on the definition path regardless of the mkIf
+  # condition, so during the minimal-install pass (where the proton-secrets module
+  # is absent) mkIf would still error "option does not exist". lib.optional drops
+  # the definition entirely there.
+  imports =
+    [
+      (import ../_core/default.nix {
+        users_list = import_users;
+        machine_type = machine_type;
+        machine_uuid = machine_uuid;
+      })
+    ]
+    ++ lib.optional (!initialInstallMode) {
+      services.proton-secrets.patFile = "/var/lib/proton-pass-cli/pat";
+    };
 
   networking.hostName = "broadcast";
 

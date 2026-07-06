@@ -39,21 +39,27 @@ in {
   # Re-mint a Proton session from the installer-seeded PAT. Essential on a fresh
   # first boot: the fs session copied off the ISO won't match this host's newly
   # generated machine-id, and (being impermanent) the session dir starts empty.
-  # Gated so the minimal-install pass — which does not import the proton-secrets
-  # module — never sees this option.
-  services.proton-secrets.patFile =
-    lib.mkIf (!initialInstallMode) "/var/lib/proton-pass-cli/pat";
+  #
+  # Applied as a conditional import so the minimal-install pass — which does not
+  # import the proton-secrets module — never carries this definition. A plain
+  # `services.proton-secrets.patFile = mkIf (!initialInstallMode) …` does NOT work:
+  # the option-existence check fires on the definition path regardless of the mkIf
+  # condition, so it would still error "option does not exist" in minimal mode.
+  # lib.optional yields [] there, dropping the definition entirely.
+  imports =
+    [
+      inputs.preservation.nixosModules.default
 
-  imports = [
-    inputs.preservation.nixosModules.default
-
-    (import ../_core/default.nix {
-      users_list = import_users;
-      machine_type = machine_type;
-      machine_uuid = machine_uuid;
-      extra_user_modules = {};
-    })
-  ];
+      (import ../_core/default.nix {
+        users_list = import_users;
+        machine_type = machine_type;
+        machine_uuid = machine_uuid;
+        extra_user_modules = {};
+      })
+    ]
+    ++ lib.optional (!initialInstallMode) {
+      services.proton-secrets.patFile = "/var/lib/proton-pass-cli/pat";
+    };
 
   networking.hostName = "ai";
 
