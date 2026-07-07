@@ -17,6 +17,11 @@
     ../../modules/amd-gpu/configuration.nix # AMD workstation GPU — Hyprland display + DisplayLink teleprompter render
   ];
 
+  # NixOS owns all three NVMe drives here (boot + RAID0 recordings, see disko.nix),
+  # so let the installer do an unattended full wipe. Default is false so dual-boot
+  # machines are never auto-wiped.
+  calamoose.install.wipeAllDisks = true;
+
   boot = {
     kernelPackages = pkgs.linuxPackages_latest;
   };

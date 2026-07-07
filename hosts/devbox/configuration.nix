@@ -67,4 +67,13 @@ in {
     enable = true;
     binfmt = true;
   };
+
+  # The MSI MPG 322URX QD-OLED exposes a tiny built-in USB mass-storage gadget
+  # ("Optix Driver" — /dev/sda, a 22K vfat volume, vendor 1462) meant to
+  # auto-install its Windows software. It's harmless on Linux but shows up as an
+  # always-present removable drive; tell udisks to ignore it so it stops
+  # appearing in the file manager / desktop.
+  services.udev.extraRules = ''
+    SUBSYSTEM=="block", ENV{ID_VENDOR_ID}=="1462", ENV{ID_MODEL}=="Optix_Driver", ENV{UDISKS_IGNORE}="1"
+  '';
 }

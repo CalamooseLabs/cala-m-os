@@ -45,6 +45,20 @@
     '';
   };
 
+  options.calamoose.install.wipeAllDisks = lib.mkOption {
+    type = lib.types.bool;
+    default = false;
+    example = true;
+    description = ''
+      Install-time disk policy read by `install-cala-m-os`. When true, disko runs
+      in destroy,format,mount mode with --yes-wipe-all-disks — an unattended full
+      wipe of EVERY disk in this host's disko config. Leave false (default) for
+      machines that dual-boot or own only some disks: the installer then refuses
+      to auto-partition rather than blowing them away. Set true only for boxes
+      NixOS fully owns (e.g. broadcast/TRX50-SAGE).
+    '';
+  };
+
   options.calamoose.hardlinkLayout = lib.mkOption {
     type = lib.types.bool;
     default = false;
