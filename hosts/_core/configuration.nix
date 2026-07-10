@@ -99,7 +99,10 @@ in
     # Boot loader
     boot = {
       loader = {
-        timeout = lib.mkForce 0;
+        # mkDefault (was mkForce) so a host can opt back into a visible menu —
+        # broadcast sets 5 after a hidden menu made a broken generation nearly
+        # unrecoverable. Everything else still boots straight through at 0.
+        timeout = lib.mkDefault 0;
         systemd-boot.enable = true;
         efi.canTouchEfiVariables = true;
       };

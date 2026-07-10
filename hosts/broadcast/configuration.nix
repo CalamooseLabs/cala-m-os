@@ -86,4 +86,35 @@ in {
   boot.extraModprobeConfig = ''
     options snd_usb_audio vid=0x1235 pid=0x8218 device_setup=1
   '';
+
+  # Boot visibility + recoverability. A stage-1 failure on this box once showed
+  # only a bare "no usable init" — the console was silenced (loglevel=0, from
+  # core's consoleLogLevel = 0) and the hidden boot menu (core timeout 0) made
+  # picking a working generation needlessly hard on a machine that's rarely at
+  # hand. Keep boot visible here; a stream box boots off-air anyway.
+  boot.plymouth.enable = false; # no splash painting over the console
+  boot.consoleLogLevel = lib.mkForce 6; # emits loglevel=6, last-wins over core's 3/0
+  # Stage-1 is systemd-based (boot.initrd.systemd), so core's quiet/
+  # rd.systemd.show_status=false would still hide unit status — and its
+  # boot.shell_on_fail is a scripted-initrd param that is inert here. mkAfter
+  # wins (later rd.systemd.show_status overrides the earlier one), and
+  # emergencyAccess is the systemd-initrd equivalent of shell_on_fail: on a
+  # stage-1 failure drop to a root emergency shell (physical-access box).
+  boot.kernelParams = lib.mkAfter ["rd.systemd.show_status=true" "systemd.show_status=true"];
+  boot.initrd.systemd.emergencyAccess = true;
+  boot.loader.timeout = 5; # core defaults 0 (hidden menu)
+  boot.loader.systemd-boot.configurationLimit = 10; # bounded, keeps fallback gens
+
+  # With amdgpu no longer force-loaded in the initrd (see machines/modules/
+  # amd-gpu), the card is probed by udev in stage-2 — so greetd can win the race
+  # against /dev/dri/amd-card appearing, Hyprland then finds no usable
+  # AQ_DRM_DEVICES primary and exits, and greetd (Restart=on-success upstream)
+  # would die once and leave a permanently black seat. Two-layer guard:
+  # wait briefly for the card before launching, and always restart the seat so
+  # any lost race (or Hyprland crash) is a 2s blink instead of a dead console.
+  services.greetd.settings.default_session.command = lib.mkForce "sh -c 'for _ in $(seq 100); do [ -e /dev/dri/amd-card ] && break; sleep 0.1; done; start-hyprland &> /dev/null'";
+  systemd.services.greetd.serviceConfig = {
+    Restart = lib.mkForce "always";
+    RestartSec = 2;
+  };
 }

@@ -8,7 +8,19 @@
   services.xserver.videoDrivers = ["amdgpu"];
 
   hardware.enableRedistributableFirmware = true;
-  boot.initrd.kernelModules = ["amdgpu"];
+
+  # amdgpu is deliberately NOT forced into the initrd here. Early KMS (amdgpu in
+  # boot.initrd.kernelModules) is cosmetic — it only paints splash/console before
+  # switch-root — but it makes the whole boot hostage to the DRM driver + GPU
+  # firmware working inside stage-1: broadcast (RX 9060 RDNA4 discrete, kernel
+  # 7.1) failed stage-1 with amdgpu in its initrd. This is ASIC-specific, not a
+  # kernel problem — devbox boots the same kernel fine WITH amdgpu in its initrd
+  # (Framework iGPU, via nixos-hardware) — but early KMS buys nothing worth that
+  # risk on new silicon. amdgpu still loads normally in stage-2 via
+  # services.xserver.videoDrivers above, which is all Hyprland/evdi need (late
+  # probe races, e.g. greetd vs /dev/dri/amd-card, are handled at the consumer —
+  # see hosts/broadcast). A consumer that truly wants early KMS (e.g. a
+  # passthrough guest) must opt in with its own boot.initrd.kernelModules.
 
   # Stable symlinks to the AMD card/render nodes (renderD*/card* numbering is not
   # stable across boots / multi-GPU). Lets a Wayland compositor be pinned to the
