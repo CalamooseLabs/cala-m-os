@@ -8,6 +8,18 @@
   switching = osConfig.userSwitching.enable or false;
   cfg = config.cala.waybar;
 
+  # Active-style base16 palette (see hosts/_core/options.nix → calamoose.style),
+  # emitted as GTK @define-color rules. Both the main bar stylesheet AND the
+  # standalone cap process (a separate waybar with no stylix prelude of its own)
+  # prepend this so @baseNN resolves to the chosen style. calamooselabs resolves
+  # to the same gruvbox hex the CSS used before, so its look is unchanged.
+  scheme = osConfig.stylix.base16Scheme;
+  palette =
+    lib.concatMapStringsSep "\n"
+    (n: "@define-color ${n} ${scheme.${n}};")
+    ["base00" "base01" "base02" "base03" "base04" "base05" "base06" "base07" "base08" "base09" "base0A" "base0B" "base0C" "base0D" "base0E" "base0F"]
+    + "\n";
+
   # --- Collapse feature --------------------------------------------------
   # Two waybar instances: the home-manager-managed MAIN bar (which owns the
   # exclusive zone / reserved top strip) and a standalone non-exclusive CAP.
@@ -63,6 +75,7 @@
   });
 
   capStyle = pkgs.writeText "waybar-cap-style.css" ''
+    ${palette}
     * {
       font-family: "MesloLGS NF";
       font-size: 15px;
@@ -74,15 +87,15 @@
     /* Identical to the bar's left end cap (#custom-collapse), just the arrow
        pointing the other way (❮ = pull the bar back out). */
     #custom-cap {
-      background: rgba(30, 33, 35, 0.92);
-      color: #b8b8b8;
+      background: alpha(@base00, 0.92);
+      color: @base04;
       margin: 6px 0;
       padding: 4px 16px;
       border-radius: 18px 0 0 18px;
       transition: color 200ms ease;
     }
     #custom-cap:hover {
-      color: #73cef4;
+      color: @base0C;
     }
   '';
 
@@ -93,15 +106,15 @@
 
     /* collapse handle = the rounded left cap */
     #custom-collapse {
-      background: rgba(30, 33, 35, 0.92);
-      color: #b8b8b8;
+      background: alpha(@base00, 0.92);
+      color: @base04;
       margin: 6px 0;
       padding: 4px 16px;
       border-radius: 18px 0 0 18px;
       transition: color 200ms ease;
     }
     #custom-collapse:hover {
-      color: #73cef4;
+      color: @base0C;
     }
     #custom-music {
       border-radius: 0;
@@ -257,7 +270,7 @@ in {
           };
       };
 
-      style = builtins.readFile ./style.css + lib.optionalString cfg.collapse.enable collapseCss;
+      style = palette + builtins.readFile ./style.css + lib.optionalString cfg.collapse.enable collapseCss;
     };
   };
 }

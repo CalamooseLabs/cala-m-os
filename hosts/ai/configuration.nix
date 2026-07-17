@@ -54,7 +54,9 @@ in {
         users_list = import_users;
         machine_type = machine_type;
         machine_uuid = machine_uuid;
-        extra_user_modules = {};
+        # ai-github: bot GitHub identity (on-card OpenPGP, present-but-no-touch).
+        # yubikey-github-bootstrap is added after the antlers lock bump.
+        extra_user_modules = {developer = ["ai-github"];};
       })
     ]
     ++ lib.optional (!initialInstallMode) {

@@ -35,6 +35,24 @@
     description = "True when any secrets backend is active. Use in mkIf. Do not set.";
   };
 
+  options.calamoose.style = lib.mkOption {
+    type = lib.types.enum ["calamooselabs" "blank" "thecompany"];
+    default = "calamooselabs";
+    example = "thecompany";
+    description = ''
+      Visual style (Stylix theme) for this host — selects the system-wide base16
+      palette, fonts, wallpaper, cursor, and Plymouth logo. Consumed by
+      modules/stylix/configuration.nix.
+
+        "calamooselabs" (default) — the house gruvbox-ish dark palette + photo wallpaper.
+        "blank"                   — minimal grayscale dark; no accent color, solid background.
+        "thecompany"              — The Company, Inc. brand theme, per its Brand Guidelines:
+                                    Incognito Black base with the electric Blue Screen of Death
+                                    / Circle-Back Cyan accents, Outfit + BioRhyme fonts, and the
+                                    "Evil Eye" logomark wallpaper + boot logo.
+    '';
+  };
+
   options.calamoose.version = lib.mkOption {
     type = lib.types.str;
     default = "0.0.1-beta";

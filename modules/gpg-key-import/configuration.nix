@@ -24,6 +24,17 @@ in {
         already in ${user}'s keyring, so it is safe to re-run.
       '';
     };
+
+    secretName = lib.mkOption {
+      type = lib.types.str;
+      default = "yubigpg.asc";
+      description = ''
+        Name of the `calamoose.secrets.<name>` entry holding the armored GPG
+        public key to import. Defaults to the shared `yubigpg.asc`; hosts that
+        import a different identity (e.g. the `ai` bot key) point this at their
+        own secret. The secret must be declared elsewhere in the tree.
+      '';
+    };
   };
 
   # Ship the command only when explicitly enabled AND secrets (the yubigpg.asc
@@ -36,7 +47,7 @@ in {
         keyId = cfg.keyId;
         # Point at the backend-neutral path (agenix -> /run/agenix, online ->
         # /run/proton-secrets) instead of the antlers default of /run/agenix.
-        keyFile = config.calamoose.secrets."yubigpg.asc".path;
+        keyFile = config.calamoose.secrets.${cfg.secretName}.path;
       };
     };
   };

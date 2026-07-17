@@ -23,16 +23,16 @@ window#waybar {
 #backlight,
 #battery,
 #custom-power {
-  background: rgba(30, 33, 35, 0.92);
+  background: alpha(@base00, 0.92);
   margin: 6px 0;
   padding: 4px 11px;
-  color: #cdd6d4;
+  color: @base05;
 }
 
 /* the rounded left cap = the now-playing capsule (animated) */
 #custom-music {
   border-radius: 18px 0 0 18px;
-  color: #c9d05c;
+  color: @base0B;
   transition:
     min-width 380ms cubic-bezier(0.25, 0.1, 0.25, 1),
     padding 380ms cubic-bezier(0.25, 0.1, 0.25, 1);
@@ -51,34 +51,34 @@ window#waybar {
   border-radius: 0;
   margin-right: 0;
   padding: 4px 15px;
-  color: #f43753;
+  color: @base08;
 }
 
 /* subtle dividers between groups (now-playing | clock | stats) */
 #clock,
 #pulseaudio {
-  border-left: 1px solid rgba(238, 238, 238, 0.1);
+  border-left: 1px solid alpha(@base05, 0.1);
 }
 
 /* the clock is the bright focal element */
 #clock {
-  color: #eeeeee;
+  color: @base05;
   font-weight: bold;
 }
 
 /* accent-colored status glyphs (each Waybar module is a single color) */
 #pulseaudio {
-  color: #eeeeee;
+  color: @base05;
 }
 #network {
-  color: #73cef4;
+  color: @base0C;
 }
 #backlight {
-  color: #ffc24b;
+  color: @base0A;
 }
 #battery {
-  color: #c9d05c;
+  color: @base0B;
 }
 #custom-persona {
-  color: #b8b8b8;
+  color: @base04;
 }

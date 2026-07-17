@@ -8,7 +8,27 @@
   frameDir = ../../assets/lock-frames;
   frameCount = 24;
   reloadEvery = 1;
-  stillPath = "${../../assets/lockscreen-bg.png}";
+
+  # Active-style palette + accent tokens (see hosts/_core/options.nix →
+  # calamoose.style). Accents follow the chosen style; calamooselabs resolves to
+  # the same 73cef4/c9d05c/f43753 it used before, thecompany to its brand blues,
+  # blank to neutral grays. Neutral text greys below are left literal — they read
+  # fine on any dark background and re-mapping them would shift the house look.
+  c = osConfig.stylix.base16Scheme;
+  accent = "rgb(${lib.removePrefix "#" c.base0C})"; # primary tick / outline
+  okColor = "rgb(${lib.removePrefix "#" c.base0B})"; # check_color
+  failColor = "rgb(${lib.removePrefix "#" c.base08})"; # fail_color
+  fgColor = "rgb(${lib.removePrefix "#" c.base05})"; # input text
+
+  # Per-style still background: the house lock art for calamooselabs, the style's
+  # own wallpaper for the branded/blank looks. (The drift/"dynamic" frames are
+  # hand-coloured house art and stay as-is when that mode is selected.)
+  stillPath =
+    if osConfig.calamoose.style == "thecompany"
+    then "${../../assets/thecompany-wallpaper.png}"
+    else if osConfig.calamoose.style == "blank"
+    then "${../../assets/blank-wallpaper.png}"
+    else "${../../assets/lockscreen-bg.png}";
 
   # "dynamic": rasterize the drift frames to PNGs once, at build time.
   framePngs = pkgs.runCommand "hyprlock-aurora-frames" {nativeBuildInputs = [pkgs.resvg];} ''
@@ -67,7 +87,7 @@ in {
         {
           monitor = "";
           size = "3, 80";
-          color = "rgb(73cef4)";
+          color = accent;
           rounding = 0;
           border_size = 0;
           position = "50, -60";
@@ -77,7 +97,7 @@ in {
         {
           monitor = "";
           size = "74, 3";
-          color = "rgb(73cef4)";
+          color = accent;
           rounding = 0;
           border_size = 0;
           position = "62, 420";
@@ -93,7 +113,7 @@ in {
           text = "  LOCKED";
           font_size = 16;
           font_family = "MesloLGS NF";
-          color = "rgb(73cef4)";
+          color = accent;
           position = "66, -56";
           halign = "left";
           valign = "top";
@@ -170,11 +190,11 @@ in {
           outline_thickness = 2;
           dots_center = true;
           fade_on_empty = false;
-          outer_color = "rgb(73cef4)";
+          outer_color = accent;
           inner_color = "rgba(20, 22, 24, 0.55)";
-          font_color = "rgb(eeeeee)";
-          check_color = "rgb(c9d05c)";
-          fail_color = "rgb(f43753)";
+          font_color = fgColor;
+          check_color = okColor;
+          fail_color = failColor;
           placeholder_text = "";
         }
       ];

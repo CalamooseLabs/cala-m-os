@@ -1,8 +1,15 @@
 {
   lib,
   pkgs,
+  osConfig,
   ...
 }: let
+  # Active-style palette (see modules/stylix + hosts/_core/options.nix →
+  # calamoose.style). Deriving the border colors from it means the accent
+  # gradient follows the chosen style instead of being pinned to the house
+  # palette. `hx` strips the leading '#' for Hyprland's rgba(RRGGBBAA) form.
+  c = osConfig.stylix.base16Scheme;
+  hx = s: lib.removePrefix "#" s;
   # $mod SHIFT R rescue: yank every window + the cursor back onto the internal
   # laptop panel. For when an external monitor is unplugged (e.g. undocking with
   # the lid shut) and windows are left running on a display that no longer
@@ -67,10 +74,12 @@ in {
         gaps_in = 2;
         gaps_out = 8;
         border_size = 2;
-        # cyan -> green accent gradient (matches the waybar accents). mkForce to
-        # win over stylix's hyprland border theming.
-        "col.active_border" = lib.mkForce "rgba(73cef4ee) rgba(c9d05cee) 45deg";
-        "col.inactive_border" = lib.mkForce "rgba(2b2b2baa)";
+        # cyan -> green accent gradient (matches the waybar accents), pulled from
+        # the active style's palette. mkForce to win over stylix's hyprland border
+        # theming. calamooselabs keeps its exact 73cef4->c9d05c; thecompany becomes
+        # Circle-Back Cyan -> Highlighter Green; blank becomes a neutral gray ramp.
+        "col.active_border" = lib.mkForce "rgba(${hx c.base0C}ee) rgba(${hx c.base0B}ee) 45deg";
+        "col.inactive_border" = lib.mkForce "rgba(${hx c.base00}aa)";
       };
 
       input = {
