@@ -20,6 +20,7 @@ in {
   #   modules/multichat/secrets       -> youtube-api-key (multichat apiKeyFile)
   calamoose.enableSecrets = "online";
   calamoose.version = "1.0.1-beta";
+  calamoose.style = "thecompany"; # The Company, Inc. brand theme
 
   # Re-mint a Proton session from the installer-seeded PAT (same pattern as `ai`).
   # The fs-provider session is bound to the machine-id, so the session the ISO

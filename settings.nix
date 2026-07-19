@@ -25,6 +25,7 @@
       gateway = "10.10.10.1";
       homelab = "10.10.10.15";
       media = "10.10.10.11";
+      security = "10.10.10.20"; # UniFi Protect camera-wall VM (set a matching DHCP reservation)
       torrent = "10.10.10.35";
       vault = "10.10.10.45";
       htpc = "10.10.10.40";

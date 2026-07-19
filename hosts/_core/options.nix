@@ -48,7 +48,7 @@
         "blank"                   — minimal grayscale dark; no accent color, solid background.
         "thecompany"              — The Company, Inc. brand theme, per its Brand Guidelines:
                                     Incognito Black base with the electric Blue Screen of Death
-                                    / Circle-Back Cyan accents, Outfit + BioRhyme fonts, and the
+                                    / Circle-Back Cyan accents, Outfit + BioRhyme Expanded fonts, and the
                                     "Evil Eye" logomark wallpaper + boot logo.
     '';
   };

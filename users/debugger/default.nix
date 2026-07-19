@@ -51,6 +51,7 @@
     "stylix"
     "teleprompter"
     "termusic"
+    "unifi-protect-viewer"
     "vibe"
     "vibe-server"
     "virt-manager"

@@ -22,4 +22,18 @@ in {
     yubidev
     yubibackup
   ];
+  # UniFi Protect integration API key — consumed by the `security` microVM via /run/hostsecrets.
+  "protect-api-key.age".publicKeys = [
+    yubiserver
+    yubinano
+    yubidev
+    yubibackup
+  ];
+  # UniFi-OS local-admin password for recorded-video playback (the `security` VM).
+  "protect-admin-password.age".publicKeys = [
+    yubiserver
+    yubinano
+    yubidev
+    yubibackup
+  ];
 }

@@ -11,6 +11,7 @@
     "multichat"
     "obs-studio"
     "openssh"
+    "stylix"
     "teleprompter"
   ];
 in {

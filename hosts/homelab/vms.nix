@@ -4,6 +4,15 @@
   ...
 }: let
   vms = {
+    "security" = {
+      # UniFi Protect camera-wall web service (services.unifi-protect-monitor). Streams
+      # via ffmpeg (audio-transcode + video-copy) and proxies recorded clips — light CPU,
+      # no local storage (footage lives on the console). Shares the eno2 lab bridge to
+      # reach the console at 10.10.10.251; its API key + admin password arrive from the
+      # host via /run/hostsecrets/* (declared in ./secrets).
+      devices = [];
+      storage = 12; # GBs (OS only)
+    };
     "media" = {
       devices = ["arc-b50"];
       # Plex gets the 10GbE port (eno1) to itself — its NAS reads and client

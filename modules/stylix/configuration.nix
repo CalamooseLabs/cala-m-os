@@ -17,11 +17,14 @@
   # The Company, Inc. display faces. The Brand Guidelines specify Adobe's
   # Polymath / Xanti Typewriter / Espiritu; those are not packaged, so we use
   # the free Google alternatives the guidelines themselves nominate (Outfit for
-  # Polymath, BioRhyme for Xanti Typewriter). Slimmed to just these families to
-  # keep the closure small.
-  companyFonts = pkgs.google-fonts.override {
-    fonts = ["Outfit" "BioRhyme"];
-  };
+  # Polymath, BioRhyme Expanded for Xanti Typewriter). Vendored in-repo under
+  # ./fonts (the brand-provided OFL TTFs) so the theme is self-contained and
+  # pins the exact cuts — nixpkgs' google-fonts only ships the regular-width
+  # BioRhyme variable font, not the Expanded family this brand calls for.
+  companyFonts = pkgs.runCommandLocal "thecompany-fonts" {} ''
+    install -Dm444 -t $out/share/fonts/truetype ${./fonts}/*.ttf
+    install -Dm444 -t $out/share/doc/thecompany-fonts ${./fonts}/*.txt
+  '';
 
   # Theme table — each entry is a complete visual style. `calamoose.style`
   # selects one; every host defaults to "calamooselabs".
@@ -101,7 +104,7 @@
       };
       serif = {
         package = companyFonts;
-        name = "BioRhyme";
+        name = "BioRhyme Expanded";
       };
       base16Scheme = {
         base00 = "#0d1a1c"; # Incognito Black — background

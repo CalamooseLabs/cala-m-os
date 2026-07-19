@@ -11,6 +11,7 @@
 in {
   calamoose.enableSecrets = false;
   calamoose.version = "2.0.1";
+  calamoose.style = "thecompany"; # The Company, Inc. brand theme
 
   imports = [
     # Common Core Config

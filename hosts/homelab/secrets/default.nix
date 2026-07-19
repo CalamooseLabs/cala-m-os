@@ -15,5 +15,14 @@
       agenixFile = ./proton-vpn.conf.age;
       reference = "pass://REPLACE_ME/proton-vpn.conf";
     };
+    # UniFi Protect — consumed by the `security` microVM via /run/hostsecrets.
+    "protect-api-key" = {
+      agenixFile = ./protect-api-key.age;
+      reference = "pass://REPLACE_ME/protect-api-key";
+    };
+    "protect-admin-password" = {
+      agenixFile = ./protect-admin-password.age;
+      reference = "pass://REPLACE_ME/protect-admin-password";
+    };
   };
 }
