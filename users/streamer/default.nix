@@ -5,6 +5,8 @@
     "agenix"
     "bash"
     "bitfocus-companion"
+    "chromium"
+    "cobblemon-overlay"
     "fonts"
     "hyprland"
     "moosefetch"
