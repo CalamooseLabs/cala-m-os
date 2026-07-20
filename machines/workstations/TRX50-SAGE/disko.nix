@@ -7,24 +7,6 @@
   # role of each disk deterministic. The disk keys below (boot/recordings0/1)
   # only set the partlabels (disk-<key>-<part>); the by-id `device` is what
   # actually binds a role to a physical drive.
-  #
-  # THE OTHER HALF OF THAT BUG: by-id only fixed which disk gets FORMATTED. The
-  # RUNNING system still selected root by partlabel, because disko's GPT device
-  # selector (disko lib/types/gpt.nix) only emits /dev/disk/by-partuuid/<uuid>
-  # when a partition `uuid` is set — otherwise it falls back to the NON-unique
-  # /dev/disk/by-partlabel/disk-boot-root. That label is last-writer-wins in
-  # udev (60-persistent-storage: SYMLINK+=, no tiebreak) across EVERY partition
-  # carrying it — and the pre-by-id install era (disko targeted /dev/nvmeXn1 by
-  # unstable name) stamped "disk-boot-root" onto whatever drive was nvmeXn1 at
-  # the time. A drive demoted out of the boot role by the by-id switch (or any
-  # extra M.2) keeps that stale label + stale ext4, so stage-1 could bind the
-  # symlink to the WRONG disk, mount an empty ext4 at /sysroot, and fail
-  # switch-root → "Switch root target contains no usable init" even AFTER the
-  # by-id fix (which only pinned the FORMAT target, never the boot-time mount).
-  # Pinning explicit partition GUIDs below forces disko to mount / and /boot
-  # by /dev/disk/by-partuuid/<uuid> (globally unique), so a colliding partlabel
-  # can never mismount root again. These GUIDs are written to disk at format
-  # time; changing them requires a reformat/reinstall (this box is install-only).
   disko.devices = {
     disk = {
       # Boot Drive — Samsung 990 EVO Plus (serial S7U5NJ0Y201623).
@@ -39,9 +21,6 @@
               # generations — 512M ESPs are a classic "No space left on /boot".
               size = "1G";
               type = "EF00";
-              # Fixed GUID → disko mounts /boot by /dev/disk/by-partuuid/<uuid>,
-              # not the non-unique by-partlabel/disk-boot-ESP (see header note).
-              uuid = "a690af18-3ee8-43f8-9ce3-793be5f07c41";
               content = {
                 type = "filesystem";
                 format = "vfat";
@@ -51,10 +30,6 @@
             };
             root = {
               size = "100%";
-              # Fixed GUID → disko mounts / by /dev/disk/by-partuuid/<uuid>, not
-              # the non-unique by-partlabel/disk-boot-root. THIS is the selector
-              # that "no usable init" hinged on (see header note).
-              uuid = "8cdfdd45-2dbb-43cc-b5db-d8ba5b25ac9a";
               content = {
                 type = "filesystem";
                 format = "ext4";

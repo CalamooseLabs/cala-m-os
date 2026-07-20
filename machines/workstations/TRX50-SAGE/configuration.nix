@@ -23,7 +23,16 @@
   calamoose.install.wipeAllDisks = true;
 
   boot = {
-    kernelPackages = pkgs.linuxPackages_latest;
+    # linuxPackages_latest (kernel 7.1) HANGS this box in stage-1 with "switch
+    # root target contains no usable init": the full config's gen2 loads its
+    # kernel+initrd from the 990's systemd-boot but never hands off to init,
+    # while the minimal install's gen1 on stable 6.18 boots fine from the SAME
+    # menu. Kernel 7.1 itself is not the problem (devbox runs linuxPackages_latest
+    # and boots) — it's a 7.1 regression specific to this box's hardware (RDNA4
+    # RX 9060 + NVIDIA RTX Pro 4000 + NVMe RAID on TRX50). Pin to the stable
+    # kernel gen1 already proves bootable here. Retry linuxPackages_latest once a
+    # later 7.x lands (bump the nixpkgs input); keep this pin as the known-good.
+    kernelPackages = pkgs.linuxPackages;
   };
 
   # Seed the committed Bitfocus Companion baseline (buttons/pages/connections) on a
