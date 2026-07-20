@@ -19,7 +19,7 @@ in {
   #   users/_core/secrets/default.nix -> admin_password (hub hashedPasswordFile)
   #   modules/multichat/secrets       -> youtube-api-key (multichat apiKeyFile)
   calamoose.enableSecrets = "online";
-  calamoose.version = "1.0.1-beta";
+  calamoose.version = "1.1.0-beta";
   calamoose.style = "thecompany"; # The Company, Inc. brand theme
 
   # Re-mint a Proton session from the installer-seeded PAT (same pattern as `ai`).
