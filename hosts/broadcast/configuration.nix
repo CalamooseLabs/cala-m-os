@@ -49,6 +49,18 @@ in {
     ]
     ++ lib.optional (!initialInstallMode) {
       services.proton-secrets.patFile = "/var/lib/proton-pass-cli/pat";
+      # THE fix for gen2 "Switch root target contains no usable init" (found Jul 21
+      # 2026 — it was the secrets, not the kernel). With systemd stage-1, NixOS runs
+      # this system's `activate` INSIDE the initrd (initrd-nixos-activation → chroot
+      # /sysroot .../prepare-root), where there is NO network. With the default
+      # failClosed=true the Proton preflight/fetch does `exit 1`, which kills
+      # `activate` BEFORE its `etc` snippet creates /sysroot/{etc/os-release,sbin/init}
+      # — so systemd's switch-root usable-init check fails and the box never boots
+      # past stage-1. gen1 (minimal install) has no proton snippet, which is the only
+      # reason it boots. Non-fatal lets `activate` finish so /sysroot is populated and
+      # switch-root succeeds; secrets are best-effort at boot and refetched once the
+      # network is up (a later activation, or `sudo proton-secrets login` + rebuild).
+      services.proton-secrets.failClosed = false;
     };
 
   networking.hostName = "broadcast";
