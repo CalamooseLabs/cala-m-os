@@ -22,18 +22,14 @@
   # machines are never auto-wiped.
   calamoose.install.wipeAllDisks = true;
 
-  boot = {
-    # linuxPackages_latest (kernel 7.1) HANGS this box in stage-1 with "switch
-    # root target contains no usable init": the full config's gen2 loads its
-    # kernel+initrd from the 990's systemd-boot but never hands off to init,
-    # while the minimal install's gen1 on stable 6.18 boots fine from the SAME
-    # menu. Kernel 7.1 itself is not the problem (devbox runs linuxPackages_latest
-    # and boots) — it's a 7.1 regression specific to this box's hardware (RDNA4
-    # RX 9060 + NVIDIA RTX Pro 4000 + NVMe RAID on TRX50). Pin to the stable
-    # kernel gen1 already proves bootable here. Retry linuxPackages_latest once a
-    # later 7.x lands (bump the nixpkgs input); keep this pin as the known-good.
-    kernelPackages = pkgs.linuxPackages;
-  };
+  # NOTE: the gen2 "Switch root target contains no usable init" hang on this box
+  # was NOT the kernel — it was the proton-secrets activation snippet doing
+  # `exit 1` in the no-network initrd `activate`, aborting before /sysroot's
+  # /etc was set up (fixed by services.proton-secrets.failClosed=false in
+  # hosts/broadcast). gen2 failed identically on both 7.1 and 6.18, so the
+  # earlier stable pin here was a red herring; run linuxPackages_latest like the
+  # other workstations.
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # Seed the committed Bitfocus Companion baseline (buttons/pages/connections) on a
   # fresh box, then let the machine own it — Companion's config already persists via
