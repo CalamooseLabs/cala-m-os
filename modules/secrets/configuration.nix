@@ -93,6 +93,20 @@ in {
     description = "Backend-neutral secret declarations, resolved per calamoose.enableSecrets.";
   };
 
+  options.calamoose.secretsSelfHealRestartUnits = lib.mkOption {
+    type = lib.types.listOf lib.types.str;
+    default = [];
+    example = ["multichat.service"];
+    description = ''
+      Systemd units to `try-restart` after the online (Proton Pass) self-heal
+      successfully fetches secrets post-boot. Use this for RUNTIME consumers that
+      read a secret FILE at service start (e.g. via LoadCredential) and would
+      otherwise miss a value that only arrives once the network is up.
+      Activation-time consumers (hashedPasswordFile, etc.) are re-applied by the
+      self-heal's `switch-to-configuration` and must NOT be listed here.
+    '';
+  };
+
   config = lib.mkMerge [
     # ---- offline: agenix ----
     (lib.mkIf (backend == "agenix") {
@@ -125,6 +139,64 @@ in {
         cfg;
       # Permit just the unfree Proton Pass CLI (server hosts don't set allowUnfree).
       nixpkgs.config.allowUnfreePredicate = lib.mkDefault (pkg: lib.getName pkg == "proton-pass-cli");
+
+      # ---- Self-heal: fetch the online secrets once the network is up ----
+      # With systemd stage-1 (boot.initrd.systemd.enable, the default here) NixOS
+      # runs `activate` ONLY inside the initrd, which has no network — so the
+      # Proton fetch there always fails and the ramfs secrets (/run/proton-secrets/*)
+      # start every boot empty, and `activate` is NOT re-run in stage-2. Without
+      # this, secrets are populated only by a manual `nixos-rebuild switch` while
+      # online. This oneshot re-runs activation once network-online is reached:
+      # `switch-to-configuration test` re-executes the Proton fetch (now WITH
+      # network) AND the `users` snippet, so both the secret files and their
+      # activation-time consumers (e.g. hashedPasswordFile) are populated with no
+      # manual step. Runtime consumers that read a secret file at start
+      # (LoadCredential, etc.) are bounced via secretsSelfHealRestartUnits.
+      #
+      # It only acts when a secret is actually missing (i.e. the initrd couldn't
+      # fetch), retries a few times to ride out flaky first-boot DHCP, and never
+      # fails the boot. Same-generation `switch-to-configuration` computes zero
+      # unit changes, so it re-runs activation without restarting the live session.
+      systemd.services.proton-secrets-selfheal = lib.mkIf (cfg != {}) {
+        description = "Fetch online secrets once the network is up (initrd activation has none)";
+        wantedBy = ["multi-user.target"];
+        after = ["network-online.target"];
+        wants = ["network-online.target"];
+        serviceConfig = {
+          Type = "oneshot";
+          RemainAfterExit = true;
+          TimeoutStartSec = "300";
+        };
+        script = let
+          paths = lib.concatMapStringsSep " " (s: lib.escapeShellArg s.path) (lib.attrValues cfg);
+          systemctl = "${config.systemd.package}/bin/systemctl";
+          restarts =
+            lib.concatMapStringsSep "\n"
+            (u: "${systemctl} try-restart ${lib.escapeShellArg u} || true")
+            config.calamoose.secretsSelfHealRestartUnits;
+        in ''
+          set -u
+          _ps_missing() { for p in ${paths}; do [ -e "$p" ] || return 0; done; return 1; }
+          if ! _ps_missing; then
+            echo "[proton-secrets-selfheal] all secrets already present; nothing to do"
+            exit 0
+          fi
+          _n=0
+          while [ "$_n" -lt 5 ]; do
+            _n=$((_n + 1))
+            echo "[proton-secrets-selfheal] attempt $_n: re-running activation with network up..."
+            /run/current-system/bin/switch-to-configuration test || true
+            if ! _ps_missing; then
+              echo "[proton-secrets-selfheal] secrets populated."
+              ${restarts}
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "[proton-secrets-selfheal] WARNING: secrets still missing after $_n attempts (check network / Proton session)." >&2
+          exit 0
+        '';
+      };
     })
   ];
 }

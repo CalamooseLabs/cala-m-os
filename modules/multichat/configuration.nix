@@ -26,6 +26,14 @@
     ./secrets
   ];
 
+  # multichat reads its YouTube key file via LoadCredential at service START, so
+  # on an online host — where the key arrives only after the network is up (the
+  # initrd activation that would fetch it has no network; see modules/secrets) —
+  # it must be bounced once the self-heal has fetched the key, or it stays keyless
+  # until the next restart.
+  calamoose.secretsSelfHealRestartUnits =
+    lib.optionals config.calamoose._secretsEnabled ["multichat.service"];
+
   services.multichat = {
     enable = true;
 

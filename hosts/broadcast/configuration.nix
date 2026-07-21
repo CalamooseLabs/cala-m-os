@@ -61,6 +61,15 @@ in {
       # switch-root succeeds; secrets are best-effort at boot and refetched once the
       # network is up (a later activation, or `sudo proton-secrets login` + rebuild).
       services.proton-secrets.failClosed = false;
+      # The initrd activation still ATTEMPTS the fetch every boot (and fails,
+      # harmlessly now that failClosed=false) because it has no network — so
+      # fast-fail it instead of burning the default 3×5s of preflight sleeps on a
+      # doomed attempt. The real fetch happens post-network via the
+      # proton-secrets-selfheal oneshot (see modules/secrets), which re-runs
+      # activation once network-online is reached; its own retry loop rides out
+      # any first-boot session/DHCP flakiness, so 1 try here is enough.
+      services.proton-secrets.preflightRetries = 1;
+      services.proton-secrets.preflightRetryDelay = 1;
     };
 
   networking.hostName = "broadcast";
