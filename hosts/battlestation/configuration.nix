@@ -3,7 +3,7 @@
 #   Gaming Desktop + Stream Src  #
 #                                #
 ##################################
-{...}: let
+{cala-m-os, ...}: let
   import_users = ["gamer"];
 
   machine_type = "Workstation";
@@ -21,7 +21,22 @@ in {
       machine_uuid = machine_uuid;
       extra_user_modules = {gamer = ["davinci-resolve"];};
     })
+
+    # TCI Run — Stream Deck "new hardcore run" PrismLauncher spawner. Host-scoped
+    # (imported directly, not via the shared gamer profile) so lanstation's gamer
+    # is untouched. Companion on `broadcast` fires GET http://10.10.10.30:8778/new-run.
+    ../../modules/tci-run/configuration.nix
   ];
+
+  # Drop the built Cobblemon Initiative .mrpack in ~/TCI (or repoint mrpackPath at
+  # a synced dist/ dir / file); the template rebuilds whenever the pack hash changes.
+  # Firewall scoped to the studio subnet (where `broadcast`/Companion lives), so no
+  # other lab-subnet device can spawn instances. NOTE: studio↔lab is inter-VLAN —
+  # the router must permit 10.1.10.0/26 → 10.10.10.30:8778 for the button to reach.
+  services.tci-run = {
+    enable = true;
+    allowedSources = ["${cala-m-os.ip.studio.subnet}"];
+  };
 
   networking.hostName = "battlestation";
 
