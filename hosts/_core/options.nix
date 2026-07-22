@@ -77,6 +77,55 @@
     '';
   };
 
+  options.calamoose.install.dataDisks = lib.mkOption {
+    type = lib.types.listOf (lib.types.submodule {
+      options = {
+        device = lib.mkOption {
+          type = lib.types.str;
+          example = "/dev/disk/by-id/nvme-WDS200T1X0E-00AFY0_22042X800647";
+          description = ''
+            Stable /dev/disk/by-id path of the data disk. NEVER use /dev/nvmeXn1
+            or /dev/sdX — kernel enumeration order is not stable, especially
+            between the installed system and the installer ISO.
+          '';
+        };
+        label = lib.mkOption {
+          type = lib.types.str;
+          example = "battle-data";
+          description = ''
+            Filesystem label. Used by the installer's mkfs AND by the by-label
+            `fileSystems` mount you declare for this disk.
+          '';
+        };
+        fsType = lib.mkOption {
+          type = lib.types.enum ["ext4" "xfs"];
+          default = "ext4";
+          description = "Filesystem the installer creates when you choose to (re)format this disk.";
+        };
+      };
+    });
+    default = [];
+    example = lib.literalExpression ''
+      [
+        {
+          device = "/dev/disk/by-id/nvme-WDS200T1X0E-00AFY0_22042X800647";
+          label = "battle-data";
+          fsType = "xfs";
+        }
+      ]
+    '';
+    description = ''
+      Preserved data disks handled by `install-cala-m-os` AFTER the main install,
+      one interactive prompt each. These are deliberately NOT part of disko, so a
+      reinstall NEVER wipes them: the installer defaults to KEEP and only
+      reformats on an explicit `W` from a terminal (a non-interactive run always
+      keeps them). Mount each one yourself via `fileSystems` keyed on
+      `/dev/disk/by-label/<label>` with the `nofail` option so an absent or
+      not-yet-formatted disk can't block boot. Distinct from `wipeAllDisks`,
+      which governs the disko-owned OS disk(s).
+    '';
+  };
+
   options.calamoose.hardlinkLayout = lib.mkOption {
     type = lib.types.bool;
     default = false;
@@ -97,6 +146,28 @@
 
   # Surface the host version in `nixos-version` / the boot menu entry.
   config.system.nixos.tags = ["cala-${config.calamoose.version}"];
+
+  # Disk-wipe safety net. The whole "disko can never touch the data drive" story
+  # rests on two invariants; enforce them at eval time so a future foot-gun edit
+  # (reverting the by-id pin to /dev/nvmeXn1, or pointing a dataDisk at a disko
+  # disk) fails the build instead of silently wiping the wrong disk on install.
+  config.assertions = let
+    inst = config.calamoose.install;
+    diskoDevices = lib.mapAttrsToList (_: d: d.device) (config.disko.devices.disk or {});
+    byId = lib.hasPrefix "/dev/disk/by-id/";
+    dataDevices = map (d: d.device) inst.dataDisks;
+    unpinned = lib.filter (d: !byId d) diskoDevices;
+    overlap = lib.filter (d: lib.elem d diskoDevices) dataDevices;
+  in [
+    {
+      assertion = !inst.wipeAllDisks || unpinned == [];
+      message = "calamoose.install.wipeAllDisks = true requires every disko disk to be pinned by a stable /dev/disk/by-id/ path (unstable target(s): ${lib.concatStringsSep ", " unpinned}). Under --yes-wipe-all-disks an enumeration-order name like /dev/nvme0n1 can wipe the wrong disk.";
+    }
+    {
+      assertion = overlap == [];
+      message = "calamoose.install.dataDisks must not list a disko-owned disk (overlap: ${lib.concatStringsSep ", " overlap}). A data disk is meant to be preserved and must never be a disko target, or wipeAllDisks would erase it.";
+    }
+  ];
 
   # Normalize the tri-state flag into the resolved backend + convenience bool.
   config.calamoose._secretsBackend = let
