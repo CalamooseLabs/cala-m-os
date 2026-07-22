@@ -49,27 +49,18 @@ in {
     ]
     ++ lib.optional (!initialInstallMode) {
       services.proton-secrets.patFile = "/var/lib/proton-pass-cli/pat";
-      # THE fix for gen2 "Switch root target contains no usable init" (found Jul 21
-      # 2026 — it was the secrets, not the kernel). With systemd stage-1, NixOS runs
-      # this system's `activate` INSIDE the initrd (initrd-nixos-activation → chroot
-      # /sysroot .../prepare-root), where there is NO network. With the default
-      # failClosed=true the Proton preflight/fetch does `exit 1`, which kills
-      # `activate` BEFORE its `etc` snippet creates /sysroot/{etc/os-release,sbin/init}
-      # — so systemd's switch-root usable-init check fails and the box never boots
-      # past stage-1. gen1 (minimal install) has no proton snippet, which is the only
-      # reason it boots. Non-fatal lets `activate` finish so /sysroot is populated and
-      # switch-root succeeds; secrets are best-effort at boot and refetched once the
-      # network is up (a later activation, or `sudo proton-secrets login` + rebuild).
+      # Defense-in-depth for the gen2 "Switch root target contains no usable init"
+      # hang. Root cause: the Proton fetch ran in the no-network INITRD activation
+      # (systemd stage-1 runs `activate` inside the initrd) and its `exit 1` aborted
+      # `activate` before the `etc` snippet set up /etc on the new root — so
+      # switch-root found no /sbin/init. The STRUCTURAL fix is in antlers: the
+      # proton-secrets activation snippets now skip the initrd entirely
+      # (IN_NIXOS_SYSTEMD_STAGE1), so the boot can no longer abort regardless of
+      # this setting. failClosed=false is kept because it additionally makes any
+      # live/self-heal fetch failure non-fatal (best-effort secrets on this box).
+      # The real fetch happens post-network via the proton-secrets-selfheal oneshot
+      # (see modules/secrets), which re-runs activation once network-online.
       services.proton-secrets.failClosed = false;
-      # The initrd activation still ATTEMPTS the fetch every boot (and fails,
-      # harmlessly now that failClosed=false) because it has no network — so
-      # fast-fail it instead of burning the default 3×5s of preflight sleeps on a
-      # doomed attempt. The real fetch happens post-network via the
-      # proton-secrets-selfheal oneshot (see modules/secrets), which re-runs
-      # activation once network-online is reached; its own retry loop rides out
-      # any first-boot session/DHCP flakiness, so 1 try here is enough.
-      services.proton-secrets.preflightRetries = 1;
-      services.proton-secrets.preflightRetryDelay = 1;
     };
 
   networking.hostName = "broadcast";
