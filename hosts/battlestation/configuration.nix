@@ -10,7 +10,7 @@
   machine_uuid = "B850-MAX";
 in {
   calamoose.enableSecrets = false;
-  calamoose.version = "2.1.0";
+  calamoose.version = "2.2.0";
   calamoose.style = "thecompany"; # The Company, Inc. brand theme
 
   imports = [
@@ -19,7 +19,7 @@ in {
       users_list = import_users;
       machine_type = machine_type;
       machine_uuid = machine_uuid;
-      extra_user_modules = {};
+      extra_user_modules = {gamer = ["davinci-resolve"];};
     })
   ];
 
