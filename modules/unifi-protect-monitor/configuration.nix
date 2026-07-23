@@ -4,9 +4,10 @@
 # `security` microVM guest (see hosts/security/configuration.nix). The service is host-level.
 #
 # Secrets: on the guest the integration API key and the recorded-playback admin password
-# are decrypted on the homelab HOST (agenix) and shared in at /run/hostsecrets/* by the
-# vm-manager virtiofs share (see services/vm-manager/default.nix) — declared in
-# hosts/homelab/secrets/{secrets.nix,default.nix}.
+# are decrypted on the parent HOST (agenix) and shared in at /run/hostsecrets/* by the
+# vm-manager virtiofs share (see services/vm-manager/default.nix). They are declared in
+# this module's ./secrets/{secrets.nix,default.nix}, which the PARENT host imports (see
+# hosts/homelab/vms.nix) — NOT this configuration.nix, since the guest must not re-decrypt.
 {inputs, ...}: {
   imports = [inputs.antlers.nixosModules.unifi-protect-monitor];
 

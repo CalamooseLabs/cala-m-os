@@ -9,7 +9,8 @@
       # via ffmpeg (audio-transcode + video-copy) and proxies recorded clips — light CPU,
       # no local storage (footage lives on the console). Shares the eno2 lab bridge to
       # reach the console at 10.10.10.251; its API key + admin password arrive from the
-      # host via /run/hostsecrets/* (declared in ./secrets).
+      # host via /run/hostsecrets/* (declared in modules/unifi-protect-monitor/secrets,
+      # imported below — the host decrypts them, the guest just reads them).
       devices = [];
       storage = 12; # GBs (OS only)
     };
@@ -56,6 +57,10 @@ in {
   imports =
     [
       ./secrets
+      # UniFi Protect secrets live with the module that consumes them
+      # (modules/unifi-protect-monitor); the host decrypts them (agenix) and
+      # vm-manager shares them into the `security` guest at /run/hostsecrets/*.
+      ../../modules/unifi-protect-monitor/secrets
       ../../services/vm-manager
       ../../services/certs
     ]
