@@ -19,13 +19,14 @@ in {
       users_list = import_users;
       machine_type = machine_type;
       machine_uuid = machine_uuid;
-      extra_user_modules = {gamer = ["davinci-resolve"];};
+      extra_user_modules = {
+        gamer = [
+          "cobblemon-overlay"
+          "davinci-resolve"
+          "tci-run"
+        ];
+      };
     })
-
-    # TCI Run — Stream Deck "new hardcore run" PrismLauncher spawner. Host-scoped
-    # (imported directly, not via the shared gamer profile) so lanstation's gamer
-    # is untouched. Companion on `broadcast` fires GET http://10.10.10.30:8778/new-run.
-    ../../modules/tci-run/configuration.nix
   ];
 
   # Drop the built Cobblemon Initiative .mrpack in ~/TCI (or repoint mrpackPath at
