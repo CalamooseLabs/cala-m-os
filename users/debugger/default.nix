@@ -10,6 +10,7 @@
     "bat"
     "btop"
     "direnv"
+    "discord"
     "easyeffects"
     "edit-config"
     "fade-in"

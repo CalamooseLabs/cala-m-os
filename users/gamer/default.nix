@@ -7,6 +7,7 @@
     "bat"
     "btop"
     "chromium"
+    "discord"
     "geforce-now"
     "ghostty"
     "git"
