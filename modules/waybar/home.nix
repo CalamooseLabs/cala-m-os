@@ -6,6 +6,7 @@
   ...
 }: let
   switching = osConfig.userSwitching.enable or false;
+  privacy = osConfig.cala.waybar.streamPrivacy.enable or false;
   cfg = config.cala.waybar;
 
   # Active-style base16 palette (see hosts/_core/options.nix → calamoose.style),
@@ -133,6 +134,71 @@
       printf '{"text":" ","class":"stopped"}\n'
     fi
   '';
+
+  # --- Stream-privacy wallpaper toggle -----------------------------------
+  # A bar button that hides the personal desktop for streaming by swapping the
+  # wallpaper to The Company, Inc. brand art AT RUNTIME (hyprctl hyprpaper), so
+  # it can be flipped mid-stream with no rebuild. State is a file in
+  # XDG_RUNTIME_DIR; the button glyph reflects it. The two wallpaper store paths
+  # are baked in: `normalWp` is this host's active Stylix wallpaper (whatever the
+  # calamoose.style resolves to), `privacyWp` is the brand art shared with the
+  # thecompany style / hyprlock.
+  normalWp = "${osConfig.stylix.image}";
+  privacyWp = "${../../assets/thecompany-wallpaper.png}";
+
+  privacyToggle = pkgs.writeShellApplication {
+    name = "cala-stream-privacy-toggle";
+    runtimeInputs = [pkgs.hyprland pkgs.procps];
+    text = ''
+      state="''${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/cala-stream-privacy"
+      set_wallpaper() {
+        # preload -> set active -> drop the now-unused previous image
+        hyprctl hyprpaper preload "$1"    >/dev/null 2>&1 || true
+        hyprctl hyprpaper wallpaper ",$1" >/dev/null 2>&1 || true
+        hyprctl hyprpaper unload unused   >/dev/null 2>&1 || true
+      }
+      if [ -f "$state" ]; then
+        set_wallpaper "${normalWp}"
+        rm -f "$state"
+      else
+        set_wallpaper "${privacyWp}"
+        : > "$state"
+      fi
+      # refresh the bar button immediately (custom/privacy listens on SIGRTMIN+8)
+      pkill -RTMIN+8 -x waybar 2>/dev/null || true
+    '';
+  };
+
+  privacyStatus = pkgs.writeShellScript "waybar-stream-privacy" ''
+    state="''${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/cala-stream-privacy"
+    if [ -f "$state" ]; then
+      printf '{"text":"","class":"on","tooltip":"Stream privacy ON (company wallpaper) — click to restore your desktop"}\n'
+    else
+      printf '{"text":"","class":"off","tooltip":"Stream privacy OFF — click to hide your desktop for streaming"}\n'
+    fi
+  '';
+
+  # Appended to the main bar stylesheet only when the toggle is enabled: a plain
+  # pill (style.css's shared body doesn't list this id) that lights green while
+  # privacy is on = safe to stream.
+  privacyCss = ''
+
+    #custom-privacy {
+      background: alpha(@base00, 0.92);
+      margin: 6px 0;
+      padding: 4px 11px;
+      transition: color 200ms ease;
+    }
+    #custom-privacy.off {
+      color: @base04;
+    }
+    #custom-privacy.on {
+      color: @base0B;
+    }
+    #custom-privacy:hover {
+      color: @base0C;
+    }
+  '';
 in {
   options.cala.waybar.collapse.enable =
     lib.mkEnableOption "the collapsible right-docked waybar — click the rounded cap to slide it to a stub; collapsing releases the top strip so Hyprland reclaims the vertical space"
@@ -161,7 +227,9 @@ in {
       Install.WantedBy = ["hyprland-session.target"];
     };
 
-    home.packages = lib.optional cfg.collapse.enable toggleScript;
+    home.packages =
+      lib.optional cfg.collapse.enable toggleScript
+      ++ lib.optional privacy privacyToggle;
 
     programs.waybar = {
       enable = true;
@@ -186,6 +254,7 @@ in {
               lib.optional cfg.collapse.enable "custom/collapse"
               ++ ["custom/music"]
               ++ lib.optional switching "custom/persona"
+              ++ lib.optional privacy "custom/privacy"
               ++ ["clock" "pulseaudio" "network" "backlight" "battery" "custom/power"];
 
             "custom/music" = {
@@ -255,6 +324,19 @@ in {
               return-type = "";
             };
           }
+          // lib.optionalAttrs privacy {
+            # Runs once at start, then re-reads on click (exec-on-event) and on
+            # SIGRTMIN+8 (fired by the toggle) — no polling. Click swaps the
+            # wallpaper and flips the glyph.
+            "custom/privacy" = {
+              exec = "${privacyStatus}";
+              return-type = "json";
+              interval = "once";
+              signal = 8;
+              tooltip = true;
+              on-click = "${privacyToggle}/bin/cala-stream-privacy-toggle";
+            };
+          }
           // lib.optionalAttrs cfg.collapse.enable {
             # SIGUSR1 -> hide (invisible mode -> exclusive zone 0 -> Hyprland
             # reclaims the strip); SIGUSR2 -> show. Driven by the toggle script.
@@ -270,7 +352,7 @@ in {
           };
       };
 
-      style = palette + builtins.readFile ./style.css + lib.optionalString cfg.collapse.enable collapseCss;
+      style = palette + builtins.readFile ./style.css + lib.optionalString cfg.collapse.enable collapseCss + lib.optionalString privacy privacyCss;
     };
   };
 }

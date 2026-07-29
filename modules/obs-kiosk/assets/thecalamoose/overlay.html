@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Overlay</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+  }
+  svg { display: block; width: 100vw; height: 100vh; }
+
+  .label {
+    font-family: "Courier New", ui-monospace, monospace;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    fill: #A8F0E4;
+  }
+
+  .twinkle { animation: tw 3.4s steps(2, end) infinite; }
+  @keyframes tw { 0%, 60% { opacity: .9 } 61%, 100% { opacity: .15 } }
+
+  .beacon { animation: bc 2s steps(2, end) infinite; }
+  @keyframes bc { 0%, 50% { opacity: 1 } 51%, 100% { opacity: .2 } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .twinkle, .beacon { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<svg id="stage" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid meet" shape-rendering="crispEdges">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#01101E"/>
+      <stop offset="55%"  stop-color="#04263F"/>
+      <stop offset="100%" stop-color="#0B4A63"/>
+    </linearGradient>
+
+    <linearGradient id="sun" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#F2FDFF"/>
+      <stop offset="45%"  stop-color="#8AE6FF"/>
+      <stop offset="100%" stop-color="#2E7FC0"/>
+    </linearGradient>
+
+    <linearGradient id="gridfade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#4FC3F7" stop-opacity=".85"/>
+      <stop offset="100%" stop-color="#A8F0E4" stop-opacity=".25"/>
+    </linearGradient>
+
+    <!-- transparent holes for camera + main screen + chat -->
+    <mask id="cutouts">
+      <rect x="0" y="0" width="1920" height="1080" fill="#fff"/>
+      <rect x="472" y="24"  width="1424" height="801" fill="#000"/>
+      <rect x="24"  y="716" width="424"  height="340" fill="#000"/>
+      <rect x="24"  y="24"  width="424"  height="668" fill="#000"/>
+    </mask>
+
+    <clipPath id="sunClip">
+      <rect x="472" y="849" width="1424" height="141"/>
+    </clipPath>
+
+    <clipPath id="bandClip">
+      <rect x="472" y="849" width="1424" height="207"/>
+    </clipPath>
+
+    <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+      <rect x="0" y="0" width="4" height="2" fill="#000" opacity=".18"/>
+    </pattern>
+  </defs>
+
+  <!-- ================= scene (everything behind the sources) ================ -->
+  <g mask="url(#cutouts)">
+    <rect x="0" y="0" width="1920" height="1080" fill="url(#sky)"/>
+
+    <g clip-path="url(#bandClip)">
+      <rect x="472" y="849" width="1424" height="207" fill="url(#sky)"/>
+
+      <g id="stars"></g>
+
+      <!-- sliced sun, clipped at the horizon -->
+      <g clip-path="url(#sunClip)">
+        <circle cx="1184" cy="988" r="118" fill="url(#sun)"/>
+        <g id="slices"></g>
+      </g>
+
+      <!-- ridges -->
+      <path id="ridgeFar"  fill="#0E5A77"/>
+      <path id="ridgeNear" fill="#062B43"/>
+
+      <!-- horizon + grid -->
+      <rect x="472" y="990" width="1424" height="2" fill="#A8F0E4" opacity=".55"/>
+      <g id="grid" stroke="url(#gridfade)" stroke-width="1.5" fill="none"></g>
+
+      <rect x="472" y="849" width="1424" height="207" fill="url(#scan)"/>
+    </g>
+  </g>
+
+  <!-- ===================== chat plate (semi-transparent) ==================== -->
+  <rect x="24" y="24" width="424" height="668" fill="#01101E" opacity=".55"/>
+  <rect x="24" y="24" width="424" height="36"  fill="#A8F0E4" opacity=".10"/>
+  <rect x="24" y="59" width="424" height="1.5" fill="#A8F0E4" opacity=".35"/>
+  <text class="label" x="46" y="48">CHAT</text>
+  <rect class="beacon" x="410" y="36" width="10" height="10" fill="#4FC3F7"/>
+
+  <!-- ============================== frames ================================= -->
+  <g fill="none" stroke="#A8F0E4" stroke-width="2" opacity=".7">
+    <rect x="24"  y="24"  width="424"  height="668"/>
+    <rect x="24"  y="716" width="424"  height="340"/>
+    <rect x="472" y="24"  width="1424" height="801"/>
+  </g>
+
+  <g id="brackets" fill="none" stroke="#4FC3F7" stroke-width="4"></g>
+</svg>
+
+<script>
+(function () {
+  const NS = "http://www.w3.org/2000/svg";
+  const el = (n, a) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); return e; };
+
+  /* ---------- stepped 8-bit ridge lines ---------- */
+  const STEP = 8, BASE = 992, X0 = 472, X1 = 1896;
+
+  function yAt(pts, x) {
+    for (let i = 0; i < pts.length - 1; i++) {
+      const a = pts[i], b = pts[i + 1];
+      if (x >= a[0] && x <= b[0]) return a[1] + (b[1] - a[1]) * ((x - a[0]) / (b[0] - a[0]));
+    }
+    return pts[pts.length - 1][1];
+  }
+
+  function ridge(pts) {
+    let d = `M ${X0} ${BASE}`;
+    for (let x = X0; x < X1; x += STEP) {
+      const y = Math.round(yAt(pts, x + STEP / 2) / STEP) * STEP;
+      d += ` L ${x} ${y} L ${Math.min(x + STEP, X1)} ${y}`;
+    }
+    return d + ` L ${X1} ${BASE} Z`;
+  }
+
+  const far = [[472,952],[560,896],[652,936],[760,872],[864,924],[980,888],[1092,932],[1200,864],[1316,920],[1448,884],[1580,930],[1704,892],[1832,936],[1896,918]];
+  const near = [[472,990],[544,952],[624,974],[708,928],[804,968],[904,944],[1012,974],[1124,932],[1244,970],[1364,940],[1484,974],[1608,944],[1728,974],[1836,948],[1896,968]];
+
+  document.getElementById("ridgeFar").setAttribute("d", ridge(far));
+  document.getElementById("ridgeNear").setAttribute("d", ridge(near));
+
+  /* ---------- sun slices ---------- */
+  const slices = document.getElementById("slices");
+  let h = 3;
+  for (let y = 900; y < 990; y += h + 9) {
+    slices.appendChild(el("rect", { x: 1050, y: y, width: 268, height: h, fill: "#04263F", opacity: ".9" }));
+    h += 1.6;
+  }
+
+  /* ---------- stars ---------- */
+  const stars = document.getElementById("stars");
+  const seed = [[520,872],[598,898],[690,864],[742,906],[836,876],[912,902],[1004,868],[1060,896],[1310,870],[1392,900],[1470,866],[1560,898],[1652,868],[1744,900],[1828,872],[1876,896]];
+  seed.forEach((p, i) => {
+    const s = el("rect", { x: p[0], y: p[1], width: i % 3 === 0 ? 4 : 3, height: i % 3 === 0 ? 4 : 3, fill: "#FFFFFF", opacity: ".8" });
+    s.setAttribute("class", "twinkle");
+    s.style.animationDelay = (i * 0.37).toFixed(2) + "s";
+    stars.appendChild(s);
+  });
+
+  /* ---------- corner brackets ---------- */
+  const br = document.getElementById("brackets");
+  const A = 22;
+  [[24,24,424,668],[24,716,424,340],[472,24,1424,801]].forEach(([x,y,w,ht]) => {
+    const c = [
+      `M ${x} ${y+A} L ${x} ${y} L ${x+A} ${y}`,
+      `M ${x+w-A} ${y} L ${x+w} ${y} L ${x+w} ${y+A}`,
+      `M ${x+w} ${y+ht-A} L ${x+w} ${y+ht} L ${x+w-A} ${y+ht}`,
+      `M ${x+A} ${y+ht} L ${x} ${y+ht} L ${x} ${y+ht-A}`
+    ];
+    c.forEach(d => br.appendChild(el("path", { d })));
+  });
+
+  /* ---------- scrolling perspective grid ---------- */
+  const grid = document.getElementById("grid");
+  const HOR = 991, BOT = 1056, DEPTH = BOT - HOR, VPX = 1184;
+
+  for (let i = -9; i <= 9; i++) {
+    const spread = i * 190;
+    grid.appendChild(el("line", { x1: VPX, y1: HOR, x2: VPX + spread, y2: BOT }));
+  }
+
+  const rows = [];
+  for (let i = 0; i < 9; i++) {
+    const l = el("line", { x1: X0, x2: X1, y1: HOR, y2: HOR });
+    rows.push(l);
+    grid.appendChild(l);
+  }
+
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let phase = 0, last = performance.now();
+
+  function tick(now) {
+    phase = (phase + (now - last) / 9000) % 1;
+    last = now;
+    rows.forEach((l, i) => {
+      const p = ((i / rows.length) + phase) % 1;
+      const y = HOR + DEPTH * p * p;
+      l.setAttribute("y1", y);
+      l.setAttribute("y2", y);
+      l.setAttribute("stroke-opacity", (0.15 + p * 0.75).toFixed(2));
+    });
+    requestAnimationFrame(tick);
+  }
+
+  if (reduce) {
+    rows.forEach((l, i) => {
+      const p = i / rows.length;
+      const y = HOR + DEPTH * p * p;
+      l.setAttribute("y1", y); l.setAttribute("y2", y);
+    });
+  } else {
+    requestAnimationFrame(tick);
+  }
+})();
+</script>
+</body>
+</html>

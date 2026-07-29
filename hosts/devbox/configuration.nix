@@ -32,6 +32,10 @@ in {
   # Drifting (animated) lockscreen background on the laptop.
   cala.lockscreen.background = "static";
 
+  # Waybar button that swaps the desktop wallpaper to the brand art at runtime,
+  # so a personal photo background never lands on a stream. Click to hide/reveal.
+  cala.waybar.streamPrivacy.enable = true;
+
   # Enable CUPS to print documents.
   services.avahi = {
     enable = true;

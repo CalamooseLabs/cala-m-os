@@ -9,6 +9,7 @@
     "bash"
     "bat"
     "btop"
+    "cobblemon-overlay"
     "direnv"
     "discord"
     "easyeffects"
