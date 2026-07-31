@@ -169,12 +169,18 @@
     '';
   };
 
+  # The two "text" values below hold real Nerd-Font PUA glyphs (eye-slash for
+  # on/hidden, eye for off/visible). They render as icons but look like EMPTY
+  # strings in most editors -- do NOT delete or "clean them up": this button
+  # shipped with an empty text exactly once for that reason, and Waybar HIDES a
+  # custom module whose text is empty, so the whole button silently vanished.
+  # State colour is set in privacyCss; on = safe to stream, off = desktop shown.
   privacyStatus = pkgs.writeShellScript "waybar-stream-privacy" ''
     state="''${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/cala-stream-privacy"
     if [ -f "$state" ]; then
-      printf '{"text":"","class":"on","tooltip":"Stream privacy ON (company wallpaper) — click to restore your desktop"}\n'
+      printf '{"text":"","class":"on","tooltip":"Stream privacy ON (company wallpaper) — click to restore your desktop"}\n'
     else
-      printf '{"text":"","class":"off","tooltip":"Stream privacy OFF — click to hide your desktop for streaming"}\n'
+      printf '{"text":"","class":"off","tooltip":"Stream privacy OFF — click to hide your desktop for streaming"}\n'
     fi
   '';
 
