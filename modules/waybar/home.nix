@@ -193,6 +193,8 @@
       background: alpha(@base00, 0.92);
       margin: 6px 0;
       padding: 4px 11px;
+      /* nudge just the eye glyph up a touch from the bar's shared 15px */
+      font-size: 17px;
       transition: color 200ms ease;
     }
     #custom-privacy.off {
