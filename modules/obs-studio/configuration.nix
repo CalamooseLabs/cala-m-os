@@ -45,6 +45,7 @@
       obs-backgroundremoval
       obs-pipewire-audio-capture
       obs-vertical-canvas
+      obs-move-transition
       droidcam-obs
     ];
   };
