@@ -25,8 +25,19 @@
     enable = true;
     forceRunOnActivation = true;
 
+    remotes = {
+      # com.kagi.Orion pulls its GNOME runtime (org.gnome.Platform) from Flathub.
+      "flathub" = "https://dl.flathub.org/repo/flathub.flatpakrepo";
+      # Orion's own beta repo now ships a dedicated flatpak (no more vendored bundle).
+      "orion-beta" = "https://flatpak.orionbrowser.com/orion-beta.flatpakrepo";
+    };
+
     packages = [
-      ":${./packages/oriongtk.alpha.external.flatpak}"
+      # Runtime dependency. Auto-pulled by the app install anyway, but pinned here so
+      # the closure is explicit/deterministic — bump if Orion advances its GNOME runtime.
+      "flathub:runtime/org.gnome.Platform//50"
+      # Orion browser (dedicated flatpak, replaces the old vendored com.kagi.OrionGtk).
+      "orion-beta:app/com.kagi.Orion//beta"
     ];
   };
 }

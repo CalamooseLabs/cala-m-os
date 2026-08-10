@@ -16,6 +16,7 @@
     "hyprland"
     "hyprlock"
     "hyprpaper"
+    "moosewire"
     "neovim"
     "nh"
     "rebuild-config"

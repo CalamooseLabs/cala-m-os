@@ -33,6 +33,7 @@
     "lazygit"
     "minecraft"
     "moosefetch"
+    "moosewire"
     "neovim"
     "nh"
     "obs-studio"

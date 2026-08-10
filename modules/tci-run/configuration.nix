@@ -118,6 +118,25 @@
           find "$tmp/minecraft/saves" -type f -name session.lock -delete 2>/dev/null || true
         fi
 
+        # Force windowed. The pack ships options.txt with fullscreen:true, which on
+        # Wayland/Hyprland trips the GLFW exclusive-fullscreen startup loop (title
+        # screen re-resolves forever, never loads). A pristine clone re-applies that
+        # packed state every run and can't self-heal — unlike a persistent instance
+        # that got past the fullscreen race once — so the loop hits every launch.
+        # Flip it to false at build time (F11 in-game still goes fullscreen once
+        # loaded). Disable via services.tci-run.forceWindowed = false (e.g. if you
+        # ship a Wayland-patched GLFW and want the pack's fullscreen honored).
+        if ${lib.boolToString cfg.forceWindowed}; then
+          local opts="$tmp/minecraft/options.txt"
+          if [ -f "$opts" ]; then
+            if grep -q '^fullscreen:' "$opts"; then
+              sed -i 's/^fullscreen:.*/fullscreen:false/' "$opts"
+            else
+              printf 'fullscreen:false\n' >> "$opts"
+            fi
+          fi
+        fi
+
         # Brand the run tiles with the pack icon if shipped. Prism reads instance
         # icons from its shared icons/ dir keyed by iconKey (NOT minecraft/icon.png).
         local iconkey="default"
@@ -389,6 +408,20 @@ in {
       type = lib.types.str;
       default = "TCI Runs";
       description = "PrismLauncher group the spawned instances are filed under.";
+    };
+
+    forceWindowed = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = ''
+        Rewrite each fresh clone's `options.txt` to `fullscreen:false`. The pack ships
+        `fullscreen:true`, which on Wayland/Hyprland triggers a GLFW exclusive-fullscreen
+        startup loop (the title screen re-resolves forever and never finishes loading).
+        Because every run is a pristine clone that re-applies the packed state, the loop
+        hits every launch — so this defaults on. Windowed boots stable; press F11 in-game
+        to go fullscreen once loaded. Set to `false` if you run a Wayland-patched GLFW and
+        want the pack's fullscreen honored.
+      '';
     };
 
     port = lib.mkOption {
