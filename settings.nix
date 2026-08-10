@@ -23,17 +23,13 @@
       subnet = "10.10.10.0/26";
       prefixLength = 26;
       gateway = "10.10.10.1";
+      media = "10.10.10.10";
       homelab = "10.10.10.15";
-      media = "10.10.10.11";
       security = "10.10.10.20"; # UniFi Protect camera-wall VM (set a matching DHCP reservation)
       torrent = "10.10.10.35";
-      vault = "10.10.10.45";
       htpc = "10.10.10.40";
       lanstation-1 = "10.10.10.41";
       lanstation-2 = "10.10.10.42";
-      lanstation-3 = "10.10.10.43";
-      lanstation-4 = "10.10.10.44";
-      battlestation = "10.10.10.30";
     };
 
     # Studio subnet — live broadcast / OBS + device control (streamdeck, teleprompters)
@@ -42,6 +38,7 @@
       prefixLength = 26;
       gateway = "10.1.10.1";
       broadcast = "10.1.10.15";
+      battlestation = "10.1.10.30";
     };
   };
 

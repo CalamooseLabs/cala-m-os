@@ -30,7 +30,7 @@
   services.cobblemon-overlay = {
     enable = true;
 
-    # Bind LAN-wide so the ingest push from battlestation (lab subnet) can
+    # Bind LAN-wide so the ingest push from battlestation (studio subnet) can
     # reach it; overlay pages are read same-box by OBS via 127.0.0.1.
     hostname = "0.0.0.0";
     port = 8082;
@@ -39,7 +39,7 @@
     localNetworkOnly = true;
     # Only the gaming box may reach the port from off-box. The LAN is
     # v4-static (settings.nix), so drop the module's default v6 allowances.
-    localNetworkSubnets = ["${cala-m-os.ip.lab.battlestation}/32"];
+    localNetworkSubnets = ["${cala-m-os.ip.studio.battlestation}/32"];
     localNetworkSubnets6 = [];
   };
 }

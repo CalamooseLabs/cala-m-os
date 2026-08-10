@@ -18,42 +18,6 @@
         }
       ];
     };
-    "lanstation-3" = {
-      autostart = false;
-      hostOverride = "lanstation-vm";
-      ipOverride = "${cala-m-os.ip.lab.lanstation-3}";
-      devices = ["amd-pro-w7600-1" "pci-usb-controller-3"];
-      storage = 200; # GBs
-      shareStore = false;
-      storeOnDisk = true;
-      # dns = ["${cala-m-os.ip.lab.vault}"];
-      shares = [
-        {
-          proto = "virtiofs";
-          tag = "games";
-          source = "/recordings";
-          mountPoint = "/mnt/games";
-        }
-      ];
-    };
-    "lanstation-4" = {
-      autostart = false;
-      hostOverride = "lanstation-vm";
-      ipOverride = "${cala-m-os.ip.lab.lanstation-4}";
-      devices = ["amd-pro-w7600-2" "pci-usb-controller-4"];
-      storage = 200; # GBs
-      shareStore = false;
-      storeOnDisk = true;
-      # dns = ["${cala-m-os.ip.lab.vault}"];
-      shares = [
-        {
-          proto = "virtiofs";
-          tag = "games";
-          source = "/recordings";
-          mountPoint = "/mnt/games";
-        }
-      ];
-    };
   };
 
   bridgeInterface = "eno2";
