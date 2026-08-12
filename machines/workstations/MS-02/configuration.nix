@@ -11,5 +11,7 @@
     ../../modules/nvidia-gpu/configuration.nix
   ];
 
+  calamoose.install.wipeAllDisks = true;
+
   boot.kernelPackages = pkgs.linuxPackages_latest;
 }
