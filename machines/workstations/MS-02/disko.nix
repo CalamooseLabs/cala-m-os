@@ -2,7 +2,10 @@
   disko.devices = {
     disk = {
       main = {
-        device = "/dev/nvme0n1";
+        # OS drive = Samsung 990 PRO 2TB, the only disk in this box. Pinned by-id
+        # (model+serial) so wipeAllDisks=true / --yes-wipe-all-disks can never
+        # target the wrong device under an enumeration-order name like /dev/nvme0n1.
+        device = "/dev/disk/by-id/nvme-Samsung_SSD_990_PRO_2TB_S7L9NJ0L313887A";
         type = "disk";
         content = {
           type = "gpt";
