@@ -50,8 +50,37 @@
       TEMPLATE="$STATE_DIR/template"
       HASH_FILE="$STATE_DIR/template.hash"
       COUNTER_FILE="$STATE_DIR/counter"
+      OVERLAY_URL="${cfg.overlayUrl}"
+      OVERLAY_TOKEN_FILE="${lib.optionalString (cfg.overlayTokenFile != null) (toString cfg.overlayTokenFile)}"
 
       log() { printf '[tci-run] %s\n' "$*" >&2; }
+
+      # Push the run number (or a reset) to the cobblemon-overlay /control endpoint
+      # so its attempt/cemetery grouping tracks "TCI - Run #N". Gated on the baked
+      # syncOverlay flag (mirrors forceWindowed below); a NON-FATAL best-effort call
+      # so a down/unreachable overlay never blocks spawning or resetting a run. The
+      # token (when configured) is read from OVERLAY_TOKEN_FILE at call time, so a
+      # manual `tci-run reset` from a shell authenticates just like the service path.
+      #   notify_overlay set <n> [bank]   |   notify_overlay reset
+      notify_overlay() {
+        if ! ${lib.boolToString cfg.syncOverlay}; then return 0; fi
+        local action="$1" attempt="''${2:-1}" bank="''${3:-false}" payload token=""
+        if [ "$action" = "set" ]; then
+          payload="$(jq -n --argjson a "$attempt" --argjson b "$bank" '{action:"set",attempt:$a,bank:$b}')"
+        else
+          payload="$(jq -n '{action:"reset"}')"
+        fi
+        if [ -n "$OVERLAY_TOKEN_FILE" ] && [ -r "$OVERLAY_TOKEN_FILE" ]; then
+          token="$(tr -d '\n\r' < "$OVERLAY_TOKEN_FILE")"
+        fi
+        local curlargs=(-fsS --max-time 3 -H 'Content-Type: application/json')
+        if [ -n "$token" ]; then curlargs+=(-H "Authorization: Bearer $token"); fi
+        if curl "''${curlargs[@]}" -d "$payload" "$OVERLAY_URL" >/dev/null 2>&1; then
+          log "overlay <- $action ''${attempt}"
+        else
+          log "overlay notify failed ($action) — non-fatal"
+        fi
+      }
 
       # Resolve the mrpack: a direct file, or the newest *.mrpack in a directory.
       resolve_mrpack() {
@@ -113,9 +142,13 @@
         fi
 
         # Pristine-world guard: a stale session.lock (or a pack accidentally built
-        # from a dirty world) would break the "fresh world every run" promise.
+        # from a dirty world) would break the "fresh world every run" promise. Also
+        # strip the mod's per-world stream-stats file so every clone mints a FRESH
+        # worldId — a played-in export could otherwise bake ONE worldId into every
+        # clone and (with sync off) collapse every run to a single overlay attempt.
         if [ -d "$tmp/minecraft/saves" ]; then
           find "$tmp/minecraft/saves" -type f -name session.lock -delete 2>/dev/null || true
+          find "$tmp/minecraft/saves" -type f -name cobblemon_initiative_streamstats.json -delete 2>/dev/null || true
         fi
 
         # Force windowed. The pack ships options.txt with fullscreen:true, which on
@@ -259,7 +292,36 @@
         mv "$build" "$INSTANCES/$folder"
         printf '%s\n' "$display" > "$STATE_DIR/last"
         log "created '$display' -> $INSTANCES/$folder"
+        # A fresh run began — pin the overlay to N and bank the prior attempt's deaths.
+        notify_overlay set "$n" true
         printf '%s\n' "$display"
+      }
+
+      # "Reset it all" (tci-run side): zero the counter + clear last, optionally wipe
+      # the spawned instances, then tell the overlay to wipe its campaign/cemetery.
+      reset_run() {
+        printf '0\n' > "$COUNTER_FILE"
+        rm -f "$STATE_DIR/last"
+        ${lib.optionalString cfg.resetWipesInstances ''
+        # Wipe the spawned run instances (strictly FOLDER_PREFIX-guarded) and empty
+        # the group so a fresh campaign starts clean. template/ is kept for a fast
+        # next clone.
+        if [ -d "$INSTANCES" ]; then
+          find "$INSTANCES" -mindepth 1 -maxdepth 1 -type d -name "$FOLDER_PREFIX*" -exec rm -rf {} + 2>/dev/null || true
+        fi
+        local gf="$INSTANCES/instgroups.json"
+        if [ -f "$gf" ]; then
+          local gtmp="$gf.tmp.$$"
+          if jq --arg g "$GROUP_NAME" '(.groups[$g].instances) = []' "$gf" > "$gtmp" 2>/dev/null; then
+            mv "$gtmp" "$gf"
+          else
+            rm -f "$gtmp"
+          fi
+        fi
+        ''}
+        notify_overlay reset
+        log "reset: counter zeroed${lib.optionalString cfg.resetWipesInstances ", instances wiped"}"
+        status
       }
 
       status() {
@@ -284,8 +346,22 @@
           flock 9
           if mrpack="$(resolve_mrpack)"; then build_template "$mrpack"; else log "no mrpack at $MRPACK_SRC"; exit 1; fi
           ;;
+        reset)
+          exec 9> "$STATE_DIR/.lock"
+          flock 9
+          reset_run
+          ;;
+        push)
+          # Re-assert the current counter to the overlay (idempotent set). Fired by
+          # the reconcile timer; a no-op when syncOverlay is off.
+          pn=0
+          if [ -f "$COUNTER_FILE" ]; then read -r pn < "$COUNTER_FILE" || pn=0; fi
+          case "$pn" in "" | *[!0-9]*) pn=0 ;; esac
+          if [ "$pn" -lt 1 ]; then pn=1; fi
+          notify_overlay set "$pn"
+          ;;
         status) status ;;
-        *) log "usage: tci-run {new|sync|status}"; exit 2 ;;
+        *) log "usage: tci-run {new|sync|status|reset|push}"; exit 2 ;;
       esac
     '';
   };
@@ -470,6 +546,52 @@ in {
       default = true;
       description = "Open {option}`port` in the firewall (scoped by {option}`allowedSources` when set).";
     };
+
+    syncOverlay = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = ''
+        Keep the cobblemon-overlay's attempt number in sync with the run counter:
+        after every `new` (and on `reset`) push the absolute run number to the
+        overlay's `/control` endpoint, so its cemetery grouping tracks
+        "{option}`namePrefix`N". The overlay adopts the pushed number and stops its
+        own worldId-based auto-increment. Off (default) leaves the two independent.
+        Also installs a 60s reconcile timer that idempotently re-asserts the counter
+        so a missed push or an overlay restart self-heals without another press.
+      '';
+    };
+
+    overlayUrl = lib.mkOption {
+      type = lib.types.str;
+      default = "http://${cala-m-os.ip.studio.broadcast}:8082/control";
+      description = ''
+        The cobblemon-overlay `/control` endpoint tci-run POSTs to when
+        {option}`syncOverlay` is set. Defaults to the overlay on the broadcast host.
+      '';
+    };
+
+    overlayTokenFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      example = "/run/agenix/cobblemon-overlay-token";
+      description = ''
+        File whose trimmed contents are the overlay's shared token, sent as
+        `Authorization: Bearer <token>` on the `/control` push. Read directly by the
+        CLI at call time (so it must be readable by {option}`user`, and a manual
+        `tci-run reset` authenticates too). Null pushes unauthenticated, relying on
+        the overlay's firewall scoping instead.
+      '';
+    };
+
+    resetWipesInstances = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = ''
+        On `tci-run reset`, also delete the spawned run instances (the `tci-run-*`
+        folders) and empty the {option}`groupName` group. Default zeroes only the
+        counter + `last`, keeping the run tiles and the fast-clone template.
+      '';
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -521,6 +643,32 @@ in {
         RestrictRealtime = true;
         LockPersonality = true;
         RestrictAddressFamilies = ["AF_UNIX" "AF_INET" "AF_INET6"];
+      };
+    };
+
+    # Reconcile timer (only under syncOverlay): idempotently re-assert the counter
+    # to the overlay every minute, so drift from a missed push or an overlay restart
+    # self-heals without another button press. Set-to-N is idempotent, so a normal
+    # tick is a free no-op.
+    systemd.timers.tci-run-reconcile = lib.mkIf cfg.syncOverlay {
+      description = "Re-assert the TCI run number to the cobblemon-overlay";
+      wantedBy = ["timers.target"];
+      timerConfig = {
+        OnBootSec = "90s";
+        OnUnitActiveSec = "60s";
+        Unit = "tci-run-reconcile.service";
+      };
+    };
+
+    systemd.services.tci-run-reconcile = lib.mkIf cfg.syncOverlay {
+      description = "Re-assert the TCI run number to the cobblemon-overlay";
+      after = ["network.target"];
+      serviceConfig = {
+        Type = "oneshot";
+        User = cfg.user;
+        Group = cfg.group;
+        Environment = ["HOME=${home}"];
+        ExecStart = "${tci-run}/bin/tci-run push";
       };
     };
   };

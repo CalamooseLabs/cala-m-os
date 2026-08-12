@@ -32,8 +32,12 @@ in {
   # Drop the built Cobblemon Initiative .mrpack in ~/TCI (or repoint mrpackPath at
   # a synced dist/ dir / file); the template rebuilds whenever the pack hash changes.
   # Firewall scoped to the studio subnet (where `broadcast`/Companion lives), so no
-  # other lab-subnet device can spawn instances. NOTE: studio↔lab is inter-VLAN —
-  # the router must permit 10.1.10.0/26 → 10.10.10.30:8778 for the button to reach.
+  # other device can spawn instances. battlestation (10.1.10.30) and broadcast
+  # (10.1.10.15) share the studio subnet, so the button reaches :8778 intra-subnet.
+  #
+  # To lock the overlay's attempt/cemetery to the run counter, add:
+  #   syncOverlay = true;
+  #   overlayTokenFile = <the shared cobblemon-overlay token>;  # see the module README
   services.tci-run = {
     enable = true;
     allowedSources = ["${cala-m-os.ip.studio.subnet}"];
