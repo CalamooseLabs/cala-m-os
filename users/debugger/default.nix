@@ -31,6 +31,7 @@
     "imv"
     "ios"
     "lazygit"
+    "localsend"
     "minecraft"
     "moosefetch"
     "moosewire"

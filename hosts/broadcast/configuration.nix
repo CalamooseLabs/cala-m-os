@@ -61,6 +61,33 @@ in {
       # The real fetch happens post-network via the proton-secrets-selfheal oneshot
       # (see modules/secrets), which re-runs activation once network-online.
       services.proton-secrets.failClosed = false;
+
+      # OBS + Bitfocus Companion baselines are owned by this HOST (broadcast =
+      # streaming role + brand identity), not the TRX50-SAGE machine (hardware).
+      # Wired inside the non-install branch on purpose: the bitfocus-companion
+      # module and home-manager only exist in the full config, not the minimal
+      # INITIAL_INSTALL_MODE pass — the same reason the machine files (evaluated
+      # only in full mode) could set these unguarded.
+      #
+      # seedDb auto-wires once hosts/broadcast/companion/db.sqlite is committed;
+      # push it back with `sudo companion-restore`, capture live changes with
+      # `sudo companion-snapshot`. The committed db carries a BLANK OBS-WebSocket
+      # password on purpose: OBS runs its websocket with auth DISABLED (port 4455
+      # is firewalled to localhost, single-user box — see ./home.nix), so Companion
+      # connects over loopback with no password and there is no secret to manage.
+      services.bitfocus-companion.seedDb = let
+        p = ./companion/db.sqlite;
+      in
+        if builtins.pathExists p
+        then p
+        else null;
+      services.bitfocus-companion.repoPath = "/etc/nixos/hosts/broadcast/companion";
+
+      # Host-level home-manager entry point (merges with the machine's home.nix
+      # via the list-typed sharedModules option) — carries the OBS baseline seed,
+      # $HOME media assets, and the seeded (auth-disabled) OBS-websocket config.
+      # See ./home.nix.
+      home-manager.sharedModules = [./home.nix];
     };
 
   networking.hostName = "broadcast";

@@ -31,18 +31,7 @@
   # other workstations.
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  # Seed the committed Bitfocus Companion baseline (buttons/pages/connections) on a
-  # fresh box, then let the machine own it — Companion's config already persists via
-  # its StateDirectory, so live edits survive rebuilds. seedDb auto-wires once a
-  # baseline db is committed (see ./companion/README.md); push it back with
-  # `sudo companion-restore`, capture live changes with `sudo companion-snapshot`.
-  services.bitfocus-companion = {
-    seedDb = let
-      p = ./companion/db.sqlite;
-    in
-      if builtins.pathExists p
-      then p
-      else null;
-    repoPath = "/etc/nixos/machines/workstations/TRX50-SAGE/companion";
-  };
+  # NOTE: the OBS + Bitfocus Companion baselines used to live here; they now live
+  # with the `broadcast` HOST (hosts/broadcast/{obs,companion} + ./home.nix), since
+  # they are role/brand identity rather than TRX50-SAGE hardware.
 }

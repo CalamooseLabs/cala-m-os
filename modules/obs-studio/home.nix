@@ -118,6 +118,29 @@ in {
         repo for committing. Null omits the snapshot command.
       '';
     };
+
+    homeAssets = lib.mkOption {
+      type = lib.types.attrsOf lib.types.path;
+      default = {};
+      example = lib.literalExpression ''
+        {
+          "brb.mp4" = ../../modules/obs-kiosk/assets/thecalamoose/brb.mp4;
+          "thecompany/brb.mp4" = ../../modules/obs-kiosk/assets/thecompany/brb.mp4;
+        }
+      '';
+      description = ''
+        Media assets that OBS sources reference by ABSOLUTE `$HOME` path
+        (image_source `file`, ffmpeg_source `local_file`, local browser_source
+        `local_file`). Seeding the scene collection only reproduces the *path* —
+        the file itself must exist there too, or the source renders black on a
+        fresh box. Each attr maps a `$HOME`-relative destination to a committed
+        source file; it is copied in on activation, copy-if-absent (never
+        clobbering a file the machine already owns), so live tweaks survive every
+        rebuild. To serve more than one brand, give each its own destination (a
+        subdir or a distinct filename) so their assets never collide at the same
+        `$HOME` path.
+      '';
+    };
   };
 
   config = lib.mkMerge [
@@ -150,6 +173,23 @@ in {
       '';
 
       home.packages = [restoreApp];
+    })
+
+    # Media assets referenced by absolute $HOME paths in the scene collection.
+    # Copy-if-absent (same philosophy as the config seed): the machine owns them
+    # after the first activation, so live edits to e.g. overlay.html survive
+    # rebuilds. Each dest may include subdirs, so multiple brands coexist without
+    # colliding at the same $HOME path.
+    (lib.mkIf (cfg.homeAssets != {}) {
+      home.activation.seedObsHomeAssets = lib.hm.dag.entryAfter ["writeBoundary"] (
+        lib.concatStrings (lib.mapAttrsToList (dest: src: ''
+            if [ ! -e "$HOME/${dest}" ]; then
+              run mkdir -p "$(dirname "$HOME/${dest}")"
+              run ${pkgs.coreutils}/bin/cp --no-preserve=mode "${src}" "$HOME/${dest}"
+            fi
+          '')
+          cfg.homeAssets)
+      );
     })
   ];
 }
