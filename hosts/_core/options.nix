@@ -1,8 +1,59 @@
 {
   lib,
   config,
+  pkgs,
   ...
-}: {
+}: let
+  # First-boot runner for calamoose.install.firstBootCommands. Each entry becomes
+  # a one-shot unit that runs ONCE per fresh root filesystem: a stamp under
+  # fbStampDir gates it, and that stamp lives on the root that a teardown wipes.
+  # So an ordinary `nixos-rebuild switch` finds the stamp and skips, but a
+  # teardown + full install (or a recreated microVM .img) starts with an empty
+  # root, no stamp, and re-runs. Built for the media-stack restores, which must
+  # run INSIDE a guest on its first boot — by then the host has shared decrypted
+  # secrets into /run/hostsecrets and the NAS backup shares are mounted, neither
+  # of which is true at host-installer time (and the guest doesn't exist yet).
+  fbc = config.calamoose.install.firstBootCommands;
+  fbStampDir = "/var/lib/cala-firstboot";
+  mkFirstBootUnit = name: c: let
+    stamp = "${fbStampDir}/${name}.done";
+    runner = pkgs.writeShellScript "cala-firstboot-${name}" ''
+      set -uo pipefail
+      rc=0
+      ${c.run} || rc="''$?"
+      # Stamp on success only (default) so a first boot where the backup was not
+      # yet reachable is retried next boot; stampOnFailure=true marks it done
+      # regardless. `true`/`false` below are shell builtins.
+      if [ "''$rc" -eq 0 ] || ${lib.boolToString c.stampOnFailure}; then
+        install -d -m 0755 ${fbStampDir}
+        touch ${stamp}
+      fi
+      exit "''$rc"
+    '';
+  in {
+    description = "First-boot task '${name}' (runs once per fresh install)";
+    wantedBy = ["multi-user.target"];
+    wants = ["network-online.target"];
+    after = ["network-online.target"] ++ c.after;
+    before = c.before;
+    unitConfig =
+      {
+        ConditionPathExists = "!${stamp}";
+      }
+      // lib.optionalAttrs (c.requiresMounts != []) {
+        RequiresMountsFor = c.requiresMounts;
+      };
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      User = c.user;
+      ExecStart = runner;
+    };
+    # Resolve `run` (e.g. plex-restore, from environment.systemPackages) and the
+    # coreutils used above against the full system profile.
+    path = [config.system.path];
+  };
+in {
   options.calamoose.enableSecrets = lib.mkOption {
     # Tri-state, backward-compatible:
     #   false            -> no secrets loaded
@@ -126,6 +177,78 @@
     '';
   };
 
+  options.calamoose.install.firstBootCommands = lib.mkOption {
+    default = {};
+    description = ''
+      Commands to run ONCE on the first boot after a fresh install — a teardown +
+      full install, or a recreated microVM root image — and NOT on an ordinary
+      `nixos-rebuild switch`. Keyed by a short, stable name used for the unit and
+      its run-once stamp (${fbStampDir}/<name>.done); the stamp lives on the root
+      a wipe destroys, which is what tells a fresh install apart from a rebuild.
+
+      Primarily for the media-stack restores that must run inside a guest on its
+      first boot (host secrets are already at /run/hostsecrets and the NAS backup
+      shares are mounted by then), where the host installer cannot reach guest
+      state. A missing backup just means the restore exits non-zero and is retried
+      next boot (see stampOnFailure).
+    '';
+    example = lib.literalExpression ''
+      {
+        plex-restore = {
+          run = "plex-restore";
+          requiresMounts = ["/mnt/backup"];
+          after = ["plex.service"];
+        };
+      }
+    '';
+    type = lib.types.attrsOf (lib.types.submodule {
+      options = {
+        run = lib.mkOption {
+          type = lib.types.str;
+          example = "plex-restore";
+          description = "Command line run once on first boot. Resolved against the system PATH.";
+        };
+        requiresMounts = lib.mkOption {
+          type = lib.types.listOf lib.types.str;
+          default = [];
+          example = ["/mnt/backup"];
+          description = "Mount points the unit waits for (RequiresMountsFor) — e.g. the NAS backup share the restore reads.";
+        };
+        after = lib.mkOption {
+          type = lib.types.listOf lib.types.str;
+          default = [];
+          example = ["plex.service"];
+          description = ''
+            Extra After= ordering (network-online.target is always added). A
+            restore whose script stops/starts its own service must be ordered
+            AFTER that service (e.g. "plex.service"), never Before — a Before= on
+            a service the command itself starts is an ordering cycle.
+          '';
+        };
+        before = lib.mkOption {
+          type = lib.types.listOf lib.types.str;
+          default = [];
+          description = "Before= ordering, for commands that must precede another unit.";
+        };
+        user = lib.mkOption {
+          type = lib.types.str;
+          default = "root";
+          description = "User to run as. Restores that stop/start services and chown files need root.";
+        };
+        stampOnFailure = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
+          description = ''
+            Write the run-once stamp even when the command fails. Default false:
+            the stamp is written only on success, so a first boot where the backup
+            was not yet reachable (non-zero exit) is retried on the next boot
+            rather than being marked done.
+          '';
+        };
+      };
+    });
+  };
+
   options.calamoose.hardlinkLayout = lib.mkOption {
     type = lib.types.bool;
     default = false;
@@ -146,6 +269,12 @@
 
   # Surface the host version in `nixos-version` / the boot menu entry.
   config.system.nixos.tags = ["cala-${config.calamoose.version}"];
+
+  # Emit one run-once unit per firstBootCommands entry (empty attrset -> no units).
+  config.systemd.services =
+    lib.mapAttrs'
+    (name: c: lib.nameValuePair "cala-firstboot-${name}" (mkFirstBootUnit name c))
+    fbc;
 
   # Disk-wipe safety net. The whole "disko can never touch the data drive" story
   # rests on two invariants; enforce them at eval time so a future foot-gun edit

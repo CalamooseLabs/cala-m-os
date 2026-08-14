@@ -77,12 +77,11 @@ in {
 
   # Local download dirs are only needed in copy mode; in hardlink mode they live
   # on the NFS share (pre-created on the NAS / by qBittorrent's preStart).
-  systemd.tmpfiles.rules =
-    lib.optionals (!hardlink) [
-      "d /data/qbit 0755 qbittorrent qbittorrent -"
-      "d /data/qbit/downloads 0755 qbittorrent qbittorrent -"
-      "d /data/qbit/incomplete 0755 qbittorrent qbittorrent -"
-    ];
+  systemd.tmpfiles.rules = lib.optionals (!hardlink) [
+    "d /data/qbit 0755 qbittorrent qbittorrent -"
+    "d /data/qbit/downloads 0755 qbittorrent qbittorrent -"
+    "d /data/qbit/incomplete 0755 qbittorrent qbittorrent -"
+  ];
 
   # In hardlink mode, anything that touches the shared mount must start after it.
   # Without this, qBittorrent's preStart `mkdir -p` would create the download dir
@@ -151,5 +150,30 @@ in {
     to = "23:00";
     download = 10240; # 10 MB/s during the window
     upload = 5120; # 5 MB/s during the window
+  };
+
+  # First-boot recovery after a teardown + full install (this guest's root image
+  # is recreated blank, so each *arr loses /var/lib/<app>). Each <app>-restore
+  # pulls the newest backup zip the app wrote to its NAS share. Runs once only —
+  # the stamp lives on the wiped root, so an ordinary rebuild skips it. Each
+  # <app>-restore stops/starts its own service, so order AFTER it, not Before.
+  # (qBittorrent has no backup mechanism yet, so it is not restored here — its
+  # torrents must be re-added by hand; the downloaded data on NFS survives.)
+  calamoose.install.firstBootCommands = {
+    radarr-restore = {
+      run = "radarr-restore";
+      requiresMounts = ["/mnt/backups/radarr"];
+      after = ["radarr.service"];
+    };
+    sonarr-restore = {
+      run = "sonarr-restore";
+      requiresMounts = ["/mnt/backups/sonarr"];
+      after = ["sonarr.service"];
+    };
+    prowlarr-restore = {
+      run = "prowlarr-restore";
+      requiresMounts = ["/mnt/backups/prowlarr"];
+      after = ["prowlarr.service"];
+    };
   };
 }
