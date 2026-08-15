@@ -19,7 +19,7 @@
   machine_type = "Workstation";
   machine_uuid = "MS-02";
 in {
-  calamoose.version = "2.0.3-beta";
+  calamoose.version = "2.1.0-beta";
 
   imports =
     [

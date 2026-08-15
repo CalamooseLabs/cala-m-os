@@ -23,7 +23,7 @@
       subnet = "10.10.10.0/26";
       prefixLength = 26;
       gateway = "10.10.10.1";
-      media = "10.10.10.10";
+      media = "10.10.10.11";
       homelab = "10.10.10.15";
       security = "10.10.10.20"; # UniFi Protect camera-wall VM (set a matching DHCP reservation)
       torrent = "10.10.10.35";
