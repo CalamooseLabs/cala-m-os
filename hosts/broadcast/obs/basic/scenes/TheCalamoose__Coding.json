@@ -605,7 +605,7 @@
             "id": "browser_source",
             "versioned_id": "browser_source",
             "settings": {
-                "url": "localhost:8081",
+                "url": "http://localhost:8081",
                 "width": 1920,
                 "height": 1080
             },
