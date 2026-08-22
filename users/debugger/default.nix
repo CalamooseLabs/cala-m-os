@@ -33,6 +33,7 @@
     "lazygit"
     "localsend"
     "minecraft"
+    "moosebroom"
     "moosefetch"
     "moosewire"
     "neovim"

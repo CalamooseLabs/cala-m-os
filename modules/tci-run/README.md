@@ -14,7 +14,10 @@ hardcore + Nuzlocke run after a death without touching the gaming PC.
 - `tci-run new` clones the template → `instances/tci-run-NNN` (display name
   `TCI - Run #N`), files it under the **TCI Runs** group, bumps a counter. The template
   lives in `~/.local/state/tci-run` (out of Prism's list). It's **create-only** — the
-  new tile pops into Prism's live-watched list and you double-click it.
+  new tile pops into Prism's live-watched list and you double-click it. Each run bakes
+  Prism per-instance overrides (`quitLauncherAfterRun`, default on) so the launcher
+  window hides once the game is up and Prism quits entirely when the game exits —
+  other Prism instances keep the global launcher behavior.
 - A tiny HTTP listener (`tci-run-listener.service`, runs as `hub`) turns a Companion
   HTTP request into `tci-run new`, fired detached so the button is instant. An 8s
   debounce collapses accidental double-presses. `mmc-pack.json` is minimal — Prism
@@ -71,10 +74,12 @@ locked to the run counter, and reset the whole campaign in one shot.
 ## Options (`services.tci-run.*`)
 
 `enable`, `mrpackPath` (file or dir, default `~/TCI`), `namePrefix` (`TCI - Run #`),
-`groupName` (`TCI Runs`), `port` (8778), `address`, `debounceSeconds` (8),
-`allowedSources` (CIDRs the firewall accepts; set to the studio subnet here),
-`tokenFile` (a file containing `TCI_RUN_TOKEN=<secret>`, loaded via EnvironmentFile —
-kept out of the store), `openFirewall`.
+`groupName` (`TCI Runs`), `quitLauncherAfterRun` (bool, default `true` — bake
+`OverrideMiscellaneous`/`CloseAfterLaunch`/`QuitAfterGameStop` into each run so the
+launcher hides on game start and Prism quits on game exit), `port` (8778), `address`,
+`debounceSeconds` (8), `allowedSources` (CIDRs the firewall accepts; set to the studio
+subnet here), `tokenFile` (a file containing `TCI_RUN_TOKEN=<secret>`, loaded via
+EnvironmentFile — kept out of the store), `openFirewall`.
 
 Overlay sync/reset: `syncOverlay` (bool, default `false`), `overlayUrl` (default
 `http://<broadcast>:8082/control`), `overlayTokenFile` (a file whose trimmed contents
@@ -87,3 +92,7 @@ are the overlay's bearer token; read by the CLI, must be readable by `user`),
   seconds) — fine for detached create-only. On a CoW fs (btrfs/xfs) it's instant.
 - `sync` is intentionally **not** exposed over HTTP (it's a heavy rebuild); the `new`
   hot path self-heals the template on a pack change.
+- The `quitLauncherAfterRun` keys live in the **template's** `instance.cfg`, so after a
+  `nixos-rebuild switch` that changes the option, run `tci-run sync` once to rebuild
+  the template (rebuilds are otherwise pack-hash-gated). Existing `tci-run-NNN`
+  instances keep their old behavior — only newly spawned runs pick up the change.

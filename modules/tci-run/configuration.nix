@@ -197,6 +197,16 @@
           printf 'InstanceType=OneSix\n'
           printf 'iconKey=%s\n' "$iconkey"
           printf 'name=TCI Template\n'
+          if ${lib.boolToString cfg.quitLauncherAfterRun}; then
+            # Per-instance Prism overrides (only read when OverrideMiscellaneous=true):
+            # hide the launcher window once the game is up, quit Prism when the game
+            # exits. Baked into the template so every clone inherits them (the clone
+            # filter in new_run only strips name/play-time keys); global Prism
+            # behavior and other instances are untouched.
+            printf 'OverrideMiscellaneous=true\n'
+            printf 'CloseAfterLaunch=true\n'
+            printf 'QuitAfterGameStop=true\n'
+          fi
         } > "$tmp/instance.cfg"
 
         rm -rf "$tmp/_extract"
@@ -497,6 +507,19 @@ in {
         hits every launch — so this defaults on. Windowed boots stable; press F11 in-game
         to go fullscreen once loaded. Set to `false` if you run a Wayland-patched GLFW and
         want the pack's fullscreen honored.
+      '';
+    };
+
+    quitLauncherAfterRun = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = ''
+        Bake Prism per-instance overrides (`OverrideMiscellaneous` + `CloseAfterLaunch` +
+        `QuitAfterGameStop`) into each spawned run: the launcher window hides once the
+        game is up and Prism quits entirely when the game exits. Scoped to TCI run
+        instances — other Prism instances keep the global launcher behavior. Takes
+        effect for runs spawned after the next template rebuild (`tci-run sync` or a
+        pack hash change); already-spawned runs keep their old instance.cfg.
       '';
     };
 
