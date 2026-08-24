@@ -53,6 +53,8 @@
     # Attempt a *logged* GPU reset on a ring hang instead of silently wedging
     # the whole machine — also gives us a trace to work from (default -1/auto).
     "amdgpu.gpu_recovery=1"
+    # Disable PSR, PSR-SU and Panel Replay
+    "amggpu.dcdebugmask=0x410"
   ];
 
   services.pipewire.wireplumber.extraConfig.no-ucm = {
