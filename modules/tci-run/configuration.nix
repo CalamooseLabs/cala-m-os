@@ -328,7 +328,7 @@
             rm -f "$gtmp"
           fi
         fi
-        ''}
+      ''}
         notify_overlay reset
         log "reset: counter zeroed${lib.optionalString cfg.resetWipesInstances ", instances wiped"}"
         status
@@ -477,7 +477,7 @@ in {
 
     mrpackPath = lib.mkOption {
       type = lib.types.str;
-      default = "${home}/TCI";
+      default = "${home}/03 - Resources/TCI";
       description = ''
         Path to the Cobblemon Initiative .mrpack, or a directory to scan for the
         newest *.mrpack. The template is rebuilt whenever this file's hash changes.
