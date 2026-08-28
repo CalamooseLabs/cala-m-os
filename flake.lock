@@ -43,6 +43,27 @@
         "type": "github"
       }
     },
+    "antlers_2": {
+      "inputs": {
+        "nixpkgs": [
+          "chatcards",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1786640315,
+        "narHash": "sha256-QYArhyNn+3Y5sY0+gkaILTvJk4vcDhUIgNOylfh8uRg=",
+        "owner": "CalamooseLabs",
+        "repo": "antlers",
+        "rev": "50dd0f23d26a506a48468fe9ccc60190be2cc8f1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "CalamooseLabs",
+        "repo": "antlers",
+        "type": "github"
+      }
+    },
     "aquamarine": {
       "inputs": {
         "hyprutils": [
@@ -163,6 +184,27 @@
         "owner": "tinted-theming",
         "repo": "base16-vim",
         "rev": "577fe8125d74ff456cf942c733a85d769afe58b7",
+        "type": "github"
+      }
+    },
+    "chatcards": {
+      "inputs": {
+        "antlers": "antlers_2",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1787935810,
+        "narHash": "sha256-+NawX8aGqMXW4oo8Pb4IEbgf8Gt6ytqVfXYxtdJ98uk=",
+        "owner": "The-Company-Inc-Nerds",
+        "repo": "chat-cards",
+        "rev": "14563d641d94f9e22b927f5376d9170756839fe2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "The-Company-Inc-Nerds",
+        "repo": "chat-cards",
         "type": "github"
       }
     },
@@ -789,11 +831,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1787576628,
-        "narHash": "sha256-IF3MYUIskT8Eo9vxONXgdK13ysxnaZvMknKDxFQkwtg=",
+        "lastModified": 1787955046,
+        "narHash": "sha256-O39RqnBqn/IH6TmJD/NOG0HcivP4oYq7n3GHyWMnDvE=",
         "owner": "The-Company-Inc-Nerds",
         "repo": "multichat",
-        "rev": "0fce26e33d9997e890d0cd9a6d251f0ac5011dfe",
+        "rev": "7afe6baef3beff9b5ad1cbbd4e765c7f80da100d",
         "type": "github"
       },
       "original": {
@@ -959,6 +1001,7 @@
         "agenix": "agenix",
         "antlers": "antlers",
         "arion": "arion",
+        "chatcards": "chatcards",
         "disko": "disko",
         "flatpaks": "flatpaks",
         "home-manager": "home-manager_2",

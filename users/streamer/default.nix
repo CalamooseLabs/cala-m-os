@@ -5,6 +5,7 @@
     "agenix"
     "bash"
     "bitfocus-companion"
+    "chatcards"
     "chromium"
     "cobblemon-overlay"
     "fonts"

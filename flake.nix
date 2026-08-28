@@ -77,9 +77,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # The Company Inc — combined Twitch + YouTube live chat viewer (broadcast host)
     multichat = {
       url = "github:The-Company-Inc-Nerds/multichat";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    chatcards = {
+      url = "github:The-Company-Inc-Nerds/chat-cards";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
