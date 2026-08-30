@@ -9,6 +9,7 @@
 {
   lib,
   initialInstallMode,
+  cala-m-os,
   ...
 }: let
   import_users = ["streamer"];
@@ -91,6 +92,44 @@ in {
     };
 
   networking.hostName = "broadcast";
+
+  # Physical power button: don't let logind hard-poweroff a box that's likely
+  # mid-stream. Hyprland binds XF86PowerOff to obs-safe-poweroff instead (see
+  # ./home.nix), which lets OBS exit cleanly — saving config and clearing its
+  # crash sentinel — before systemctl poweroff, so the next launch skips the
+  # "did not shut down properly / Safe Mode?" dialog. A ≥5s hold stays a forced
+  # poweroff for when the session itself is wedged (Hyprland dead = nothing
+  # listening for the short press).
+  services.logind.settings.Login = {
+    HandlePowerKey = "ignore";
+    HandlePowerKeyLongPress = "poweroff";
+  };
+
+  # OBS records to the RAID0 scratch array (disko mounts it at /recordings,
+  # root-owned by default) — the seeded profile's FilePath/RecFilePath point
+  # there, so the session user must be able to write it. tmpfiles covers the
+  # nofail case: if the array is absent the dir still exists on root and
+  # recordings degrade to the boot disk instead of erroring out. (Files written
+  # there while the array is away get shadowed under the mountpoint when it
+  # returns — still eating boot-disk space; unmount to reclaim.)
+  systemd.tmpfiles.rules = [
+    "d /recordings 0775 ${cala-m-os.globals.defaultUser} users -"
+  ];
+  # tmpfiles alone races the mount: nofail mounts are NOT ordered before
+  # local-fs.target (which tmpfiles-setup runs after), so on a boot where
+  # tmpfiles wins, the root-owned xfs mounts OVER the chowned stub and OBS
+  # gets EACCES — bites exactly once, on the first boots after a fresh
+  # format, until a chown lands on the mounted fs (xfs persists it). Bind a
+  # oneshot to the mount so ownership is asserted whenever it actually mounts.
+  systemd.services.recordings-owner = {
+    after = ["recordings.mount"];
+    wantedBy = ["recordings.mount"];
+    serviceConfig.Type = "oneshot";
+    script = ''
+      chown ${cala-m-os.globals.defaultUser}:users /recordings
+      chmod 0775 /recordings
+    '';
+  };
 
   # Pin Hyprland's (Aquamarine) primary renderer to the AMD GPU and include the
   # DisplayLink (evdi) card. WHY THIS WORKS ON AMD BUT NOT THE OLD ARC: Aquamarine

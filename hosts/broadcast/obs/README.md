@@ -31,3 +31,29 @@ obs/
 
 Bootstrap: on the box that already has your real OBS setup, run
 `obs-config-snapshot`, commit, and this becomes the baseline for reinstalls.
+
+## Baseline decisions (re-assert these if a snapshot overwrites them)
+
+- **`global.ini [General] BrowserHWAccel=false`** — CEF's GPU process crashing
+  under Wayland/AMD takes OBS down seconds after launch, right as the browser
+  sources (overlay.html, multichat) initialize; hardware acceleration off is the
+  standard fix and costs little for 2D overlay pages. It must live in
+  `global.ini` `[General]` (NOT `user.ini`) on OBS 30–32, and the live file can
+  only be edited while OBS is closed (OBS rewrites it on exit). A snapshot taken
+  with `--with-global` from a box where someone re-enabled it in Settings →
+  Advanced would silently revert this.
+- **Scene asset paths** point at `/home/hub/assets/thecalamoose/…` — seeded by
+  `calamoose.obs.homeAssets` in `../home.nix`. Keep new sources on that path.
+- **Recording paths** (`FilePath`/`RecFilePath`/`FFFilePath` in the profile)
+  point at `/recordings` — the RAID0 scratch array from the machine's disko
+  layout, made user-writable by a tmpfiles rule in `../configuration.nix`.
+
+Applying baseline changes to the ALREADY-RUNNING box: the seed is
+copy-if-absent, so edits here don't reach a live config on rebuild — and
+`obs-config-restore` copies from the baseline baked into the *current
+generation's* script, not this directory. Sequence: `sudo nixos-rebuild switch
+--flake .#broadcast` FIRST, quit OBS, then `obs-config-restore` (`--with-global`
+isn't needed; restore covers `global.ini` too). And restore BEFORE the next
+`obs-config-snapshot`: a snapshot from a box that hasn't been restored yet
+mirrors the live (old) scenes/profiles back over hand-edits here — always
+review `git diff` before committing a snapshot.

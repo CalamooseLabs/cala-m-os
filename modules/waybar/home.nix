@@ -207,12 +207,105 @@
       color: @base0C;
     }
   '';
+  # --- Quick-launch pills --------------------------------------------------
+  # Host-defined launcher buttons (see the option below), rendered as one pill
+  # per entry just left of the clock. Launches go through systemd-run so the
+  # app escapes waybar.service's cgroup — on-click children are otherwise
+  # killed whenever the bar restarts (which happens on every compositor
+  # re-exec, since hyprland-session.target is stop/started then).
+  quickLaunchModules = lib.listToAttrs (map (e: {
+      name = "custom/ql-${e.id}";
+      value =
+        {
+          format = e.glyph;
+          on-click = "${pkgs.systemd}/bin/systemd-run --user --collect -- ${e.command}";
+        }
+        // (
+          if e.tooltip != ""
+          then {
+            tooltip = true;
+            tooltip-format = e.tooltip;
+          }
+          else {tooltip = false;}
+        );
+    })
+    cfg.quickLaunch);
+
+  # Same pill body as the shared block in style.css (that selector is an
+  # explicit id list, so new ids get nothing for free); 17px matches the
+  # privacy pill's glyph-size nudge.
+  quickLaunchCss = lib.optionalString (cfg.quickLaunch != []) ''
+
+    ${lib.concatMapStringsSep ", " (e: "#custom-ql-${e.id}") cfg.quickLaunch} {
+      background: alpha(@base00, 0.92);
+      margin: 6px 0;
+      padding: 4px 11px;
+      font-size: 17px;
+      color: @base04;
+      transition: color 200ms ease;
+    }
+    ${lib.concatMapStringsSep ", " (e: "#custom-ql-${e.id}:hover") cfg.quickLaunch} {
+      color: @base0C;
+    }
+  '';
 in {
   options.cala.waybar.collapse.enable =
     lib.mkEnableOption "the collapsible right-docked waybar — click the rounded cap to slide it to a stub; collapsing releases the top strip so Hyprland reclaims the vertical space"
     // {default = true;};
 
+  options.cala.waybar.powerCommand = lib.mkOption {
+    type = lib.types.str;
+    default = "powermenu";
+    description = ''
+      Command the bar's power pill runs on click. The default expects the rofi
+      module's powermenu on PATH; hosts without rofi point it elsewhere (the
+      broadcast box uses obs-safe-poweroff so a click is a safe shutdown).
+    '';
+  };
+
+  options.cala.waybar.quickLaunch = lib.mkOption {
+    type = lib.types.listOf (lib.types.submodule {
+      options = {
+        id = lib.mkOption {
+          type = lib.types.strMatching "[a-z0-9-]+";
+          description = "Slug for the module/CSS id (custom/ql-<id>).";
+        };
+        glyph = lib.mkOption {
+          # nonEmptyStr: waybar HIDES a custom module whose text is empty, so a
+          # lost glyph would make the button silently vanish (this bar shipped
+          # that bug once with the privacy pill) — fail the eval instead.
+          type = lib.types.nonEmptyStr;
+          description = ''
+            Nerd-Font glyph shown in the pill. PUA glyphs look EMPTY in most
+            editors — don't "clean them up".
+          '';
+        };
+        command = lib.mkOption {
+          type = lib.types.str;
+          description = "Command to launch (word-split; wrapped in systemd-run --user so it survives bar restarts).";
+        };
+        tooltip = lib.mkOption {
+          type = lib.types.str;
+          default = "";
+          description = "Hover text; empty disables the tooltip.";
+        };
+      };
+    });
+    default = [];
+    description = ''
+      Quick-launch buttons rendered as pills left of the clock — e.g. the
+      broadcast box's relaunch-OBS / Companion / Multichat buttons.
+    '';
+  };
+
   config = {
+    assertions = [
+      {
+        assertion = lib.allUnique (map (e: e.id) cfg.quickLaunch);
+        message = "cala.waybar.quickLaunch: id values must be unique (duplicates would silently collapse to the first entry's command)";
+      }
+    ];
+
     # Let it try to start a few more times
     systemd.user.services.waybar = {
       Unit.StartLimitBurst = 30;
@@ -263,6 +356,7 @@ in {
               ++ ["custom/music"]
               ++ lib.optional switching "custom/persona"
               ++ lib.optional privacy "custom/privacy"
+              ++ map (e: "custom/ql-${e.id}") cfg.quickLaunch
               ++ ["clock" "pulseaudio" "network" "backlight" "battery" "custom/power"];
 
             "custom/music" = {
@@ -318,7 +412,11 @@ in {
 
             "custom/power" = {
               tooltip = false;
-              on-click = "powermenu";
+              # systemd-run for the same reason as the quick-launch pills: an
+              # on-click child dies with the bar, and for a powerCommand like
+              # obs-safe-poweroff a bar restart mid-wait would strand the box
+              # with OBS stopped but no poweroff issued.
+              on-click = "${pkgs.systemd}/bin/systemd-run --user --collect -- ${cfg.powerCommand}";
               format = "襤";
             };
           }
@@ -357,10 +455,11 @@ in {
               tooltip = false;
               on-click = "${toggleScript}/bin/cala-waybar-collapse";
             };
-          };
+          }
+          // quickLaunchModules;
       };
 
-      style = palette + builtins.readFile ./style.css + lib.optionalString cfg.collapse.enable collapseCss + lib.optionalString privacy privacyCss;
+      style = palette + builtins.readFile ./style.css + lib.optionalString cfg.collapse.enable collapseCss + lib.optionalString privacy privacyCss + quickLaunchCss;
     };
   };
 }

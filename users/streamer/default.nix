@@ -16,6 +16,7 @@
     "openssh"
     "stylix"
     "teleprompter"
+    "waybar"
   ];
 in {
   inherit modules;
