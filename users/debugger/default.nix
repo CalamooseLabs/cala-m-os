@@ -50,7 +50,6 @@
     "restore-config"
     "rofi"
     "scanner"
-    "solaar"
     "ssh"
     "steam"
     "stylix"
