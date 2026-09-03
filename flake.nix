@@ -5,6 +5,14 @@
     # Unstable NixOS Branch
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    # DaVinci Resolve Studio 21 without dragging the rest of nixpkgs forward.
+    # The full unstable bump that ships davinci-resolve-studio 21.0.4 also pulled
+    # kernel 7.2.2 (breaks evdi/teleprompter), deno 2.9.5, the utsushi removal, etc.
+    # So pin a davinci-ONLY nixpkgs at the rev that has 21.0.4 and map just that one
+    # package through the overlay below; the system itself stays on the main nixpkgs.
+    # Bump this rev (or fold it back into nixpkgs) once the base catches up.
+    nixpkgs-davinci.url = "github:nixos/nixpkgs/d2f67949798825fe853f7c5d0492b8bf016d3f88";
+
     # Specific Hardware Fixes
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
@@ -86,6 +94,14 @@
       url = "github:The-Company-Inc-Nerds/chat-cards";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # The Company, Inc. bookkeeping app (books CLI + services.calamoose-books).
+    # PRIVATE repo — hosts that consume it (battlestation, devbox) must hand Nix a
+    # GitHub PAT at fetch time (see modules/nix-github-token + each host's wiring).
+    bookkeeper = {
+      url = "github:The-Company-Inc-Nerds/bookkeeper-app";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -127,6 +143,21 @@
         modules = [
           ./hosts/${hostname}/configuration.nix
           {nixpkgs.overlays = import ./overlays;}
+          # Surgical DaVinci Resolve Studio 21 pin (see nixpkgs-davinci input). Lazy:
+          # only forced on the host that actually uses davinci-resolve-studio
+          # (battlestation), so other hosts don't evaluate the second nixpkgs.
+          {
+            nixpkgs.overlays = [
+              (_final: _prev: {
+                davinci-resolve-studio =
+                  (import inputs.nixpkgs-davinci {
+                    inherit system;
+                    config.allowUnfree = true;
+                  })
+                  .davinci-resolve-studio;
+              })
+            ];
+          }
         ];
       };
   in {

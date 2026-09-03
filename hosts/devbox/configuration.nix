@@ -4,8 +4,10 @@
 #                                #
 ##################################
 {
+  inputs,
   lib,
   pkgs,
+  initialInstallMode,
   ...
 }: let
   import_users = [
@@ -17,15 +19,35 @@
 in {
   calamoose.version = "2.1.0";
 
-  imports = [
-    # Common Core Config
-    (import ../_core/default.nix {
-      users_list = import_users;
-      machine_type = machine_type;
-      machine_uuid = machine_uuid;
-      extra_user_modules = {};
-    })
-  ];
+  imports =
+    [
+      # Common Core Config
+      (import ../_core/default.nix {
+        users_list = import_users;
+        machine_type = machine_type;
+        machine_uuid = machine_uuid;
+        extra_user_modules = {};
+      })
+    ]
+    # bookkeeper (books) + its PRIVATE flake input need a GitHub PAT to fetch, and
+    # neither belongs in the minimal installer pass (no token, no secrets facade there).
+    ++ lib.optional (!initialInstallMode) {
+      imports = [
+        inputs.bookkeeper.nixosModules.default
+        ../../modules/nix-github-token/configuration.nix
+      ];
+
+      services.calamoose-books.enable = true;
+
+      # devbox uses agenix (its default backend). The token is an .age encrypted to the
+      # Yubikeys (modules/nix-github-token/secrets/secrets.nix). Create it once with:
+      #   cd modules/nix-github-token/secrets && agenix -e nix-github-token.age
+      #   # plaintext: access-tokens = github.com=github_pat_…
+      programs.nix-github-token = {
+        enable = true;
+        agenixFile = ../../modules/nix-github-token/secrets/nix-github-token.age;
+      };
+    };
 
   networking.hostName = "devbox";
 
