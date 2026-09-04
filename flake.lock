@@ -851,11 +851,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1787955046,
-        "narHash": "sha256-O39RqnBqn/IH6TmJD/NOG0HcivP4oYq7n3GHyWMnDvE=",
+        "lastModified": 1788561643,
+        "narHash": "sha256-iUs/ploD9Xqs5jc0fNR2UsR2O2DGsA58uY9Y/sIctUE=",
         "owner": "The-Company-Inc-Nerds",
         "repo": "multichat",
-        "rev": "7afe6baef3beff9b5ad1cbbd4e765c7f80da100d",
+        "rev": "ea4fbde19d089fc68e1aea4917956762eb80aacc",
         "type": "github"
       },
       "original": {

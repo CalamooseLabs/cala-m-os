@@ -50,15 +50,10 @@
   # discipline, not a lock.
   packCap = 1000;
 
-  # Where the full T&C is published. multichat does NOT host a terms page — the
-  # url is only substituted into the chat prompt as {terms} — so this stays empty
-  # until there is a real page to point at, and the prompt carries the summary
-  # instead of a dead link.
-  termsUrl = "";
-
-  termsSummary =
-    "Continental US only, one entry per household, ${toString packCap} packs total. "
-    + "Winners are contacted to confirm: mail, donate, pass, or destroy.";
+  # Where the full T&C is published. The !terms chat command replies with this
+  # url (substituted into the reply as {terms}). multichat does NOT host the page
+  # and no longer gates entry on accepting — it just points viewers at the store.
+  termsUrl = "https://store.thecompany.inc/pages/giveaway-terms";
 in {
   imports = [
     inputs.multichat.nixosModules.default
@@ -139,14 +134,14 @@ in {
       # no milestone draws arm on their own).
       firstN = packCap;
 
-      # The terms gate rides eventsubReady with replies, and for the same reason:
-      # the "you must accept first" prompt IS a chat reply. Switched on while
-      # replies are off, an entrant who hasn't accepted is refused in silence,
-      # with nothing telling them the accept command exists — worse than no gate.
+      # Not an acceptance gate anymore: viewers type !terms and the bot replies
+      # with the store terms link. Still rides eventsubReady because the reply
+      # needs the broadcaster's user:write:chat token (same as `replies`) — with
+      # replies off the command is silently inert.
       terms = {
         enable = eventsubReady;
-        command = "accept"; # viewers type !accept
-        version = "1"; # bump to force everyone to re-accept changed terms
+        command = "terms"; # viewers type !terms
+        version = "1";
         url = termsUrl;
       };
 
@@ -175,12 +170,8 @@ in {
           "Thank you for entering, @{user}! All ${toString packCap} packs are "
           + "spoken for — you are on the waitlist.";
 
-        # Carries the terms itself, because termsUrl is empty and the built-in
-        # prompt would otherwise render an empty "()" where the link goes.
-        termsRequired =
-          "@{user} type {accept} to enter. "
-          + termsSummary
-          + lib.optionalString (termsUrl != "") " Full terms: ${termsUrl}";
+        # The !terms command reply — points viewers at the published terms page.
+        terms = "@{user} 📋 Full giveaway terms & conditions: {terms}";
       };
     };
 

@@ -96,7 +96,7 @@
     };
 
     # The Company, Inc. bookkeeping app (books CLI + services.calamoose-books).
-    # PRIVATE repo — hosts that consume it (battlestation, devbox) must hand Nix a
+    # PRIVATE repo — hosts that consume it (devbox) must hand Nix a
     # GitHub PAT at fetch time (see modules/nix-github-token + each host's wiring).
     bookkeeper = {
       url = "github:The-Company-Inc-Nerds/bookkeeper-app";
