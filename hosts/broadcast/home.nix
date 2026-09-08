@@ -37,18 +37,25 @@ in {
       else null;
     repoPath = "/etc/nixos/hosts/broadcast/obs";
 
-    # Media the scene sources reference by absolute $HOME path. The TheCalamoose
-    # scenes point at /home/hub/assets/thecalamoose/{brb,starting}.mp4 +
-    # overlay.html (the committed scene JSON references these exact paths), so
-    # those files must exist there on a fresh box or the overlays render black.
-    # Assets live once in modules/obs-kiosk/assets/<brand>/; the per-brand
-    # assets/<brand>/ destination keeps brands from colliding at the same $HOME
-    # path. This box is primarily The Company but also runs TheCalamoose for
-    # testing — add an "assets/thecompany/…" set once those scenes exist.
+    # Media the scene sources reference by absolute $HOME path (the committed
+    # scene JSON references these exact paths), so they must exist there on a
+    # fresh box or the sources render black. Assets live once in
+    # modules/obs-kiosk/assets/<brand>/; the per-brand assets/<brand>/
+    # destination keeps brands from colliding at the same $HOME path.
+    #   - thecalamoose: the TheCalamoose - Coding collection (brb/starting/overlay).
+    #   - thecompany:   the The Cobblemon Initiative collection (BRB / Starting
+    #     Soon / stinger / full + paper overlays). This box is primarily The
+    #     Company, so global.ini opens straight into that profile + collection.
     homeAssets = {
       "assets/thecalamoose/brb.mp4" = ../../modules/obs-kiosk/assets/thecalamoose/brb.mp4;
       "assets/thecalamoose/starting.mp4" = ../../modules/obs-kiosk/assets/thecalamoose/starting.mp4;
       "assets/thecalamoose/overlay.html" = ../../modules/obs-kiosk/assets/thecalamoose/overlay.html;
+
+      "assets/thecompany/TheCompanyInc_BeRightBack_3840x2160.mp4" = ../../modules/obs-kiosk/assets/thecompany/TheCompanyInc_BeRightBack_3840x2160.mp4;
+      "assets/thecompany/TheCompanyInc_StreamStartingSoon_3840x2160.mp4" = ../../modules/obs-kiosk/assets/thecompany/TheCompanyInc_StreamStartingSoon_3840x2160.mp4;
+      "assets/thecompany/TheCompanyInc_StingerTransition_3840x2160.webm" = ../../modules/obs-kiosk/assets/thecompany/TheCompanyInc_StingerTransition_3840x2160.webm;
+      "assets/thecompany/TheCompanyInc_FullOverlay_2x.png" = ../../modules/obs-kiosk/assets/thecompany/TheCompanyInc_FullOverlay_2x.png;
+      "assets/thecompany/on-air-papers.png" = ../../modules/obs-kiosk/assets/thecompany/on-air-papers.png;
     };
   };
 

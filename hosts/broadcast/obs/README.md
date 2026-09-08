@@ -42,8 +42,16 @@ Bootstrap: on the box that already has your real OBS setup, run
   only be edited while OBS is closed (OBS rewrites it on exit). A snapshot taken
   with `--with-global` from a box where someone re-enabled it in Settings →
   Advanced would silently revert this.
-- **Scene asset paths** point at `/home/hub/assets/thecalamoose/…` — seeded by
-  `calamoose.obs.homeAssets` in `../home.nix`. Keep new sources on that path.
+- **Scene asset paths** point at `/home/hub/assets/<brand>/…` — seeded by
+  `calamoose.obs.homeAssets` in `../home.nix` (`thecalamoose/` and `thecompany/`,
+  copied from `modules/obs-kiosk/assets/<brand>/`). Keep new sources on that path
+  and add the matching `homeAssets` entry, or the source renders black on a fresh
+  box (seeding reproduces the path, not the file).
+- **Profiles / collections:** `TheCalamoose` (→ `TheCalamoose - Coding`) and
+  `The Company, Inc.` (→ `The Cobblemon Initiative`, its stinger + BRB/Starting
+  Soon + full/paper overlays). `global.ini` opens into **The Company, Inc. / The
+  Cobblemon Initiative** by default (this box is primarily The Company); switch
+  the `[Basic]` `Profile`/`SceneCollection` pointers to change that.
 - **Recording paths** (`FilePath`/`RecFilePath`/`FFFilePath` in the profile)
   point at `/recordings` — the RAID0 scratch array from the machine's disko
   layout, made user-writable by a tmpfiles rule in `../configuration.nix`.
