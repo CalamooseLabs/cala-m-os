@@ -37,8 +37,8 @@
       subnet = "10.1.10.0/26";
       prefixLength = 26;
       gateway = "10.1.10.1";
-      broadcast = "10.1.10.15";
-      battlestation = "10.1.10.30";
+      broadcast = "10.1.10.49";
+      battlestation = "10.1.10.32";
     };
   };
 
