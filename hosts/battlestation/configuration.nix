@@ -3,13 +3,7 @@
 #   Gaming Desktop + Stream Src  #
 #                                #
 ##################################
-{
-  inputs,
-  cala-m-os,
-  lib,
-  initialInstallMode,
-  ...
-}: let
+{cala-m-os, ...}: let
   import_users = ["gamer"];
 
   machine_type = "Workstation";
