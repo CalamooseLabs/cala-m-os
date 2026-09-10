@@ -26,8 +26,10 @@ matching password on both the OBS server and the Companion `obs` connection, and
 it out of git (e.g. `calamoose.secrets` + Proton Pass, injected at runtime).
 
 Note: `companion-snapshot` copies the live db verbatim. If you later add a Companion
-connection that stores a password, scrub it from the snapshot before committing. Keep
-any exported `.companionconfig` out of git too — exports embed connection secrets.
+connection that stores a password, scrub it from the snapshot before committing. The
+same goes for an exported `.companionconfig` — exports embed connection config, so
+verify every connection's `secrets` is empty before committing one (the committed
+`db.companionconfig` was checked: obs is loopback/no-pass, generic-http has none).
 
 **Stream keys** (Twitch + YouTube via Aitum) are intentionally not stored here — they
 rotate and stay in OBS/Aitum on the box; re-enter them after a reinstall.
@@ -38,9 +40,21 @@ Companion v4.3 has **no CLI/HTTP path to import a config** — import is web-UI 
 The raw `db.sqlite` is the only artifact that can be applied programmatically. It's
 robust here: it lands in the `v<major.minor>` release dir (derived from the package
 version), and on upgrades Companion migrates an older db forward automatically. The
-tradeoff is the file is an opaque binary — git can't diff it. If you want a
-human-reviewable mirror, also export a `.companionconfig` from the UI and keep it
-alongside; it's documentation only, not used by the seed.
+tradeoff is the file is an opaque binary — git can't diff it.
+
+`db.companionconfig` is the human-reviewable mirror of the committed db (a "full"
+export from the UI, 2026-09-10: pages HOME/Scenes/TCI, obs + generic-http
+connections, Stream Deck Neo surface). It's documentation, not used by the seed —
+but the db CAN be rebuilt from an export without touching the box:
+
+    cp db.sqlite /tmp/db.sqlite && chmod +w /tmp/db.sqlite   # keeps main/userconfig + cloud
+    jq -r -f import-companionconfig.jq db.companionconfig | sqlite3 /tmp/db.sqlite
+    # verify, then copy back over db.sqlite
+
+`import-companionconfig.jq` replaces pages/controls/instances/surfaces from the
+export and preserves everything else. Written against the v4.3 db layout
+(`page_config_version` 11) — re-verify the shapes after a major Companion bump,
+e.g. by booting `bitfocus-companion --config-dir <tmpdir>` against the result.
 
 ## Round-trip (run as root — the service dir is root/StateDirectory-owned)
 

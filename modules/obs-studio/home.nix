@@ -20,9 +20,13 @@
   obsDir = "${config.xdg.configHome}/obs-studio";
 
   # Force the committed baseline back over the live config (after backing it up).
+  # profiles/ and scenes/ are MIRRORED (--delete): a restore also removes
+  # profiles/collections the baseline doesn't have — OBS's auto-created
+  # "Untitled" leftovers, dropped brands — instead of merging them back in.
+  # Symmetric with obs-config-snapshot, which mirrors live → repo the same way.
   restoreApp = pkgs.writeShellApplication {
     name = "obs-config-restore";
-    runtimeInputs = [pkgs.coreutils pkgs.gnutar];
+    runtimeInputs = [pkgs.coreutils pkgs.gnutar pkgs.rsync];
     text = ''
       src="${toString cfg.seedSource}"
       obsDir="${obsDir}"
@@ -41,20 +45,30 @@
       if [ -d "$obsDir" ]; then
         ts="$(date +%Y%m%d-%H%M%S)"
         backup="$obsDir.backup-$ts.tar.gz"
-        tar czf "$backup" -C "$(dirname "$obsDir")" "$(basename "$obsDir")"
+        # -h: if $obsDir is a symlink, archive the real tree, not a link stub —
+        # the mirror below would otherwise delete content only "backed up" as
+        # a symlink entry.
+        tar czhf "$backup" -C "$(dirname "$obsDir")" "$(basename "$obsDir")"
         echo "backed up live config to $backup"
       fi
 
       mkdir -p "$obsDir"
-      for item in basic global.ini; do
-        [ -e "$src/$item" ] || continue
-        if [ -d "$src/$item" ]; then
-          mkdir -p "$obsDir/$item"
-          cp -rf --no-preserve=mode "$src/$item/." "$obsDir/$item/"
-        else
-          cp -f --no-preserve=mode "$src/$item" "$obsDir/$item"
-        fi
+      # Mirror, don't merge: --delete prunes live profiles/collections that are
+      # not in the baseline (e.g. an auto-created "Untitled"). Restricted to the
+      # two dirs OBS keeps under basic/, so nothing else is ever pruned.
+      for sub in profiles scenes; do
+        [ -e "$src/basic/$sub" ] || continue
+        mkdir -p "$obsDir/basic/$sub"
+        # --perms + --chmod force writable modes over the store's 0444 (chmod
+        # alone only affects newly created files); --ignore-times because store
+        # mtimes are all epoch — after one restore both sides sit at epoch, and
+        # the size+mtime quick-check would silently skip same-size edits.
+        rsync -rlt --perms --ignore-times --delete --no-owner --no-group \
+          --chmod=D755,F644 "$src/basic/$sub/" "$obsDir/basic/$sub/"
       done
+      if [ -e "$src/global.ini" ]; then
+        cp -f --no-preserve=mode "$src/global.ini" "$obsDir/global.ini"
+      fi
       echo "restored baseline into $obsDir (restart OBS to load it)"
     '';
   };

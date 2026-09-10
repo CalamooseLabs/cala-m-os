@@ -21,12 +21,11 @@
 
   home_imports = map (name: makeModuleConfigs name "home.nix") import_modules;
 in {
-  imports =
-    [
-      ./secrets
-      (import ./configuration.nix {username = username;}) # Core Config
-      (import user_configuration {username = username;}) # User Config
-    ];
+  imports = [
+    ./secrets
+    (import ./configuration.nix {username = username;}) # Core Config
+    (import user_configuration {username = username;}) # User Config
+  ];
 
   home-manager.users = {
     "${username}" = {

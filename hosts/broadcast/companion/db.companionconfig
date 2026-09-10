@@ -1,0 +1,1117 @@
+{
+	"version": 12,
+	"type": "full",
+	"companionBuild": "v4.3.4",
+	"pages": {
+		"1": {
+			"id": "s5S2nQrKuZlh_L4UFPE_6",
+			"name": "HOME",
+			"controls": {
+				"0": {
+					"0": {
+						"type": "button",
+						"style": {
+							"text": "On\\nAir",
+							"textExpression": false,
+							"size": "18",
+							"png64": null,
+							"alignment": "center:center",
+							"pngalignment": "center:center",
+							"color": 16777215,
+							"bgcolor": 0,
+							"show_topbar": "default"
+						},
+						"options": {
+							"stepProgression": "auto",
+							"stepExpression": "",
+							"rotaryActions": false
+						},
+						"feedbacks": [
+							{
+								"id": "d6NgrDMbCzEmTU5ze39Hd",
+								"definitionId": "streaming",
+								"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+								"options": {},
+								"upgradeIndex": 8,
+								"type": "feedback",
+								"style": {
+									"color": 16777215,
+									"bgcolor": 13041664
+								},
+								"isInverted": {
+									"value": false,
+									"isExpression": false
+								}
+							},
+							{
+								"id": "RY8CWYhFI83i-HoIVSEw4",
+								"definitionId": "streaming",
+								"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+								"options": {},
+								"upgradeIndex": 8,
+								"type": "feedback",
+								"style": {
+									"color": 0,
+									"bgcolor": 16777215
+								},
+								"isInverted": {
+									"value": true,
+									"isExpression": false
+								}
+							}
+						],
+						"steps": {
+							"0": {
+								"action_sets": {
+									"down": [
+										{
+											"id": "AB9c7L63OghypacbfHA-y",
+											"definitionId": "StartStopStreaming",
+											"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+											"options": {},
+											"upgradeIndex": 8,
+											"type": "action"
+										}
+									],
+									"up": []
+								},
+								"options": {
+									"runWhileHeld": []
+								}
+							}
+						},
+						"localVariables": []
+					},
+					"1": {
+						"type": "button",
+						"style": {
+							"text": "Recording",
+							"textExpression": false,
+							"size": "14",
+							"png64": null,
+							"alignment": "center:center",
+							"pngalignment": "center:center",
+							"color": 16777215,
+							"bgcolor": 0,
+							"show_topbar": "default"
+						},
+						"options": {
+							"stepProgression": "auto",
+							"stepExpression": "",
+							"rotaryActions": false
+						},
+						"feedbacks": [
+							{
+								"id": "F3btdpffeehkIDvOtOEtN",
+								"definitionId": "recording",
+								"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+								"options": {
+									"fg": {
+										"value": 16777215,
+										"isExpression": false
+									},
+									"bg": {
+										"value": 13107200,
+										"isExpression": false
+									},
+									"fg_paused": {
+										"value": 16777215,
+										"isExpression": false
+									},
+									"bg_paused": {
+										"value": 16737792,
+										"isExpression": false
+									}
+								},
+								"upgradeIndex": 8,
+								"type": "feedback",
+								"isInverted": {
+									"value": false,
+									"isExpression": false
+								}
+							}
+						],
+						"steps": {
+							"0": {
+								"action_sets": {
+									"down": [
+										{
+											"id": "F1_3nWZFPNpBv5bV3PlGD",
+											"definitionId": "StartStopRecording",
+											"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+											"options": {},
+											"upgradeIndex": 8,
+											"type": "action"
+										}
+									],
+									"up": []
+								},
+								"options": {
+									"runWhileHeld": []
+								}
+							}
+						},
+						"localVariables": []
+					},
+					"3": {
+						"type": "button",
+						"style": {
+							"text": "Twitch Viewer",
+							"textExpression": false,
+							"size": "auto",
+							"png64": null,
+							"alignment": "center:center",
+							"pngalignment": "center:center",
+							"color": 16777215,
+							"bgcolor": 0,
+							"show_topbar": "default"
+						},
+						"options": {
+							"stepProgression": "auto",
+							"stepExpression": "",
+							"rotaryActions": false
+						},
+						"feedbacks": [],
+						"steps": {
+							"0": {
+								"action_sets": {
+									"down": [],
+									"up": []
+								},
+								"options": {
+									"runWhileHeld": []
+								}
+							}
+						},
+						"localVariables": []
+					}
+				},
+				"1": {
+					"0": {
+						"type": "button",
+						"style": {
+							"text": "Scene:\\n$(obs:scene_active)",
+							"textExpression": false,
+							"size": "14",
+							"png64": null,
+							"alignment": "center:center",
+							"pngalignment": "center:center",
+							"color": 16777215,
+							"bgcolor": 0,
+							"show_topbar": "default"
+						},
+						"options": {
+							"stepProgression": "auto",
+							"stepExpression": "",
+							"rotaryActions": false
+						},
+						"feedbacks": [],
+						"steps": {
+							"0": {
+								"action_sets": {
+									"down": [],
+									"up": []
+								},
+								"options": {
+									"runWhileHeld": []
+								}
+							}
+						},
+						"localVariables": []
+					},
+					"1": {
+						"type": "button",
+						"style": {
+							"text": "Mic.\\nMuted",
+							"textExpression": false,
+							"size": "auto",
+							"png64": null,
+							"alignment": "center:center",
+							"pngalignment": "center:center",
+							"color": 16777215,
+							"bgcolor": 0,
+							"show_topbar": "default"
+						},
+						"options": {
+							"stepProgression": "auto",
+							"stepExpression": "",
+							"rotaryActions": false
+						},
+						"feedbacks": [
+							{
+								"id": "AoTIoATWpzlK3sFaoA6fz",
+								"definitionId": "audio_muted",
+								"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+								"options": {
+									"source": {
+										"value": "Microphone",
+										"isExpression": false
+									}
+								},
+								"upgradeIndex": 8,
+								"type": "feedback",
+								"style": {
+									"color": 16777215,
+									"bgcolor": 13107200
+								},
+								"isInverted": {
+									"value": false,
+									"isExpression": false
+								}
+							}
+						],
+						"steps": {
+							"0": {
+								"action_sets": {
+									"down": [
+										{
+											"id": "MCiO4DmtyeMCmhqbx1tI4",
+											"definitionId": "toggle_source_mute",
+											"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+											"options": {
+												"source": {
+													"value": "Microphone",
+													"isExpression": false
+												}
+											},
+											"upgradeIndex": 8,
+											"type": "action"
+										}
+									],
+									"up": []
+								},
+								"options": {
+									"runWhileHeld": []
+								}
+							}
+						},
+						"localVariables": []
+					},
+					"3": {
+						"type": "button",
+						"style": {
+							"text": "YT Viewer",
+							"textExpression": false,
+							"size": "auto",
+							"png64": null,
+							"alignment": "center:center",
+							"pngalignment": "center:center",
+							"color": 16777215,
+							"bgcolor": 0,
+							"show_topbar": "default"
+						},
+						"options": {
+							"stepProgression": "auto",
+							"stepExpression": "",
+							"rotaryActions": false
+						},
+						"feedbacks": [],
+						"steps": {
+							"0": {
+								"action_sets": {
+									"down": [],
+									"up": []
+								},
+								"options": {
+									"runWhileHeld": []
+								}
+							}
+						},
+						"localVariables": []
+					}
+				},
+				"2": {
+					"0": {
+						"type": "button",
+						"style": {
+							"text": "",
+							"textExpression": false,
+							"size": "auto",
+							"png64": null,
+							"alignment": "center:center",
+							"pngalignment": "center:center",
+							"color": 16777215,
+							"bgcolor": 0,
+							"show_topbar": "default"
+						},
+						"options": {
+							"stepProgression": "auto",
+							"stepExpression": "",
+							"rotaryActions": false
+						},
+						"feedbacks": [],
+						"steps": {
+							"0": {
+								"action_sets": {
+									"down": [],
+									"up": []
+								},
+								"options": {
+									"runWhileHeld": []
+								}
+							}
+						},
+						"localVariables": []
+					},
+					"3": {
+						"type": "button",
+						"style": {
+							"text": "Next Page",
+							"textExpression": false,
+							"size": "auto",
+							"png64": null,
+							"alignment": "center:center",
+							"pngalignment": "center:center",
+							"color": 16777215,
+							"bgcolor": 16777215,
+							"show_topbar": "default"
+						},
+						"options": {
+							"stepProgression": "auto",
+							"stepExpression": "",
+							"rotaryActions": false
+						},
+						"feedbacks": [],
+						"steps": {
+							"0": {
+								"action_sets": {
+									"down": [
+										{
+											"id": "1akXmrBOWlVuOnoNDp6l1",
+											"definitionId": "inc_page",
+											"connectionId": "internal",
+											"options": {
+												"surfaceId": {
+													"isExpression": false,
+													"value": "self"
+												}
+											},
+											"type": "action",
+											"children": {}
+										}
+									],
+									"up": []
+								},
+								"options": {
+									"runWhileHeld": []
+								}
+							}
+						},
+						"localVariables": []
+					}
+				}
+			},
+			"gridSize": {
+				"minRow": 0,
+				"maxRow": 2,
+				"minColumn": 0,
+				"maxColumn": 3
+			}
+		},
+		"2": {
+			"id": "13O8WNGlZYCRpWQQ5QBwl",
+			"name": "Scenes",
+			"controls": {
+				"0": {
+					"0": {
+						"type": "button",
+						"style": {
+							"text": "$(obs:scene_2)",
+							"textExpression": false,
+							"size": "14",
+							"png64": null,
+							"alignment": "center:center",
+							"pngalignment": "center:center",
+							"color": 16777215,
+							"bgcolor": 0,
+							"show_topbar": "default"
+						},
+						"options": {
+							"stepProgression": "auto",
+							"stepExpression": "",
+							"rotaryActions": false
+						},
+						"feedbacks": [
+							{
+								"id": "7MSC8qZvAGpGPJAMtvBEh",
+								"definitionId": "sceneProgram",
+								"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+								"options": {
+									"scene": {
+										"value": "Starting Soon",
+										"isExpression": false
+									}
+								},
+								"upgradeIndex": 8,
+								"type": "feedback",
+								"style": {
+									"color": 16777215,
+									"bgcolor": 39168
+								},
+								"isInverted": {
+									"value": false,
+									"isExpression": false
+								}
+							}
+						],
+						"steps": {
+							"0": {
+								"action_sets": {
+									"down": [
+										{
+											"id": "mVbISRPSnZmLmCOkFBo4_",
+											"definitionId": "set_scene",
+											"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+											"options": {
+												"scene": {
+													"value": "Starting Soon",
+													"isExpression": false
+												},
+												"customSceneName": {
+													"value": "",
+													"isExpression": false
+												}
+											},
+											"upgradeIndex": 8,
+											"type": "action"
+										}
+									],
+									"up": []
+								},
+								"options": {
+									"runWhileHeld": []
+								}
+							}
+						},
+						"localVariables": []
+					},
+					"2": {
+						"type": "button",
+						"style": {
+							"text": "$(obs:scene_4)",
+							"textExpression": false,
+							"size": "14",
+							"png64": null,
+							"alignment": "center:center",
+							"pngalignment": "center:center",
+							"color": 16777215,
+							"bgcolor": 0,
+							"show_topbar": "default"
+						},
+						"options": {
+							"stepProgression": "auto",
+							"stepExpression": "",
+							"rotaryActions": false
+						},
+						"feedbacks": [
+							{
+								"id": "OfSXegAk30OJ71xeq583E",
+								"definitionId": "sceneProgram",
+								"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+								"options": {
+									"scene": {
+										"value": "Gameplay",
+										"isExpression": false
+									}
+								},
+								"upgradeIndex": 8,
+								"type": "feedback",
+								"style": {
+									"color": 16777215,
+									"bgcolor": 39168
+								},
+								"isInverted": {
+									"value": false,
+									"isExpression": false
+								}
+							}
+						],
+						"steps": {
+							"0": {
+								"action_sets": {
+									"down": [
+										{
+											"id": "vaR8IbHqFQ5gN11d85UtS",
+											"definitionId": "set_scene",
+											"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+											"options": {
+												"scene": {
+													"value": "Gameplay",
+													"isExpression": false
+												},
+												"customSceneName": {
+													"value": "",
+													"isExpression": false
+												}
+											},
+											"upgradeIndex": 8,
+											"type": "action"
+										}
+									],
+									"up": []
+								},
+								"options": {
+									"runWhileHeld": []
+								}
+							}
+						},
+						"localVariables": []
+					},
+					"3": {
+						"type": "button",
+						"style": {
+							"text": "$(obs:scene_5)",
+							"textExpression": false,
+							"size": "14",
+							"png64": null,
+							"alignment": "center:center",
+							"pngalignment": "center:center",
+							"color": 16777215,
+							"bgcolor": 0,
+							"show_topbar": "default"
+						},
+						"options": {
+							"stepProgression": "auto",
+							"stepExpression": "",
+							"rotaryActions": false
+						},
+						"feedbacks": [
+							{
+								"id": "SaHxs1wjv35j_H4rp6JCJ",
+								"definitionId": "sceneProgram",
+								"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+								"options": {
+									"scene": {
+										"value": "Gameplay - Talking Head",
+										"isExpression": false
+									}
+								},
+								"upgradeIndex": 8,
+								"type": "feedback",
+								"style": {
+									"color": 16777215,
+									"bgcolor": 39168
+								},
+								"isInverted": {
+									"value": false,
+									"isExpression": false
+								}
+							}
+						],
+						"steps": {
+							"0": {
+								"action_sets": {
+									"down": [
+										{
+											"id": "ObRun4XQAJtPQMFGjJF-v",
+											"definitionId": "set_scene",
+											"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+											"options": {
+												"scene": {
+													"value": "Gameplay - Talking Head",
+													"isExpression": false
+												},
+												"customSceneName": {
+													"value": "",
+													"isExpression": false
+												}
+											},
+											"upgradeIndex": 8,
+											"type": "action"
+										}
+									],
+									"up": []
+								},
+								"options": {
+									"runWhileHeld": []
+								}
+							}
+						},
+						"localVariables": []
+					}
+				},
+				"1": {
+					"0": {
+						"type": "button",
+						"style": {
+							"text": "$(obs:scene_3)",
+							"textExpression": false,
+							"size": "14",
+							"png64": null,
+							"alignment": "center:center",
+							"pngalignment": "center:center",
+							"color": 16777215,
+							"bgcolor": 0,
+							"show_topbar": "default"
+						},
+						"options": {
+							"stepProgression": "auto",
+							"stepExpression": "",
+							"rotaryActions": false
+						},
+						"feedbacks": [
+							{
+								"id": "ig-mg87nj_JkkqWtzB-gi",
+								"definitionId": "sceneProgram",
+								"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+								"options": {
+									"scene": {
+										"value": "Be Right Back",
+										"isExpression": false
+									}
+								},
+								"upgradeIndex": 8,
+								"type": "feedback",
+								"style": {
+									"color": 16777215,
+									"bgcolor": 39168
+								},
+								"isInverted": {
+									"value": false,
+									"isExpression": false
+								}
+							}
+						],
+						"steps": {
+							"0": {
+								"action_sets": {
+									"down": [
+										{
+											"id": "g6zQ-rIw4NyB2xXDjWTnX",
+											"definitionId": "set_scene",
+											"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+											"options": {
+												"scene": {
+													"value": "Be Right Back",
+													"isExpression": false
+												},
+												"customSceneName": {
+													"value": "",
+													"isExpression": false
+												}
+											},
+											"upgradeIndex": 8,
+											"type": "action"
+										}
+									],
+									"up": []
+								},
+								"options": {
+									"runWhileHeld": []
+								}
+							}
+						},
+						"localVariables": []
+					},
+					"2": {
+						"type": "button",
+						"style": {
+							"text": "$(obs:scene_6)",
+							"textExpression": false,
+							"size": "14",
+							"png64": null,
+							"alignment": "center:center",
+							"pngalignment": "center:center",
+							"color": 16777215,
+							"bgcolor": 0,
+							"show_topbar": "default"
+						},
+						"options": {
+							"stepProgression": "auto",
+							"stepExpression": "",
+							"rotaryActions": false
+						},
+						"feedbacks": [
+							{
+								"id": "idWSsjlWZd_La4x59LjTn",
+								"definitionId": "sceneProgram",
+								"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+								"options": {
+									"scene": {
+										"value": "Card Opening",
+										"isExpression": false
+									}
+								},
+								"upgradeIndex": 8,
+								"type": "feedback",
+								"style": {
+									"color": 16777215,
+									"bgcolor": 39168
+								},
+								"isInverted": {
+									"value": false,
+									"isExpression": false
+								}
+							}
+						],
+						"steps": {
+							"0": {
+								"action_sets": {
+									"down": [
+										{
+											"id": "IQNdYaswTfA3jXg7TGv98",
+											"definitionId": "set_scene",
+											"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+											"options": {
+												"scene": {
+													"value": "Card Opening",
+													"isExpression": false
+												},
+												"customSceneName": {
+													"value": "",
+													"isExpression": false
+												}
+											},
+											"upgradeIndex": 8,
+											"type": "action"
+										}
+									],
+									"up": []
+								},
+								"options": {
+									"runWhileHeld": []
+								}
+							}
+						},
+						"localVariables": []
+					}
+				},
+				"2": {
+					"0": {
+						"type": "button",
+						"style": {
+							"text": "",
+							"textExpression": false,
+							"size": "auto",
+							"png64": null,
+							"alignment": "center:center",
+							"pngalignment": "center:center",
+							"color": 16777215,
+							"bgcolor": 16777215,
+							"show_topbar": "default"
+						},
+						"options": {
+							"stepProgression": "auto",
+							"stepExpression": "",
+							"rotaryActions": false
+						},
+						"feedbacks": [],
+						"steps": {
+							"0": {
+								"action_sets": {
+									"down": [
+										{
+											"id": "t6RzHopuYrsAW9BSFGbad",
+											"definitionId": "dec_page",
+											"connectionId": "internal",
+											"options": {
+												"surfaceId": {
+													"isExpression": false,
+													"value": "self"
+												}
+											},
+											"type": "action",
+											"children": {}
+										}
+									],
+									"up": []
+								},
+								"options": {
+									"runWhileHeld": []
+								}
+							}
+						},
+						"localVariables": []
+					},
+					"3": {
+						"type": "button",
+						"style": {
+							"text": "",
+							"textExpression": false,
+							"size": "auto",
+							"png64": null,
+							"alignment": "center:center",
+							"pngalignment": "center:center",
+							"color": 16777215,
+							"bgcolor": 16777215,
+							"show_topbar": "default"
+						},
+						"options": {
+							"stepProgression": "auto",
+							"stepExpression": "",
+							"rotaryActions": false
+						},
+						"feedbacks": [],
+						"steps": {
+							"0": {
+								"action_sets": {
+									"down": [
+										{
+											"id": "pYkESM_ZD8h5WV4vu4uh8",
+											"definitionId": "inc_page",
+											"connectionId": "internal",
+											"options": {
+												"surfaceId": {
+													"isExpression": false,
+													"value": "self"
+												}
+											},
+											"type": "action",
+											"children": {}
+										}
+									],
+									"up": []
+								},
+								"options": {
+									"runWhileHeld": []
+								}
+							}
+						},
+						"localVariables": []
+					}
+				}
+			},
+			"gridSize": {
+				"minRow": 0,
+				"maxRow": 2,
+				"minColumn": 0,
+				"maxColumn": 3
+			}
+		},
+		"3": {
+			"id": "L0AIxTPFrBINyHGYYVp9m",
+			"name": "TCI",
+			"controls": {
+				"0": {
+					"0": {
+						"type": "button",
+						"style": {
+							"text": "New Run",
+							"textExpression": false,
+							"size": "18",
+							"png64": null,
+							"alignment": "center:center",
+							"pngalignment": "center:center",
+							"color": 16777215,
+							"bgcolor": 0,
+							"show_topbar": "default"
+						},
+						"options": {
+							"stepProgression": "auto",
+							"stepExpression": "",
+							"rotaryActions": false
+						},
+						"feedbacks": [
+							{
+								"id": "CiMfeNen5XpPianNFXdOS",
+								"definitionId": "bank_pushed",
+								"connectionId": "internal",
+								"options": {
+									"location": {
+										"isExpression": false,
+										"value": "$(this:page)/$(this:row)/$(this:column)"
+									},
+									"latch_compatability": {
+										"isExpression": false,
+										"value": false
+									}
+								},
+								"type": "feedback",
+								"style": {
+									"color": 16777215,
+									"bgcolor": 16711680
+								},
+								"isInverted": {
+									"value": false,
+									"isExpression": false
+								},
+								"children": {}
+							}
+						],
+						"steps": {
+							"0": {
+								"action_sets": {
+									"down": [
+										{
+											"id": "21kbWPgBi6lGl9P1PnPfU",
+											"definitionId": "get",
+											"connectionId": "xs6MYqwGqTf7JrT1vvPBR",
+											"options": {
+												"url": {
+													"value": "/new-run",
+													"isExpression": false
+												},
+												"header": {
+													"isExpression": false,
+													"value": ""
+												},
+												"jsonResultDataVariable": {
+													"isExpression": false
+												},
+												"result_stringify": {
+													"value": false,
+													"isExpression": false
+												},
+												"statusCodeVariable": {
+													"isExpression": false
+												}
+											},
+											"upgradeIndex": 2,
+											"type": "action"
+										}
+									],
+									"up": []
+								},
+								"options": {
+									"runWhileHeld": []
+								}
+							}
+						},
+						"localVariables": []
+					}
+				},
+				"2": {
+					"0": {
+						"type": "button",
+						"style": {
+							"text": "",
+							"textExpression": false,
+							"size": "auto",
+							"png64": null,
+							"alignment": "center:center",
+							"pngalignment": "center:center",
+							"color": 16777215,
+							"bgcolor": 16777215,
+							"show_topbar": "default"
+						},
+						"options": {
+							"stepProgression": "auto",
+							"stepExpression": "",
+							"rotaryActions": false
+						},
+						"feedbacks": [],
+						"steps": {
+							"0": {
+								"action_sets": {
+									"down": [
+										{
+											"id": "AxX64FIjgV5Ine09aGo62",
+											"definitionId": "dec_page",
+											"connectionId": "internal",
+											"options": {
+												"surfaceId": {
+													"isExpression": false,
+													"value": "self"
+												}
+											},
+											"type": "action",
+											"children": {}
+										}
+									],
+									"up": []
+								},
+								"options": {
+									"runWhileHeld": []
+								}
+							}
+						},
+						"localVariables": []
+					}
+				}
+			},
+			"gridSize": {
+				"minRow": 0,
+				"maxRow": 2,
+				"minColumn": 0,
+				"maxColumn": 3
+			}
+		}
+	},
+	"triggers": {},
+	"triggerCollections": [],
+	"instances": {
+		"a7zrdC_6d-Z7s9luA2DIy": {
+			"moduleInstanceType": "connection",
+			"moduleId": "obs-studio",
+			"moduleVersionId": "3.15.3",
+			"updatePolicy": "stable",
+			"sortOrder": 1,
+			"label": "obs",
+			"isFirstInit": false,
+			"config": {
+				"port": 4455,
+				"host": "localhost"
+			},
+			"secrets": {},
+			"lastUpgradeIndex": 8,
+			"enabled": true
+		},
+		"xs6MYqwGqTf7JrT1vvPBR": {
+			"moduleInstanceType": "connection",
+			"moduleId": "generic-http",
+			"moduleVersionId": "3.1.1",
+			"updatePolicy": "stable",
+			"sortOrder": 2,
+			"label": "http",
+			"isFirstInit": false,
+			"config": {
+				"prefix": "http://10.1.10.32:8778",
+				"proxyAddress": "",
+				"rejectUnauthorized": true,
+				"insecureHTTPParser": true
+			},
+			"secrets": {},
+			"lastUpgradeIndex": 2,
+			"enabled": true
+		}
+	},
+	"connectionCollections": [],
+	"surfaces": {
+		"streamdeck:AB8JA6031LW0X0": {
+			"groupConfig": {
+				"name": "Auto group",
+				"last_page_id": "L0AIxTPFrBINyHGYYVp9m",
+				"startup_page_id": "s5S2nQrKuZlh_L4UFPE_6",
+				"use_last_page": true,
+				"restrict_pages": false,
+				"allowed_page_ids": [],
+				"page": 1,
+				"last_page": 3,
+				"startup_page": 1,
+				"allowed_pages": []
+			},
+			"enabled": true,
+			"config": {
+				"brightness": 100,
+				"rotation": 0,
+				"never_lock": false,
+				"xOffset": 0,
+				"yOffset": 0,
+				"groupId": null
+			},
+			"type": "Elgato Stream Deck Neo",
+			"integrationType": "elgato-stream-deck",
+			"gridSize": {
+				"columns": 4,
+				"rows": 3
+			}
+		}
+	},
+	"surfaceGroups": {},
+	"surfacesRemote": {},
+	"surfaceInstances": {
+		"Q6fZx4o0Y0khEfvw606DY": {
+			"moduleInstanceType": "surface",
+			"moduleId": "elgato-stream-deck",
+			"moduleVersionId": "builtin",
+			"label": "elgato-stream-deck",
+			"config": {},
+			"isFirstInit": true,
+			"lastUpgradeIndex": 0,
+			"enabled": true,
+			"sortOrder": 0,
+			"updatePolicy": "stable"
+		}
+	},
+	"surfaceInstanceCollections": []
+}

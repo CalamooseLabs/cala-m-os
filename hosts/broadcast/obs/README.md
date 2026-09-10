@@ -25,7 +25,9 @@ obs/
   `git add` + commit.
 - **Push the baseline → box (overwrite live):** `obs-config-restore`
   Backs up the live config to `~/.config/obs-studio.backup-<ts>.tar.gz` first, then
-  overwrites the baseline files. Restart OBS to load it.
+  **mirrors** `basic/profiles` + `basic/scenes` (removing live profiles/collections
+  the baseline doesn't have — e.g. an auto-created "Untitled") and overwrites
+  `global.ini`. Restart OBS to load it.
 - **Fresh box:** the baseline is copied in automatically on the first rebuild
   (only where a file is absent — never clobbering machine-owned files).
 
@@ -48,10 +50,14 @@ Bootstrap: on the box that already has your real OBS setup, run
   and add the matching `homeAssets` entry, or the source renders black on a fresh
   box (seeding reproduces the path, not the file).
 - **Profiles / collections:** `TheCalamoose` (→ `TheCalamoose - Coding`) and
-  `The Company, Inc.` (→ `The Cobblemon Initiative`, its stinger + BRB/Starting
-  Soon + full/paper overlays). `global.ini` opens into **The Company, Inc. / The
-  Cobblemon Initiative** by default (this box is primarily The Company); switch
-  the `[Basic]` `Profile`/`SceneCollection` pointers to change that.
+  `The Company, Inc.` (→ `The Cobblemon Initiative`: Chat Window / Starting Soon /
+  Be Right Back / Gameplay / Gameplay - Talking Head / Card Opening, with the
+  stinger + BRB/Starting Soon media and full/paper overlays). `global.ini` opens
+  into **The Company, Inc. / The Cobblemon Initiative** by default (this box is
+  primarily The Company); switch the `[Basic]` `Profile`/`SceneCollection`
+  pointers to change that. These are the ONLY profiles/collections — no
+  "Untitled" leftovers; `obs-config-restore` mirrors, so it prunes any that
+  appear on the live box.
 - **Recording paths** (`FilePath`/`RecFilePath`/`FFFilePath` in the profile)
   point at `/recordings` — the RAID0 scratch array from the machine's disko
   layout, made user-writable by a tmpfiles rule in `../configuration.nix`.

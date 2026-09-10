@@ -33,6 +33,5 @@
   # Pin GitHub's SSH host key so the headless box never blocks on a TOFU prompt
   # the first time it talks to github.com. Verify against GitHub's published
   # fingerprints: https://docs.github.com/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints
-  programs.ssh.knownHosts."github.com".publicKey =
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl";
+  programs.ssh.knownHosts."github.com".publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl";
 }

@@ -1,4 +1,8 @@
-{lib, enable_secrets ? true, ...}: {
+{
+  lib,
+  enable_secrets ? true,
+  ...
+}: {
   age = lib.mkIf enable_secrets {
     secrets = {
       "secret" = {

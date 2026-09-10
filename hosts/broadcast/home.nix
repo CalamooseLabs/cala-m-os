@@ -56,6 +56,9 @@ in {
       "assets/thecompany/TheCompanyInc_StingerTransition_3840x2160.webm" = ../../modules/obs-kiosk/assets/thecompany/TheCompanyInc_StingerTransition_3840x2160.webm;
       "assets/thecompany/TheCompanyInc_FullOverlay_2x.png" = ../../modules/obs-kiosk/assets/thecompany/TheCompanyInc_FullOverlay_2x.png;
       "assets/thecompany/on-air-papers.png" = ../../modules/obs-kiosk/assets/thecompany/on-air-papers.png;
+      "assets/thecompany/Chat.png" = ../../modules/obs-kiosk/assets/thecompany/Chat.png;
+      "assets/thecompany/Memo.png" = ../../modules/obs-kiosk/assets/thecompany/Memo.png;
+      "assets/thecompany/Webcam.png" = ../../modules/obs-kiosk/assets/thecompany/Webcam.png;
     };
   };
 

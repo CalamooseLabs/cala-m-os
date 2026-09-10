@@ -110,6 +110,21 @@ in {
         config.calamoose.secrets."youtube-api-key".path;
     };
 
+    # /alerts overlay theming (the OBS browser source). Follows pop as The
+    # Company, Inc office memo (upstream's built-in "company-memo" style); every
+    # other alert kind keeps the default card. Follow events arrive over
+    # EventSub, so until eventsubReady this is inert config, not a broken gate.
+    alerts = {
+      activeTheme = "The Company, Inc";
+      themes = [
+        {
+          name = "The Company, Inc";
+          style = "company-memo";
+          events = ["follow"];
+        }
+      ];
+    };
+
     # The !enter giveaway. Enabled unconditionally so the pack-opening loop below
     # is live; the features that need a broadcaster token follow ids.nix.
     giveaway = {
