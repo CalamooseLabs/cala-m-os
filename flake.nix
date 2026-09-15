@@ -102,6 +102,19 @@
       url = "github:The-Company-Inc-Nerds/bookkeeper-app";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # The Cobblemon Initiative — dedicated-server fleet module (hub + warden +
+    # on-demand per-player instances), consumed by the tci-public/tci-private
+    # hosts via modules/tci-server. We use only `nixosModules.tci-server`
+    # (nix/tci-server.nix), a plain module built against THIS flake's nixpkgs;
+    # the game bundle itself is deployed out-of-band by `nix run .#deploy-server`
+    # from the mod repo, not through this input. PRIVATE repo — the consuming
+    # hosts enable modules/nix-github-token so Nix can fetch it (same PAT wiring
+    # as bookkeeper). Tracks the default branch (main), where the module lives.
+    cobblemon-initiative = {
+      url = "github:The-Company-Inc-Nerds/the-cobblemon-initiative";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -172,6 +185,12 @@
       openreturn = mkSystem "openreturn" {};
       livedata = mkSystem "livedata" {};
       ai = mkSystem "ai" {};
+
+      # The Cobblemon Initiative dedicated servers (headless bare-metal fleets).
+      # tci-public  — Hetzner dedicated, internet-facing hub (co-op OR solo).
+      # tci-private — local LAN box, internal soul-link (shared-fate) fleet.
+      tci-public = mkSystem "tci-public" {};
+      tci-private = mkSystem "tci-private" {};
 
       iso = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs;};

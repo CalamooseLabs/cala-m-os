@@ -25,6 +25,7 @@
       gateway = "10.10.10.1";
       media = "10.10.10.11";
       homelab = "10.10.10.15";
+      tci = "10.10.10.16"; # TCI private soul-link fleet (set a matching DHCP reservation)
       security = "10.10.10.20"; # UniFi Protect camera-wall VM (set a matching DHCP reservation)
       torrent = "10.10.10.35";
       htpc = "10.10.10.40";

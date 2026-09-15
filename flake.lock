@@ -194,11 +194,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1788404916,
-        "narHash": "sha256-o02sbseAHNKKnTJls3xuA8tA+lEpAPViTz/S2lFgiPU=",
+        "lastModified": 1789495105,
+        "narHash": "sha256-gDX0LL5oKuu9K5bwubquYhDbbHVYBAI0U7KGZIv5UbU=",
         "owner": "The-Company-Inc-Nerds",
         "repo": "bookkeeper-app",
-        "rev": "066162a854bc178da158a6ec70a7a1fb83983fb4",
+        "rev": "89576a080bb4b4608bc083b8d616796b38b904c6",
         "type": "github"
       },
       "original": {
@@ -225,6 +225,27 @@
       "original": {
         "owner": "The-Company-Inc-Nerds",
         "repo": "chat-cards",
+        "type": "github"
+      }
+    },
+    "cobblemon-initiative": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "zed-editor": "zed-editor"
+      },
+      "locked": {
+        "lastModified": 1789490673,
+        "narHash": "sha256-4QGJ+EkuRE80KNRn3mVxYgU+WO5e8ThvraFlWogtIWY=",
+        "owner": "The-Company-Inc-Nerds",
+        "repo": "the-cobblemon-initiative",
+        "rev": "d595379f98ffe7d4abf8dbbd71bae03bec1258ef",
+        "type": "github"
+      },
+      "original": {
+        "owner": "The-Company-Inc-Nerds",
+        "repo": "the-cobblemon-initiative",
         "type": "github"
       }
     },
@@ -958,7 +979,7 @@
         "nixpkgs": [
           "nixpkgs"
         ],
-        "zed-editor": "zed-editor"
+        "zed-editor": "zed-editor_2"
       },
       "locked": {
         "lastModified": 1781907848,
@@ -1039,6 +1060,7 @@
         "arion": "arion",
         "bookkeeper": "bookkeeper",
         "chatcards": "chatcards",
+        "cobblemon-initiative": "cobblemon-initiative",
         "disko": "disko",
         "flatpaks": "flatpaks",
         "home-manager": "home-manager_2",
@@ -1255,6 +1277,30 @@
       }
     },
     "zed-editor": {
+      "inputs": {
+        "nixpkgs": [
+          "cobblemon-initiative",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "dir": "flakes/zed-editor",
+        "lastModified": 1763486553,
+        "narHash": "sha256-1bmlyqpTEDC+Bpu7n47vaoSThSggMbgBaJ/mvbrdttI=",
+        "owner": "CalamooseLabs",
+        "repo": "antlers",
+        "rev": "db8969c971163c8437a0a9309c9495439a00f548",
+        "type": "github"
+      },
+      "original": {
+        "dir": "flakes/zed-editor",
+        "owner": "CalamooseLabs",
+        "ref": "flakes.zed-editor",
+        "repo": "antlers",
+        "type": "github"
+      }
+    },
+    "zed-editor_2": {
       "inputs": {
         "nixpkgs": [
           "openreturn",
