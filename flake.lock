@@ -194,11 +194,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1789500577,
-        "narHash": "sha256-wFpqrFQNqTxPir+2ZCRI1CPK6Jh2Yg63lZ7dS9xnfoM=",
+        "lastModified": 1789503070,
+        "narHash": "sha256-3H11pN9ukhd8RcIwElBffJF97l3/2WFLtp9lbaYmOko=",
         "owner": "The-Company-Inc-Nerds",
         "repo": "bookkeeper-app",
-        "rev": "c0c41aeb8a677b58025bdc1691550e3d40cbfaef",
+        "rev": "807d1c3b5d678a68d4e8658cddc1f411a3144d8a",
         "type": "github"
       },
       "original": {
