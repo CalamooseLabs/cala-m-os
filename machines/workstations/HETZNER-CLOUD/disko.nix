@@ -1,17 +1,17 @@
-# Single-NVMe UEFI layout for a Hetzner dedicated box (ESP + swap + ext4 root).
+# Single-disk UEFI layout for a Hetzner Cloud instance (ESP + swap + ext4 root).
 #
-# Instances are DISPOSABLE and world backups are on, so a single disk is an
-# acceptable trade for simplicity. For uptime-through-disk-loss on a 2-NVMe AX
-# box, the disko boot-raid1 example (mdadm RAID1, ESP metadata=1.0, GRUB
-# mirroredBoots for real ESP redundancy) is the alternative — swap this file for
-# it if the box has two drives and downtime matters.
+# Cloud instances are DISPOSABLE and world backups are on, so one disk is fine.
+# The disk is a single virtio-SCSI device at /dev/sda (NOT NVMe — that's the
+# Robot/AX bare-metal line). New Cloud x86 VMs boot UEFI, so the systemd-boot +
+# ESP layout from hosts/_core works as-is.
 #
-# TODO: confirm the real device from the rescue system (`lsblk`). nixos-anywhere
-# partitions THIS device; a wrong name wipes the wrong disk.
+# TODO: confirm the device from the rescue system (`lsblk`); it is normally
+# /dev/sda. nixos-anywhere partitions THIS device; a wrong name wipes the wrong
+# disk.
 {
   disko.devices.disk.main = {
     type = "disk";
-    device = "/dev/nvme0n1";
+    device = "/dev/sda";
     content = {
       type = "gpt";
       partitions = {

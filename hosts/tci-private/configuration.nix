@@ -32,7 +32,7 @@ in {
 
   networking.hostName = "tci-private";
 
-  # PAT for the private cobblemon-initiative input (see tci-public for the
+  # PAT for the private cobblemon-initiative input (see tci-cloud for the
   # host-key bootstrap note).
   programs.nix-github-token = {
     enable = true;

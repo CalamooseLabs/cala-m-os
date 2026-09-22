@@ -48,6 +48,53 @@
   dbVersionDir = "v" + lib.versions.majorMinor cfg.package.version;
   dbDir = "${cfg.configDir}/${dbVersionDir}";
 
+  # Connection modules, pre-unpacked into the exact layout a module-store install
+  # produces. Companion 4.x bundles NO connection modules (only the two builtin
+  # surface modules) — every connection module normally arrives via a UI-driven
+  # store download into `<configDir>/modules/<moduleId>-<version>/`, which a
+  # reinstall wipes. A seeded db pins exact versions (moduleVersionId), startup
+  # does an exact-match lookup against the dirs' companion/manifest.json versions
+  # and NEVER auto-installs, so without these every seeded connection lands in
+  # "Unknown module" until reinstalled by hand. The filesystem is Companion's only
+  # module registry, so dropping the unpacked package there is indistinguishable
+  # from a store install. (--extra-module-path can't do this job: modules loaded
+  # from it are forced to versionId "dev" and never satisfy a pinned version.)
+  # The store tarball's single top-level dir varies (pkg/ vs <id>/) — strip it.
+  unpackedConnectionModules =
+    lib.mapAttrs (
+      name: spec:
+        pkgs.runCommand "companion-connection-module-${name}" {
+          src = pkgs.fetchurl {inherit (spec) url hash;};
+        } ''
+          mkdir -p $out
+          tar -xzf "$src" --strip-components=1 -C $out
+          # Fail the build, not the box, if the store package layout ever drifts.
+          test -f $out/companion/manifest.json
+        ''
+    )
+    cfg.connectionModules;
+
+  # ExecStartPre: ensure every declared connection module is present. Per-dir
+  # copy-if-absent (NOT only-on-fresh-box): a reinstall starts empty and gets all
+  # of them, while UI-driven updates/uninstalls on a live box are left alone.
+  # Copied rather than symlinked — Companion launches modules with the Node
+  # permission model (--allow-fs-read=<moduleDir>) which resolves realpaths, so a
+  # dir pointing into the read-only store can fail reading its own code. Runs as
+  # the service user, so ownership comes out right for later UI uninstalls.
+  moduleSeedScript = pkgs.writeShellScript "companion-seed-modules" ''
+    set -eu
+    dest="${cfg.configDir}/modules"
+    ${pkgs.coreutils}/bin/mkdir -p "$dest"
+    ${lib.concatStrings (lib.mapAttrsToList (name: src: ''
+        if [ ! -e "$dest/${name}" ]; then
+          ${pkgs.coreutils}/bin/cp -R "${src}" "$dest/${name}"
+          ${pkgs.coreutils}/bin/chmod -R u+w "$dest/${name}"
+          echo "companion: seeded connection module ${name}"
+        fi
+      '')
+      unpackedConnectionModules)}
+  '';
+
   # ExecStartPre: seed the committed baseline db, but ONLY into a genuinely fresh
   # config (no db in the current or any prior release dir) — so an existing box's
   # live config, and Companion's own forward-migration, are never clobbered. Runs
@@ -251,6 +298,47 @@ in {
         `db.sqlite` into for committing. Null omits the snapshot command.
       '';
     };
+
+    connectionModules = lib.mkOption {
+      type = lib.types.attrsOf (lib.types.submodule {
+        options = {
+          url = lib.mkOption {
+            type = lib.types.str;
+            description = ''
+              Module-store package tarball URL. Get it from the store API:
+              `curl https://developer.bitfocus.io/api/v1/companion/modules/connection/<moduleId>`
+              → `versions[].tarUrl` (the embedded commit sha makes it immutable).
+            '';
+          };
+          hash = lib.mkOption {
+            type = lib.types.str;
+            description = ''
+              SRI hash of the tarball. The store API's `tarSha` is the same digest
+              in hex — convert with `nix hash convert --hash-algo sha256 <hex>`.
+            '';
+          };
+        };
+      });
+      default = {};
+      example = lib.literalExpression ''
+        {
+          "obs-studio-3.15.3" = {
+            url = "https://developer-module-builds.s4.bitfocus.io/connection/obs-studio/v3.15.3-<commit>/obs-studio-v3.15.3.tgz";
+            hash = "sha256-...";
+          };
+        }
+      '';
+      description = ''
+        Connection modules to pre-install into `<configDir>/modules/<name>`
+        before startup, exactly as a module-store install would. Attribute names
+        MUST follow Companion's `<moduleId>-<version>` store convention, and the
+        version must match the `moduleVersionId` the seeded db's connections pin
+        — Companion resolves versions by exact match and never auto-installs at
+        startup, so a missing pinned version means "Unknown module". Each entry
+        is copied only when its directory is absent, so live-box module updates
+        and uninstalls through the UI are never clobbered.
+      '';
+    };
   };
 
   config = lib.mkMerge [
@@ -283,7 +371,10 @@ in {
         after = ["network.target"];
 
         serviceConfig = {
-          ExecStartPre = lib.mkIf (cfg.seedDb != null) [seedScript];
+          ExecStartPre = lib.mkIf (cfg.seedDb != null || cfg.connectionModules != {}) (
+            lib.optional (cfg.seedDb != null) seedScript
+            ++ lib.optional (cfg.connectionModules != {}) moduleSeedScript
+          );
           ExecStart = "${lib.getExe cfg.package} ${lib.escapeShellArgs args}";
           User = cfg.user;
           Group = cfg.group;

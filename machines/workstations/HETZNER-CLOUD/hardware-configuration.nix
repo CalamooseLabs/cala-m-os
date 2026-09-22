@@ -1,12 +1,12 @@
-# Bare-metal AMD (Hetzner AX-series) hardware profile.
+# Hetzner Cloud (AMD) hardware profile.
 #
 # PLACEHOLDER / safe superset — REGENERATE on the real box, then commit it:
 #   nix run github:nix-community/nixos-anywhere -- \
-#     --flake .#tci-public \
+#     --flake .#tci-cloud \
 #     --generate-hardware-config nixos-generate-config \
-#       ./machines/workstations/HETZNER-AX/hardware-configuration.nix \
+#       ./machines/workstations/HETZNER-CLOUD/hardware-configuration.nix \
 #     --target-host root@<SERVER_IP>
-# (boot the box into the Hetzner Rescue System first, SSH key loaded). The
+# (enable the Hetzner Rescue System on the instance first, SSH key loaded). The
 # bootloader (systemd-boot, UEFI) and hostPlatform come from hosts/_core; this
 # file carries only the hardware scan.
 {
@@ -17,14 +17,14 @@
 }: {
   imports = [(modulesPath + "/installer/scan/not-detected.nix")];
 
-  # Disks + IPMI/USB console + stage-1 essentials. A safe superset for AX boxes;
+  # virtio disk/NIC + stage-1 essentials for a QEMU/KVM Cloud VM. A safe superset;
   # the generated file is authoritative for the exact controller set.
   boot.initrd.availableKernelModules = [
-    "nvme"
-    "ahci"
-    "xhci_pci"
-    "usbhid"
-    "usb_storage"
+    "virtio_pci"
+    "virtio_scsi"
+    "virtio_blk"
+    "virtio_net"
+    "sr_mod"
     "sd_mod"
   ];
   boot.initrd.kernelModules = [];

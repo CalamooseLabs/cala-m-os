@@ -20,7 +20,7 @@
 #
 # The upstream flake input is a PRIVATE repo — every host that consumes this
 # module also enables "nix-github-token" so Nix can fetch it at eval time (see
-# hosts/tci-public + hosts/tci-private).
+# hosts/tci-cloud + hosts/tci-private).
 {
   inputs,
   lib,

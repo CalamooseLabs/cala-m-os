@@ -1,7 +1,7 @@
 ##################################
 #                                #
-#     TCI Public Server (hub)    #
-#     Hetzner dedicated (AX)      #
+#     TCI Cloud Server (hub)     #
+#     Hetzner Cloud (US, CCX)    #
 #                                #
 #  Internet-facing fleet: the    #
 #  hub is the front door; each   #
@@ -12,9 +12,14 @@
 {lib, ...}: let
   import_users = ["server"];
   machine_type = "Workstation";
-  machine_uuid = "HETZNER-AX";
+  machine_uuid = "HETZNER-CLOUD";
 in {
   calamoose.version = "1.0.0";
+
+  # No Yubikey on a Cloud VM: disable agenix so activation doesn't block on a
+  # hardware key. (The private cobblemon-initiative input is still fetched at
+  # eval time from the DEPLOYING box's token — see nix-github-token below.)
+  calamoose.enableSecrets = false;
 
   imports = [
     (import ../_core/default.nix {
@@ -28,41 +33,40 @@ in {
     })
   ];
 
-  networking.hostName = "tci-public";
+  networking.hostName = "tci-cloud";
 
-  # PAT for the private cobblemon-initiative input (agenix backend, the host
-  # default). Encrypt the .age to THIS box's host key before it can self-rebuild;
-  # until then, deploy FROM a box that already holds the token (e.g. devbox)
-  # via `nixos-rebuild --target-host`, whose evaluator fetches the input.
+  # PAT for the private cobblemon-initiative input. With enableSecrets = false
+  # (no Yubikey on a Cloud box) the token is NOT decrypted on the box — so
+  # deploy FROM a machine that already holds it (e.g. devbox) via
+  # `nixos-rebuild --target-host`, whose evaluator fetches the private input.
   programs.nix-github-token = {
     enable = true;
     agenixFile = ../../modules/nix-github-token/secrets/nix-github-token.age;
   };
 
-  # ---- Hetzner dedicated networking ---------------------------------------
-  # Static IPv4 with an OUT-OF-SUBNET gateway (GatewayOnLink) + a static address
-  # from the routed /64, via systemd-networkd. Match the NIC by MAC — the
-  # interface NAME is only known once hardware-configuration.nix is generated.
-  # TODO: fill in the real IPv4/prefix/gateway/MAC + /64 from Hetzner Robot, or
-  # let `nixos-anywhere --generate-hardware-config` regenerate the hardware file
-  # and move the match there. Placeholders below (RFC-5737 doc addresses).
+  # ---- Remote access ------------------------------------------------------
+  # A Cloud box has NO Yubikey, but the `server` profile authorizes only Yubikey
+  # (sk-ssh-ed25519) keys — so add a PLAIN key you hold or you are locked out
+  # after the first reboot (only the web VNC console would remain).
+  # TODO: drop in your real public key and uncomment (the login account is `hub`):
+  # users.users.hub.openssh.authorizedKeys.keys = [
+  #   "ssh-ed25519 AAAA... you@host"
+  # ];
+
+  # ---- Hetzner Cloud networking -------------------------------------------
+  # Cloud instances get their public IPv4 via DHCP and IPv6 via router
+  # advertisements — no static addressing (unlike Robot/AX bare metal). Match
+  # the primary NIC by name glob so we don't depend on its exact name.
   networking.networkmanager.enable = lib.mkForce false;
   networking.useDHCP = false;
   systemd.network = {
     enable = true;
     networks."10-wan" = {
-      matchConfig.MACAddress = "aa:bb:cc:dd:ee:ff"; # TODO: real NIC MAC (`ip link` in rescue)
-      address = [
-        "203.0.113.10/26" # TODO: real Hetzner IPv4 + prefix
-        "2a01:4f8:aaaa:bbbb::1/64" # TODO: real routed /64, pick ::1
-      ];
-      routes = [
-        {
-          Gateway = "203.0.113.1"; # TODO: real IPv4 gateway (outside the subnet)
-          GatewayOnLink = true;
-        }
-        {Gateway = "fe80::1";} # Hetzner IPv6 link-local gateway
-      ];
+      matchConfig.Name = "en*";
+      networkConfig = {
+        DHCP = "ipv4";
+        IPv6AcceptRA = true;
+      };
       linkConfig.RequiredForOnline = "routable";
     };
   };

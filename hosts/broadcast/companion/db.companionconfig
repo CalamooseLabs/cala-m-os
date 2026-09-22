@@ -28,15 +28,15 @@
 						},
 						"feedbacks": [
 							{
-								"id": "d6NgrDMbCzEmTU5ze39Hd",
+								"id": "MyA3pbN4tRZ7s6ognFXpx",
 								"definitionId": "streaming",
-								"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+								"connectionId": "L6ck-w_UtYhUeUmjNWVhV",
 								"options": {},
 								"upgradeIndex": 8,
 								"type": "feedback",
 								"style": {
 									"color": 16777215,
-									"bgcolor": 13041664
+									"bgcolor": 16711680
 								},
 								"isInverted": {
 									"value": false,
@@ -44,15 +44,15 @@
 								}
 							},
 							{
-								"id": "RY8CWYhFI83i-HoIVSEw4",
+								"id": "D3bKH1AiWjZiakYbveJ9t",
 								"definitionId": "streaming",
-								"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+								"connectionId": "L6ck-w_UtYhUeUmjNWVhV",
 								"options": {},
 								"upgradeIndex": 8,
 								"type": "feedback",
 								"style": {
-									"color": 0,
-									"bgcolor": 16777215
+									"color": 16777215,
+									"bgcolor": 1048775
 								},
 								"isInverted": {
 									"value": true,
@@ -65,9 +65,9 @@
 								"action_sets": {
 									"down": [
 										{
-											"id": "AB9c7L63OghypacbfHA-y",
+											"id": "0bzWENNuSaDTIjP7SLKTT",
 											"definitionId": "StartStopStreaming",
-											"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+											"connectionId": "L6ck-w_UtYhUeUmjNWVhV",
 											"options": {},
 											"upgradeIndex": 8,
 											"type": "action"
@@ -102,9 +102,9 @@
 						},
 						"feedbacks": [
 							{
-								"id": "F3btdpffeehkIDvOtOEtN",
+								"id": "BXHACT-U0yy0JySomruuZ",
 								"definitionId": "recording",
-								"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+								"connectionId": "L6ck-w_UtYhUeUmjNWVhV",
 								"options": {
 									"fg": {
 										"value": 16777215,
@@ -136,9 +136,9 @@
 								"action_sets": {
 									"down": [
 										{
-											"id": "F1_3nWZFPNpBv5bV3PlGD",
+											"id": "VfC3QD2Wbq3F2KFP1Ie0g",
 											"definitionId": "StartStopRecording",
-											"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+											"connectionId": "L6ck-w_UtYhUeUmjNWVhV",
 											"options": {},
 											"upgradeIndex": 8,
 											"type": "action"
@@ -153,17 +153,49 @@
 						},
 						"localVariables": []
 					},
-					"3": {
+					"2": {
 						"type": "button",
 						"style": {
-							"text": "Twitch Viewer",
+							"text": "$(Twitch:thecompanyinc_uptime)",
 							"textExpression": false,
-							"size": "auto",
+							"size": "14",
 							"png64": null,
 							"alignment": "center:center",
 							"pngalignment": "center:center",
 							"color": 16777215,
 							"bgcolor": 0,
+							"show_topbar": "default"
+						},
+						"options": {
+							"stepProgression": "auto",
+							"stepExpression": "",
+							"rotaryActions": false
+						},
+						"feedbacks": [],
+						"steps": {
+							"0": {
+								"action_sets": {
+									"down": [],
+									"up": []
+								},
+								"options": {
+									"runWhileHeld": []
+								}
+							}
+						},
+						"localVariables": []
+					},
+					"3": {
+						"type": "button",
+						"style": {
+							"text": "$(Twitch:thecompanyinc_viewers)\\nViewers",
+							"textExpression": false,
+							"size": "18",
+							"png64": null,
+							"alignment": "center:center",
+							"pngalignment": "center:center",
+							"color": 16777215,
+							"bgcolor": 8421631,
 							"show_topbar": "default"
 						},
 						"options": {
@@ -239,9 +271,9 @@
 						},
 						"feedbacks": [
 							{
-								"id": "AoTIoATWpzlK3sFaoA6fz",
+								"id": "L8a5JCH8BEriQMlqUOdgK",
 								"definitionId": "audio_muted",
-								"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+								"connectionId": "L6ck-w_UtYhUeUmjNWVhV",
 								"options": {
 									"source": {
 										"value": "Microphone",
@@ -265,9 +297,9 @@
 								"action_sets": {
 									"down": [
 										{
-											"id": "MCiO4DmtyeMCmhqbx1tI4",
+											"id": "HjAJO1opmaRysbq1h55ia",
 											"definitionId": "toggle_source_mute",
-											"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+											"connectionId": "L6ck-w_UtYhUeUmjNWVhV",
 											"options": {
 												"source": {
 													"value": "Microphone",
@@ -287,17 +319,49 @@
 						},
 						"localVariables": []
 					},
-					"3": {
+					"2": {
 						"type": "button",
 						"style": {
-							"text": "YT Viewer",
+							"text": "Live:\\n$(Twitch:thecompanyinc_live)",
 							"textExpression": false,
-							"size": "auto",
+							"size": "14",
 							"png64": null,
 							"alignment": "center:center",
 							"pngalignment": "center:center",
 							"color": 16777215,
-							"bgcolor": 0,
+							"bgcolor": 8421631,
+							"show_topbar": "default"
+						},
+						"options": {
+							"stepProgression": "auto",
+							"stepExpression": "",
+							"rotaryActions": false
+						},
+						"feedbacks": [],
+						"steps": {
+							"0": {
+								"action_sets": {
+									"down": [],
+									"up": []
+								},
+								"options": {
+									"runWhileHeld": []
+								}
+							}
+						},
+						"localVariables": []
+					},
+					"3": {
+						"type": "button",
+						"style": {
+							"text": "$(Twitch:thecompanyinc_followers) Followers",
+							"textExpression": false,
+							"size": "14",
+							"png64": null,
+							"alignment": "center:center",
+							"pngalignment": "center:center",
+							"color": 16777215,
+							"bgcolor": 12632319,
 							"show_topbar": "default"
 						},
 						"options": {
@@ -377,7 +441,7 @@
 								"action_sets": {
 									"down": [
 										{
-											"id": "1akXmrBOWlVuOnoNDp6l1",
+											"id": "xVsib5Jm6ObLxiVMs0nJy",
 											"definitionId": "inc_page",
 											"connectionId": "internal",
 											"options": {
@@ -433,9 +497,9 @@
 						},
 						"feedbacks": [
 							{
-								"id": "7MSC8qZvAGpGPJAMtvBEh",
+								"id": "Cl5MImANqSDPi48UwO1FS",
 								"definitionId": "sceneProgram",
-								"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+								"connectionId": "L6ck-w_UtYhUeUmjNWVhV",
 								"options": {
 									"scene": {
 										"value": "Starting Soon",
@@ -446,7 +510,7 @@
 								"type": "feedback",
 								"style": {
 									"color": 16777215,
-									"bgcolor": 39168
+									"bgcolor": 52224
 								},
 								"isInverted": {
 									"value": false,
@@ -459,9 +523,9 @@
 								"action_sets": {
 									"down": [
 										{
-											"id": "mVbISRPSnZmLmCOkFBo4_",
+											"id": "NNaeM08vexCd-yiBAVDPm",
 											"definitionId": "set_scene",
-											"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+											"connectionId": "L6ck-w_UtYhUeUmjNWVhV",
 											"options": {
 												"scene": {
 													"value": "Starting Soon",
@@ -476,6 +540,38 @@
 											"type": "action"
 										}
 									],
+									"up": []
+								},
+								"options": {
+									"runWhileHeld": []
+								}
+							}
+						},
+						"localVariables": []
+					},
+					"1": {
+						"type": "button",
+						"style": {
+							"text": "$(Twitch:thecompanyinc_viewers)\\nViewers",
+							"textExpression": false,
+							"size": "18",
+							"png64": null,
+							"alignment": "center:center",
+							"pngalignment": "center:center",
+							"color": 16777215,
+							"bgcolor": 8421631,
+							"show_topbar": "default"
+						},
+						"options": {
+							"stepProgression": "auto",
+							"stepExpression": "",
+							"rotaryActions": false
+						},
+						"feedbacks": [],
+						"steps": {
+							"0": {
+								"action_sets": {
+									"down": [],
 									"up": []
 								},
 								"options": {
@@ -505,9 +601,9 @@
 						},
 						"feedbacks": [
 							{
-								"id": "OfSXegAk30OJ71xeq583E",
+								"id": "nxulSGOEOVFmVZN7weGLK",
 								"definitionId": "sceneProgram",
-								"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+								"connectionId": "L6ck-w_UtYhUeUmjNWVhV",
 								"options": {
 									"scene": {
 										"value": "Gameplay",
@@ -531,9 +627,9 @@
 								"action_sets": {
 									"down": [
 										{
-											"id": "vaR8IbHqFQ5gN11d85UtS",
+											"id": "FANFRc2COHy3j8WI_5ug5",
 											"definitionId": "set_scene",
-											"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+											"connectionId": "L6ck-w_UtYhUeUmjNWVhV",
 											"options": {
 												"scene": {
 													"value": "Gameplay",
@@ -577,9 +673,9 @@
 						},
 						"feedbacks": [
 							{
-								"id": "SaHxs1wjv35j_H4rp6JCJ",
+								"id": "y9pyVJGdlZFXUsTcMAzNK",
 								"definitionId": "sceneProgram",
-								"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+								"connectionId": "L6ck-w_UtYhUeUmjNWVhV",
 								"options": {
 									"scene": {
 										"value": "Gameplay - Talking Head",
@@ -603,9 +699,9 @@
 								"action_sets": {
 									"down": [
 										{
-											"id": "ObRun4XQAJtPQMFGjJF-v",
+											"id": "8Abz5-TipQ7KtqQ9TuxgS",
 											"definitionId": "set_scene",
-											"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+											"connectionId": "L6ck-w_UtYhUeUmjNWVhV",
 											"options": {
 												"scene": {
 													"value": "Gameplay - Talking Head",
@@ -651,9 +747,9 @@
 						},
 						"feedbacks": [
 							{
-								"id": "ig-mg87nj_JkkqWtzB-gi",
+								"id": "vsBirOG1XfrGgYMmk5SBp",
 								"definitionId": "sceneProgram",
-								"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+								"connectionId": "L6ck-w_UtYhUeUmjNWVhV",
 								"options": {
 									"scene": {
 										"value": "Be Right Back",
@@ -677,9 +773,9 @@
 								"action_sets": {
 									"down": [
 										{
-											"id": "g6zQ-rIw4NyB2xXDjWTnX",
+											"id": "aosJDz6QnSdnrHUUAb74e",
 											"definitionId": "set_scene",
-											"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
+											"connectionId": "L6ck-w_UtYhUeUmjNWVhV",
 											"options": {
 												"scene": {
 													"value": "Be Right Back",
@@ -703,10 +799,10 @@
 						},
 						"localVariables": []
 					},
-					"2": {
+					"1": {
 						"type": "button",
 						"style": {
-							"text": "$(obs:scene_6)",
+							"text": "$(Twitch:thecompanyinc_uptime)",
 							"textExpression": false,
 							"size": "14",
 							"png64": null,
@@ -721,51 +817,43 @@
 							"stepExpression": "",
 							"rotaryActions": false
 						},
-						"feedbacks": [
-							{
-								"id": "idWSsjlWZd_La4x59LjTn",
-								"definitionId": "sceneProgram",
-								"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
-								"options": {
-									"scene": {
-										"value": "Card Opening",
-										"isExpression": false
-									}
-								},
-								"upgradeIndex": 8,
-								"type": "feedback",
-								"style": {
-									"color": 16777215,
-									"bgcolor": 39168
-								},
-								"isInverted": {
-									"value": false,
-									"isExpression": false
-								}
-							}
-						],
+						"feedbacks": [],
 						"steps": {
 							"0": {
 								"action_sets": {
-									"down": [
-										{
-											"id": "IQNdYaswTfA3jXg7TGv98",
-											"definitionId": "set_scene",
-											"connectionId": "a7zrdC_6d-Z7s9luA2DIy",
-											"options": {
-												"scene": {
-													"value": "Card Opening",
-													"isExpression": false
-												},
-												"customSceneName": {
-													"value": "",
-													"isExpression": false
-												}
-											},
-											"upgradeIndex": 8,
-											"type": "action"
-										}
-									],
+									"down": [],
+									"up": []
+								},
+								"options": {
+									"runWhileHeld": []
+								}
+							}
+						},
+						"localVariables": []
+					},
+					"3": {
+						"type": "button",
+						"style": {
+							"text": "$(Twitch:thecompanyinc_followers) Followers",
+							"textExpression": false,
+							"size": "14",
+							"png64": null,
+							"alignment": "center:center",
+							"pngalignment": "center:center",
+							"color": 16777215,
+							"bgcolor": 12632319,
+							"show_topbar": "default"
+						},
+						"options": {
+							"stepProgression": "auto",
+							"stepExpression": "",
+							"rotaryActions": false
+						},
+						"feedbacks": [],
+						"steps": {
+							"0": {
+								"action_sets": {
+									"down": [],
 									"up": []
 								},
 								"options": {
@@ -801,7 +889,7 @@
 								"action_sets": {
 									"down": [
 										{
-											"id": "t6RzHopuYrsAW9BSFGbad",
+											"id": "jWtEn77bT3B7CLy4xPb37",
 											"definitionId": "dec_page",
 											"connectionId": "internal",
 											"options": {
@@ -847,7 +935,7 @@
 								"action_sets": {
 									"down": [
 										{
-											"id": "pYkESM_ZD8h5WV4vu4uh8",
+											"id": "k5IcAj-qyMT7XUihjuqsJ",
 											"definitionId": "inc_page",
 											"connectionId": "internal",
 											"options": {
@@ -933,9 +1021,9 @@
 								"action_sets": {
 									"down": [
 										{
-											"id": "21kbWPgBi6lGl9P1PnPfU",
+											"id": "nyuIk4jphVzx7UmBAq8bn",
 											"definitionId": "get",
-											"connectionId": "xs6MYqwGqTf7JrT1vvPBR",
+											"connectionId": "DQznMo8ydm6rVeV34UDI8",
 											"options": {
 												"url": {
 													"value": "/new-run",
@@ -958,8 +1046,176 @@
 											},
 											"upgradeIndex": 2,
 											"type": "action"
+										},
+										{
+											"id": "nkjXBIDkKZpm5yTexIXYE",
+											"definitionId": "custom_variable_set_value",
+											"connectionId": "internal",
+											"options": {
+												"name": {
+													"value": "deaths",
+													"isExpression": false
+												},
+												"create": {
+													"isExpression": false,
+													"value": false
+												},
+												"value": {
+													"value": "$(custom:deaths) + 1",
+													"isExpression": true
+												}
+											},
+											"type": "action",
+											"children": {}
+										},
+										{
+											"id": "wg6DE5Ho3wftS6kOrE4-T",
+											"definitionId": "setText",
+											"connectionId": "L6ck-w_UtYhUeUmjNWVhV",
+											"options": {
+												"source": {
+													"value": "Death Counter",
+													"isExpression": false
+												},
+												"text": {
+													"value": "Deaths: $(custom:deaths)",
+													"isExpression": false
+												}
+											},
+											"upgradeIndex": 8,
+											"type": "action"
 										}
 									],
+									"up": []
+								},
+								"options": {
+									"runWhileHeld": []
+								}
+							}
+						},
+						"localVariables": []
+					},
+					"2": {
+						"type": "button",
+						"style": {
+							"text": "$(Twitch:thecompanyinc_viewers)\\nViewers",
+							"textExpression": false,
+							"size": "18",
+							"png64": null,
+							"alignment": "center:center",
+							"pngalignment": "center:center",
+							"color": 16777215,
+							"bgcolor": 8421631,
+							"show_topbar": "default"
+						},
+						"options": {
+							"stepProgression": "auto",
+							"stepExpression": "",
+							"rotaryActions": false
+						},
+						"feedbacks": [],
+						"steps": {
+							"0": {
+								"action_sets": {
+									"down": [],
+									"up": []
+								},
+								"options": {
+									"runWhileHeld": []
+								}
+							}
+						},
+						"localVariables": []
+					},
+					"3": {
+						"type": "button",
+						"style": {
+							"text": "$(Twitch:thecompanyinc_followers) Followers",
+							"textExpression": false,
+							"size": "14",
+							"png64": null,
+							"alignment": "center:center",
+							"pngalignment": "center:center",
+							"color": 16777215,
+							"bgcolor": 12632319,
+							"show_topbar": "default"
+						},
+						"options": {
+							"stepProgression": "auto",
+							"stepExpression": "",
+							"rotaryActions": false
+						},
+						"feedbacks": [],
+						"steps": {
+							"0": {
+								"action_sets": {
+									"down": [],
+									"up": []
+								},
+								"options": {
+									"runWhileHeld": []
+								}
+							}
+						},
+						"localVariables": []
+					}
+				},
+				"1": {
+					"2": {
+						"type": "button",
+						"style": {
+							"text": "Uptime:\\n$(Twitch:thecompanyinc_uptime)",
+							"textExpression": false,
+							"size": "14",
+							"png64": null,
+							"alignment": "center:center",
+							"pngalignment": "center:center",
+							"color": 16777215,
+							"bgcolor": 0,
+							"show_topbar": "default"
+						},
+						"options": {
+							"stepProgression": "auto",
+							"stepExpression": "",
+							"rotaryActions": false
+						},
+						"feedbacks": [],
+						"steps": {
+							"0": {
+								"action_sets": {
+									"down": [],
+									"up": []
+								},
+								"options": {
+									"runWhileHeld": []
+								}
+							}
+						},
+						"localVariables": []
+					},
+					"3": {
+						"type": "button",
+						"style": {
+							"text": "Death Counter:\\n$(custom:deaths)",
+							"textExpression": false,
+							"size": "14",
+							"png64": null,
+							"alignment": "center:center",
+							"pngalignment": "center:center",
+							"color": 16777215,
+							"bgcolor": 0,
+							"show_topbar": "default"
+						},
+						"options": {
+							"stepProgression": "auto",
+							"stepExpression": "",
+							"rotaryActions": false
+						},
+						"feedbacks": [],
+						"steps": {
+							"0": {
+								"action_sets": {
+									"down": [],
 									"up": []
 								},
 								"options": {
@@ -995,7 +1251,7 @@
 								"action_sets": {
 									"down": [
 										{
-											"id": "AxX64FIjgV5Ine09aGo62",
+											"id": "gWV0HIeP7qjE9ZnkoVs7V",
 											"definitionId": "dec_page",
 											"connectionId": "internal",
 											"options": {
@@ -1029,29 +1285,24 @@
 	},
 	"triggers": {},
 	"triggerCollections": [],
+	"custom_variables": {
+		"deaths": {
+			"description": "TCI Death Counter",
+			"defaultValue": 22,
+			"persistCurrentValue": true,
+			"sortOrder": 0
+		}
+	},
+	"customVariablesCollections": [],
+	"expressionVariables": {},
+	"expressionVariablesCollections": [],
 	"instances": {
-		"a7zrdC_6d-Z7s9luA2DIy": {
-			"moduleInstanceType": "connection",
-			"moduleId": "obs-studio",
-			"moduleVersionId": "3.15.3",
-			"updatePolicy": "stable",
-			"sortOrder": 1,
-			"label": "obs",
-			"isFirstInit": false,
-			"config": {
-				"port": 4455,
-				"host": "localhost"
-			},
-			"secrets": {},
-			"lastUpgradeIndex": 8,
-			"enabled": true
-		},
-		"xs6MYqwGqTf7JrT1vvPBR": {
+		"DQznMo8ydm6rVeV34UDI8": {
 			"moduleInstanceType": "connection",
 			"moduleId": "generic-http",
 			"moduleVersionId": "3.1.1",
 			"updatePolicy": "stable",
-			"sortOrder": 2,
+			"sortOrder": 1,
 			"label": "http",
 			"isFirstInit": false,
 			"config": {
@@ -1063,6 +1314,66 @@
 			"secrets": {},
 			"lastUpgradeIndex": 2,
 			"enabled": true
+		},
+		"L6ck-w_UtYhUeUmjNWVhV": {
+			"moduleInstanceType": "connection",
+			"moduleId": "obs-studio",
+			"moduleVersionId": "3.15.3",
+			"updatePolicy": "stable",
+			"sortOrder": 2,
+			"label": "obs",
+			"isFirstInit": false,
+			"config": {
+				"port": 4455,
+				"host": "localhost"
+			},
+			"secrets": {},
+			"lastUpgradeIndex": 8,
+			"enabled": true
+		},
+		"vqbdzY5zyH3CcsNlRPykK": {
+			"moduleInstanceType": "connection",
+			"moduleId": "twitch-api",
+			"moduleVersionId": "4.1.1",
+			"updatePolicy": "stable",
+			"sortOrder": 3,
+			"label": "Twitch",
+			"isFirstInit": false,
+			"config": {
+				"channels": "thecompanyinc",
+				"broadcasterAds": true,
+				"broadcasterBits": true,
+				"broadcasterChannelPoints": true,
+				"broadcasterCharity": true,
+				"broadcasterGoals": true,
+				"broadcasterExtensions": true,
+				"broadcasterHypeTrain": true,
+				"broadcasterModeration": true,
+				"broadcasterPollsPredictions": true,
+				"broadcasterRaids": true,
+				"broadcasterStreamKey": true,
+				"broadcasterGuestStar": true,
+				"broadcasterSubscriptions": true,
+				"broadcasterVIPs": true,
+				"editorStreamMarkers": true,
+				"moderatorAnnouncements": true,
+				"moderatorAutomod": true,
+				"moderatorChatModeration": true,
+				"moderatorChatters": true,
+				"moderatorFollowers": true,
+				"moderatorShieldMode": true,
+				"moderatorShoutouts": true,
+				"moderatorGuestStar": true,
+				"moderatorUnbanRequests": true,
+				"moderatorWarnings": true,
+				"userChat": true,
+				"userClips": true,
+				"accessToken": "",
+				"refreshToken": ""
+			},
+			"secrets": {},
+			"lastUpgradeIndex": -1,
+			"enabled": true
 		}
 	},
 	"connectionCollections": [],
@@ -1070,15 +1381,15 @@
 		"streamdeck:AB8JA6031LW0X0": {
 			"groupConfig": {
 				"name": "Auto group",
-				"last_page_id": "L0AIxTPFrBINyHGYYVp9m",
+				"last_page_id": "13O8WNGlZYCRpWQQ5QBwl",
 				"startup_page_id": "s5S2nQrKuZlh_L4UFPE_6",
 				"use_last_page": true,
 				"restrict_pages": false,
 				"allowed_page_ids": [],
 				"page": 1,
-				"last_page": 3,
-				"startup_page": 1,
-				"allowed_pages": []
+				"allowed_pages": [],
+				"last_page": 2,
+				"startup_page": 1
 			},
 			"enabled": true,
 			"config": {

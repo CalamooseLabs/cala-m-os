@@ -1,7 +1,7 @@
 ##################################
 #                                #
-#   Hetzner dedicated (AX-series) #
-#   TCI public fleet host         #
+#   Hetzner Cloud (US, CCX)      #
+#   TCI cloud fleet host         #
 #                                #
 ##################################
 {...}: {

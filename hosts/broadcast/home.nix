@@ -59,6 +59,10 @@ in {
       "assets/thecompany/Chat.png" = ../../modules/obs-kiosk/assets/thecompany/Chat.png;
       "assets/thecompany/Memo.png" = ../../modules/obs-kiosk/assets/thecompany/Memo.png;
       "assets/thecompany/Webcam.png" = ../../modules/obs-kiosk/assets/thecompany/Webcam.png;
+      # Underscore name: the live box's source pointed at ~/Bottom Screen.png;
+      # the baseline re-asserts the assets path (see obs/README.md), and a space
+      # would break the Nix path literal here.
+      "assets/thecompany/Bottom_Screen.png" = ../../modules/obs-kiosk/assets/thecompany/Bottom_Screen.png;
     };
   };
 

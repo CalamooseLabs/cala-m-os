@@ -51,8 +51,9 @@ Bootstrap: on the box that already has your real OBS setup, run
   box (seeding reproduces the path, not the file).
 - **Profiles / collections:** `TheCalamoose` (→ `TheCalamoose - Coding`) and
   `The Company, Inc.` (→ `The Cobblemon Initiative`: Chat Window / Starting Soon /
-  Be Right Back / Gameplay / Gameplay - Talking Head / Card Opening, with the
-  stinger + BRB/Starting Soon media and full/paper overlays). `global.ini` opens
+  Be Right Back / Gameplay / Card Opening / Vertical Scene, with the
+  stinger + BRB/Starting Soon media and full overlays; the 2026-09-22 snapshot
+  dropped `Gameplay - Talking Head` + Run Counter — removed on the box). `global.ini` opens
   into **The Company, Inc. / The Cobblemon Initiative** by default (this box is
   primarily The Company); switch the `[Basic]` `Profile`/`SceneCollection`
   pointers to change that. These are the ONLY profiles/collections — no

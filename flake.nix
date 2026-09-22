@@ -104,7 +104,7 @@
     };
 
     # The Cobblemon Initiative — dedicated-server fleet module (hub + warden +
-    # on-demand per-player instances), consumed by the tci-public/tci-private
+    # on-demand per-player instances), consumed by the tci-cloud/tci-private
     # hosts via modules/tci-server. We use only `nixosModules.tci-server`
     # (nix/tci-server.nix), a plain module built against THIS flake's nixpkgs;
     # the game bundle itself is deployed out-of-band by `nix run .#deploy-server`
@@ -186,10 +186,10 @@
       livedata = mkSystem "livedata" {};
       ai = mkSystem "ai" {};
 
-      # The Cobblemon Initiative dedicated servers (headless bare-metal fleets).
-      # tci-public  — Hetzner dedicated, internet-facing hub (co-op OR solo).
+      # The Cobblemon Initiative dedicated servers.
+      # tci-cloud   — Hetzner Cloud (US), internet-facing hub (co-op OR solo).
       # tci-private — local LAN box, internal soul-link (shared-fate) fleet.
-      tci-public = mkSystem "tci-public" {};
+      tci-cloud = mkSystem "tci-cloud" {};
       tci-private = mkSystem "tci-private" {};
 
       iso = nixpkgs.lib.nixosSystem {

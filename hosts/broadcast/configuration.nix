@@ -84,6 +84,32 @@ in {
         else null;
       services.bitfocus-companion.repoPath = "/etc/nixos/hosts/broadcast/companion";
 
+      # Companion 4.x ships ZERO connection modules — normally each is downloaded
+      # from the Bitfocus module store into /var/lib/bitfocus-companion/modules/,
+      # which a reinstall wipes. The seeded db pins these EXACT versions
+      # (moduleVersionId per connection) and Companion never auto-installs, so
+      # without pre-seeding every connection came up "Unknown module" after each
+      # reinstall until deleted and re-added by hand. Keep this list in lockstep
+      # with the committed db: whenever a snapshot/export changes a connection's
+      # moduleVersionId, add the matching entry here (see connectionModules option
+      # docs in modules/bitfocus-companion for how to get url + hash from the
+      # store API). The elgato-stream-deck surface is "builtin" — ships in the
+      # package, nothing to seed.
+      services.bitfocus-companion.connectionModules = {
+        "obs-studio-3.15.3" = {
+          url = "https://developer-module-builds.s4.bitfocus.io/connection/obs-studio/v3.15.3-64a9f074fc8f6ee4eefd86e6e7e9396e76b44050/obs-studio-v3.15.3.tgz";
+          hash = "sha256-pM6YBUu1xMWXm2rvoVFGl1c2m6H46nwRD/mUGpWRdpA=";
+        };
+        "generic-http-3.1.1" = {
+          url = "https://developer-module-builds.s4.bitfocus.io/connection/generic-http/v3.1.1-aa2f436c546b4aa1f8081938c9db7528b246d43e/generic-http-v3.1.1.tgz";
+          hash = "sha256-oiHRs+SX1FHHoj+yser6+YtjmXX/TwJfat/2CJBbUrM=";
+        };
+        "twitch-api-4.1.1" = {
+          url = "https://developer-module-builds.s4.bitfocus.io/connection/twitch-api/v4.1.1-0eb88139b7c913f618271c8e3af89b555b1318f2/twitch-api-v4.1.1.tgz";
+          hash = "sha256-gKidGWtGU7gNebFeY23a2QRDfJJIGReZXlQGhPaFw8Q=";
+        };
+      };
+
       # Host-level home-manager entry point (merges with the machine's home.nix
       # via the list-typed sharedModules option) — carries the OBS baseline seed,
       # $HOME media assets, and the seeded (auth-disabled) OBS-websocket config.

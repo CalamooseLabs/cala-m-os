@@ -7,6 +7,7 @@
 #   controls:  id = "bank:<cid>", value = the control JSON (inline in the export)
 #   instances: id = instance id, value = instance JSON (export: instances + surfaceInstances)
 #   surfaces / surface_groups: id = key, value = JSON (verbatim from export)
+#   custom_variables: id = variable name, value = JSON (verbatim from export)
 
 def sqlstr: tojson | gsub("'"; "''") | "'" + . + "'";
 def rawsql: gsub("'"; "''") | "'" + . + "'";
@@ -17,6 +18,11 @@ def rawsql: gsub("'"; "''") | "'" + . + "'";
 "DELETE FROM instances;",
 "DELETE FROM surfaces;",
 "DELETE FROM surface_groups;",
+"DELETE FROM custom_variables;",
+
+( (.custom_variables // {}) | to_entries[]
+  | "INSERT INTO custom_variables (id, value) VALUES (" + (.key|rawsql) + ", " + (.value|sqlstr) + ");"
+),
 
 ( (.instances + .surfaceInstances) | to_entries[]
   | "INSERT INTO instances (id, value) VALUES (" + (.key|rawsql) + ", " + (.value|sqlstr) + ");"
