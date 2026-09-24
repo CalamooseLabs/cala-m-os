@@ -1,6 +1,7 @@
 {machine_path, ...}: {
   inputs,
   cala-m-os,
+  config,
   ...
 }: let
   machine_home = toString (machine_path + "/home.nix");
@@ -21,6 +22,14 @@ in {
 
     sharedModules = [
       {
+        # Hand home-manager modules the same beta selector NixOS modules get
+        # (see calamoose.beta.* in ./options.nix) — a beta-aware module's
+        # home.nix does `pkgs = betaPkgsFor "<name>";` exactly like its
+        # configuration.nix. useGlobalPkgs already carries the
+        # calamoose.beta.packages overlay into HM; this covers the
+        # module-level switch.
+        _module.args.betaPkgsFor = config.calamoose.beta._pkgsFor;
+
         # Let Home Manager install and manage itself.
         programs.home-manager.enable = true;
 

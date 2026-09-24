@@ -2,8 +2,34 @@
   lib,
   config,
   pkgs,
+  inputs,
+  initialInstallMode,
   ...
 }: let
+  # --- calamoose.beta ---------------------------------------------------------
+  # Package set from the `nixpkgs-beta` flake input (a second nixos-unstable pin
+  # that rides ahead of the main one — see flake.nix). Lazy: nothing below forces
+  # this import until a host actually lists a beta package or a beta-aware module
+  # resolves its set, so hosts with empty lists never evaluate the second nixpkgs.
+  # Mirrors the FLAKE-LEVEL import (same ./overlays + allowUnfree) but NOT
+  # module-added nixpkgs.config/overlays (permittedInsecurePackages, local patch
+  # overlays like tailscale's) — a beta package needing those fails eval only on
+  # the beta side with the stock nixpkgs error; add the equivalent here if that
+  # ever bites. System comes from the option, not pkgs.stdenv, so even a
+  # pathological beta swap of stdenv itself can't recurse through this import.
+  pkgs-beta = import inputs.nixpkgs-beta {
+    system = config.nixpkgs.hostPlatform.system;
+    config.allowUnfree = true;
+    overlays = import ../../overlays;
+  };
+  beta = config.calamoose.beta;
+
+  # Every modules/<name>/ directory gets a calamoose.modules.<name> option set
+  # (declared below) — generated from the directory listing, so setting a
+  # typo'd module name fails eval with "option does not exist" instead of
+  # silently no-oping.
+  moduleNames = lib.attrNames (lib.filterAttrs (_: t: t == "directory") (builtins.readDir ../../modules));
+
   # First-boot runner for calamoose.install.firstBootCommands. Each entry becomes
   # a one-shot unit that runs ONCE per fresh root filesystem: a stamp under
   # fbStampDir gates it, and that stamp lives on the root that a teardown wipes.
@@ -249,6 +275,66 @@ in {
     });
   };
 
+  options.calamoose.beta.packages = lib.mkOption {
+    type = lib.types.listOf lib.types.str;
+    default = [];
+    example = ["obs-studio" "plex"];
+    description = ''
+      Top-level nixpkgs attribute names to take from the `nixpkgs-beta` input
+      instead of the main `nixpkgs` — the surgical tool for testing a newer
+      build of one package on one host without moving the whole system (same
+      idea as the davinci pin in flake.nix, but declarative per host). Applied
+      as an overlay, so EVERY consumer on this host gets the beta build — NixOS
+      and home-manager alike (useGlobalPkgs). Names must be TOP-LEVEL attrs
+      (asserted); for nested attrs (python3Packages.*, kernel modules) write an
+      explicit overlay instead. Use plain string literals only — deriving a
+      name from `pkgs` itself would make the overlay recursive.
+    '';
+  };
+
+  # Per-module knobs, one option set per modules/<name>/ directory. Set from a
+  # host configuration.nix or a user profile's module — either way the value is
+  # host-global (NixOS options don't scope per user).
+  options.calamoose.modules = lib.genAttrs moduleNames (name: {
+    beta = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      example = true;
+      description = ''
+        Take the `${name}` module's ENTIRE package set from the `nixpkgs-beta`
+        input instead of the main `nixpkgs`. Only a beta-AWARE module reacts —
+        a module opts in by resolving its set via `betaPkgsFor "${name}"` in
+        both configuration.nix and home.nix and declaring
+        `calamoose.modules."${name}".betaAware = true` (reference:
+        modules/obs-studio). Flipping a module that isn't beta-aware — or
+        isn't even enrolled on this host — emits an eval warning instead of
+        silently doing nothing. Anything a module wires through
+        `config.boot.*` (kernel modules) stays on the main nixpkgs regardless
+        — the kernel is never split.
+      '';
+    };
+    betaAware = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      internal = true;
+      description = ''
+        Declared true by the `${name}` module itself (in its
+        configuration.nix) when it resolves its package set via `betaPkgsFor`.
+        Powers the no-effect warning on `beta`. Do not set from hosts.
+      '';
+    };
+  });
+
+  # The selector behind the `betaPkgsFor` module argument. An internal option so
+  # the NixOS side (below) and the home-manager side (hosts/_core/home.nix, which
+  # only exists in the full config) hand out the SAME function.
+  options.calamoose.beta._pkgsFor = lib.mkOption {
+    type = lib.types.raw;
+    readOnly = true;
+    internal = true;
+    description = "Module-name -> package-set selector backing betaPkgsFor. Do not set.";
+  };
+
   options.calamoose.hardlinkLayout = lib.mkOption {
     type = lib.types.bool;
     default = false;
@@ -266,6 +352,38 @@ in {
       / remote-path mappings reconfigured to the shared mount.
     '';
   };
+
+  config.calamoose.beta._pkgsFor = name:
+    if (config.calamoose.modules.${name} or null) != null && config.calamoose.modules.${name}.beta
+    then pkgs-beta
+    else pkgs;
+
+  # Loud no-op detection: a beta flag on a module that never declared itself
+  # beta-aware (or isn't enrolled/imported on this host at all, so its
+  # betaAware line never ran) would otherwise silently do nothing. Suppressed
+  # during the minimal install pass, where NO cala module is imported and any
+  # set flag would spuriously warn.
+  config.warnings = lib.optionals (!initialInstallMode) (lib.concatLists (lib.mapAttrsToList (
+      name: m:
+        lib.optional (m.beta && !m.betaAware)
+        "calamoose.modules.${name}.beta = true has no effect: module '${name}' is not beta-aware on this host (either not enrolled by any user profile, or it doesn't resolve its packages via betaPkgsFor — see modules/obs-studio to adopt the pattern)."
+    )
+    config.calamoose.modules));
+
+  # Same mechanism that provides `pkgs` itself — beta-aware modules just add
+  # `betaPkgsFor` to their argument set. Lazy: never forced unless a module
+  # actually uses it.
+  config._module.args.betaPkgsFor = beta._pkgsFor;
+
+  # calamoose.beta.packages: swap the listed top-level attrs host-wide.
+  # mkOrder 1500 places this AFTER every default-order overlay (flake-level
+  # ./overlays + the davinci pin, module-level patch overlays), so an explicit
+  # beta listing deterministically wins any collision. Corollary: the attr you
+  # get is PLAIN nixpkgs-beta — a local patch overlay for the same attr (e.g.
+  # tailscale's checkFlags) is deliberately dropped while it's on beta.
+  config.nixpkgs.overlays = lib.mkIf (beta.packages != []) (lib.mkOrder 1500 [
+    (_final: _prev: lib.genAttrs beta.packages (n: pkgs-beta.${n}))
+  ]);
 
   # Surface the host version in `nixos-version` / the boot menu entry.
   config.system.nixos.tags = ["cala-${config.calamoose.version}"];
@@ -295,6 +413,16 @@ in {
     {
       assertion = overlap == [];
       message = "calamoose.install.dataDisks must not list a disko-owned disk (overlap: ${lib.concatStringsSep ", " overlap}). A data disk is meant to be preserved and must never be a disko target, or wipeAllDisks would erase it.";
+    }
+    # Beta-channel guards. Both are lazy over the (usually empty) lists, so
+    # hosts that don't use the beta channel never evaluate nixpkgs-beta.
+    {
+      assertion = lib.all (n: !lib.hasInfix "." n) beta.packages;
+      message = "calamoose.beta.packages entries must be top-level nixpkgs attr names (offending: ${lib.concatStringsSep ", " (lib.filter (lib.hasInfix ".") beta.packages)}). A naive nested swap would clobber sibling attrs — write an explicit overlay for nested paths.";
+    }
+    {
+      assertion = lib.all (n: lib.hasAttr n pkgs-beta) beta.packages;
+      message = "calamoose.beta.packages lists attrs that don't exist in nixpkgs-beta: ${lib.concatStringsSep ", " (lib.filter (n: !lib.hasAttr n pkgs-beta) beta.packages)}.";
     }
   ];
 

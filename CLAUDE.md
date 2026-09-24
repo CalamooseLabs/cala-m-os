@@ -104,6 +104,16 @@ cala-m-os.globals.TZ           # "America/Denver"
 cala-m-os.ip.lab.gateway       # "10.10.10.1"
 ```
 
+### Beta Channel (staged upgrades)
+
+Two nixos-unstable pins: `nixpkgs` (the system) and `nixpkgs-beta` (rides ahead).
+`nix flake update nixpkgs-beta` bumps ONLY beta; the system pin stays put. Per-host opt-in:
+
+- `calamoose.beta.packages = ["obs-studio"];` — swap single **top-level** attrs host-wide (an overlay, so it reaches home-manager too via `useGlobalPkgs`). Nested attrs need an explicit overlay.
+- `calamoose.modules."<name>".beta = true;` — flip a **beta-aware** cala module wholesale (set from a host or a user profile; host-global either way). The option set is generated from the `modules/` directory listing, so a typo'd name fails eval. A module opts in by taking `betaPkgsFor` in its args, selecting `pkgs = betaPkgsFor "<name>";` in both `configuration.nix` and `home.nix`, and declaring `calamoose.modules."<name>".betaAware = true;` (reference: `modules/obs-studio`). Flipping a module that isn't beta-aware (or isn't enrolled) emits an eval warning. Kernel bits (`config.boot.*`) always stay on the main pin.
+
+Graduate by bumping the main `nixpkgs` and clearing the beta lists. Options + assertions live in `hosts/_core/options.nix`.
+
 ### Adding a New Module
 
 1. Scaffold from the template: `nix flake init -t .#module` (or create `modules/<name>/` by hand)

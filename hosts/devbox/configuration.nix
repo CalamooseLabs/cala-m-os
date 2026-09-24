@@ -19,6 +19,10 @@
 in {
   calamoose.version = "2.1.0";
 
+  # Take claude-code from the nixpkgs-beta pin (host-wide overlay: shell,
+  # vibe wrapper, and vibe-server sessions all get the same build).
+  calamoose.beta.packages = ["claude-code"];
+
   imports =
     [
       # Common Core Config

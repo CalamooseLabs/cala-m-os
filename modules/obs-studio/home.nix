@@ -13,9 +13,11 @@
 {
   config,
   lib,
-  pkgs,
+  betaPkgsFor,
   ...
 }: let
+  # Beta-aware, matching ./configuration.nix — see the note there.
+  pkgs = betaPkgsFor "obs-studio";
   cfg = config.calamoose.obs;
   obsDir = "${config.xdg.configHome}/obs-studio";
 

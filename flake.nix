@@ -6,12 +6,20 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     # DaVinci Resolve Studio 21 without dragging the rest of nixpkgs forward.
-    # The full unstable bump that ships davinci-resolve-studio 21.0.4 also pulled
-    # kernel 7.2.2 (breaks evdi/teleprompter), deno 2.9.5, the utsushi removal, etc.
-    # So pin a davinci-ONLY nixpkgs at the rev that has 21.0.4 and map just that one
-    # package through the overlay below; the system itself stays on the main nixpkgs.
-    # Bump this rev (or fold it back into nixpkgs) once the base catches up.
     nixpkgs-davinci.url = "github:nixos/nixpkgs/d2f67949798825fe853f7c5d0492b8bf016d3f88";
+
+    # Beta channel — a SECOND nixos-unstable pin that rides AHEAD of the main
+    # `nixpkgs`. Update it alone with `nix flake update nixpkgs-beta` (the main
+    # pin doesn't move), then cherry-pick per host what should come from it:
+    #   calamoose.beta.packages = ["obs-studio"];          # swap single attrs host-wide
+    #   calamoose.modules."obs-studio".beta = true;        # flip a beta-aware cala module
+    # Lets parts of the system be tested/upgraded incrementally; graduate by
+    # bumping the main nixpkgs and clearing the beta lists. Options + the
+    # betaPkgsFor module pattern live in hosts/_core/options.nix.
+    # NOTE: a bare `nix flake update` moves BOTH pins to the same rev (both
+    # track nixos-unstable) — beta silently becomes a no-op until the next
+    # `nix flake update nixpkgs-beta`. Update inputs by name.
+    nixpkgs-beta.url = "github:nixos/nixpkgs/nixos-unstable";
 
     # Specific Hardware Fixes
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
