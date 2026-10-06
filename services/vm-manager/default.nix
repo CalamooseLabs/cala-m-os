@@ -1,12 +1,37 @@
 {
   config,
   lib,
+  pkgs,
   inputs,
   initialInstallMode,
   cala-m-os,
   ...
 }: let
   cfg = config.services.cala-vm-manager;
+
+  # Host secrets shared into the guests (/run/hostsecrets). On the agenix
+  # backend /run/agenix is a symlink that agenix repoints to a NEW
+  # /run/agenix.d/<n> on every activation while deleting the old one — but a
+  # guest's virtiofsd opened the old directory once at start, so after any host
+  # rebuild the guests would see an empty share until restarted. Share a stable
+  # directory instead, refreshed in place (same inode) after every decrypt:
+  # by an activation snippet on rebuilds and by vm-hostsecrets-sync after the
+  # post-boot agenix-rerun. The Proton backend writes a stable directory already.
+  secretsBackend = config.calamoose._secretsBackend;
+  useStableCopy = secretsBackend == "agenix" && config.age.secrets != {};
+  hostSecretsDir = "/run/vm-hostsecrets";
+  hostSecretsSource =
+    if useStableCopy
+    then hostSecretsDir
+    else if secretsBackend == "proton-pass"
+    then "/run/proton-secrets"
+    else "/run/agenix";
+  syncScript = pkgs.writeShellScript "vm-hostsecrets-sync" ''
+    install -d -m 0751 ${hostSecretsDir}
+    if [ -d /run/agenix/ ]; then
+      ${pkgs.rsync}/bin/rsync -a --delete /run/agenix/ ${hostSecretsDir}/
+    fi
+  '';
 
   getDeviceFiles = device: filename: import (cfg.devicePath + "/${device}/${filename}");
 
@@ -169,13 +194,12 @@
                 proto = "virtiofs";
                 tag = "agenix";
                 # Backend-aware: share whichever runtime dir holds the decrypted
-                # host secrets. tag + mountPoint are unchanged so guests keep using
-                # /run/hostsecrets/* regardless of backend.
-                source =
-                  if config.calamoose._secretsBackend == "proton-pass"
-                  then "/run/proton-secrets"
-                  else "/run/agenix";
+                # host secrets (see hostSecretsSource above). tag + mountPoint are
+                # unchanged so guests keep using /run/hostsecrets/* regardless of
+                # backend. Guests only ever read.
+                source = hostSecretsSource;
                 mountPoint = "/run/hostsecrets";
+                readOnly = true;
               }
             ]
             ++ vm.shares
@@ -277,6 +301,37 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
+    # On the agenix backend the host's secrets are only populated post-boot by
+    # agenix-rerun (modules/agenix: stage-2 activation runs before pcscd exists,
+    # so boot-time decryption always fails). The stable copy is refreshed right
+    # after it, and every guest's virtiofsd (and thus the guest, which Requires
+    # it) is ordered after that sync. Wants, not Requires: a guest that needs no
+    # secrets (media) still boots if no YubiKey is present.
+    systemd.services.vm-hostsecrets-sync = lib.mkIf useStableCopy {
+      description = "Refresh the host-secrets directory shared into the MicroVM guests";
+      wantedBy = ["multi-user.target"];
+      wants = ["agenix-rerun.service"];
+      after = ["agenix-rerun.service"];
+      # `systemctl restart agenix-rerun` (the fix-up after a boot without the
+      # YubiKey) re-runs this sync as well.
+      partOf = ["agenix-rerun.service"];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        ExecStart = syncScript;
+      };
+    };
+    systemd.services."microvm-virtiofsd@" = lib.mkIf useStableCopy {
+      after = ["vm-hostsecrets-sync.service"];
+      wants = ["vm-hostsecrets-sync.service"];
+    };
+    # Rebuilds: re-sync right after agenix has written the new generation, so
+    # running guests keep a valid, current view (same directory inode).
+    system.activationScripts.vmHostSecretsSync = lib.mkIf useStableCopy {
+      deps = ["agenix"];
+      text = "${syncScript}";
+    };
+
     systemd.network.networks."${cala-m-os.networking.network-name}-noip" = {
       matchConfig.Name = "vm-*";
 

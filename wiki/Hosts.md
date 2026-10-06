@@ -15,7 +15,7 @@ These are the machines declared in `flake.nix` under `nixosConfigurations` (buil
 | `lanstation` | `B760-PLUS` | Workstation | `gamer` | on | VFIO/VM host; receives `self`; static NICs (NetworkManager forced off) |
 | `devbox` | `FW16-AMD-AI` | Workstation | `debugger` | on | Framework 16 + NVIDIA 5070; printing; docs forced on |
 | `ephemeral` | `ZIMA` | Workstation | `void` | on | Zima Board 2 SBC |
-| `homelab` | `MS-02` | Workstation | `server` | on | MicroVM host (media + torrent guests); ACME certs; receives `self` |
+| `homelab` | `MS-02` | Workstation | `server` | on | MicroVM host (media + torrent + security guests); ACME certs; receives `self`; see [[Disaster Recovery|Disaster-Recovery]] |
 | `simple` | `FW13-12XXP` | Workstation | `basic` | on | Framework 13 (12th-gen Intel); imports `_core/configuration.nix` directly |
 | `battlestation` | `B850-MAX` | Workstation | `gamer` | on | Ryzen 9800X3D + RTX 5090; PipeWire |
 | `broadcast` | `TRX50-SAGE` | Workstation | `streamer` | **off** | Threadripper; OBS kiosk via greetd+cage; RTX Pro 4000 |
@@ -40,6 +40,7 @@ These are the machines declared in `flake.nix` under `nixosConfigurations` (buil
 |-----|------|----------|------|
 | `media` | VM `Medium` | `homelab` | Plex media server |
 | `torrent` | VM `X-Small` | `homelab` | \*arr stack + qBittorrent over VPN |
+| `security` | VM `X-Small` | `homelab` | UniFi Protect camera wall (`10.10.10.20`) |
 | `quorumcall` | VM `Small` | `livedata` | QuorumCall service |
 | `htpc` | VM `Large` | (planned) | Home-theater PC |
 | `vault` | VM `Small` | (planned) | Local Steam cache (Arion lancache) |

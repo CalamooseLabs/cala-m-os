@@ -55,6 +55,7 @@ flowchart LR
 | **[[Networking|Networking]]** | IP plan, macvtap, bridges, firewall |
 | **[[ISO & Installer|ISO-Installer]]** | Custom ISO, two-pass install, `INITIAL_INSTALL_MODE` |
 | **[[Common Tasks|Common-Tasks]]** | Cookbook: rebuild, add host/module/user/secret, build & flash ISO |
+| **[[Disaster Recovery|Disaster-Recovery]]** | Rebuilding `homelab` + its guests from the ISO, a YubiKey and the NAS backups |
 | **[[Glossary|Glossary]]** | Project-specific terms |
 
 ---

@@ -56,7 +56,7 @@ services.cala-caddy = {
 |--------|------|---------|
 | `enable` | bool | Turn it on |
 | `domain` | str | Base domain (a `*.domain` wildcard is also issued) |
-| `tokenPath` | str | Path to the Cloudflare API token env file (an agenix secret) |
+| `tokenPath` | str | Path to the Cloudflare API token env file (a `calamoose.secrets` entry; on the agenix backend the first order is ordered after `agenix-rerun`) |
 
 **Behavior:** disables DNS caching (`services.resolved` with `Cache=no`, forces `nscd` off, NM DNS `none`), then `security.acme` requests `<domain>` + `*.<domain>` via the `cloudflare` provider, email from `cala-m-os.globals.defaultEmail`, cert group `caddy`. Also enables upstream `services.caddy` (so the `caddy` group exists for the cert).
 
@@ -66,7 +66,7 @@ services.cala-caddy = {
 services.cala-certs = {
   enable = true;
   domain = cala-m-os.fqdn;
-  tokenPath = config.age.secrets.cloudflare-token.path;
+  tokenPath = config.calamoose.secrets.cloudflare-token.path;
 };
 ```
 

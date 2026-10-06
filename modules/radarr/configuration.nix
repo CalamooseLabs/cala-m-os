@@ -19,10 +19,18 @@
 
   boot.supportedFilesystems = ["nfs"];
 
+  # nofail: a missing NAS must not wedge the guest's boot; everything that
+  # touches the share waits for it via RequiresMountsFor instead.
   fileSystems."/mnt/backups/radarr" = {
     device = "${cala-m-os.nfs.server}:${cala-m-os.nfs.backup.radarr}";
     fsType = "nfs";
+    options = ["nofail"];
   };
+
+  # Radarr's scheduled backups (Settings -> General -> Backups) target
+  # /mnt/backups/radarr; never let it start with the share unmounted, or it
+  # writes them into the empty mountpoint on the local root instead.
+  systemd.services.radarr.unitConfig.RequiresMountsFor = ["/mnt/backups/radarr"];
 
   # radarr-restore — rebuild state from the newest backup zip on the NAS share
   # (Radarr writes its own scheduled backups there). From the antlers scripts

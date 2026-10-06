@@ -20,6 +20,11 @@
   dataRoot = "/data";
 in {
   calamoose.version = "0.9.0-beta";
+  # Keyless guest: secrets are decrypted on the homelab host and shared in at
+  # /run/hostsecrets (services/vm-manager). Without this the server profile's
+  # agenix module would try (and fail) to decrypt admin_password.age with
+  # YubiKey identities the guest cannot reach, on every boot.
+  calamoose.enableSecrets = false;
 
   imports = [
     # Common Core Config
@@ -49,29 +54,41 @@ in {
   # Media/download NFS shares for the *arr suite. (Per-service backup shares are
   # mounted by the radarr/sonarr/prowlarr modules.)
   fileSystems =
-    if hardlink
-    then {
-      # One mount of the library root → downloads and library share a
-      # filesystem, so *arr imports are instant hardlinks (zero data copied).
-      # nofail so a not-yet-ready NAS can't wedge boot; qBittorrent/*arr wait
-      # for the mount via RequiresMountsFor below.
-      "${dataRoot}" = {
-        device = "${cala-m-os.nfs.server}:${cala-m-os.nfs.media.root}";
+    (
+      if hardlink
+      then {
+        # One mount of the library root → downloads and library share a
+        # filesystem, so *arr imports are instant hardlinks (zero data copied).
+        # nofail so a not-yet-ready NAS can't wedge boot; qBittorrent/*arr wait
+        # for the mount via RequiresMountsFor below.
+        "${dataRoot}" = {
+          device = "${cala-m-os.nfs.server}:${cala-m-os.nfs.media.root}";
+          fsType = "nfs";
+          options = ["nofail"];
+        };
+      }
+      else {
+        # Library mounted per folder for *arr to import into; downloads are local,
+        # so a completed import copies across filesystems (the egressRateLimit on
+        # this VM keeps that copy from saturating the NAS).
+        "/media/movies" = {
+          device = "${cala-m-os.nfs.server}:${cala-m-os.nfs.media.movies}";
+          fsType = "nfs";
+        };
+        "/media/tv-shows" = {
+          device = "${cala-m-os.nfs.server}:${cala-m-os.nfs.media.tv-shows}";
+          fsType = "nfs";
+        };
+      }
+    )
+    // {
+      # qBittorrent torrent-state backups (services.qbittorrent-vpn.backup).
+      # nofail: a missing NAS must not wedge the guest's boot; the backup timer
+      # and the first-boot restore wait for the mount via RequiresMountsFor.
+      "/mnt/backups/qbittorrent" = {
+        device = "${cala-m-os.nfs.server}:${cala-m-os.nfs.backup.qbittorrent}";
         fsType = "nfs";
         options = ["nofail"];
-      };
-    }
-    else {
-      # Library mounted per folder for *arr to import into; downloads are local,
-      # so a completed import copies across filesystems (the egressRateLimit on
-      # this VM keeps that copy from saturating the NAS).
-      "/media/movies" = {
-        device = "${cala-m-os.nfs.server}:${cala-m-os.nfs.media.movies}";
-        fsType = "nfs";
-      };
-      "/media/tv-shows" = {
-        device = "${cala-m-os.nfs.server}:${cala-m-os.nfs.media.tv-shows}";
-        fsType = "nfs";
       };
     };
 
@@ -95,12 +112,20 @@ in {
   services.qbittorrent-vpn = {
     enable = true;
 
+    # Daily tarball of BT_backup (.torrent + .fastresume), categories/tags and
+    # RSS state to the NAS, plus the qbittorrent-restore command used below.
+    backup.enable = true;
+
     wireguardConfigFile = "/run/hostsecrets/proton-vpn.conf";
     qbittorrentPasswordFile = "/run/hostsecrets/qbit-password";
 
     webUI = {
       port = 8080;
       username = "admin";
+      # Caddy forwards the public name as the Host header. qBittorrent accepts
+      # any Host by default; restricting it to the proxied name is DNS-rebinding
+      # hardening, not a requirement.
+      serverDomains = ["qbit.${cala-m-os.fqdn}"];
     };
 
     downloads =
@@ -153,12 +178,16 @@ in {
   };
 
   # First-boot recovery after a teardown + full install (this guest's root image
-  # is recreated blank, so each *arr loses /var/lib/<app>). Each <app>-restore
-  # pulls the newest backup zip the app wrote to its NAS share. Runs once only —
-  # the stamp lives on the wiped root, so an ordinary rebuild skips it. Each
-  # <app>-restore stops/starts its own service, so order AFTER it, not Before.
-  # (qBittorrent has no backup mechanism yet, so it is not restored here — its
-  # torrents must be re-added by hand; the downloaded data on NFS survives.)
+  # is recreated blank, so each app loses /var/lib/<app>). Each <app>-restore
+  # pulls the newest backup the app (or its backup timer) wrote to its NAS
+  # share. Runs once only — the stamp lives on the wiped root, so an ordinary
+  # rebuild skips it. Each <app>-restore stops/starts its own service, so order
+  # AFTER it, not Before. qbittorrent-restore puts the .torrent/.fastresume
+  # state back so every torrent resumes against the data that survived on NFS;
+  # it works even while qbittorrent.service is down (e.g. secrets not yet
+  # shared in), since it only needs the profile directory, and a share with no
+  # archive yet (a first install) counts as "nothing to restore", so the unit
+  # stamps itself done instead of restoring a later archive over live state.
   calamoose.install.firstBootCommands = {
     radarr-restore = {
       run = "radarr-restore";
@@ -173,7 +202,15 @@ in {
     prowlarr-restore = {
       run = "prowlarr-restore";
       requiresMounts = ["/mnt/backups/prowlarr"];
-      after = ["prowlarr.service"];
+      # After the Radarr/Sonarr restores too (ordering only): Prowlarr's
+      # restored DB holds their real API keys, so its first application sync
+      # should meet the restored apps, not their throw-away first-start keys.
+      after = ["prowlarr.service" "cala-firstboot-radarr-restore.service" "cala-firstboot-sonarr-restore.service"];
+    };
+    qbittorrent-restore = {
+      run = "qbittorrent-restore";
+      requiresMounts = ["/mnt/backups/qbittorrent"];
+      after = ["qbittorrent.service"];
     };
   };
 }

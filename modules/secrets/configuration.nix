@@ -141,12 +141,14 @@ in {
       nixpkgs.config.allowUnfreePredicate = lib.mkDefault (pkg: lib.getName pkg == "proton-pass-cli");
 
       # ---- Self-heal: fetch the online secrets once the network is up ----
-      # With systemd stage-1 (boot.initrd.systemd.enable, the default here) NixOS
-      # runs `activate` ONLY inside the initrd, which has no network — so the
-      # Proton fetch there always fails and the ramfs secrets (/run/proton-secrets/*)
-      # start every boot empty, and `activate` is NOT re-run in stage-2. Without
-      # this, secrets are populated only by a manual `nixos-rebuild switch` while
-      # online. This oneshot re-runs activation once network-online is reached:
+      # NixOS runs `activate` from stage-2-init BEFORE systemd is started, i.e.
+      # with no network — so the Proton fetch there always fails and the ramfs
+      # secrets (/run/proton-secrets/*) start every boot empty, and `activate` is
+      # not re-run once systemd is up. (The agenix backend has the same shape of
+      # problem — no pcscd at activation time — solved by agenix-rerun in
+      # modules/agenix.) Without this, secrets are populated only by a manual
+      # `nixos-rebuild switch` while online. This oneshot re-runs activation once
+      # network-online is reached:
       # `switch-to-configuration test` re-executes the Proton fetch (now WITH
       # network) AND the `users` snippet, so both the secret files and their
       # activation-time consumers (e.g. hashedPasswordFile) are populated with no

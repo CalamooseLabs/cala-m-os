@@ -17,8 +17,11 @@
     # The local UniFi Protect console.
     consoleIP = "10.10.10.251";
 
-    # Integration-API X-API-KEY (read at runtime, never in the store).
-    apiKeyFile = "/run/hostsecrets/protect-api-key";
+    # Integration-API X-API-KEY (read at runtime, never in the store). The host
+    # decrypts it root:root 0400 and virtiofs carries that ownership through
+    # unchanged, so the unprivileged service user could not open it directly;
+    # systemd copies it in as a credential (LoadCredential below) instead.
+    apiKeyFile = "/run/credentials/unifi-protect-monitor.service/protect-api-key";
 
     # LAN-only web UI on http://<guest>:8460 — passwordless on the trusted LAN. Add
     # passwordFile (another /run/hostsecrets/* secret) to gate it further.
@@ -30,7 +33,16 @@
     recordings = {
       enable = true;
       username = "unifi_protect_monitor";
-      passwordFile = "/run/hostsecrets/protect-admin-password";
+      passwordFile = "/run/credentials/unifi-protect-monitor.service/protect-admin-password";
     };
   };
+
+  # Stage the two host-shared secrets as systemd credentials: read by root at
+  # service start, exposed to the service user under /run/credentials/<unit>/.
+  # A missing source (host secrets not shared in yet) fails the start and the
+  # unit's Restart=always keeps retrying until they appear.
+  systemd.services.unifi-protect-monitor.serviceConfig.LoadCredential = [
+    "protect-api-key:/run/hostsecrets/protect-api-key"
+    "protect-admin-password:/run/hostsecrets/protect-admin-password"
+  ];
 }

@@ -10,6 +10,11 @@
   machine_uuid = "Medium";
 in {
   calamoose.version = "0.9.0-beta";
+  # Keyless guest: secrets are decrypted on the homelab host and shared in at
+  # /run/hostsecrets (services/vm-manager). Without this the server profile's
+  # agenix module would try (and fail) to decrypt admin_password.age with
+  # YubiKey identities the guest cannot reach, on every boot.
+  calamoose.enableSecrets = false;
 
   imports = [
     # Common Core Config

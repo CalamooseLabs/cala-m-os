@@ -51,10 +51,52 @@ in {
     # Open HTTPS port
     networking.firewall.allowedTCPPorts = [80 443];
 
-    systemd.services.caddy.serviceConfig = {
-      Restart = "on-failure";
-      RestartSec = "5s";
-      AmbientCapabilities = "CAP_NET_BIND_SERVICE";
+    systemd.services.caddy = {
+      # The cert/key arrive over the host's virtiofs share (/mnt/acme). On a
+      # fresh host they do not exist until acme-<domain>.service has run, and
+      # upstream's RestartPreventExitStatus=1 means a Caddy that fails to load
+      # them is NOT restarted — it would stay dead until someone starts it by
+      # hand. Wait for the files (the mount itself is ordered via
+      # RequiresMountsFor) before handing over to Caddy.
+      unitConfig.RequiresMountsFor = lib.unique [(builtins.dirOf cfg.tlsCert) (builtins.dirOf cfg.tlsKey)];
+      preStart = ''
+        for _ in $(seq 1 120); do
+          if [ -s ${lib.escapeShellArg cfg.tlsCert} ] && [ -s ${lib.escapeShellArg cfg.tlsKey} ]; then
+            exit 0
+          fi
+          sleep 5
+        done
+        echo "caddy: TLS files ${cfg.tlsCert} / ${cfg.tlsKey} still missing after 10 minutes" >&2
+        exit 1
+      '';
+      serviceConfig = {
+        Restart = "on-failure";
+        RestartSec = "5s";
+        AmbientCapabilities = "CAP_NET_BIND_SERVICE";
+      };
+    };
+
+    # Caddy loads file-based certificates once at start and never re-reads
+    # them. The host renews the wildcard cert in place (and swaps the self-signed
+    # placeholder for the real one shortly after a fresh install); virtiofs
+    # propagates no inotify events, so poll with a daily graceful reload.
+    systemd.services.caddy-reload = {
+      description = "Reload Caddy so a renewed shared certificate is served";
+      after = ["caddy.service"];
+      requisite = ["caddy.service"];
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = "${config.systemd.package}/bin/systemctl reload caddy.service";
+      };
+    };
+    systemd.timers.caddy-reload = {
+      description = "Daily Caddy reload for renewed certificates";
+      wantedBy = ["timers.target"];
+      timerConfig = {
+        OnCalendar = "daily";
+        Persistent = true;
+        RandomizedDelaySec = "1h";
+      };
     };
   };
 }

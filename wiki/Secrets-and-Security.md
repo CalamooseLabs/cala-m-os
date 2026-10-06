@@ -20,7 +20,7 @@ flowchart TD
 `modules/agenix/configuration.nix` imports the agenix module and, when secrets are enabled, installs `agenix`/`age`/`age-plugin-yubikey` and configures identities:
 
 ```nix
-age = lib.mkIf config.calamoose.enableSecrets {
+age = lib.mkIf (config.calamoose._secretsBackend == "agenix") {
   identityPaths = [
     "${./.}/identities/server.key"
     "${./.}/identities/yubi.key"
@@ -52,7 +52,19 @@ agenix -e <file>.age -i ./identities/yubi.key   # run from the bundle dir
 
 ### Decryption target
 
-agenix decrypts to `/run/agenix/<name>`; consumers read `config.age.secrets.<name>.path`. The agenix activation is ordered **after `basic.target`** (so impermanence bind-mounts land first) and depends on `pcscd` (smartcard daemon) to reach the Yubikey.
+agenix decrypts to `/run/agenix/<name>` (a symlink into the `/run/agenix.d/<generation>` ramfs); consumers read `config.calamoose.secrets.<name>.path`, which resolves to that path on the agenix backend.
+
+### When decryption actually happens — `agenix-rerun`
+
+agenix installs its secrets from a NixOS **activation script**, and activation runs from stage-2-init **before systemd starts**. `age-plugin-yubikey` talks to the key through `pcscd`, a socket-activated systemd service — so at boot the decryption always fails and `/run/agenix` starts empty (a `nixos-rebuild switch`, run with pcscd up, is what used to populate it).
+
+`modules/agenix/configuration.nix` therefore defines `agenix-rerun.service` on every agenix host: after `pcscd.socket` it waits briefly for a YubiKey to enumerate, re-runs the exact agenix activation snippets (with retries), and fails fast if no key is plugged in. Consumers that need the secrets at boot order after it with `wants` + `after`:
+
+- `microvm-virtiofsd@` (the `/run/hostsecrets` share into guests) — `services/vm-manager`
+- `acme-order-renew-<domain>` (the Cloudflare token) — `services/certs`
+- `NetworkManager` (VPN `.nmconnection` secrets) — `modules/vpn`
+
+Operationally: keep the host's recipient YubiKey plugged in; if it was missing at boot, plug it in and `sudo systemctl restart agenix-rerun` (the VM host's `vm-hostsecrets-sync` is `PartOf` it and re-syncs; then restart the units that needed the secrets). Every host switch rotates the `/run/agenix.d/<n>` generation; the VM host therefore shares a stable copy (`/run/vm-hostsecrets`, refreshed in place by `vm-hostsecrets-sync` after `agenix-rerun` and by an activation snippet on every rebuild) rather than the rotating symlink, so running guests keep a current, read-only `/run/hostsecrets`.
 
 ---
 
@@ -60,7 +72,7 @@ agenix decrypts to `/run/agenix/<name>`; consumers read `config.age.secrets.<nam
 
 Declared in `hosts/_core/options.nix` (default `true`). Every secret-consuming block is wrapped in `lib.mkIf config.calamoose.enableSecrets`, so flipping it to `false` skips all secret registration, the agenix install, and the VM secret share.
 
-**Hosts with `enableSecrets = false`:** `broadcast`, `openreturn`, `quorumcall`, `livedata`. These build without needing a decryptable Yubikey present.
+**Hosts with `enableSecrets = false`:** `openreturn`, `quorumcall`, `livedata`, and the keyless homelab guests `media`, `torrent`, `security` (they read host-decrypted files from `/run/hostsecrets` instead). `broadcast` uses `"online"` (Proton Pass). These build without needing a decryptable Yubikey present.
 
 ---
 
@@ -78,6 +90,7 @@ Declared in `hosts/_core/options.nix` (default `true`). Every secret-consuming b
 | `cloudflare-token` | `hosts/homelab/secrets/` | `cala-certs` DNS-01 token |
 | `qbit-password` | `hosts/homelab/secrets/` | torrent VM (via virtiofs → `/run/hostsecrets`) |
 | `proton-vpn.conf` | `hosts/homelab/secrets/` | torrent VM WireGuard (via virtiofs) |
+| `protect-api-key` / `protect-admin-password` | `modules/unifi-protect-monitor/secrets/` (imported by `hosts/homelab/vms.nix`) | security VM camera wall, handed to the service via `LoadCredential` (via virtiofs) |
 
 ---
 

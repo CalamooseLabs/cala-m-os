@@ -59,5 +59,34 @@ in {
     };
 
     services.caddy.enable = true;
+
+    # Pre-create the certificate directory at boot. It is otherwise created
+    # only as the StateDirectory of acme-<domain>.service, which races the
+    # guests' virtiofs daemons on a fresh host (hosts/homelab/vms.nix shares it
+    # into media/torrent); a virtiofsd whose --shared-dir does not exist fails,
+    # and the guest that Requires it is then never started. Ownership matches
+    # what the acme module enforces for the cert's group.
+    systemd.tmpfiles.rules = ["d /var/lib/acme/${cfg.domain} 0750 acme caddy - -"];
+
+    # The order/renew unit reads the Cloudflare token via EnvironmentFile; on the
+    # agenix backend that file only appears once agenix-rerun has decrypted it
+    # post-boot (see modules/agenix). Without this ordering the boot-time order
+    # fails on a fresh host and nothing retries until the daily renew timer (up
+    # to 24h of jitter), leaving the guests on the self-signed placeholder cert.
+    systemd.services."acme-order-renew-${cfg.domain}" = lib.mkMerge [
+      (lib.mkIf (config.calamoose._secretsBackend == "agenix") {
+        after = ["agenix-rerun.service"];
+        wants = ["agenix-rerun.service"];
+      })
+      {
+        # A fresh box may boot with a wrong clock (dead RTC battery) or before
+        # DNS is usable; TLS to the CA and the DNS-01 check both need both.
+        # Upstream sets RestartSec=15min but no Restart=, so a failed first order
+        # otherwise waits for the daily timer (plus up to 24h of jitter).
+        after = ["time-sync.target"];
+        wants = ["time-sync.target"];
+        serviceConfig.Restart = "on-failure";
+      }
+    ];
   };
 }

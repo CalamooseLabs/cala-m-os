@@ -37,6 +37,8 @@
 
 3. Reboot
 
+Rebuilding the `homelab` server (and its Plex / \*arr / qBittorrent / camera-wall guests) from a bare disk, a YubiKey and the NAS backups is documented step by step in the wiki's **[Disaster Recovery](./wiki/Disaster-Recovery.md)** page.
+
 ### Key Installation
 
 Hosts that carry the `developer` profile (e.g. `ai`) ship two commands that
@@ -89,7 +91,7 @@ on real hardware; **MicroVM guests** run on a host through its `cala-vm-manager`
 | `battlestation` | AM5 desktop (B850) | `gamer` | `2.0.0` | Gaming desktop — also the game/stream source |
 | `lanstation` | Intel desktop (B760) | `gamer` | `1.0.0` | LAN gaming station — RTX 5090 host; splits into a GPU-passthrough gaming VM (WIP) |
 | `broadcast` | Threadripper (TRX50-SAGE) | `streamer` | `1.0.0-beta` | Live stream box — RTX Pro 4000, Blackmagic Quad HDMI, OBS |
-| `homelab` | Minisforum MS-02 | `server` | `2.0.0-beta` | Homelab VM host — runs `media` + `torrent` |
+| `homelab` | Minisforum MS-02 | `server` | `2.1.0-beta` | Homelab VM host — runs `media` + `torrent` + `security` |
 | `livedata` | Minisforum MS-01 | `server` | `1.0.0-alpha` | App/VM host — runs `openreturn` + `quorumcall` |
 | `simple` | Framework 13 | `basic` | `1.0.0` | Minimal desktop setup |
 | `ai` | Zima | `developer` | `0.0.1-alpha` | Headless TTY dev box (impermanent root) — runs background Claude sessions |
@@ -101,6 +103,7 @@ on real hardware; **MicroVM guests** run on a host through its `cala-vm-manager`
 |-------|------|------|---------|---------|------|
 | `media` | Medium | `server` | `0.9.0-beta` | `homelab` | Plex media server (Caddy SSL) |
 | `torrent` | X-Small | `server` | `0.9.0-beta` | `homelab` | Radarr / Sonarr / Prowlarr + qBittorrent (VPN) |
+| `security` | X-Small | `server` | `0.9.0-beta` | `homelab` | UniFi Protect camera-wall web service |
 | `openreturn` | Small | `server` | `0.1.0-alpha` | `livedata` | OpenReturn TTY app server |
 | `quorumcall` | Small | `server` | `0.1.0-alpha` | `livedata` | QuorumCall TTY app server |
 | `lanstation-vm` | Large | `gamer` | `1.0.0` | `lanstation` | GPU-passthrough gaming guest (WIP) |

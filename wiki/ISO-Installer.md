@@ -53,6 +53,12 @@ The ISO is also the flake's `packages.default`. `flash-iso` is documented in [[F
 
 Then reboot.
 
+Notes:
+- The ISO auto-starts the `cala-installer` TUI on tty1 (a gum front-end over `install-cala-m-os`): pick the host, then **"Use the host's default machine"** for any existing host. The **"Generate a fresh config for THIS box (self)"** choice is for brand-new hardware only — it neither sets `wipeAllDisks` nor pins the disk by id, so it cannot install a host like `homelab`.
+- The first (minimal) pass uses the flake's pinned `disko` input, so it needs nothing beyond the clone.
+- Reinstalling onto a **replaced OS disk**: the machine's `disko.nix` pins the drive by id; pass the new path with `sudo INSTALL_OS_DISK=/dev/disk/by-id/... install-cala-m-os <host>` — variable after `sudo` — (MS-02 supports this; a non-by-id value is refused) and update the pin afterwards. Full homelab procedure: [[Disaster Recovery|Disaster-Recovery]].
+- The password entered in Step 5 is `hub`'s password of record: `users.mutableUsers` is on, so the `admin_password` secret only seeds accounts that are created while it is readable.
+
 ---
 
 ## Machine override — build a host onto different hardware

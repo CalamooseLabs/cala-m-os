@@ -26,6 +26,7 @@
           tag = "acmecerts";
           source = "/var/lib/acme/${cala-m-os.fqdn}";
           mountPoint = "/mnt/acme";
+          readOnly = true;
         }
       ];
     };
@@ -43,6 +44,7 @@
           tag = "acmecerts";
           source = "/var/lib/acme/${cala-m-os.fqdn}";
           mountPoint = "/mnt/acme";
+          readOnly = true;
         }
       ];
     };
