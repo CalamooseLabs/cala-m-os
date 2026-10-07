@@ -20,7 +20,17 @@
   lib,
   pkgs,
   ...
-}: {
+}: let
+  # pgrep/pkill selector for the MAIN obs process, by kernel name (comm) —
+  # never by argv. The wrapper chain (wrapOBS → the nosync wrapProgram in
+  # modules/obs-studio → obs's own C wrapper) loses `exec -a` at the shebang
+  # hop, so the live process's argv0 is …-wrapped-obs-studio-nosync/bin/
+  # .obs-wrapped__, which the old argv pattern anchored on bin/obs never
+  # matched. comm is the exec'd binary's own name: ".obs-wrapped" (or "obs"
+  # unwrapped). Helpers can't match: their comm truncates to ".obs-ffmpeg-mux" /
+  # ".obs-nvenc-test" (15 chars) and CEF's is "obs-browser-pag".
+  obsProc = "-x '\\.?obs(-wrapped)?'";
+in {
   # Only ship obs-kiosk where OBS is actually configured. niri is also used on
   # boxes without OBS (the ephemeral lab host's `void` user); gating on
   # programs.obs-studio.enable keeps config.programs.obs-studio.finalPackage
@@ -61,8 +71,15 @@
           # would hit OBS's "already running — launch anyway?" dialog, which is
           # exactly the kind of modal this kiosk path exists to avoid. Matches
           # the session user's OBS the same way the wait loop below does.
-          if pgrep -u "$(stat -c %U "$XDG_RUNTIME_DIR")" -f 'obs-studio[^/]*/bin/\.?obs(-wrapped)?( |$)' >/dev/null 2>&1; then
+          session_user="$(stat -c %U "$XDG_RUNTIME_DIR")"
+          if pgrep -u "$session_user" ${obsProc} >/dev/null 2>&1; then
             echo "obs-kiosk: OBS is already running — nothing to do" >&2
+            exit 0
+          fi
+          # Likewise while a launch is still waiting on its stream keys (see the
+          # obs-stream-keys step below): that obs-kiosk will exec OBS shortly.
+          if pgrep -u "$session_user" -x obs-stream-keys >/dev/null 2>&1; then
+            echo "obs-kiosk: an OBS launch is already in progress (waiting for stream keys) — nothing to do" >&2
             exit 0
           fi
           # Ask the compositor to spawn obs-kiosk (no flag → the PRIME launch below)
@@ -71,22 +88,26 @@
           # that makes the relaunched OBS exit at once — so confirm by polling for
           # the process and report real success/failure instead of a misleading "ok".
           # Target the session user (the SSH login may be root); they own the runtime
-          # dir we found. Match the obs-studio store path with -f so we never match
-          # this obs-kiosk process itself.
-          session_user="$(stat -c %U "$XDG_RUNTIME_DIR")"
+          # dir we found. Seconds spent while the launch waits on its stream keys
+          # (up to 90s, see below) don't count against the 15s.
           if ! ${config.programs.hyprland.package}/bin/hyprctl dispatch exec obs-kiosk; then
             echo "obs-kiosk: hyprctl dispatch failed for instance $HYPRLAND_INSTANCE_SIGNATURE" >&2
             exit 1
           fi
           echo "obs-kiosk: dispatched into Hyprland ($HYPRLAND_INSTANCE_SIGNATURE) as $session_user; waiting for OBS..." >&2
-          for _ in $(seq 1 15); do
-            if pgrep -u "$session_user" -f obs-studio >/dev/null 2>&1; then
+          waited=0
+          for _ in $(seq 1 120); do
+            if pgrep -u "$session_user" ${obsProc} >/dev/null 2>&1; then
               echo "obs-kiosk: OBS is up" >&2
               exit 0
             fi
+            if ! pgrep -u "$session_user" -x obs-stream-keys >/dev/null 2>&1; then
+              waited=$((waited + 1))
+              [ "$waited" -le 15 ] || break
+            fi
             sleep 1
           done
-          echo "obs-kiosk: OBS did not come up within 15s — check for a stale lock or missing GL paths (try: pgrep -u $session_user -f obs-studio)" >&2
+          echo "obs-kiosk: OBS did not come up — check for a stale lock or missing GL paths (try: pgrep -u $session_user -x .obs-wrapped)" >&2
           exit 1
         fi
         if [ "$#" -gt 0 ]; then
@@ -101,8 +122,25 @@
         # sentinels before launching, but only when no OBS is running: a live
         # instance owns its own run_ file and deleting it would blind real
         # crash detection.
-        if ! pgrep -u "$(id -un)" -f 'obs-studio[^/]*/bin/\.?obs(-wrapped)?( |$)' >/dev/null 2>&1; then
+        if ! pgrep -u "$(id -un)" ${obsProc} >/dev/null 2>&1; then
           rm -f "''${XDG_CONFIG_HOME:-$HOME/.config}/obs-studio/.sentinel/run_"* 2>/dev/null || true
+        fi
+
+        # Stream keys (calamoose.obs.streamKeys in modules/obs-studio, where a
+        # host configures them): inject now, while OBS is still closed — OBS
+        # reads keys only at launch and the Aitum plugins rewrite their config
+        # on exit. --wait covers a fresh box whose Proton secrets are still being
+        # fetched (they arrive after network-online); an injected key persists in
+        # the OBS config, so later boots don't wait. May delay the launch (≤90s,
+        # only until the boot-time fetch finishes); never prevents it.
+        if command -v obs-stream-keys >/dev/null 2>&1; then
+          obs-stream-keys --wait 90 || true
+          # Another launcher may have started OBS during that wait — don't
+          # stack a second instance (and its "already running" modal) on it.
+          if pgrep -u "$(id -un)" ${obsProc} >/dev/null 2>&1; then
+            echo "obs-kiosk: OBS was started meanwhile — nothing to do" >&2
+            exit 0
+          fi
         fi
 
         export LD_LIBRARY_PATH=/run/opengl-driver/lib''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
@@ -127,19 +165,18 @@
       # confirm dialog, so it works headless/mid-stream. Powering off around a
       # running OBS instead kills compositor + OBS together, OBS loses the race,
       # the sentinel survives, and the next launch gets the Safe Mode popup.
-      # The pgrep/pkill pattern is anchored to …-obs-studio-*/bin/{obs,
-      # .obs-wrapped} — the MAIN process only. It must not match the sibling
-      # bin/obs-ffmpeg-mux (TERM would kill a replay-buffer save mid-write and
-      # truncate the file — OBS stops it cleanly itself), bin/obs-nvenc-test,
-      # or the CEF helpers under libexec/.
+      # pkill/pgrep target the MAIN process only (obsProc, by comm). They must
+      # not match obs-ffmpeg-mux (TERM would kill a replay-buffer save mid-write
+      # and truncate the file — OBS stops it cleanly itself), obs-nvenc-test,
+      # or the CEF helpers.
       # Wired to the physical power button on broadcast (logind ignores the key,
       # Hyprland bindl execs this) and to the waybar power pill there.
       (pkgs.writeShellScriptBin "obs-safe-poweroff" ''
-        if pkill -TERM -f 'obs-studio[^/]*/bin/\.?obs(-wrapped)?( |$)' 2>/dev/null; then
+        if pkill -TERM ${obsProc} 2>/dev/null; then
           # up to 20s for stream/recording teardown + config write; if OBS is
           # truly hung we power off anyway and let systemd do the killing
           for _ in $(seq 1 40); do
-            pgrep -f 'obs-studio[^/]*/bin/\.?obs(-wrapped)?( |$)' >/dev/null 2>&1 || break
+            pgrep ${obsProc} >/dev/null 2>&1 || break
             sleep 0.5
           done
         fi

@@ -27,7 +27,8 @@ obs/
   Backs up the live config to `~/.config/obs-studio.backup-<ts>.tar.gz` first, then
   **mirrors** `basic/profiles` + `basic/scenes` (removing live profiles/collections
   the baseline doesn't have — e.g. an auto-created "Untitled") and overwrites
-  `global.ini`. Restart OBS to load it.
+  `global.ini`, then re-injects the stream keys (`obs-stream-keys`). Restart OBS
+  to load it.
 - **Fresh box:** the baseline is copied in automatically on the first rebuild
   (only where a file is absent — never clobbering machine-owned files).
 
@@ -50,10 +51,17 @@ Bootstrap: on the box that already has your real OBS setup, run
   and add the matching `homeAssets` entry, or the source renders black on a fresh
   box (seeding reproduces the path, not the file).
 - **Profiles / collections:** `TheCalamoose` (→ `TheCalamoose - Coding`) and
-  `The Company, Inc.` (→ `The Cobblemon Initiative`: Chat Window / Starting Soon /
-  Be Right Back / Gameplay / Card Opening / Vertical Scene, with the
-  stinger + BRB/Starting Soon media and full overlays; the 2026-09-22 snapshot
-  dropped `Gameplay - Talking Head` + Run Counter — removed on the box). `global.ini` opens
+  `The Company, Inc.` (→ `The Cobblemon Initiative`, refreshed from the
+  2026-10-01 export). Main canvas: Chat Window / Starting Soon / Be Right Back /
+  Gameplay / Card Opening / Only Me, with the stinger + BRB/Starting Soon media
+  and full overlays. **Aitum Vertical** canvas (1080x1920): Gameplay / Card
+  Opening / BRB / Starting Soon, linked to the same-named main scenes (Be Right
+  Back → BRB) so switching the main scene switches the vertical one; Chat Window
+  and Only Me have no vertical twin. Scene names repeat across the canvases, so
+  any scripted edit must select by `uuid`/`canvas_uuid`, not `name`. History: the
+  2026-09-22 snapshot dropped `Gameplay - Talking Head` + Run Counter; the
+  2026-10-01 export turned the empty `Vertical Scene` into vertical Gameplay and
+  dropped Conference Microphone. `global.ini` opens
   into **The Company, Inc. / The Cobblemon Initiative** by default (this box is
   primarily The Company); switch the `[Basic]` `Profile`/`SceneCollection`
   pointers to change that. These are the ONLY profiles/collections — no
@@ -62,6 +70,28 @@ Bootstrap: on the box that already has your real OBS setup, run
 - **Recording paths** (`FilePath`/`RecFilePath`/`FFFilePath` in the profile)
   point at `/recordings` — the RAID0 scratch array from the machine's disko
   layout, made user-writable by a tmpfiles rule in `../configuration.nix`.
+- **The Company profile streams** to Twitch (main output, Enhanced Broadcasting
+  with `MultitrackExtraCanvas` = the Aitum Vertical canvas uuid
+  `179cb257-40f6-4e05-9baa-b8a1be7d50a7`; it must keep matching the
+  collection's `canvases` entry), YouTube (Aitum Multistream output) and
+  YouTube Vertical (Aitum Vertical stream output).
+- **Stream keys are never in this directory.** `service.json` is committed with
+  a blank key. `obs-config-snapshot` copies each `service.json` only through a
+  scrub that blanks `key`/`bearer_token`/`password`, and skips every
+  `service.json*` sibling and OBS's `*.bak`/`*.tmp` save leftovers (they can
+  hold old keys). A secret baked into a custom server URL is not detected, so
+  review such diffs. The keys live in Proton Pass (item `Stream Keys`, fields
+  `Twitch` / `YouTube` / `YouTube Vertical`). `obs-stream-keys` writes them into
+  the live config when obs-kiosk launches OBS, wired by
+  `calamoose.obs.streamKeys` in `../configuration.nix`. It refuses to run while
+  OBS is open: OBS reads keys only at launch, and both Aitum plugins rewrite
+  their config on exit. The boot-time launch usually runs before the
+  post-network Proton fetch, so it uses the key already in the OBS config. After
+  rotating a key, quit and relaunch OBS once the box is up. The two Aitum
+  configs (`plugin_config/{aitum-multistream,vertical-canvas}/config.json`) are
+  not part of this baseline either. On a fresh box the vertical one only exists
+  after OBS's first run, so YouTube Vertical gets its key from the second
+  launch onward.
 
 Applying baseline changes to the ALREADY-RUNNING box: the seed is
 copy-if-absent, so edits here don't reach a live config on rebuild — and

@@ -19,6 +19,7 @@ in {
   # Online (Proton Pass) secrets — fetched at activation. Consumed here:
   #   users/_core/secrets/default.nix -> admin_password (hub hashedPasswordFile)
   #   modules/multichat/secrets       -> youtube-api-key (multichat apiKeyFile)
+  #   this file (below)               -> stream-key-* (OBS stream keys)
   calamoose.enableSecrets = "online";
   calamoose.version = "1.4.0";
   calamoose.style = "thecompany"; # The Company, Inc. brand theme
@@ -48,7 +49,7 @@ in {
         machine_uuid = machine_uuid;
       })
     ]
-    ++ lib.optional (!initialInstallMode) {
+    ++ lib.optional (!initialInstallMode) ({config, ...}: {
       services.proton-secrets.patFile = "/var/lib/proton-pass-cli/pat";
       # Defense-in-depth for the gen2 "Switch root target contains no usable init"
       # hang. Root cause: the Proton fetch ran in the no-network INITRD activation
@@ -115,7 +116,80 @@ in {
       # $HOME media assets, and the seeded (auth-disabled) OBS-websocket config.
       # See ./home.nix.
       home-manager.sharedModules = [./home.nix];
-    };
+
+      # OBS stream keys for The Company, Inc. — one Proton Pass item ("Stream
+      # Keys", vault Cala-M-OS) with a field per destination. Owned by the
+      # session user: obs-stream-keys runs as hub from obs-kiosk, right before
+      # each OBS launch, and writes them into the live OBS config (see
+      # calamoose.obs.streamKeys in modules/obs-studio). The committed baseline
+      # carries NO keys — service.json's key is blank and obs-config-snapshot
+      # blanks it again — so rotating a key is: update Proton Pass, rebuild
+      # switch (re-fetches), quit OBS, relaunch it via obs-kiosk / the bar pill.
+      # A reboot alone is NOT enough: the boot-time OBS launch runs before the
+      # post-network fetch, so it keeps the key already in the OBS config —
+      # quit + relaunch OBS once the box is up.
+      # CAUTION: a missing/renamed/blank field aborts the WHOLE proton-secrets
+      # fetch (all 9 broadcast secrets — multichat, chat-cards, admin_password
+      # too). failClosed=false means the switch still exits 0 (only a
+      # "[proton-secrets] … refresh failed" warning), and the damage lands on
+      # the NEXT boot. Check each of the three fields BEFORE switching, without
+      # printing it — the count must be > 1 (1 = blank field):
+      #   sudo proton-secrets resolve --vault-name Cala-M-OS --item-title 'Stream Keys' --field 'YouTube Vertical' | wc -c
+      # and after switching: ls /run/proton-secrets/stream-key-*  (all three).
+      calamoose.secrets = let
+        streamKey = field: {
+          vaultName = "Cala-M-OS";
+          itemTitle = "Stream Keys";
+          inherit field;
+          owner = cala-m-os.globals.defaultUser;
+        };
+      in {
+        "stream-key-twitch" = streamKey "Twitch";
+        "stream-key-youtube" = streamKey "YouTube";
+        "stream-key-youtube-vertical" = streamKey "YouTube Vertical";
+      };
+
+      # Where each key goes. Existing outputs keep their name/settings and just
+      # get the key; one is created only when none qualifies.
+      #   Twitch           main output (service.json, Twitch + Enhanced
+      #                    Broadcasting, which also carries the vertical canvas)
+      #   YouTube          every youtube.com Aitum Multistream output of this
+      #                    profile (a primary + backup pair shares the key)
+      #   YouTube Vertical the Aitum Vertical output NAMED "YouTube Vertical"
+      #                    (a youtube.com output already holding this exact
+      #                    key is renamed to that once). That plugin's config
+      #                    is GLOBAL (it also shows under TheCalamoose), so
+      #                    another channel's YouTube output there is left alone.
+      calamoose.obs.streamKeys = let
+        youtube = "rtmps://a.rtmps.youtube.com:443/live2";
+      in {
+        twitch = {
+          target = "service";
+          profile = "The_Company_Inc";
+          match = "twitch";
+          keyFile = config.calamoose.secrets."stream-key-twitch".path;
+        };
+        youtube = {
+          target = "multistream";
+          profile = "The_Company_Inc";
+          match = "youtube.com";
+          create = {
+            name = "YouTube";
+            server = youtube;
+          };
+          keyFile = config.calamoose.secrets."stream-key-youtube".path;
+        };
+        youtube-vertical = {
+          target = "vertical";
+          match = "youtube.com";
+          create = {
+            name = "YouTube Vertical";
+            server = youtube;
+          };
+          keyFile = config.calamoose.secrets."stream-key-youtube-vertical".path;
+        };
+      };
+    });
 
   networking.hostName = "broadcast";
 

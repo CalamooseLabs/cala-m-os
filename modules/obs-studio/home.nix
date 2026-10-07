@@ -71,6 +71,12 @@
       if [ -e "$src/global.ini" ]; then
         cp -f --no-preserve=mode "$src/global.ini" "$obsDir/global.ini"
       fi
+      # The baseline carries no stream keys (blank service.json key), so the
+      # mirror just blanked the live ones — re-inject where a host configures
+      # them (calamoose.obs.streamKeys → obs-stream-keys, a system package).
+      if command -v obs-stream-keys >/dev/null 2>&1; then
+        obs-stream-keys || echo "warning: stream keys not re-injected — quit OBS, then run obs-stream-keys" >&2
+      fi
       echo "restored baseline into $obsDir (restart OBS to load it)"
     '';
   };
@@ -80,7 +86,7 @@
   # from a running box, so it must be available before any baseline exists.
   snapshotApp = pkgs.writeShellApplication {
     name = "obs-config-snapshot";
-    runtimeInputs = [pkgs.coreutils pkgs.rsync];
+    runtimeInputs = [pkgs.coreutils pkgs.jq pkgs.rsync];
     text = ''
       repo="${toString cfg.repoPath}"
       obsDir="${obsDir}"
@@ -95,9 +101,34 @@
 
       mkdir -p "$repo/basic/profiles" "$repo/basic/scenes"
       # Mirror the meaningful content; --delete keeps the repo in sync with
-      # profiles/collections you removed on the box.
-      rsync -rlt --delete --no-owner --no-group "$obsDir/basic/profiles/" "$repo/basic/profiles/"
-      rsync -rlt --delete --no-owner --no-group "$obsDir/basic/scenes/"   "$repo/basic/scenes/"
+      # profiles/collections you removed on the box. *.bak / *.tmp are OBS's
+      # atomic-save leftovers (service.json.bak can hold an old stream key) —
+      # never baseline material; --delete-excluded clears any that got in.
+      # service.json and every sibling of it (.bak, injector temp files) carry
+      # the stream key, so they are excluded and service.json alone is copied
+      # below through a scrub — a key never lands in the working tree, not
+      # even briefly, and not if the scrub fails.
+      for sub in profiles scenes; do
+        rsync -rlt --delete --delete-excluded \
+          --exclude='*.bak' --exclude='*.tmp' --exclude='service.json*' \
+          --no-owner --no-group "$obsDir/basic/$sub/" "$repo/basic/$sub/"
+      done
+      for svc in "$obsDir"/basic/profiles/*/service.json; do
+        [ -e "$svc" ] || continue
+        dest="$repo/basic/profiles/$(basename "$(dirname "$svc")")/service.json"
+        # Blank the credentials (key / WHIP bearer_token / custom-RTMP auth
+        # password); a host injects keys at launch instead (calamoose.obs.
+        # streamKeys in modules/obs-studio/configuration.nix). A secret baked
+        # into a custom server URL is NOT detected — review such diffs.
+        if ! jq -c '.settings |= with_entries(if (.key | IN("key", "bearer_token", "password")) then .value = "" else . end)' \
+          "$svc" > "$dest.scrub"; then
+          rm -f "$dest.scrub"
+          echo "WARNING: could not parse $svc — left out of the snapshot" >&2
+          continue
+        fi
+        mv -f "$dest.scrub" "$dest"
+      done
+      echo "stream keys blanked in the snapshotted service.json files"
 
       # global.ini carries the "current profile/collection" pointer that lets
       # a fresh box open straight into the right setup, but also machine-local
