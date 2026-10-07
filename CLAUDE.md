@@ -79,18 +79,19 @@ Flake outputs (built with `nixos-rebuild ... --flake .#<host>`):
 | `battlestation` | B850-MAX | `gamer` | Gaming desktop + stream source |
 | `lanstation` | B760-PLUS | `gamer` | RTX 5090 host; VFIO — splits into a GPU-passthrough gaming VM (WIP) |
 | `broadcast` | TRX50-SAGE | `streamer` | OBS live-stream box; RTX Pro 4000 + AMD GPU (evdi teleprompter); `enableSecrets="online"` (Proton Pass: admin_password + multichat youtube-api-key) |
-| `homelab` | MS-02 | `server` | Homelab VM host (media + torrent); owns agenix secrets + cala-certs |
+| `homelab` | MS-02 | `server` | Homelab VM host (media + torrent + security); owns agenix secrets + cala-certs |
 | `livedata` | MS-01 | `server` | Client app/VM host (openreturn + quorumcall); `enableSecrets=false` |
 | `openreturn` | Small VM | `server` | OpenReturn app; standalone output *and* a `livedata` guest |
 | `iso` | — | — | Custom installer with disko + agenix |
 
-**microVM guests** (built by a parent host's `vms.nix`, not top-level outputs): `media` (Medium) + `torrent` (X-Small) on `homelab`; `openreturn` + `quorumcall` (Small) on `livedata`; `lanstation-vm` (Large, the gaming guest) on `lanstation` (WIP). `htpc` and `vault` (local Steam cache) are defined but not yet wired to a parent.
+**microVM guests** (built by a parent host's `vms.nix`, not top-level outputs): `media` (Medium) + `torrent` (X-Small) + `security` (X-Small, UniFi Protect camera wall) on `homelab`; `openreturn` + `quorumcall` (Small) on `livedata`; `lanstation-vm` (Large, the gaming guest) on `lanstation` (WIP). `htpc` and `vault` (local Steam cache) are defined but not yet wired to a parent.
 
 ### Secrets / Security
 
-- **agenix** manages secrets encrypted to Yubikey-backed SSH keys
+- **agenix** manages secrets encrypted to Yubikey-backed SSH keys. Decryption cannot happen at activation time (pcscd is not up yet), so `modules/agenix` ships `agenix-rerun.service`; anything that needs a secret at boot orders after it (`services/vm-manager`, `services/certs`, `modules/vpn`)
 - **GPG** and **Yubikey** modules handle hardware key integration
 - The ISO boots with Yubikey SSH auth; installs using `INITIAL_INSTALL_MODE=1` for a minimal first pass, then does a full rebuild
+- `homelab` and its guests rebuild from scratch via `wiki/Disaster-Recovery.md`: guest state comes back through `calamoose.install.firstBootCommands` restores (plex/radarr/sonarr/prowlarr/qbittorrent) from the NAS backup shares
 
 ### specialArgs Pattern
 

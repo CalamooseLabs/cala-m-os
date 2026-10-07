@@ -5,6 +5,7 @@
 }: {
   lib,
   pkgs,
+  inputs,
   machineOverride ? "",
   ...
 }: let
@@ -18,7 +19,10 @@ in {
   imports = [
     ../../hosts/_core/options.nix
     machine_hardware
-    "${fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
+    # The flake's pinned disko (not an impure fetch of disko master): the same
+    # revision the full config uses, and it resolves from the lock file so the
+    # first install pass works offline and cannot break on an upstream change.
+    inputs.disko.nixosModules.disko
     machine_disko
   ];
 

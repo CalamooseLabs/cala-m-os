@@ -180,8 +180,10 @@ The manager passes `inputs`, `cala-m-os`, `initialInstallMode` into each guest's
 
 | Host | NIC | Guests |
 |------|-----|--------|
-| `homelab` | `eno2` | `media` (Plex, passthrough `arc-b50` iGPU), `torrent` (\*arr + qBittorrent/VPN) |
+| `homelab` | `eno2` (`media` on `eno1`) | `media` (Plex, passthrough `arc-b50` GPU, 10GbE port to itself), `torrent` (\*arr + qBittorrent/VPN), `security` (UniFi Protect camera wall) |
 | `livedata` | `enp88s0` | `openreturn`, `quorumcall` (10.1.10.0/24, custom gateway/DNS) |
 | `lanstation` | `eno2` | one GPU-passthrough gaming VM (WIP — `vms.nix` not yet imported) |
+
+On the agenix backend the host shares a stable, read-only copy of its secrets (`/run/vm-hostsecrets`, kept current by `vm-hostsecrets-sync`), and every guest's `microvm-virtiofsd@` (and so the guest) is ordered after that sync, which itself follows `agenix-rerun.service` — so `/run/hostsecrets` is populated before the guest boots and stays valid across host rebuilds. See [[Secrets & Security|Secrets-and-Security]]. Guests never garbage-collect the shared store and wait for their macvtap link before `network-online.target` (`machines/vms/_core`). The homelab guests restore their state from the NAS on their first boot; the full rebuild-from-nothing procedure is in [[Disaster Recovery|Disaster-Recovery]].
 
 See [[Hosts|Hosts]] for the guest directory list.

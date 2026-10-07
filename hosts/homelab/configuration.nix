@@ -34,6 +34,11 @@ in {
 
   networking.hostName = "homelab";
 
+  # Keep the boot menu reachable over the KVM: after a reinstall or a bad
+  # generation this is the only way to pick an older generation without a
+  # trip to the box (core defaults to 0 = boot straight through).
+  boot.loader.timeout = 3;
+
   networking.networkmanager.enable = lib.mkForce false;
 
   networking = {
@@ -51,6 +56,10 @@ in {
     # doesn't grab a stray lease on 10.10.10.0/26 that would collide with eno2.
     # The media VM's macvtap parent needs this interface up.
     interfaces.eno1.useDHCP = false;
+    # No DHCP client at all: every host address is static, and with the
+    # hardware default (useDHCP = true) dhcpcd would also solicit leases on the
+    # guests' vm-* macvtap links using their MACs.
+    useDHCP = false;
     defaultGateway = {
       address = cala-m-os.ip.lab.gateway;
       interface = "eno2";

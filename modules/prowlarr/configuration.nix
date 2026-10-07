@@ -19,9 +19,24 @@
 
   boot.supportedFilesystems = ["nfs"];
 
+  # nofail: a missing NAS must not wedge the guest's boot; everything that
+  # touches the share waits for it via RequiresMountsFor instead.
   fileSystems."/mnt/backups/prowlarr" = {
     device = "${cala-m-os.nfs.server}:${cala-m-os.nfs.backup.prowlarr}";
     fsType = "nfs";
+    options = ["nofail"];
+  };
+
+  # Prowlarr runs under DynamicUser, which implies ProtectSystem=strict: the
+  # whole filesystem is read-only to it except its StateDirectory. Its scheduled
+  # backups (Settings -> General -> Backups, folder /mnt/backups/prowlarr) can
+  # therefore only land on the NAS share if that path is explicitly writable —
+  # without this every backup silently fails and prowlarr-restore finds nothing.
+  # Mount ordering keeps the app from writing into the empty mountpoint on the
+  # local root if the NAS is late.
+  systemd.services.prowlarr = {
+    serviceConfig.ReadWritePaths = ["/mnt/backups/prowlarr"];
+    unitConfig.RequiresMountsFor = ["/mnt/backups/prowlarr"];
   };
 
   # prowlarr-restore — rebuild state from the newest backup zip on the NAS share

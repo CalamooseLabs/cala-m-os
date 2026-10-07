@@ -26,7 +26,7 @@
       media = "10.10.10.11";
       homelab = "10.10.10.15";
       tci = "10.10.10.16"; # TCI private soul-link fleet (set a matching DHCP reservation)
-      security = "10.10.10.20"; # UniFi Protect camera-wall VM (set a matching DHCP reservation)
+      security = "10.10.10.20"; # UniFi Protect camera-wall VM (static via vm-manager, MAC 02:00:00:00:00:20 — keep it out of the DHCP pool)
       torrent = "10.10.10.35";
       htpc = "10.10.10.40";
       lanstation-1 = "10.10.10.41";
@@ -62,6 +62,7 @@
       radarr = "/mnt/Media Library/Backups/Radarr";
       sonarr = "/mnt/Media Library/Backups/Sonarr";
       prowlarr = "/mnt/Media Library/Backups/Prowlarr";
+      qbittorrent = "/mnt/Media Library/Backups/qBittorrent";
     };
   };
 }

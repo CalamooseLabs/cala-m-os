@@ -65,6 +65,10 @@
     unitConfig =
       {
         ConditionPathExists = "!${stamp}";
+        # Bound the in-boot retries below: at most 10 attempts per hour, then
+        # the unit stays failed until the next boot (where it runs again).
+        StartLimitIntervalSec = "1h";
+        StartLimitBurst = 10;
       }
       // lib.optionalAttrs (c.requiresMounts != []) {
         RequiresMountsFor = c.requiresMounts;
@@ -74,6 +78,13 @@
       RemainAfterExit = true;
       User = c.user;
       ExecStart = runner;
+      # A failed attempt (NAS not reachable yet, the app still creating its
+      # data dir, a share that mounted late) is retried a few times within the
+      # same boot instead of only on the next reboot. The stamp still gates
+      # success, so a completed restore never re-runs. Restart=on-failure is
+      # permitted for Type=oneshot (only always/on-success are not).
+      Restart = "on-failure";
+      RestartSec = "2min";
     };
     # Resolve `run` (e.g. plex-restore, from environment.systemPackages) and the
     # coreutils used above against the full system profile.

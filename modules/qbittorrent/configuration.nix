@@ -7,6 +7,10 @@
 with lib; let
   cfg = config.services.qbittorrent-vpn;
 in {
+  # Scheduled backups of the torrent state + the qbittorrent-restore command
+  # (services.qbittorrent-vpn.backup.*).
+  imports = [./backup.nix];
+
   options.services.qbittorrent-vpn = {
     enable = mkEnableOption "qBittorrent with WireGuard VPN";
 
@@ -31,6 +35,18 @@ in {
         type = types.str;
         default = "admin";
         description = "WebUI username";
+      };
+
+      serverDomains = mkOption {
+        type = types.listOf types.str;
+        default = [];
+        example = ["qbit.example.com"];
+        description = ''
+          Host names the WebUI accepts in the Host header. qBittorrent accepts
+          any name by default; listing the names a reverse proxy forwards for
+          this instance turns host-header validation into DNS-rebinding
+          protection. Empty keeps the default.
+        '';
       };
     };
 
@@ -160,12 +176,28 @@ in {
       iptables
     ];
 
-    # **WireGuard network namespace service**
+    # Both units below read a file the host shares in (/run/hostsecrets/*).
+    # If it is not there yet (host booted without its YubiKey), wait for it —
+    # bounded — instead of failing straight into the start-rate limit and
+    # staying dead until someone restarts the unit by hand.
     systemd.services.wireguard-namespace = {
       description = "WireGuard VPN Network Namespace";
       after = ["network-online.target"];
-      wants = ["network-online.target"];
+      # Wants qbittorrent back: if the namespace failed at boot (secret file
+      # late) qbittorrent's start job was cancelled with it; a later successful
+      # (re)start of the namespace re-queues qbittorrent instead of leaving it
+      # "inactive (dead)" until someone starts it by hand.
+      wants = ["network-online.target" "qbittorrent.service"];
       wantedBy = ["multi-user.target"];
+
+      preStart = ''
+        for _ in $(seq 1 120); do
+          [ -s ${cfg.wireguardConfigFile} ] && exit 0
+          sleep 5
+        done
+        echo "wireguard-namespace: ${cfg.wireguardConfigFile} still missing after 10 minutes (host secrets not shared in?)" >&2
+        exit 1
+      '';
 
       serviceConfig = {
         Type = "oneshot";
@@ -318,6 +350,15 @@ in {
       wantedBy = ["qbittorrent.service"];
       before = ["qbittorrent.service"];
 
+      preStart = ''
+        for _ in $(seq 1 120); do
+          [ -s ${cfg.qbittorrentPasswordFile} ] && exit 0
+          sleep 5
+        done
+        echo "qbittorrent-setup-password: ${cfg.qbittorrentPasswordFile} still missing after 10 minutes (host secrets not shared in?)" >&2
+        exit 1
+      '';
+
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
@@ -419,6 +460,9 @@ in {
         WebUI\AuthSubnetWhitelist=10.200.200.0/24,127.0.0.1/32
         WebUI\Address=10.200.200.2
         WebUI\CSRFProtection=false
+        ${optionalString (cfg.webUI.serverDomains != []) ''
+          WebUI\ServerDomains=${concatStringsSep ";" cfg.webUI.serverDomains}
+        ''}
         Downloads\SavePath=${cfg.downloads.path}
         Downloads\TempPath=${cfg.downloads.incompletePath}
         Downloads\TempPathEnabled=true
@@ -459,10 +503,12 @@ in {
         # NoNewPrivileges = true;
         PrivateTmp = true;
         ProtectSystem = "strict";
+        # "-": the download dirs live on the NAS mount and are created by preStart;
+        # a path that does not exist yet must not fail the sandbox setup.
         ReadWritePaths = [
           "/var/lib/qbittorrent"
-          cfg.downloads.path
-          cfg.downloads.incompletePath
+          "-${cfg.downloads.path}"
+          "-${cfg.downloads.incompletePath}"
         ];
 
         # Restart limits
