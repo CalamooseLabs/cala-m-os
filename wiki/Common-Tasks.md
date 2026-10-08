@@ -23,7 +23,7 @@ Convenience module `rebuild-config` wraps this: it stages via `lazygit` if the t
 ```bash
 alejandra .            # format all Nix files (== nix fmt)
 nix flake check        # evaluate all configs
-nix develop            # dev shell: alejandra, nixd, nil, claude-code, flash-iso, zed
+nix develop            # dev shell: alejandra, nixd, nil, claude-code, flash-iso, build-pat-iso, zed
 ```
 
 ---

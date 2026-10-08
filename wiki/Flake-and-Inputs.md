@@ -102,6 +102,7 @@ It's a wired-in extension point (imported by both the dev-shell `pkgs` and the `
 | `nixd`, `nil` | Nix language servers |
 | `claude-code` | Claude Code CLI |
 | `flash-iso` | Interactive ISO build-and-flash helper (below) |
+| `build-pat-iso` | Build the ISO as a file with a Proton PAT inside, for cloud custom-ISO uploads (see [[ISO & Installer|ISO-Installer]]) |
 | `zed-editor` (from `antlers`) | Nix-enabled Zed, pre-wired to use `nil`/`nixd` + `alejandra` formatting |
 
 The shell hook prints `Using Local Nix-Enabled Zed!`.

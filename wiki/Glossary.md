@@ -37,4 +37,5 @@ Project-specific terms and where to read more.
 | **disko** | Declarative disk partitioning; layout lives in each machine's `disko.nix` |
 | **stylix** | System-wide theming module |
 | **`flash-iso`** | Dev-shell helper: build the ISO and `dd` it to a USB stick |
+| **`build-pat-iso`** | Dev-shell helper: build the ISO as a file with a Proton PAT at `/calapat/pat` (cloud custom ISOs) |
 | **`non-vm.nix`** | Workstation-only settings (unfree, store auto-optimise, `/etc/nixos` perms, NetworkManager) |

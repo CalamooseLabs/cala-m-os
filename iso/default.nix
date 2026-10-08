@@ -5,7 +5,11 @@
   lib,
   ...
 }: {
-  imports = [(modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")];
+  imports = [
+    (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")
+    # Proton PAT on the media → GitHub token for private flake inputs.
+    ./calapat.nix
+  ];
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
   nixpkgs.config.allowUnfree = true;

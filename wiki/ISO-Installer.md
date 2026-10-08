@@ -28,6 +28,51 @@ The ISO is also the flake's `packages.default`. `flash-iso` is documented in [[F
 
 ---
 
+## Proton PAT on the media → private flake inputs (`iso/calapat.nix`)
+
+Hosts with a **private** `github:` input (tci-cloud's `cobblemon-initiative`, battlestation/devbox's `bookkeeper`) can't be evaluated without a GitHub `access-tokens` line, and that line lives in Proton Pass (vault `Cala-M-OS`, item `nix-github-token`, field `secret`, the same item [[Secrets & Security|Secrets-and-Security]] uses). When the install media carries a Proton Pass PAT, the live installer logs in with it and fetches the line:
+
+| PAT source | Written by | Use |
+|---|---|---|
+| `/iso/calapat/pat` inside the ISO | `build-pat-iso` | an ISO **file**, for cloud custom-ISO slots (a virtual CD-ROM has no partition table, so a CALAPAT partition is invisible) |
+| `CALAPAT`-labelled partition | `flash-iso --with-pat` | a USB stick |
+
+- `cala-nix-token` runs at boot (`cala-nix-token.service`, retrying while the network is down and giving up on errors a retry can't fix) and again, synchronously, from an `install-cala-m-os` shim before the install starts. It logs in with its own throwaway session, logs out, and writes `/dev/shm/cala-install/nix-access-tokens.conf` (root, 0600) in canonical `access-tokens = host=token` form.
+- The live `nix.conf` `!include`s that file. The shim also exports it as `NIX_USER_CONF_FILES`, because Step Four's `nixos-enter` reads the **target's** `nix.conf` and mounts a fresh `/run`. It does rbind `/dev`, though, so `/dev/shm` survives into the chroot, and the environment is inherited.
+- `PROTON_PASS_PAT_FILE=/iso/calapat/pat` is set system-wide, so cala-installer's own Proton step for online hosts picks up the same PAT.
+- With no PAT on the media nothing changes: the service exits and Nix ignores the missing include.
+- The token is never written to the target or the store; it lives in RAM for the length of the install.
+
+### Building one: `build-pat-iso`
+
+Anyone holding the ISO can use the PAT, and Proton PAT grants are per vault. So the ISO should carry a PAT that can only read the token: put a copy of `nix-github-token` in its own vault, create a plain (non-agent) PAT with a short expiry, and grant it **viewer on that vault only**. The vault has to be granted as a whole; `--vault-name` lookups don't see item-only grants.
+
+```bash
+nix develop -c build-pat-iso --vault Cala-M-OS-Install       # prompts for the PAT; writes ~/cala-m-os-installer-pat.iso (0600)
+nix develop -c build-pat-iso --vault Cala-M-OS-Install --pat-file ~/pat --out /path/on/share/installer.iso
+#   --shared-vault          read the shared Cala-M-OS vault instead (exposes whatever the PAT is granted there)
+#   --item/--field          a differently named token item (default nix-github-token / secret)
+#   --no-check              skip the pre-flight check (offline build)
+```
+
+Before building, it does what the installer will do: it logs in with the PAT in a throwaway session and reads the token item, so a bad PAT or a missing grant fails here rather than on the cloud box. It then builds the normal ISO and uses xorriso to add `/calapat/` (root-only) to a **copy** outside the nix store, replaying the original El Torito/MBR/GPT boot records. Before writing the output it verifies the PAT reads back and the boot setup matches the original. It refuses to write inside the flake.
+
+> Revoke the PAT after the install, and delete the ISO from the share and from the provider. Exception: if you install an online-secrets host from this ISO, cala-installer seeds the PAT onto it, so revoking it would cut that host off.
+
+### Hetzner Cloud (tci-cloud)
+
+1. Put the ISO on the share behind a **direct-download** link that needs no login. Then open a Hetzner support ticket (project → Support → "Miscellaneous") with the link and "x86". The ISO becomes private to the project; the API can't upload or delete ISOs, so removal also takes a ticket.
+2. Server → ISO Images → mount it, then reboot. It boots under UEFI from a virtual CD (`/dev/sr0`); the root disk stays `/dev/sda`. Use the web console (noVNC).
+3. cala-installer's host list doesn't include tci-cloud, and HETZNER-CLOUD can't set `wipeAllDisks`: that needs a `/dev/disk/by-id` pin, and Hetzner root-disk serials differ per server. So choose **Drop to a shell** and run:
+   ```bash
+   sudo -i
+   disko --mode destroy,format,mount --flake github:CalamooseLabs/cala-m-os#tci-cloud
+   INSTALL_SKIP_DISKO=1 install-cala-m-os tci-cloud
+   ```
+   `journalctl -u cala-nix-token` shows whether the GitHub token was fetched. `cala-nix-token` retries it by hand.
+
+---
+
 ## What's on the ISO (`iso/default.nix`)
 
 - Based on `installation-cd-minimal.nix`; flakes + `nix-command` + `allowUnfree`.

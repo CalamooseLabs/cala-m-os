@@ -57,6 +57,8 @@ in
       # flash-iso now ships from the antlers scripts collection (relocated out of
       # this file). Defaults to building this repo's iso from the git toplevel.
       inputs.antlers.packages.${pkgs.stdenv.hostPlatform.system}.flash-iso
+      # The ISO as a file with a Proton PAT inside (cloud custom-ISO uploads).
+      (pkgs.callPackage ./iso/build-pat-iso.nix {})
       (inputs.antlers.lib.x86_64-linux.mkZedWrapper zedSettings)
     ];
 
