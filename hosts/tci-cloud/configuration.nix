@@ -34,10 +34,12 @@ in {
         # tci-server        = the dedicated fleet (headless hardening + Aikar JVM).
         # nix-github-token  = the PAT that lets Nix fetch the PRIVATE
         #                     cobblemon-initiative flake input at eval time.
-        extra_user_modules = {server = ["tci-server" "nix-github-token"];};
+        # cala-reinstall    = `sudo cala-reinstall` turns the box back into the
+        #                     installer in place (kexec), no custom ISO needed.
+        extra_user_modules = {server = ["tci-server" "nix-github-token" "cala-reinstall"];};
       })
     ]
-    # Both user modules above exist only in the full config, not the minimal
+    # tci-server and nix-github-token exist only in the full config, not the minimal
     # INITIAL_INSTALL_MODE pass, so their settings ride this conditional import:
     # an unguarded definition fails that pass with "option does not exist".
     ++ lib.optional (!initialInstallMode) {

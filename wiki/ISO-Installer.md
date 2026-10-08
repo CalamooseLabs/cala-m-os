@@ -73,6 +73,47 @@ Before building, it does what the installer will do: it logs in with the PAT in 
 
 ---
 
+## Reinstall in place: `cala-reinstall` (no USB or ISO)
+
+A host with the `cala-reinstall` module (`modules/cala-reinstall`; enrolled on tci-cloud) can turn itself back into the installer. It kexecs into a RAM-only build of the same installer: the flake output `installer-kexec` (`iso/kexec.nix`, a netboot image that keeps the whole store in the initrd). This suits remote boxes and cloud VMs, where there is nothing to plug in.
+
+```bash
+sudo cala-reinstall --dry-run     # build the payload and load the image, then unload it
+sudo cala-reinstall               # type the hostname to confirm; the session drops
+#   --flake REF | --image DIR      where the kexec image comes from (default: github:CalamooseLabs/cala-m-os)
+#   --token-file / --pat-file      what it carries for private inputs (default: the host's own)
+#   --no-token                     go ahead with neither (hosts without private inputs)
+#   --no-keys / --no-network       don't carry SSH keys / static addresses
+```
+
+It appends a small payload to the image's initrd. The installer copies it to `/var/lib/cala-reinstall` (`cala.installer.mediaDir`):
+
+| Carried | From | Used for |
+|---|---|---|
+| `nix-access-tokens.conf` | this host's `nix config show access-tokens` (or `--token-file`) | private flake inputs; no Proton round trip |
+| `pat` | `/var/lib/proton-pass-cli/pat` (or `--pat-file`) | fetching the token itself; seeded onto an online-secrets host it reinstalls |
+| `authorized_keys` | the host's plain SSH key lines | extra root keys in the installer |
+| `ssh/ssh_host_*` | `services.openssh.hostKeys` | the same host key, so `known_hosts` still matches |
+| `network` | static (never-expiring) global addresses, default gateways and DNS, keyed by NIC MAC | a NetworkManager profile per NIC (matched by MAC); DHCP/RA networks need none |
+| `hostname` | | the login hint in the installer |
+
+- **Nothing on disk changes until you run the install.** A hard reset before then boots the old system.
+- It refuses to run when it would carry neither a token nor a PAT, unless you pass `--no-token`. **tci-cloud holds no token** (`enableSecrets = false`), so give it `--token-file` (copy over an `access-tokens = github.com=…` line) or `--pat-file`.
+- The installer comes up with SSH (same host key, the host's keys plus the YubiKey keys) and the TUI on the console. Then install as usual. For tci-cloud, that's the shell steps above.
+- It needs RAM: the initrd is about 1.4 GB because it includes linux-firmware, like the ISO, and the installer briefly holds it twice. It checks first and refuses on boxes under roughly 4 GB.
+- Kexec skips the firmware reset. That's fine for VMs, but on a workstation with a GPU, rebooting into a USB or ISO is safer.
+- Static addresses become one NetworkManager profile per NIC, matched by MAC, so a renamed or late-appearing NIC still gets them. A NIC that also had DHCP keeps DHCP alongside them. Addresses on VLANs, bonds or bridges without a physical member aren't carried; it says so.
+- The default flake ref only has `installer-kexec` once this is on master. Until then use `--flake github:CalamooseLabs/cala-m-os/<branch>`.
+
+Tested in QEMU, from a static-IP NixOS VM:
+- After the jump, the host key was unchanged and root SSH worked with the carried key.
+- The static address was restored onto the renamed NIC (eth0 → ens3) by MAC, and GitHub was reachable.
+- The carried token reached Nix.
+- A dry run leaves nothing loaded, and it refuses to run with no token.
+- A reset booted the old system with the same host key.
+
+---
+
 ## What's on the ISO (`iso/default.nix`)
 
 - Based on `installation-cd-minimal.nix`; flakes + `nix-command` + `allowUnfree`.

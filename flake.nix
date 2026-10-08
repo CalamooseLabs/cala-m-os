@@ -205,6 +205,14 @@
         system = "x86_64-linux";
         modules = [./iso/default.nix];
       };
+
+      # The same installer as a RAM-only kexec image (no USB or ISO): what
+      # `cala-reinstall` (modules/cala-reinstall) turns a running host into.
+      installer-kexec = nixpkgs.lib.nixosSystem {
+        specialArgs = {inherit inputs;};
+        system = "x86_64-linux";
+        modules = [./iso/kexec.nix];
+      };
     };
 
     formatter = {
@@ -232,6 +240,7 @@
       self.nixosConfigurations;
 
     packages.x86_64-linux.default = self.nixosConfigurations.iso.config.system.build.isoImage;
+    packages.x86_64-linux.installer-kexec = self.nixosConfigurations.installer-kexec.config.system.build.calaKexec;
 
     templates = import ./templates;
 

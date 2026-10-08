@@ -27,6 +27,9 @@ nix develop
 # Build the custom installer ISO
 nix build .#nixosConfigurations.iso.config.system.build.isoImage
 
+# Build the RAM-only installer that `sudo cala-reinstall` kexecs a running host into
+nix build .#installer-kexec
+
 # Install on new hardware (run from ISO)
 INITIAL_INSTALL_MODE=1 sudo nixos-install --flake .#<hostname>
 ```

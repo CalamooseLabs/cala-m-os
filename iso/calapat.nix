@@ -10,8 +10,12 @@
 #                          shell). For cloud custom-ISO uploads: a virtual CD-ROM
 #                          has no partition table for a CALAPAT partition.
 #   - CALAPAT partition  — appended to a USB stick by `flash-iso --with-pat`.
+#   - /var/lib/cala-reinstall — carried into the RAM-only installer by
+#                          `cala-reinstall` (modules/cala-reinstall), which may
+#                          bring the host's own ready-made `nix-access-tokens.conf`
+#                          instead, skipping Proton entirely.
 #
-# The PAT never enters the nix store; both paths add it after the build.
+# The PAT never enters the nix store; every path adds it after the build.
 #
 # Where the token lands matters: install-cala-m-os's Step Four runs
 # `nixos-rebuild` inside `nixos-enter`, which reads the TARGET's nix.conf and
@@ -21,6 +25,7 @@
 # here: install-cala-m-os overwrites it with `tarball-ttl = 0`.) Nix skips a
 # missing or unreadable include, so media without a PAT behave as before.
 {
+  config,
   inputs,
   pkgs,
   lib,
@@ -29,7 +34,8 @@
   system = pkgs.stdenv.hostPlatform.system;
   antlers = inputs.antlers.packages.${system};
 
-  patFile = "/iso/calapat/pat";
+  mediaDir = config.cala.installer.mediaDir;
+  patFile = "${mediaDir}/pat";
   tokenFile = "/dev/shm/cala-install/nix-access-tokens.conf";
 
   cala-nix-token = pkgs.writeShellApplication {
@@ -43,6 +49,7 @@
       #   --force  refetch even if the token file already exists
       # Exits 0 when there is no PAT on the media (nothing to do).
       TOKEN_FILE=${lib.escapeShellArg tokenFile}
+      MEDIA_DIR=${lib.escapeShellArg mediaDir}
       PAT_FILE="''${PROTON_PASS_PAT_FILE:-${patFile}}"
       # Same selectors as modules/nix-github-token; media files may override them.
       VAULT="''${CALA_NIX_TOKEN_VAULT:-Cala-M-OS}"
@@ -80,6 +87,44 @@
 
       have_token() { [ -s "$TOKEN_FILE" ] && grep -q '^access-tokens' "$TOKEN_FILE"; }
       if [ "$FORCE" -eq 0 ] && have_token; then exit 0; fi
+
+      # Last two non-blank lines of pass-cli's stderr, PAT redacted.
+      show() { printf '%s\n' "$1" | grep -v '^[[:space:]]*$' | tail -n2 | sed -E "s/pst_[^[:space:]']{8,}/pst_<redacted>/g" >&2 || true; }
+
+      # Canonical `access-tokens = host=token …` from the item value. A malformed
+      # line (e.g. no spaces round the `=`) makes EVERY nix command fail, echoing
+      # the whole line — token included — in the error, so never write one.
+      canonical() {
+        local rest
+        case "$1" in
+          # The item should hold the whole directive, but accept a bare token.
+          github_pat_* | ghp_*) rest="github.com=$1" ;;
+          access-tokens*) rest=$(printf '%s' "$1" | sed -E 's/^access-tokens[[:space:]]*=[[:space:]]*//') ;;
+          *) return 1 ;;
+        esac
+        printf '%s' "$rest" | grep -Eq '^[^[:space:]=]+=[^[:space:]]+([[:space:]]+[^[:space:]=]+=[^[:space:]]+)*$' || return 1
+        printf 'access-tokens = %s\n' "$rest"
+      }
+
+      write_token() {
+        install -d -m 0700 "$(dirname "$TOKEN_FILE")" || return 1
+        (
+          umask 077
+          printf '%s\n' "$1" >"$TOKEN_FILE.tmp"
+        ) || return 1
+        mv -f "$TOKEN_FILE.tmp" "$TOKEN_FILE" || return 1
+      }
+
+      # A ready-made token on the media (cala-reinstall carries the host's own):
+      # no Proton round trip needed.
+      if [ -r "$MEDIA_DIR/nix-access-tokens.conf" ]; then
+        value=$(sed -n '/[^[:space:]]/{s/^[[:space:]]*//;s/[[:space:]]*$//;p;q}' "$MEDIA_DIR/nix-access-tokens.conf")
+        if line=$(canonical "$value") && write_token "$line"; then
+          log "GitHub access token for Nix taken from $MEDIA_DIR/nix-access-tokens.conf."
+          exit 0
+        fi
+        log "ignoring $MEDIA_DIR/nix-access-tokens.conf: not an 'access-tokens = host=token' line."
+      fi
 
       # Optional vault/item/field files next to the PAT (build-pat-iso --vault …).
       read_overrides() {
@@ -119,24 +164,6 @@
         exit 0
       fi
 
-      # Last two non-blank lines of pass-cli's stderr, PAT redacted.
-      show() { printf '%s\n' "$1" | grep -v '^[[:space:]]*$' | tail -n2 | sed -E "s/pst_[^[:space:]']{8,}/pst_<redacted>/g" >&2 || true; }
-
-      # Canonical `access-tokens = host=token …` from the item value. A malformed
-      # line (e.g. no spaces round the `=`) makes EVERY nix command fail, echoing
-      # the whole line — token included — in the error, so never write one.
-      canonical() {
-        local rest
-        case "$1" in
-          # The item should hold the whole directive, but accept a bare token.
-          github_pat_* | ghp_*) rest="github.com=$1" ;;
-          access-tokens*) rest=$(printf '%s' "$1" | sed -E 's/^access-tokens[[:space:]]*=[[:space:]]*//') ;;
-          *) return 1 ;;
-        esac
-        printf '%s' "$rest" | grep -Eq '^[^[:space:]=]+=[^[:space:]]+([[:space:]]+[^[:space:]=]+=[^[:space:]]+)*$' || return 1
-        printf 'access-tokens = %s\n' "$rest"
-      }
-
       # Returns 0 on success, 1 for errors worth retrying (network), 2 for ones
       # retrying can't fix. pass-cli is called directly, not via proton-secrets,
       # whose session probe (`pass-cli test`) is gone from pass-cli 2.2.4+.
@@ -166,12 +193,7 @@
           log "item '$ITEM' doesn't hold an 'access-tokens = host=token' line or a GitHub token; not using it."
           return 2
         fi
-        install -d -m 0700 "$(dirname "$TOKEN_FILE")" || return 1
-        (
-          umask 077
-          printf '%s\n' "$line" >"$TOKEN_FILE.tmp"
-        ) || return 1
-        mv -f "$TOKEN_FILE.tmp" "$TOKEN_FILE" || return 1
+        write_token "$line" || return 1
         log "GitHub access token for Nix fetched from Proton Pass ('$VAULT' / '$ITEM')."
       }
 
@@ -224,30 +246,41 @@
     '';
   };
 in {
-  environment.systemPackages = [
-    cala-nix-token
-    (lib.hiPrio install-cala-m-os-shim)
-  ];
+  options.cala.installer.mediaDir = lib.mkOption {
+    type = lib.types.str;
+    default = "/iso/calapat";
+    description = ''
+      Directory holding the install media's `pat` (plus optional `vault`, `item`,
+      `field`) or a ready-made `nix-access-tokens.conf`.
+    '';
+  };
 
-  # cala-installer's discover_pat (online hosts) and `proton-secrets login` both
-  # honour this; a missing file falls through to the CALAPAT partition.
-  environment.variables.PROTON_PASS_PAT_FILE = patFile;
+  config = {
+    environment.systemPackages = [
+      cala-nix-token
+      (lib.hiPrio install-cala-m-os-shim)
+    ];
 
-  nix.extraOptions = ''
-    !include ${tokenFile}
-  '';
+    # cala-installer's discover_pat (online hosts) and `proton-secrets login` both
+    # honour this; a missing file falls through to the CALAPAT partition.
+    environment.variables.PROTON_PASS_PAT_FILE = patFile;
 
-  # Fetch at boot so cala-installer's pre-install evals (secrets backend, version)
-  # already see the token. Type=simple: a oneshot would hold multi-user.target
-  # while it waits for the network.
-  systemd.services.cala-nix-token = {
-    description = "Fetch the GitHub token for private flake inputs via the media's Proton Pass PAT";
-    wantedBy = ["multi-user.target"];
-    wants = ["network-online.target"];
-    after = ["network-online.target"];
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${cala-nix-token}/bin/cala-nix-token --wait";
+    nix.extraOptions = ''
+      !include ${tokenFile}
+    '';
+
+    # Fetch at boot so cala-installer's pre-install evals (secrets backend, version)
+    # already see the token. Type=simple: a oneshot would hold multi-user.target
+    # while it waits for the network.
+    systemd.services.cala-nix-token = {
+      description = "Fetch the GitHub token for private flake inputs via the media's Proton Pass PAT";
+      wantedBy = ["multi-user.target"];
+      wants = ["network-online.target"];
+      after = ["network-online.target"];
+      serviceConfig = {
+        Type = "simple";
+        ExecStart = "${cala-nix-token}/bin/cala-nix-token --wait";
+      };
     };
   };
 }
