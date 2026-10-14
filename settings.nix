@@ -35,11 +35,11 @@
 
     # Studio subnet — live broadcast / OBS + device control (streamdeck, teleprompters)
     studio = {
-      subnet = "10.1.10.0/26";
+      subnet = "10.2.10.0/26";
       prefixLength = 26;
-      gateway = "10.1.10.1";
-      broadcast = "10.1.10.49";
-      battlestation = "10.1.10.32";
+      gateway = "10.2.10.1";
+      broadcast = "10.2.10.2";
+      battlestation = "10.2.10.3";
     };
   };
 
