@@ -22,17 +22,26 @@
   # Which fleet this box runs:
   #   "cagelocke" — the streamer event: two 2-player teams race to a gym badge on
   #                 two team instances, refereed from the hub. Closed roster.
-  #                 Event runbook: docs/Cagelocke-Design.md and
-  #                 docs/Cagelocke-Soak-Recipe.md in the cobblemon-initiative repo.
+  #                 Design + rehearsal: docs/Cagelocke-Design.md and
+  #                 docs/Cagelocke-Soak-Recipe.md (QEMU soak) in the
+  #                 cobblemon-initiative repo.
   #   "public"    — the open front door: each player gets a solo world, or forms
   #                 a co-op group.
+  # Flipping it on a LIVE box: the hub never restarts on a rebuild, so after the
+  # switch run `systemctl restart tci-server-hub` (else it keeps its old marker —
+  # going to cagelocke, the token-guarded warden then 401s it). Leave cagelocke
+  # only after `/tci-hub cage reset` with both team floors stopped.
   fleetMode = "cagelocke";
 
   # ---- Cagelocke roster ---------------------------------------------------
-  # Exact Minecraft Java names. The hub and both team instances resolve them
-  # against Mojang at start, and an unresolvable name refuses that start.
+  # Exact Minecraft Java names. The hub resolves every name here against Mojang
+  # at start; the team floors resolve only the referee and casters (streamers
+  # reach them by the uuid the hub captured at login). An unresolvable name
+  # refuses that start. After changing the roster on a live box, run
+  # `systemctl restart tci-server-hub` — the hub never restarts on a rebuild.
   streamers = []; # TODO: the four streamers (two teams of two). Until filled,
-  #                 only the referee and casters get past the hub whitelist.
+  #                 only the referee and casters get past the hub whitelist, and
+  #                 nobody may provision (see players below).
   referee = "RoboMoose"; # TODO: the referee — the ONLY op, never a streamer
   casters = []; # in-world casters (spectate both team floors), if any
 
@@ -87,8 +96,8 @@ in {
           services.tci-server = {
             enable = true;
             eula = true; # accepting Mojang's EULA (required to run the server)
-            # `deploy_server` rsyncs here + flips the symlink. For the event, freeze it:
-            # point this at the versioned dir (/srv/tci/bundle-cobblemon-initiative-<ver>)
+            # `deploy_server` rsyncs here + flips the symlink. TODO(event): freeze it —
+            # once the event build is deployed, point this at the versioned dir (/srv/tci/bundle-cobblemon-initiative-<ver>)
             # so a mid-event deploy can't reseed a wiped team on a newer build that
             # the streamers' client packs no longer match.
             bundle = "/srv/tci/bundle";
@@ -117,10 +126,11 @@ in {
         (lib.mkIf (fleetMode == "cagelocke") {
           assertions = [
             {
-              assertion = !(lib.elem referee streamers);
+              assertion = !(lib.elem (lib.toLower referee) (map lib.toLower streamers));
               message = "tci-cloud: the cagelocke referee (${referee}) is also listed as a streamer — ops bypass the race's containment, so the referee must be a separate account.";
             }
           ];
+          warnings = lib.optional (streamers == []) "tci-cloud: the cagelocke roster (streamers) is empty — nobody can provision or form a team until it is filled in.";
 
           services.tci-server = {
             cagelocke = {
@@ -134,7 +144,14 @@ in {
 
             # CLOSED roster. Team floors whitelist the WHOLE registry, so only the
             # streamers may provision, and the hub whitelist is everyone's way in.
-            players = streamers;
+            # An EMPTY players list means OPEN provisioning, so until the roster is
+            # filled hold it closed with a name no Java account can have (a hyphen) —
+            # otherwise the referee could mint a stray world that never boots but
+            # holds a slot and is whitelisted on both floors.
+            players =
+              if streamers == []
+              then ["-roster-unset-"]
+              else streamers;
             hub.whitelist = streamers ++ [referee] ++ casters;
             ops = [referee]; # referee commands (/tci-hub cage create|start|reset,
             #                  /cage admin, /cage finale) need op. Never a streamer.
@@ -147,8 +164,10 @@ in {
             instanceDefaults = {
               emptyShutdownMinutes = 0; # never halt a floor while its team is out hunting
               dailyReturnAt = null; # no 04:00 bounce to the hub mid-race
-              # The bundle ships 4; a floor holds its 2 members + a rival hunter and
-              # spectator, plus casters. Raise it if there are more than 2 casters.
+              # The bundle ships 4; a floor holds its 2 members + up to 2 rivals
+              # (hunter + spectating partner, or the losing team at the finale) + the
+              # referee (an op bypasses the cap but still takes a slot), plus casters.
+              # Raise it for more than 3 casters.
               serverProperties."max-players" = 8;
             };
 
@@ -168,6 +187,10 @@ in {
           # LoadCredential.
           systemd.services.tci-warden-token = {
             description = "Generate the TCI warden bearer token";
+            # The hub and warden Require this unit, so a rebuild that restarted it
+            # would bounce the lobby mid-race (the hub itself never restarts on a
+            # rebuild). The token is minted once and kept, so never re-run it.
+            restartIfChanged = false;
             before = ["tci-server-warden.service" "tci-server-hub.service"];
             requiredBy = ["tci-server-warden.service" "tci-server-hub.service"];
             serviceConfig = {
