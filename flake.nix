@@ -195,7 +195,8 @@
       ai = mkSystem "ai" {};
 
       # The Cobblemon Initiative dedicated servers.
-      # tci-cloud   — Hetzner Cloud (US), internet-facing hub (co-op OR solo).
+      # tci-cloud   — Hetzner Cloud (US), internet-facing hub. Starts as the
+      #               cagelocke streamer event; fleetMode "public" = co-op/solo.
       # tci-private — local LAN box, internal soul-link (shared-fate) fleet.
       tci-cloud = mkSystem "tci-cloud" {};
       tci-private = mkSystem "tci-private" {};

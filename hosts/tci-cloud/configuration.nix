@@ -3,10 +3,11 @@
 #     TCI Cloud Server (hub)     #
 #     Hetzner Cloud (US, CCX)    #
 #                                #
-#  Internet-facing fleet: the    #
-#  hub is the front door; each   #
-#  player gets a solo world, or  #
-#  forms a co-op group.          #
+#  Internet-facing fleet. Starts #
+#  out as the CAGELOCKE streamer #
+#  event (2v2 hardcore race);    #
+#  flip fleetMode to "public"    #
+#  for the open solo/co-op hub.  #
 #                                #
 ##################################
 {
@@ -17,6 +18,27 @@
   import_users = ["server"];
   machine_type = "Workstation";
   machine_uuid = "HETZNER-CLOUD";
+
+  # Which fleet this box runs:
+  #   "cagelocke" — the streamer event: two 2-player teams race to a gym badge on
+  #                 two team instances, refereed from the hub. Closed roster.
+  #                 Event runbook: docs/Cagelocke-Design.md and
+  #                 docs/Cagelocke-Soak-Recipe.md in the cobblemon-initiative repo.
+  #   "public"    — the open front door: each player gets a solo world, or forms
+  #                 a co-op group.
+  fleetMode = "cagelocke";
+
+  # ---- Cagelocke roster ---------------------------------------------------
+  # Exact Minecraft Java names. The hub and both team instances resolve them
+  # against Mojang at start, and an unresolvable name refuses that start.
+  streamers = []; # TODO: the four streamers (two teams of two). Until filled,
+  #                 only the referee and casters get past the hub whitelist.
+  referee = "RoboMoose"; # TODO: the referee — the ONLY op, never a streamer
+  casters = []; # in-world casters (spectate both team floors), if any
+
+  # Root-only, generated on the box (see tci-warden-token below). A string, not a
+  # path literal, so it never lands in the Nix store.
+  wardenTokenFile = "/var/lib/tci-secrets/warden-token";
 in {
   calamoose.version = "1.0.0";
 
@@ -43,45 +65,149 @@ in {
     # INITIAL_INSTALL_MODE pass, so their settings ride this conditional import:
     # an unguarded definition fails that pass with "option does not exist".
     ++ lib.optional (!initialInstallMode) {
-      # PAT for the private cobblemon-initiative input. With enableSecrets = false
-      # (no Yubikey on a Cloud box) the token is NOT decrypted on the box — so
-      # deploy FROM a machine that already holds it (e.g. devbox) via
-      # `nixos-rebuild --target-host`, whose evaluator fetches the private input.
-      programs.nix-github-token = {
-        enable = true;
-        agenixFile = ../../modules/nix-github-token/secrets/nix-github-token.age;
-      };
+      config = lib.mkMerge [
+        {
+          assertions = [
+            {
+              assertion = lib.elem fleetMode ["cagelocke" "public"];
+              message = "tci-cloud: fleetMode must be \"cagelocke\" or \"public\" (got \"${fleetMode}\").";
+            }
+          ];
 
-      # ---- The Cobblemon Initiative dedicated fleet (PUBLIC hub) --------------
-      services.tci-server = {
-        enable = true;
-        eula = true; # accepting Mojang's EULA (required to run the server)
-        bundle = "/srv/tci/bundle"; # `deploy_server` rsyncs here + flips the symlink
+          # PAT for the private cobblemon-initiative input. With enableSecrets = false
+          # (no Yubikey on a Cloud box) the token is NOT decrypted on the box — so
+          # deploy FROM a machine that already holds it (e.g. devbox) via
+          # `nixos-rebuild --target-host`, whose evaluator fetches the private input.
+          programs.nix-github-token = {
+            enable = true;
+            agenixFile = ../../modules/nix-github-token/secrets/nix-github-token.age;
+          };
 
-        # Where CLIENTS reach the box; instances transfer players back to it. MUST
-        # be a real, client-resolvable address (DNS A/AAAA → the box's IPv4/IPv6).
-        publicHost = "play.thecompany.inc"; # TODO: real DNS for the box
+          # ---- The Cobblemon Initiative dedicated fleet (both modes) ------------
+          services.tci-server = {
+            enable = true;
+            eula = true; # accepting Mojang's EULA (required to run the server)
+            # `deploy_server` rsyncs here + flips the symlink. For the event, freeze it:
+            # point this at the versioned dir (/srv/tci/bundle-cobblemon-initiative-<ver>)
+            # so a mid-event deploy can't reseed a wiped team on a newer build that
+            # the streamers' client packs no longer match.
+            bundle = "/srv/tci/bundle";
 
-        hub.enable = true; # always-on front door (warden.enable follows hub.enable)
-        coop.enable = true; # offer co-op groups; solo per-player worlds are the
-        #                     default path — flip to false for a singleplayer-ONLY
-        #                     public fleet. soulLink stays OFF: a public fleet never
-        #                     shares fate or widens whitelists.
+            # Where CLIENTS reach the box; instances transfer players back to it. MUST
+            # be a real, client-resolvable address (DNS A/AAAA → the box's IPv4/IPv6),
+            # and the same name the client pack is built with (--server-address).
+            publicHost = "play.thecompany.inc"; # TODO: real DNS for the box
 
-        players = []; # open auto-provisioning; hub.whitelist is the real entry gate
-        hub.whitelist = []; # TODO: allowed/paid roster, or leave open
-        ops = ["RoboMoose"]; # TODO: real operator name(s) (Mojang-resolved at start)
+            hub.enable = true; # always-on front door (warden.enable follows hub.enable)
+            coop.enable = true; # co-op groups — and cagelocke's teams ARE co-op groups.
+            #                     soulLink stays OFF: a public fleet never shares fate,
+            #                     and cagelocke asserts it off.
 
-        # Sizing — MEASURE real RSS under load before packing to the RAM ceiling
-        # (prior notes: an AX102/7950X3D sustains ~14-15 active instances at 6G).
-        maxActive = 8; # concurrent running instances the warden allows
-        maxProvisioned = 32; # worlds on disk (~3.5G each + growth)
-        instanceDefaults.memory = "6G";
-        hub.memory = "4G";
+            # Sizing — MEASURE real RSS under load before packing to the RAM ceiling.
+            # Instance heaps are pinned (-Xms = -Xmx, AlwaysPreTouch), so each running
+            # instance holds its full heap from boot.
+            instanceDefaults.memory = "6G";
+            hub.memory = "4G";
 
-        openFirewall = true; # public front door: hub 25565 + game range (25600+)
-        backup.enable = true;
-      };
+            openFirewall = true; # public front door: hub 25565 + game range (25600+)
+          };
+        }
+
+        # ---- CAGELOCKE: the streamer event ------------------------------------
+        (lib.mkIf (fleetMode == "cagelocke") {
+          assertions = [
+            {
+              assertion = !(lib.elem referee streamers);
+              message = "tci-cloud: the cagelocke referee (${referee}) is also listed as a streamer — ops bypass the race's containment, so the referee must be a separate account.";
+            }
+          ];
+
+          services.tci-server = {
+            cagelocke = {
+              enable = true; # needs hub + warden + coop, and soulLink off (asserted)
+              targetBadge = 3; # the badge count that ends the race (1..10)
+              # Whitelisted on BOTH team floors (on top of the registry). Not added to
+              # hub.whitelist automatically — that's done below.
+              guests = [referee] ++ casters;
+            };
+            coop.maxGroupSize = 2; # the warden only files 2-player teams
+
+            # CLOSED roster. Team floors whitelist the WHOLE registry, so only the
+            # streamers may provision, and the hub whitelist is everyone's way in.
+            players = streamers;
+            hub.whitelist = streamers ++ [referee] ++ casters;
+            ops = [referee]; # referee commands (/tci-hub cage create|start|reset,
+            #                  /cage admin, /cage finale) need op. Never a streamer.
+
+            # Two team floors + the hub: ~2×(6G heap + overhead) + 4G hub ≈ 24 GB
+            # resident, so a 32 GB box (e.g. CCX33) is the floor.
+            maxActive = 2; # only the two team leaders' instances ever run
+            maxProvisioned = 4; # two teams + slack for a stray or a re-formed group
+            hub.preparingCapSeconds = 600; # a cold team-world boot overruns the 120 s default
+            instanceDefaults = {
+              emptyShutdownMinutes = 0; # never halt a floor while its team is out hunting
+              dailyReturnAt = null; # no 04:00 bounce to the hub mid-race
+              # The bundle ships 4; a floor holds its 2 members + a rival hunter and
+              # spectator, plus casters. Raise it if there are more than 2 casters.
+              serverProperties."max-players" = 8;
+            };
+
+            # Team worlds are disposable (a wipe deletes them), and the nightly
+            # save-off/tar sweep would hitch a live floor.
+            backup.enable = false;
+
+            # Required, not just hardening: only with a token does an instance that
+            # crashes mid-wipe report the reset back to the warden on restart
+            # (POST /cage/reset-consumed); without it the match record goes stale.
+            warden.tokenFile = wardenTokenFile;
+          };
+
+          # The warden token: nothing off the box ever needs it (the localhost
+          # warden, the hub and the instances), and with no secrets backend here,
+          # mint it on first boot and keep it. The hub and instances read it via
+          # LoadCredential.
+          systemd.services.tci-warden-token = {
+            description = "Generate the TCI warden bearer token";
+            before = ["tci-server-warden.service" "tci-server-hub.service"];
+            requiredBy = ["tci-server-warden.service" "tci-server-hub.service"];
+            serviceConfig = {
+              Type = "oneshot";
+              RemainAfterExit = true;
+              UMask = "0077";
+            };
+            script = ''
+              if [ ! -s ${wardenTokenFile} ]; then
+                mkdir -p "$(dirname ${wardenTokenFile})"
+                head -c 32 /dev/urandom | od -An -tx1 | tr -d ' \n' > ${wardenTokenFile}.tmp
+                mv ${wardenTokenFile}.tmp ${wardenTokenFile}
+              fi
+            '';
+          };
+
+          # The bundle ships StreamSync ON, aimed at a LAN overlay Hetzner can't reach.
+          # Off until the event overlay exists — then set
+          # services.tci-server.streamSync.{endpointUrl,tokenFile}, which turns it back
+          # on (the module's "true" outranks this default).
+          systemd.services."tci-server@".environment.STREAMSYNC_ENABLED = lib.mkDefault "false";
+        })
+
+        # ---- PUBLIC: the open solo / co-op front door -------------------------
+        (lib.mkIf (fleetMode == "public") {
+          services.tci-server = {
+            # Solo per-player worlds are the default path; coop.enable (above) also
+            # offers co-op groups — flip it to false for a singleplayer-ONLY fleet.
+            players = []; # open auto-provisioning; hub.whitelist is the real entry gate
+            hub.whitelist = []; # TODO: allowed/paid roster, or leave open
+            ops = ["RoboMoose"]; # TODO: real operator name(s) (Mojang-resolved at start)
+
+            # Prior notes: an AX102/7950X3D sustains ~14-15 active instances at 6G.
+            maxActive = 8; # concurrent running instances the warden allows
+            maxProvisioned = 32; # worlds on disk (~3.5G each + growth)
+
+            backup.enable = true;
+          };
+        })
+      ];
     };
 
   networking.hostName = "tci-cloud";
