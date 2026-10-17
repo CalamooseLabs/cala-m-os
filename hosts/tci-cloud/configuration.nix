@@ -113,8 +113,9 @@ in {
             #                     and cagelocke asserts it off.
 
             # Sizing — MEASURE real RSS under load before packing to the RAM ceiling.
-            # Instance heaps are pinned (-Xms = -Xmx, AlwaysPreTouch), so each running
-            # instance holds its full heap from boot.
+            # modules/tci-server pins instance heaps (-Xms = -Xmx, AlwaysPreTouch), so
+            # each running instance holds its full heap from boot — except on a
+            # cagelocke.standby fleet, whose team worlds all run unpinned (below).
             instanceDefaults.memory = "6G";
             hub.memory = "4G";
 
@@ -139,6 +140,14 @@ in {
               # Whitelisted on BOTH team floors (on top of the registry). Not added to
               # hub.whitelist automatically — that's done below.
               guests = [referee] ++ casters;
+              # HOT STANDBY: each team keeps a pre-booted, pre-installed spare world,
+              # and a wipe's re-board swaps the team onto it in seconds instead of a
+              # 3-6 min re-seed (the condemned world re-seeds as the next spare).
+              # Both worlds of a team run UNPINNED (the module drops -Xms and
+              # AlwaysPreTouch from the flags above and adds periodic G1 uncommit),
+              # so an idle spare holds only its working set. Untested on a real
+              # fleet yet — soak it first (`soak up --standby` in the mod repo).
+              standby.enable = true;
             };
             coop.maxGroupSize = 2; # the warden only files 2-player teams
 
@@ -156,10 +165,11 @@ in {
             ops = [referee]; # referee commands (/tci-hub cage create|start|reset,
             #                  /cage admin, /cage finale) need op. Never a streamer.
 
-            # Two team floors + the hub: ~2×(6G heap + overhead) + 4G hub ≈ 24 GB
-            # resident, so a 32 GB box (e.g. CCX33) is the floor.
-            maxActive = 2; # only the two team leaders' instances ever run
-            maxProvisioned = 4; # two teams + slack for a stray or a re-formed group
+            # Two live team floors (up to 6G heap each + JVM overhead), two idle
+            # spares (their working set — unmeasured) and the 4G hub. Size the box
+            # from the sampler below (a soak or a dress rehearsal), not from heaps.
+            maxActive = 2; # live team floors; spares never count against it
+            maxProvisioned = 6; # two teams × (floor + spare) + slack for a stray or a re-form
             hub.preparingCapSeconds = 600; # a cold team-world boot overruns the 120 s default
             instanceDefaults = {
               emptyShutdownMinutes = 0; # never halt a floor while its team is out hunting
@@ -179,6 +189,10 @@ in {
             # crashes mid-wipe report the reset back to the warden on restart
             # (POST /cage/reset-consumed); without it the match record goes stale.
             warden.tokenFile = wardenTokenFile;
+
+            # Per-unit memory CSV (hub / warden / live / spare, cgroup + RSS) every
+            # 10 s at /var/lib/tci-server-metrics/mem.csv — the data to size the box.
+            metrics.memory.enable = true;
           };
 
           # The warden token: nothing off the box ever needs it (the localhost
