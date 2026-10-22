@@ -60,9 +60,19 @@ in
       # The ISO as a file with a Proton PAT inside (cloud custom-ISO uploads).
       (pkgs.callPackage ./iso/build-pat-iso.nix {})
       (inputs.antlers.lib.x86_64-linux.mkZedWrapper zedSettings)
+      # The cheat sheet below; the host list leaves out the two installer images.
+      (pkgs.callPackage ./cala-help.nix {
+        hosts = builtins.filter (name: !(builtins.elem name ["iso" "installer-kexec"])) (
+          builtins.attrNames inputs.self.nixosConfigurations
+        );
+      })
     ];
 
+    # Print the cheat sheet on the way in (direnv, or an interactive `nix develop`)
+    # but not for `nix develop -c ...`, so scripted output stays clean.
     shellHook = ''
-      echo "Using Local Nix-Enabled Zed!"
+      if [ -n "''${DIRENV_IN_ENVRC:-}" ] || [[ $- == *i* ]]; then
+        cala-help --banner >&2
+      fi
     '';
   }

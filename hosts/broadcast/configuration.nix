@@ -21,7 +21,7 @@ in {
   #   modules/multichat/secrets       -> youtube-api-key (multichat apiKeyFile)
   #   this file (below)               -> stream-key-* (OBS stream keys)
   calamoose.enableSecrets = "online";
-  calamoose.version = "1.4.0";
+  calamoose.version = "1.5.0";
   calamoose.style = "thecompany"; # The Company, Inc. brand theme
 
   # Re-mint a Proton session from the installer-seeded PAT (same pattern as `ai`).

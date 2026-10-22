@@ -10,7 +10,7 @@
   machine_uuid = "B850-MAX";
 in {
   calamoose.enableSecrets = false;
-  calamoose.version = "2.2.0";
+  calamoose.version = "3.0.0";
   calamoose.style = "thecompany"; # The Company, Inc. brand theme
 
   imports = [

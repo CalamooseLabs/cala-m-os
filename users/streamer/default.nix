@@ -9,6 +9,7 @@
     "chromium"
     "cobblemon-overlay"
     "fonts"
+    "ghostty"
     "hyprland"
     "moosefetch"
     "multichat"
@@ -17,6 +18,7 @@
     "stylix"
     "teleprompter"
     "waybar"
+    "yazi"
   ];
 in {
   inherit modules;
