@@ -371,8 +371,21 @@
           if [ "$pn" -lt 1 ]; then pn=1; fi
           notify_overlay set "$pn"
           ;;
+        set)
+          # Pin the counter to an exact run number (e.g. after a reinstall zeroed
+          # it): run N becomes the current run, so the next `new` creates N+1.
+          # Pushes N to the overlay without banking deaths.
+          case "''${2:-}" in "" | *[!0-9]*) log "usage: tci-run set <run-number>"; exit 2 ;; esac
+          sn=$((10#$2))
+          exec 9> "$STATE_DIR/.lock"
+          flock 9
+          printf '%s\n' "$sn" > "$COUNTER_FILE"
+          log "counter set to $sn (next run: $NAME_PREFIX$((sn + 1)))"
+          notify_overlay set "$sn"
+          status
+          ;;
         status) status ;;
-        *) log "usage: tci-run {new|sync|status|reset|push}"; exit 2 ;;
+        *) log "usage: tci-run {new|sync|status|reset|push|set <n>}"; exit 2 ;;
       esac
     '';
   };
