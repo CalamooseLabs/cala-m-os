@@ -3,9 +3,10 @@
 # PLACEHOLDER / safe superset — REGENERATE on the real box and commit it:
 #   nixos-generate-config --show-hardware-config \
 #     > machines/workstations/TCI-LOCAL/hardware-configuration.nix
-# The bootloader (systemd-boot, UEFI) + hostPlatform come from hosts/_core; this
-# file carries only the hardware scan. Add "kvm-amd"/"kvm-intel" to
-# boot.kernelModules only if this box will host VMs (a game server needs neither).
+# The bootloader (systemd-boot, UEFI) comes from hosts/_core; this file carries
+# the hardware scan + nixpkgs.hostPlatform (keep it when regenerating). Add
+# "kvm-amd"/"kvm-intel" to boot.kernelModules only if this box will host VMs (a
+# game server needs neither).
 {
   config,
   lib,

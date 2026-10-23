@@ -155,6 +155,9 @@
         else "";
     in
       nixpkgs.lib.nixosSystem {
+        # Only a fallback: a machine whose hardware-configuration.nix sets
+        # nixpkgs.hostPlatform (every workstation does) builds natively for that
+        # platform instead, e.g. HETZNER-CAX → aarch64-linux for webhost.
         inherit system;
         specialArgs =
           {
@@ -199,6 +202,10 @@
       # tci-private — local LAN box, internal soul-link (shared-fate) fleet.
       tci-cloud = mkSystem "tci-cloud" {};
       tci-private = mkSystem "tci-private" {};
+
+      # Minimal public web server (Hetzner Cloud CAX11, aarch64): Caddy serves
+      # every site under hosts/webhost/sites. Deploy notes in its configuration.nix.
+      webhost = mkSystem "webhost" {};
 
       iso = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs;};

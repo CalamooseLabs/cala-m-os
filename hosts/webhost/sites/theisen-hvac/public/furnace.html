@@ -1,0 +1,404 @@
+<!doctype html>
+<html class="h-full bg-gray-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="./output.css" rel="stylesheet">
+</head>
+<body class="h-full">
+    <div class="min-h-full">
+    <nav class="bg-gray-800">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex h-16 items-center justify-between">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+                <div class="h-6 w-16">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 446.85 169.66"><defs><style>.cls-1{fill:#fff;}</style></defs><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path class="cls-1" d="M226.76,88,330.51,169.4H301v0H274.08v-2.12c10.65,0,22-8.57,24.76-20.42L226.76,90.29v78.87h-27V29.24h-.35c0-13.31-10.95-23.87-22.15-25.61h0C166,5,154.34,15.75,154.34,29.33h-.05v136.4a19.2,19.2,0,0,0,7.09,1.42v2.12H112.13l-.59-1.37H111L48,28C43.59,18.1,35.87,8.49,27.23,4.29V139.92h0c0,14.58,13.17,25.88,25.4,25.88v2.1H0v-2.1c12,0,25.39-11.3,25.39-25.88h0V3.52a19.17,19.17,0,0,0-7.08-1.41V0H67.58l.61,1.35h.52l63,139.94c4.41,9.87,12.12,19.48,20.77,23.67V29.33h0c0-14.58-13.18-25.86-25.39-25.86V1.35h47V1.24h52.72v81L299.63,25C296.9,13.2,285.52,4.63,274.86,4.63V2.51h26.92v0h29.51l-104.53,82Zm219.42,57.53a23.66,23.66,0,0,1-4.44,11.4c-4.66,6.51-12.26,10.72-19.37,10.72v2h24.48v-24.1ZM422.37,2.39v2c7.53,0,15.59,4.71,20.19,11.91a23.69,23.69,0,0,1,3.62,10.2h.67V2.39Zm-75.62,84A94.86,94.86,0,0,1,396.13,3.1a83.28,83.28,0,0,0,0,166.54A94.9,94.9,0,0,1,346.75,86.36Z"/></g></g></svg>
+                </div>
+            </div>
+            <div class="hidden md:block">
+              <div class="ml-10 flex items-baseline space-x-4">
+                <a href="./" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Home</a>
+                <a href="#" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Furnace</a>
+                <a href="./radiant" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Radiant</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Mobile menu, show/hide based on menu state. -->
+      <div class="md:hidden" id="mobile-menu">
+        <div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
+          <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
+            <a href="./" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Home</a>
+            <a href="#" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Furnace</a>
+            <a href="./radiant" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Radiant</a>
+        </div>
+      </div>
+    </nav>
+  
+    <header class="bg-white shadow-sm">
+      <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+        <h1 class="text-lg font-semibold leading-6 text-gray-900">Furnace Thermostats</h1>
+      </div>
+    </header>
+    <main>
+      <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+        <!-- Your content -->
+        
+        <!-- Furnace -->
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="mx-auto max-w-2xl lg:mx-0 lg:max-w-none">
+              <ul role="list" class="mt-6 grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-3 xl:gap-x-8">
+
+                <a href="http://192.168.11.119/" class="group">
+                    <li class="overflow-hidden rounded-xl border border-gray-200">
+                      <div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
+                        <div class="h-12 w-12 flex rounded-lg bg-white object-cover ring-1 ring-gray-900/10 content-center	justify-center">
+                            <svg class="w-10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) --><path d="M544,0H32A32,32,0,0,0,0,32V192a32,32,0,0,0,32,32H544a32,32,0,0,0,32-32V32A32,32,0,0,0,544,0ZM512,160H64V128H512ZM216,424a40,40,0,0,1-40,40h-6.22c-20,0-38.18-13.88-41.28-33.61-2.88-18.41,6.92-34.22,21.84-41.47,5.73-2.78,9.66-8.25,9.66-14.63V356.67a16.1,16.1,0,0,0-21.42-15.17A87.55,87.55,0,0,0,80.7,435.24C86.26,479.82,126.55,512,171.47,512H176a88,88,0,0,0,88-88V256H216ZM437.42,309.5A16.1,16.1,0,0,0,416,324.67v17.62c0,6.38,3.93,11.85,9.66,14.63,14.92,7.25,24.72,23.06,21.84,41.47C444.4,418.12,426.2,432,406.22,432H400a40,40,0,0,1-40-40V256H312V392a88,88,0,0,0,88,88h4.53c44.92,0,85.21-32.18,90.77-76.76A87.55,87.55,0,0,0,437.42,309.5Z"/></svg>                      
+                        </div>
+                        
+                        <div class="text-sm font-medium leading-6 text-gray-900">Master Suite</div>
+                        <div class="relative ml-auto">
+                          <button type="button" class="-m-2.5 block p-2.5 text-gray-400 group-hover:text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                            </svg>                          
+                          </button>
+                        </div>
+                      </div>
+                    </li>
+                </a>
+                
+                <a href="http://192.168.11.120/" class="group">
+                    <li class="overflow-hidden rounded-xl border border-gray-200">
+                      <div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
+                        <div class="h-12 w-12 flex rounded-lg bg-white object-cover ring-1 ring-gray-900/10 content-center	justify-center">
+                            <svg class="w-10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) --><path d="M544,0H32A32,32,0,0,0,0,32V192a32,32,0,0,0,32,32H544a32,32,0,0,0,32-32V32A32,32,0,0,0,544,0ZM512,160H64V128H512ZM216,424a40,40,0,0,1-40,40h-6.22c-20,0-38.18-13.88-41.28-33.61-2.88-18.41,6.92-34.22,21.84-41.47,5.73-2.78,9.66-8.25,9.66-14.63V356.67a16.1,16.1,0,0,0-21.42-15.17A87.55,87.55,0,0,0,80.7,435.24C86.26,479.82,126.55,512,171.47,512H176a88,88,0,0,0,88-88V256H216ZM437.42,309.5A16.1,16.1,0,0,0,416,324.67v17.62c0,6.38,3.93,11.85,9.66,14.63,14.92,7.25,24.72,23.06,21.84,41.47C444.4,418.12,426.2,432,406.22,432H400a40,40,0,0,1-40-40V256H312V392a88,88,0,0,0,88,88h4.53c44.92,0,85.21-32.18,90.77-76.76A87.55,87.55,0,0,0,437.42,309.5Z"/></svg>                      
+                        </div>
+                        
+                        <div class="text-sm font-medium leading-6 text-gray-900">Library/Office</div>
+                        <div class="relative ml-auto">
+                          <button type="button" class="-m-2.5 block p-2.5 text-gray-400 group-hover:text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                            </svg>                          
+                          </button>
+                        </div>
+                      </div>
+                    </li>
+                </a>
+
+                <a href="http://192.168.11.118/" class="group">
+                    <li class="overflow-hidden rounded-xl border border-gray-200">
+                      <div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
+                        <div class="h-12 w-12 flex rounded-lg bg-white object-cover ring-1 ring-gray-900/10 content-center	justify-center">
+                            <svg class="w-10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) --><path d="M544,0H32A32,32,0,0,0,0,32V192a32,32,0,0,0,32,32H544a32,32,0,0,0,32-32V32A32,32,0,0,0,544,0ZM512,160H64V128H512ZM216,424a40,40,0,0,1-40,40h-6.22c-20,0-38.18-13.88-41.28-33.61-2.88-18.41,6.92-34.22,21.84-41.47,5.73-2.78,9.66-8.25,9.66-14.63V356.67a16.1,16.1,0,0,0-21.42-15.17A87.55,87.55,0,0,0,80.7,435.24C86.26,479.82,126.55,512,171.47,512H176a88,88,0,0,0,88-88V256H216ZM437.42,309.5A16.1,16.1,0,0,0,416,324.67v17.62c0,6.38,3.93,11.85,9.66,14.63,14.92,7.25,24.72,23.06,21.84,41.47C444.4,418.12,426.2,432,406.22,432H400a40,40,0,0,1-40-40V256H312V392a88,88,0,0,0,88,88h4.53c44.92,0,85.21-32.18,90.77-76.76A87.55,87.55,0,0,0,437.42,309.5Z"/></svg>                      
+                        </div>
+                        
+                        <div class="text-sm font-medium leading-6 text-gray-900">Great Room</div>
+                        <div class="relative ml-auto">
+                          <button type="button" class="-m-2.5 block p-2.5 text-gray-400 group-hover:text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                            </svg>                          
+                          </button>
+                        </div>
+                      </div>
+                    </li>
+                </a>
+
+                <a href="http://192.168.11.113/" class="group">
+                    <li class="overflow-hidden rounded-xl border border-gray-200">
+                      <div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
+                        <div class="h-12 w-12 flex rounded-lg bg-white object-cover ring-1 ring-gray-900/10 content-center	justify-center">
+                            <svg class="w-10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) --><path d="M544,0H32A32,32,0,0,0,0,32V192a32,32,0,0,0,32,32H544a32,32,0,0,0,32-32V32A32,32,0,0,0,544,0ZM512,160H64V128H512ZM216,424a40,40,0,0,1-40,40h-6.22c-20,0-38.18-13.88-41.28-33.61-2.88-18.41,6.92-34.22,21.84-41.47,5.73-2.78,9.66-8.25,9.66-14.63V356.67a16.1,16.1,0,0,0-21.42-15.17A87.55,87.55,0,0,0,80.7,435.24C86.26,479.82,126.55,512,171.47,512H176a88,88,0,0,0,88-88V256H216ZM437.42,309.5A16.1,16.1,0,0,0,416,324.67v17.62c0,6.38,3.93,11.85,9.66,14.63,14.92,7.25,24.72,23.06,21.84,41.47C444.4,418.12,426.2,432,406.22,432H400a40,40,0,0,1-40-40V256H312V392a88,88,0,0,0,88,88h4.53c44.92,0,85.21-32.18,90.77-76.76A87.55,87.55,0,0,0,437.42,309.5Z"/></svg>                      
+                        </div>
+                        
+                        <div class="text-sm font-medium leading-6 text-gray-900">Home Office</div>
+                        <div class="relative ml-auto">
+                          <button type="button" class="-m-2.5 block p-2.5 text-gray-400 group-hover:text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                            </svg>                          
+                          </button>
+                        </div>
+                      </div>
+                    </li>
+                </a>
+
+                <a href="http://192.168.11.111/" class="group">
+                    <li class="overflow-hidden rounded-xl border border-gray-200">
+                      <div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
+                        <div class="h-12 w-12 flex rounded-lg bg-white object-cover ring-1 ring-gray-900/10 content-center	justify-center">
+                            <svg class="w-10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) --><path d="M544,0H32A32,32,0,0,0,0,32V192a32,32,0,0,0,32,32H544a32,32,0,0,0,32-32V32A32,32,0,0,0,544,0ZM512,160H64V128H512ZM216,424a40,40,0,0,1-40,40h-6.22c-20,0-38.18-13.88-41.28-33.61-2.88-18.41,6.92-34.22,21.84-41.47,5.73-2.78,9.66-8.25,9.66-14.63V356.67a16.1,16.1,0,0,0-21.42-15.17A87.55,87.55,0,0,0,80.7,435.24C86.26,479.82,126.55,512,171.47,512H176a88,88,0,0,0,88-88V256H216ZM437.42,309.5A16.1,16.1,0,0,0,416,324.67v17.62c0,6.38,3.93,11.85,9.66,14.63,14.92,7.25,24.72,23.06,21.84,41.47C444.4,418.12,426.2,432,406.22,432H400a40,40,0,0,1-40-40V256H312V392a88,88,0,0,0,88,88h4.53c44.92,0,85.21-32.18,90.77-76.76A87.55,87.55,0,0,0,437.42,309.5Z"/></svg>                      
+                        </div>
+                        
+                        <div class="text-sm font-medium leading-6 text-gray-900">Hearth/Dining</div>
+                        <div class="relative ml-auto">
+                          <button type="button" class="-m-2.5 block p-2.5 text-gray-400 group-hover:text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                            </svg>                          
+                          </button>
+                        </div>
+                      </div>
+                    </li>
+                </a>
+
+                <a href="http://192.168.11.112/" class="group">
+                    <li class="overflow-hidden rounded-xl border border-gray-200">
+                      <div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
+                        <div class="h-12 w-12 flex rounded-lg bg-white object-cover ring-1 ring-gray-900/10 content-center	justify-center">
+                            <svg class="w-10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) --><path d="M544,0H32A32,32,0,0,0,0,32V192a32,32,0,0,0,32,32H544a32,32,0,0,0,32-32V32A32,32,0,0,0,544,0ZM512,160H64V128H512ZM216,424a40,40,0,0,1-40,40h-6.22c-20,0-38.18-13.88-41.28-33.61-2.88-18.41,6.92-34.22,21.84-41.47,5.73-2.78,9.66-8.25,9.66-14.63V356.67a16.1,16.1,0,0,0-21.42-15.17A87.55,87.55,0,0,0,80.7,435.24C86.26,479.82,126.55,512,171.47,512H176a88,88,0,0,0,88-88V256H216ZM437.42,309.5A16.1,16.1,0,0,0,416,324.67v17.62c0,6.38,3.93,11.85,9.66,14.63,14.92,7.25,24.72,23.06,21.84,41.47C444.4,418.12,426.2,432,406.22,432H400a40,40,0,0,1-40-40V256H312V392a88,88,0,0,0,88,88h4.53c44.92,0,85.21-32.18,90.77-76.76A87.55,87.55,0,0,0,437.42,309.5Z"/></svg>                      
+                        </div>
+                        
+                        <div class="text-sm font-medium leading-6 text-gray-900">Kitchen/Dinette</div>
+                        <div class="relative ml-auto">
+                          <button type="button" class="-m-2.5 block p-2.5 text-gray-400 group-hover:text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                            </svg>                          
+                          </button>
+                        </div>
+                      </div>
+                    </li>
+                </a>
+
+                <a href="http://192.168.11.114/" class="group">
+                    <li class="overflow-hidden rounded-xl border border-gray-200">
+                      <div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
+                        <div class="h-12 w-12 flex rounded-lg bg-white object-cover ring-1 ring-gray-900/10 content-center	justify-center">
+                            <svg class="w-10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) --><path d="M544,0H32A32,32,0,0,0,0,32V192a32,32,0,0,0,32,32H544a32,32,0,0,0,32-32V32A32,32,0,0,0,544,0ZM512,160H64V128H512ZM216,424a40,40,0,0,1-40,40h-6.22c-20,0-38.18-13.88-41.28-33.61-2.88-18.41,6.92-34.22,21.84-41.47,5.73-2.78,9.66-8.25,9.66-14.63V356.67a16.1,16.1,0,0,0-21.42-15.17A87.55,87.55,0,0,0,80.7,435.24C86.26,479.82,126.55,512,171.47,512H176a88,88,0,0,0,88-88V256H216ZM437.42,309.5A16.1,16.1,0,0,0,416,324.67v17.62c0,6.38,3.93,11.85,9.66,14.63,14.92,7.25,24.72,23.06,21.84,41.47C444.4,418.12,426.2,432,406.22,432H400a40,40,0,0,1-40-40V256H312V392a88,88,0,0,0,88,88h4.53c44.92,0,85.21-32.18,90.77-76.76A87.55,87.55,0,0,0,437.42,309.5Z"/></svg>                      
+                        </div>
+                        
+                        <div class="text-sm font-medium leading-6 text-gray-900">Family Room</div>
+                        <div class="relative ml-auto">
+                          <button type="button" class="-m-2.5 block p-2.5 text-gray-400 group-hover:text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                            </svg>                          
+                          </button>
+                        </div>
+                      </div>
+                    </li>
+                </a>
+
+                <a href="http://192.168.11.121/" class="group">
+                    <li class="overflow-hidden rounded-xl border border-gray-200">
+                      <div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
+                        <div class="h-12 w-12 flex rounded-lg bg-white object-cover ring-1 ring-gray-900/10 content-center	justify-center">
+                            <svg class="w-10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) --><path d="M544,0H32A32,32,0,0,0,0,32V192a32,32,0,0,0,32,32H544a32,32,0,0,0,32-32V32A32,32,0,0,0,544,0ZM512,160H64V128H512ZM216,424a40,40,0,0,1-40,40h-6.22c-20,0-38.18-13.88-41.28-33.61-2.88-18.41,6.92-34.22,21.84-41.47,5.73-2.78,9.66-8.25,9.66-14.63V356.67a16.1,16.1,0,0,0-21.42-15.17A87.55,87.55,0,0,0,80.7,435.24C86.26,479.82,126.55,512,171.47,512H176a88,88,0,0,0,88-88V256H216ZM437.42,309.5A16.1,16.1,0,0,0,416,324.67v17.62c0,6.38,3.93,11.85,9.66,14.63,14.92,7.25,24.72,23.06,21.84,41.47C444.4,418.12,426.2,432,406.22,432H400a40,40,0,0,1-40-40V256H312V392a88,88,0,0,0,88,88h4.53c44.92,0,85.21-32.18,90.77-76.76A87.55,87.55,0,0,0,437.42,309.5Z"/></svg>                      
+                        </div>
+                        
+                        <div class="text-sm font-medium leading-6 text-gray-900">Zach's Bedroom</div>
+                        <div class="relative ml-auto">
+                          <button type="button" class="-m-2.5 block p-2.5 text-gray-400 group-hover:text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                            </svg>                          
+                          </button>
+                        </div>
+                      </div>
+                    </li>
+                </a>
+
+                <a href="http://192.168.11.122/" class="group">
+                    <li class="overflow-hidden rounded-xl border border-gray-200">
+                      <div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
+                        <div class="h-12 w-12 flex rounded-lg bg-white object-cover ring-1 ring-gray-900/10 content-center	justify-center">
+                            <svg class="w-10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) --><path d="M544,0H32A32,32,0,0,0,0,32V192a32,32,0,0,0,32,32H544a32,32,0,0,0,32-32V32A32,32,0,0,0,544,0ZM512,160H64V128H512ZM216,424a40,40,0,0,1-40,40h-6.22c-20,0-38.18-13.88-41.28-33.61-2.88-18.41,6.92-34.22,21.84-41.47,5.73-2.78,9.66-8.25,9.66-14.63V356.67a16.1,16.1,0,0,0-21.42-15.17A87.55,87.55,0,0,0,80.7,435.24C86.26,479.82,126.55,512,171.47,512H176a88,88,0,0,0,88-88V256H216ZM437.42,309.5A16.1,16.1,0,0,0,416,324.67v17.62c0,6.38,3.93,11.85,9.66,14.63,14.92,7.25,24.72,23.06,21.84,41.47C444.4,418.12,426.2,432,406.22,432H400a40,40,0,0,1-40-40V256H312V392a88,88,0,0,0,88,88h4.53c44.92,0,85.21-32.18,90.77-76.76A87.55,87.55,0,0,0,437.42,309.5Z"/></svg>                      
+                        </div>
+                        
+                        <div class="text-sm font-medium leading-6 text-gray-900">Kristie's Bedroom</div>
+                        <div class="relative ml-auto">
+                          <button type="button" class="-m-2.5 block p-2.5 text-gray-400 group-hover:text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                            </svg>                          
+                          </button>
+                        </div>
+                      </div>
+                    </li>
+                </a>
+
+                <a href="http://192.168.11.115/" class="group">
+                    <li class="overflow-hidden rounded-xl border border-gray-200">
+                      <div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
+                        <div class="h-12 w-12 flex rounded-lg bg-white object-cover ring-1 ring-gray-900/10 content-center	justify-center">
+                            <svg class="w-10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) --><path d="M544,0H32A32,32,0,0,0,0,32V192a32,32,0,0,0,32,32H544a32,32,0,0,0,32-32V32A32,32,0,0,0,544,0ZM512,160H64V128H512ZM216,424a40,40,0,0,1-40,40h-6.22c-20,0-38.18-13.88-41.28-33.61-2.88-18.41,6.92-34.22,21.84-41.47,5.73-2.78,9.66-8.25,9.66-14.63V356.67a16.1,16.1,0,0,0-21.42-15.17A87.55,87.55,0,0,0,80.7,435.24C86.26,479.82,126.55,512,171.47,512H176a88,88,0,0,0,88-88V256H216ZM437.42,309.5A16.1,16.1,0,0,0,416,324.67v17.62c0,6.38,3.93,11.85,9.66,14.63,14.92,7.25,24.72,23.06,21.84,41.47C444.4,418.12,426.2,432,406.22,432H400a40,40,0,0,1-40-40V256H312V392a88,88,0,0,0,88,88h4.53c44.92,0,85.21-32.18,90.77-76.76A87.55,87.55,0,0,0,437.42,309.5Z"/></svg>                      
+                        </div>
+                        
+                        <div class="text-sm font-medium leading-6 text-gray-900">Cole's Bedroom</div>
+                        <div class="relative ml-auto">
+                          <button type="button" class="-m-2.5 block p-2.5 text-gray-400 group-hover:text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                            </svg>                          
+                          </button>
+                        </div>
+                      </div>
+                    </li>
+                </a>
+
+                <a href="http://192.168.11.116/" class="group">
+                    <li class="overflow-hidden rounded-xl border border-gray-200">
+                      <div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
+                        <div class="h-12 w-12 flex rounded-lg bg-white object-cover ring-1 ring-gray-900/10 content-center	justify-center">
+                            <svg class="w-10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) --><path d="M544,0H32A32,32,0,0,0,0,32V192a32,32,0,0,0,32,32H544a32,32,0,0,0,32-32V32A32,32,0,0,0,544,0ZM512,160H64V128H512ZM216,424a40,40,0,0,1-40,40h-6.22c-20,0-38.18-13.88-41.28-33.61-2.88-18.41,6.92-34.22,21.84-41.47,5.73-2.78,9.66-8.25,9.66-14.63V356.67a16.1,16.1,0,0,0-21.42-15.17A87.55,87.55,0,0,0,80.7,435.24C86.26,479.82,126.55,512,171.47,512H176a88,88,0,0,0,88-88V256H216ZM437.42,309.5A16.1,16.1,0,0,0,416,324.67v17.62c0,6.38,3.93,11.85,9.66,14.63,14.92,7.25,24.72,23.06,21.84,41.47C444.4,418.12,426.2,432,406.22,432H400a40,40,0,0,1-40-40V256H312V392a88,88,0,0,0,88,88h4.53c44.92,0,85.21-32.18,90.77-76.76A87.55,87.55,0,0,0,437.42,309.5Z"/></svg>                      
+                        </div>
+                        
+                        <div class="text-sm font-medium leading-6 text-gray-900">Katie's Bedroom</div>
+                        <div class="relative ml-auto">
+                          <button type="button" class="-m-2.5 block p-2.5 text-gray-400 group-hover:text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                            </svg>                          
+                          </button>
+                        </div>
+                      </div>
+                    </li>
+                </a>
+
+                <a href="http://192.168.11.117/" class="group">
+                    <li class="overflow-hidden rounded-xl border border-gray-200">
+                      <div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
+                        <div class="h-12 w-12 flex rounded-lg bg-white object-cover ring-1 ring-gray-900/10 content-center	justify-center">
+                            <svg class="w-10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) --><path d="M544,0H32A32,32,0,0,0,0,32V192a32,32,0,0,0,32,32H544a32,32,0,0,0,32-32V32A32,32,0,0,0,544,0ZM512,160H64V128H512ZM216,424a40,40,0,0,1-40,40h-6.22c-20,0-38.18-13.88-41.28-33.61-2.88-18.41,6.92-34.22,21.84-41.47,5.73-2.78,9.66-8.25,9.66-14.63V356.67a16.1,16.1,0,0,0-21.42-15.17A87.55,87.55,0,0,0,80.7,435.24C86.26,479.82,126.55,512,171.47,512H176a88,88,0,0,0,88-88V256H216ZM437.42,309.5A16.1,16.1,0,0,0,416,324.67v17.62c0,6.38,3.93,11.85,9.66,14.63,14.92,7.25,24.72,23.06,21.84,41.47C444.4,418.12,426.2,432,406.22,432H400a40,40,0,0,1-40-40V256H312V392a88,88,0,0,0,88,88h4.53c44.92,0,85.21-32.18,90.77-76.76A87.55,87.55,0,0,0,437.42,309.5Z"/></svg>                      
+                        </div>
+                        
+                        <div class="text-sm font-medium leading-6 text-gray-900">Upper Sitting Room</div>
+                        <div class="relative ml-auto">
+                          <button type="button" class="-m-2.5 block p-2.5 text-gray-400 group-hover:text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                            </svg>                          
+                          </button>
+                        </div>
+                      </div>
+                    </li>
+                </a>
+
+                <a href="http://192.168.11.124/" class="group">
+                    <li class="overflow-hidden rounded-xl border border-gray-200">
+                      <div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
+                        <div class="h-12 w-12 flex rounded-lg bg-white object-cover ring-1 ring-gray-900/10 content-center	justify-center">
+                            <svg class="w-10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) --><path d="M544,0H32A32,32,0,0,0,0,32V192a32,32,0,0,0,32,32H544a32,32,0,0,0,32-32V32A32,32,0,0,0,544,0ZM512,160H64V128H512ZM216,424a40,40,0,0,1-40,40h-6.22c-20,0-38.18-13.88-41.28-33.61-2.88-18.41,6.92-34.22,21.84-41.47,5.73-2.78,9.66-8.25,9.66-14.63V356.67a16.1,16.1,0,0,0-21.42-15.17A87.55,87.55,0,0,0,80.7,435.24C86.26,479.82,126.55,512,171.47,512H176a88,88,0,0,0,88-88V256H216ZM437.42,309.5A16.1,16.1,0,0,0,416,324.67v17.62c0,6.38,3.93,11.85,9.66,14.63,14.92,7.25,24.72,23.06,21.84,41.47C444.4,418.12,426.2,432,406.22,432H400a40,40,0,0,1-40-40V256H312V392a88,88,0,0,0,88,88h4.53c44.92,0,85.21-32.18,90.77-76.76A87.55,87.55,0,0,0,437.42,309.5Z"/></svg>                      
+                        </div>
+                        
+                        <div class="text-sm font-medium leading-6 text-gray-900">Pottery Room</div>
+                        <div class="relative ml-auto">
+                          <button type="button" class="-m-2.5 block p-2.5 text-gray-400 group-hover:text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                            </svg>                          
+                          </button>
+                        </div>
+                      </div>
+                    </li>
+                </a>
+
+                <a href="http://192.168.11.126/" class="group">
+                    <li class="overflow-hidden rounded-xl border border-gray-200">
+                      <div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
+                        <div class="h-12 w-12 flex rounded-lg bg-white object-cover ring-1 ring-gray-900/10 content-center	justify-center">
+                            <svg class="w-10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) --><path d="M544,0H32A32,32,0,0,0,0,32V192a32,32,0,0,0,32,32H544a32,32,0,0,0,32-32V32A32,32,0,0,0,544,0ZM512,160H64V128H512ZM216,424a40,40,0,0,1-40,40h-6.22c-20,0-38.18-13.88-41.28-33.61-2.88-18.41,6.92-34.22,21.84-41.47,5.73-2.78,9.66-8.25,9.66-14.63V356.67a16.1,16.1,0,0,0-21.42-15.17A87.55,87.55,0,0,0,80.7,435.24C86.26,479.82,126.55,512,171.47,512H176a88,88,0,0,0,88-88V256H216ZM437.42,309.5A16.1,16.1,0,0,0,416,324.67v17.62c0,6.38,3.93,11.85,9.66,14.63,14.92,7.25,24.72,23.06,21.84,41.47C444.4,418.12,426.2,432,406.22,432H400a40,40,0,0,1-40-40V256H312V392a88,88,0,0,0,88,88h4.53c44.92,0,85.21-32.18,90.77-76.76A87.55,87.55,0,0,0,437.42,309.5Z"/></svg>                      
+                        </div>
+                        
+                        <div class="text-sm font-medium leading-6 text-gray-900">Theater</div>
+                        <div class="relative ml-auto">
+                          <button type="button" class="-m-2.5 block p-2.5 text-gray-400 group-hover:text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                            </svg>                          
+                          </button>
+                        </div>
+                      </div>
+                    </li>
+                </a>
+
+                <a href="http://192.168.11.133/" class="group">
+                    <li class="overflow-hidden rounded-xl border border-gray-200">
+                      <div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
+                        <div class="h-12 w-12 flex rounded-lg bg-white object-cover ring-1 ring-gray-900/10 content-center	justify-center">
+                            <svg class="w-10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) --><path d="M544,0H32A32,32,0,0,0,0,32V192a32,32,0,0,0,32,32H544a32,32,0,0,0,32-32V32A32,32,0,0,0,544,0ZM512,160H64V128H512ZM216,424a40,40,0,0,1-40,40h-6.22c-20,0-38.18-13.88-41.28-33.61-2.88-18.41,6.92-34.22,21.84-41.47,5.73-2.78,9.66-8.25,9.66-14.63V356.67a16.1,16.1,0,0,0-21.42-15.17A87.55,87.55,0,0,0,80.7,435.24C86.26,479.82,126.55,512,171.47,512H176a88,88,0,0,0,88-88V256H216ZM437.42,309.5A16.1,16.1,0,0,0,416,324.67v17.62c0,6.38,3.93,11.85,9.66,14.63,14.92,7.25,24.72,23.06,21.84,41.47C444.4,418.12,426.2,432,406.22,432H400a40,40,0,0,1-40-40V256H312V392a88,88,0,0,0,88,88h4.53c44.92,0,85.21-32.18,90.77-76.76A87.55,87.55,0,0,0,437.42,309.5Z"/></svg>                      
+                        </div>
+                        
+                        <div class="text-sm font-medium leading-6 text-gray-900">Wine Cellar</div>
+                        <div class="relative ml-auto">
+                          <button type="button" class="-m-2.5 block p-2.5 text-gray-400 group-hover:text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                            </svg>                          
+                          </button>
+                        </div>
+                      </div>
+                    </li>
+                </a>
+
+                <a href="http://192.168.11.134/" class="group">
+                    <li class="overflow-hidden rounded-xl border border-gray-200">
+                      <div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
+                        <div class="h-12 w-12 flex rounded-lg bg-white object-cover ring-1 ring-gray-900/10 content-center	justify-center">
+                            <svg class="w-10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) --><path d="M544,0H32A32,32,0,0,0,0,32V192a32,32,0,0,0,32,32H544a32,32,0,0,0,32-32V32A32,32,0,0,0,544,0ZM512,160H64V128H512ZM216,424a40,40,0,0,1-40,40h-6.22c-20,0-38.18-13.88-41.28-33.61-2.88-18.41,6.92-34.22,21.84-41.47,5.73-2.78,9.66-8.25,9.66-14.63V356.67a16.1,16.1,0,0,0-21.42-15.17A87.55,87.55,0,0,0,80.7,435.24C86.26,479.82,126.55,512,171.47,512H176a88,88,0,0,0,88-88V256H216ZM437.42,309.5A16.1,16.1,0,0,0,416,324.67v17.62c0,6.38,3.93,11.85,9.66,14.63,14.92,7.25,24.72,23.06,21.84,41.47C444.4,418.12,426.2,432,406.22,432H400a40,40,0,0,1-40-40V256H312V392a88,88,0,0,0,88,88h4.53c44.92,0,85.21-32.18,90.77-76.76A87.55,87.55,0,0,0,437.42,309.5Z"/></svg>                      
+                        </div>
+                        
+                        <div class="text-sm font-medium leading-6 text-gray-900">Pool Mechanical</div>
+                        <div class="relative ml-auto">
+                          <button type="button" class="-m-2.5 block p-2.5 text-gray-400 group-hover:text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                            </svg>                          
+                          </button>
+                        </div>
+                      </div>
+                    </li>
+                </a>
+
+                <a href="http://192.168.11.125/" class="group">
+                    <li class="overflow-hidden rounded-xl border border-gray-200">
+                      <div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
+                        <div class="h-12 w-12 flex rounded-lg bg-white object-cover ring-1 ring-gray-900/10 content-center	justify-center">
+                            <svg class="w-10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) --><path d="M544,0H32A32,32,0,0,0,0,32V192a32,32,0,0,0,32,32H544a32,32,0,0,0,32-32V32A32,32,0,0,0,544,0ZM512,160H64V128H512ZM216,424a40,40,0,0,1-40,40h-6.22c-20,0-38.18-13.88-41.28-33.61-2.88-18.41,6.92-34.22,21.84-41.47,5.73-2.78,9.66-8.25,9.66-14.63V356.67a16.1,16.1,0,0,0-21.42-15.17A87.55,87.55,0,0,0,80.7,435.24C86.26,479.82,126.55,512,171.47,512H176a88,88,0,0,0,88-88V256H216ZM437.42,309.5A16.1,16.1,0,0,0,416,324.67v17.62c0,6.38,3.93,11.85,9.66,14.63,14.92,7.25,24.72,23.06,21.84,41.47C444.4,418.12,426.2,432,406.22,432H400a40,40,0,0,1-40-40V256H312V392a88,88,0,0,0,88,88h4.53c44.92,0,85.21-32.18,90.77-76.76A87.55,87.55,0,0,0,437.42,309.5Z"/></svg>                      
+                        </div>
+                        
+                        <div class="text-sm font-medium leading-6 text-gray-900">Main Level Guest Suite</div>
+                        <div class="relative ml-auto">
+                          <button type="button" class="-m-2.5 block p-2.5 text-gray-400 group-hover:text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                            </svg>                          
+                          </button>
+                        </div>
+                      </div>
+                    </li>
+                </a>
+
+                <a href="http://192.168.11.123/" class="group">
+                    <li class="overflow-hidden rounded-xl border border-gray-200">
+                      <div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
+                        <div class="h-12 w-12 flex rounded-lg bg-white object-cover ring-1 ring-gray-900/10 content-center	justify-center">
+                            <svg class="w-10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Pro 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) --><path d="M544,0H32A32,32,0,0,0,0,32V192a32,32,0,0,0,32,32H544a32,32,0,0,0,32-32V32A32,32,0,0,0,544,0ZM512,160H64V128H512ZM216,424a40,40,0,0,1-40,40h-6.22c-20,0-38.18-13.88-41.28-33.61-2.88-18.41,6.92-34.22,21.84-41.47,5.73-2.78,9.66-8.25,9.66-14.63V356.67a16.1,16.1,0,0,0-21.42-15.17A87.55,87.55,0,0,0,80.7,435.24C86.26,479.82,126.55,512,171.47,512H176a88,88,0,0,0,88-88V256H216ZM437.42,309.5A16.1,16.1,0,0,0,416,324.67v17.62c0,6.38,3.93,11.85,9.66,14.63,14.92,7.25,24.72,23.06,21.84,41.47C444.4,418.12,426.2,432,406.22,432H400a40,40,0,0,1-40-40V256H312V392a88,88,0,0,0,88,88h4.53c44.92,0,85.21-32.18,90.77-76.76A87.55,87.55,0,0,0,437.42,309.5Z"/></svg>                      
+                        </div>
+                        
+                        <div class="text-sm font-medium leading-6 text-gray-900">Lower Level Guest Suite</div>
+                        <div class="relative ml-auto">
+                          <button type="button" class="-m-2.5 block p-2.5 text-gray-400 group-hover:text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                            </svg>                          
+                          </button>
+                        </div>
+                      </div>
+                    </li>
+                </a>
+
+              </ul>
+            </div>
+        </div>
+      </div>
+    </main>
+  </div>  
+</body>
+</html>

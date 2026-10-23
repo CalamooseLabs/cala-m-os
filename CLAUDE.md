@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-**Cala-M-OS** is a multi-host NixOS flake configuration managing workstations, servers, VMs, and a custom installer ISO. The flake defines 11 host outputs: `lanstation`, `devbox`, `ephemeral`, `homelab`, `simple`, `battlestation`, `broadcast`, `openreturn`, `livedata`, `ai`, and `iso`. Several other host directories are microVM **guests** (`media`, `torrent`, `lanstation-vm`, `htpc`, `vault`, plus `quorumcall`) that a parent host builds via its `vms.nix` — they are not top-level outputs. Note: `lab` and `studio` are **subnet names** in `settings.nix`, not hosts.
+**Cala-M-OS** is a multi-host NixOS flake configuration managing workstations, servers, VMs, and a custom installer ISO. The flake defines 14 host outputs: `lanstation`, `devbox`, `ephemeral`, `homelab`, `simple`, `battlestation`, `broadcast`, `openreturn`, `livedata`, `ai`, `tci-cloud`, `tci-private`, `webhost` (the only aarch64 host), and `iso`. Several other host directories are microVM **guests** (`media`, `torrent`, `lanstation-vm`, `htpc`, `vault`, plus `quorumcall`) that a parent host builds via its `vms.nix` — they are not top-level outputs. Note: `lab` and `studio` are **subnet names** in `settings.nix`, not hosts.
 
 ## Common Commands
 
@@ -85,6 +85,7 @@ Flake outputs (built with `nixos-rebuild ... --flake .#<host>`):
 | `homelab` | MS-02 | `server` | Homelab VM host (media + torrent + security); owns agenix secrets + cala-certs |
 | `livedata` | MS-01 | `server` | Client app/VM host (openreturn + quorumcall); `enableSecrets=false` |
 | `openreturn` | Small VM | `server` | OpenReturn app; standalone output *and* a `livedata` guest |
+| `webhost` | HETZNER-CAX | `webmaster` | Minimal public web server on a Hetzner Cloud CAX11 (**aarch64**, EU-only). Caddy auto-HTTPS serves each module under `hosts/webhost/sites/<site>/`. `enableSecrets=false`. Deployed from devbox and built on the box (`--build-host`); deploy steps are in its header |
 | `iso` | — | — | Custom installer with disko + agenix |
 
 **microVM guests** (built by a parent host's `vms.nix`, not top-level outputs): `media` (Medium) + `torrent` (X-Small) + `security` (X-Small, UniFi Protect camera wall) on `homelab`; `openreturn` + `quorumcall` (Small) on `livedata`; `lanstation-vm` (Large, the gaming guest) on `lanstation` (WIP). `htpc` and `vault` (local Steam cache) are defined but not yet wired to a parent.
@@ -128,5 +129,5 @@ Graduate by bumping the main `nixpkgs` and clearing the beta lists. Options + as
 
 1. Scaffold from the template: `nix flake init -t .#host` (or create `hosts/<hostname>/configuration.nix` by hand), specifying `users_list`, `machine_uuid`, `machine_type`. Import `../_core/default.nix` (the wrapper that adds the `initialInstallMode` installer branch), **not** `../_core/configuration.nix` directly.
 2. Add to `flake.nix` under `nixosConfigurations` using `mkSystem`
-3. Add machine hardware config under `machines/workstations/<UUID>/` if it's new hardware (resolved via `machines/resolve.nix`)
+3. Add machine hardware config under `machines/workstations/<UUID>/` if it's new hardware (resolved via `machines/resolve.nix`). Its `hardware-configuration.nix` owns `nixpkgs.hostPlatform`, and that wins over mkSystem's x86 `system` fallback. This is how `HETZNER-CAX` makes `webhost` aarch64.
 4. For a microVM **guest** instead of a top-level host, declare it in a parent host's `vms.nix` rather than adding a `mkSystem` output

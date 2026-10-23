@@ -7,8 +7,8 @@
 #       ./machines/workstations/HETZNER-CLOUD/hardware-configuration.nix \
 #     --target-host root@<SERVER_IP>
 # (enable the Hetzner Rescue System on the instance first, SSH key loaded). The
-# bootloader (systemd-boot, UEFI) and hostPlatform come from hosts/_core; this
-# file carries only the hardware scan.
+# bootloader (systemd-boot, UEFI) comes from hosts/_core; this file carries the
+# hardware scan and nixpkgs.hostPlatform (keep that line when regenerating).
 {
   config,
   lib,
