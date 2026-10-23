@@ -21,6 +21,7 @@
   config,
   lib,
   pkgs,
+  utils,
   cala-m-os,
   ...
 }: let
@@ -620,12 +621,6 @@ in {
   config = lib.mkIf cfg.enable {
     environment.systemPackages = [tci-run];
 
-    # Own the state + mrpack drop dirs regardless of who first invokes the CLI.
-    systemd.tmpfiles.rules =
-      ["d ${cfg.stateDir} 0755 ${cfg.user} ${cfg.group} - -"]
-      ++ lib.optional (!lib.hasSuffix ".mrpack" cfg.mrpackPath)
-      "d ${cfg.mrpackPath} 0755 ${cfg.user} ${cfg.group} - -";
-
     networking.firewall = lib.mkIf cfg.openFirewall (
       if cfg.allowedSources == []
       then {allowedTCPPorts = [cfg.port];}
@@ -639,6 +634,15 @@ in {
       wantedBy = ["multi-user.target"];
       after = ["network.target"];
       serviceConfig = {
+        # Own the state + mrpack drop dirs from boot, regardless of who first
+        # invokes the CLI. Created AS the user, not via systemd-tmpfiles: tmpfiles
+        # runs as root and creates missing parents (~/.local, ~/.local/state) as
+        # root. That locks the user out of their own ~/.local, and home-manager
+        # then fails ("Could not find suitable profile directory").
+        ExecStartPre = utils.escapeSystemdExecArgs (
+          ["${pkgs.coreutils}/bin/mkdir" "-p" cfg.stateDir]
+          ++ lib.optional (!lib.hasSuffix ".mrpack" cfg.mrpackPath) cfg.mrpackPath
+        );
         ExecStart = "${pkgs.python3}/bin/python3 ${listenerPy}";
         User = cfg.user;
         Group = cfg.group;
