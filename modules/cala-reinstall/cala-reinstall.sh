@@ -1,10 +1,10 @@
 # shellcheck shell=bash
-# Body of `cala-reinstall` (see ./configuration.nix). CALA_REINSTALL_FLAKE is
-# set by the wrapper.
+# Body of `cala-reinstall` (see ./configuration.nix). CALA_REINSTALL_FLAKE and
+# CALA_REINSTALL_VARIANT are set by the wrapper.
 
 usage() {
   cat <<'EOF'
-usage: cala-reinstall [--dry-run] [--yes] [--flake REF | --image DIR]
+usage: cala-reinstall [--dry-run] [--yes] [--flake REF | --image DIR] [--variant full|vm]
                       [--token-file FILE | --pat-file FILE | --no-token] [--no-keys] [--no-network]
 
 Replace this running host with the Cala-M-OS installer, in RAM (kexec). The
@@ -13,7 +13,9 @@ then boots this system again.
 
   --dry-run          build the payload and load the image, then unload it
   --yes              skip the type-the-hostname confirmation
-  --flake REF        flake providing installer-kexec (default below)
+  --flake REF        flake providing installer-kexec[-vm] (default below)
+  --variant full|vm  full = with linux-firmware (bare metal); vm = without, about
+                     half the size (default: vm on a virtual machine, else full)
   --image DIR        a ready kexec image (bzImage, initrd, cmdline) instead
   --token-file FILE  GitHub `access-tokens = …` line for private flake inputs
                      (default: whatever this host's nix already has)
@@ -23,6 +25,7 @@ then boots this system again.
   --no-network       don't carry static addresses (DHCP networks need none)
 EOF
   echo "Default flake: $CALA_REINSTALL_FLAKE (programs.cala-reinstall.flake)"
+  echo "Default variant: $CALA_REINSTALL_VARIANT (programs.cala-reinstall.variant)"
 }
 die() {
   echo "cala-reinstall: $*" >&2
@@ -40,6 +43,7 @@ NET=1
 while [ $# -gt 0 ]; do
   case "$1" in
     --flake) CALA_REINSTALL_FLAKE="${2:?--flake needs a flake ref}"; shift 2 ;;
+    --variant) CALA_REINSTALL_VARIANT="${2:?--variant needs full, vm or auto}"; shift 2 ;;
     --image) IMAGE="${2:?--image needs a directory}"; shift 2 ;;
     --token-file) TOKEN_FILE="${2:?--token-file needs a path}"; shift 2 ;;
     --pat-file) PAT_FILE="${2:?--pat-file needs a path}"; shift 2 ;;
@@ -56,11 +60,30 @@ done
 [ "$(id -u)" -eq 0 ] || die "run as root: sudo cala-reinstall"
 HOST=$(cat /proc/sys/kernel/hostname)
 
+# Which image: the full one carries linux-firmware (a bare-metal NIC may need a
+# blob to come back with network); a VM's virtio devices need none, and leaving
+# it out halves the initrd, which is what fits a 4 GB cloud box.
+case "$CALA_REINSTALL_VARIANT" in
+  full | vm) ;;
+  auto)
+    if systemd-detect-virt --vm --quiet; then
+      CALA_REINSTALL_VARIANT=vm
+    else
+      CALA_REINSTALL_VARIANT=full
+    fi
+    ;;
+  *) die "--variant must be full, vm or auto (got '$CALA_REINSTALL_VARIANT')." ;;
+esac
+ATTR=installer-kexec
+[ "$CALA_REINSTALL_VARIANT" != vm ] || ATTR=installer-kexec-vm
+
 if [ -z "$IMAGE" ]; then
-  echo "Building the installer kexec image from $CALA_REINSTALL_FLAKE..."
+  # `#<attr>` resolves to packages.<this host's system>.<attr>: the x86_64 or
+  # aarch64 image, whichever this box runs.
+  echo "Building the installer kexec image ($ATTR) from $CALA_REINSTALL_FLAKE..."
   IMAGE=$(nix --extra-experimental-features 'nix-command flakes' build --refresh \
-    --no-link --print-out-paths "$CALA_REINSTALL_FLAKE#installer-kexec") ||
-    die "could not build $CALA_REINSTALL_FLAKE#installer-kexec."
+    --no-link --print-out-paths "$CALA_REINSTALL_FLAKE#$ATTR") ||
+    die "could not build $CALA_REINSTALL_FLAKE#$ATTR."
 fi
 for f in bzImage initrd cmdline; do
   [ -r "$IMAGE/$f" ] || die "$IMAGE has no $f; not an installer-kexec image."
@@ -74,7 +97,9 @@ gib=$((1024 * 1024 * 1024))
 memtotal=$(awk '/^MemTotal:/ {print $2 * 1024}' /proc/meminfo)
 memavail=$(awk '/^MemAvailable:/ {print $2 * 1024}' /proc/meminfo)
 if [ "$memtotal" -lt $((2 * isz + gib)) ]; then
-  die "the installer needs about $(((2 * isz + gib) / gib + 1)) GiB of RAM; this box has $((memtotal / gib)) GiB. Use the ISO instead."
+  hint="Use the ISO instead."
+  [ "$CALA_REINSTALL_VARIANT" = vm ] || hint="Try --variant vm (no firmware, about half the size), or the ISO."
+  die "the installer needs about $(((2 * isz + gib) / gib + 1)) GiB of RAM; this box has $((memtotal / gib)) GiB. $hint"
 fi
 if [ "$memavail" -lt $((2 * isz + gib / 4)) ]; then
   die "not enough free memory to load the image (need ~$(((2 * isz) / gib + 1)) GiB available). Stop some services and retry."
@@ -239,7 +264,7 @@ done
 
 echo
 echo "This replaces the running '$HOST' with the Cala-M-OS installer, in RAM."
-echo "  image:    $IMAGE"
+echo "  image:    $IMAGE ($CALA_REINSTALL_VARIANT)"
 if [ "${#carried[@]}" -gt 0 ]; then
   printf '  carrying: %s\n' "${carried[@]}"
 fi

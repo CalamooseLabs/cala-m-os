@@ -28,7 +28,10 @@ nix develop
 nix build .#nixosConfigurations.iso.config.system.build.isoImage
 
 # Build the RAM-only installer that `sudo cala-reinstall` kexecs a running host into
+# (every physical host has cala-reinstall; -vm = without linux-firmware, for VMs/cloud;
+# the same two exist under packages.aarch64-linux for webhost)
 nix build .#installer-kexec
+nix build .#installer-kexec-vm
 
 # Install on new hardware (run from ISO)
 INITIAL_INSTALL_MODE=1 sudo nixos-install --flake .#<hostname>
@@ -85,10 +88,18 @@ Flake outputs (built with `nixos-rebuild ... --flake .#<host>`):
 | `homelab` | MS-02 | `server` | Homelab VM host (media + torrent + security); owns agenix secrets + cala-certs |
 | `livedata` | MS-01 | `server` | Client app/VM host (openreturn + quorumcall); `enableSecrets=false` |
 | `openreturn` | Small VM | `server` | OpenReturn app; standalone output *and* a `livedata` guest |
+| `tci-cloud` | HETZNER-CLOUD | `server` | The Cobblemon Initiative public hub fleet on a Hetzner Cloud CCX (x86 VM). `enableSecrets=false`; the private `cobblemon-initiative` input means deploys run as root on devbox (nixos-anywhere / `nixos-rebuild --target-host`, steps in its header) |
+| `tci-private` | TCI-LOCAL | `server` | The Cobblemon Initiative soul-link fleet on a LAN box; static lab IP |
 | `webhost` | HETZNER-CAX | `webmaster` | Minimal public web server on a Hetzner Cloud CAX11 (**aarch64**, EU-only). Caddy auto-HTTPS serves each module under `hosts/webhost/sites/<site>/`. `enableSecrets=false`. Deployed from devbox and built on the box (`--build-host`); deploy steps are in its header |
 | `iso` | — | — | Custom installer with disko + agenix |
 
 **microVM guests** (built by a parent host's `vms.nix`, not top-level outputs): `media` (Medium) + `torrent` (X-Small) + `security` (X-Small, UniFi Protect camera wall) on `homelab`; `openreturn` + `quorumcall` (Small) on `livedata`; `lanstation-vm` (Large, the gaming guest) on `lanstation` (WIP). `htpc` and `vault` (local Steam cache) are defined but not yet wired to a parent.
+
+### Hetzner Cloud hosts + reinstall-in-place
+
+- `machines/modules/hetzner-cloud` is shared by the `HETZNER-CLOUD` and `HETZNER-CAX` machines: systemd-networkd for Hetzner's **routed (Layer 3)** network — IPv4 over Hetzner's DHCP (a /32 behind the off-subnet gateway 172.31.1.1, which networkd handles) until the host sets `calamoose.hetznerCloud.ipv4Address` (then DHCP is off and the /32 + on-link default route are static); IPv6 only via `ipv6Address` (Hetzner sends **no** router advertisements, gateway `fe80::1`); Hetzner's resolvers; `qemu-guest` profile; visible boot menu, no Plymouth (web-console only). Hosts set the addresses inside their `lib.optional (!initialInstallMode)` block because the module (and its options) is not part of the minimal install pass. First installs run on DHCP (addresses unknown); fill them in afterwards, and publish AAAA records only once `curl -6` works.
+- Both Hetzner hosts are first installed with **nixos-anywhere from Hetzner's Rescue system** (steps in each host's header). `install-cala-m-os` can't auto-wipe them (`wipeAllDisks` needs a by-id pin and Hetzner root-disk serials are per-server), so the installer TUI runs disko interactively for such hosts (it asks for a typed `yes`) and then installs with `INSTALL_SKIP_DISKO=1`.
+- **`cala-reinstall` is on every physical host** (`hosts/_core/non-vm.nix`; microVM guests are rebuilt by their parent instead): `sudo cala-reinstall` kexecs the running host into the RAM-only installer. Flake outputs `installer-kexec` (with linux-firmware, bare metal) and `installer-kexec-vm` (without, ~half the size — fits a 4 GB cloud VM) exist for x86_64 and aarch64 (`packages.<system>`); `cala-reinstall` picks `vm` under `systemd-detect-virt` (`--variant`). The installer image builds antlers' scripts through `inputs.antlers.overlays.default` so the aarch64 image works, and exports `CALA_INSTALLER_HOSTS/_MACHINES/_VM_MACHINES` (computed from the flake) for the TUI's pickers, which also refresh from the flake once online.
 
 ### Secrets / Security
 

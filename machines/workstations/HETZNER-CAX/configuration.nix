@@ -4,11 +4,15 @@
 #   Ampere Altra KVM guest       #
 #                                #
 ##################################
-{modulesPath, ...}: {
+{...}: {
   imports = [
     ./hardware-configuration.nix
     ./disko.nix
-    (modulesPath + "/profiles/qemu-guest.nix")
+
+    # Hetzner's routed (Layer 3) network + web-console-friendly boot (and the
+    # qemu-guest profile); the host sets its addresses via
+    # calamoose.hetznerCloud.* (DHCP until it does).
+    ../../modules/hetzner-cloud/configuration.nix
   ];
 
   # The ARM kernel console defaults to serial, which Hetzner's web (VNC)

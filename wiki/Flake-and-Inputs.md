@@ -70,10 +70,10 @@ flowchart LR
   flake --> dev["devShells.default → shell.nix"]
 ```
 
-- **`nixosConfigurations`** — `lanstation`, `devbox`, `ephemeral`, `homelab`, `simple`, `battlestation`, `broadcast`, `openreturn`, `livedata`, `ai`, plus `iso`. `installer-kexec` is the same installer as a RAM-only kexec image (`iso/kexec.nix`), used by `cala-reinstall`. The `iso` is built directly (not via `mkSystem`) and gets only `inputs` in `specialArgs`. See [[Hosts|Hosts]].
+- **`nixosConfigurations`** — `lanstation`, `devbox`, `ephemeral`, `homelab`, `simple`, `battlestation`, `broadcast`, `openreturn`, `livedata`, `ai`, `tci-cloud`, `tci-private`, `webhost` (aarch64), plus `iso`. `installer-kexec` is the same installer as a RAM-only kexec image (`iso/kexec.nix`), used by `cala-reinstall`; `installer-kexec-vm` drops linux-firmware (`iso/kexec-vm.nix`) for VMs, and `installer-kexec-aarch64` / `installer-kexec-vm-aarch64` are the same two for aarch64 hosts. The `iso` and the kexec images are built directly (not via `mkSystem`) and get only `inputs` in `specialArgs`. See [[Hosts|Hosts]].
 - **`formatter`** → `alejandra` (so `nix fmt` ≡ `alejandra .`).
 - **`packages.x86_64-linux.default`** → `nixosConfigurations.iso.config.system.build.isoImage`, so `nix build` builds the ISO.
-- **`packages.x86_64-linux.installer-kexec`** → the kexec image (`bzImage`, `initrd`, `cmdline`) that `cala-reinstall` boots. See [[ISO & Installer|ISO-Installer]].
+- **`packages.<system>.installer-kexec`** / **`installer-kexec-vm`** (for `x86_64-linux` and `aarch64-linux`) → the kexec image (`bzImage`, `initrd`, `cmdline`) that `cala-reinstall` boots; `<flake>#installer-kexec` resolves to the running host's own architecture. See [[ISO & Installer|ISO-Installer]].
 - **`templates`** → imported from `./templates` (see below).
 - **`devShells.${system}.default`** → `./shell.nix`.
 

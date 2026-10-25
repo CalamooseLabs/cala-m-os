@@ -35,8 +35,11 @@ flowchart TD
 | `FW13-11XXP`  | Framework 13, 11th-gen Intel                                      | —          | —          | `framework-11th-gen-intel`              | **yes**           |
 | `FW13-12XXP`  | Framework 13, 12th-gen Intel                                      | —          | —          | `framework-12th-gen-intel`              | **yes**           |
 | `FW16-AMD-AI` | Framework 16 AMD + NVIDIA 5070                                    | nvidia-gpu | —          | `framework-16-amd-ai-300-series-nvidia` | **yes**           |
+| `HETZNER-CAX` | Hetzner Cloud CAX (Ampere Altra KVM guest, **aarch64**; `webhost`)  | —          | —          | — (hetzner-cloud module)                | no                |
+| `HETZNER-CLOUD` | Hetzner Cloud CCX (AMD KVM guest, x86; `tci-cloud`)             | —          | —          | — (hetzner-cloud module)                | no                |
 | `MS-01`       | Minisforum MS-01                                                  | —          | —          | —                                       | no                |
 | `MS-02`       | Minisforum MS-02 + RTX Pro 4000                                   | nvidia-gpu | —          | —                                       | no                |
+| `TCI-LOCAL`   | The Cobblemon Initiative LAN box (`tci-private`)                   | —          | —          | —                                       | no                |
 | `TRX50-SAGE`  | ASUS Pro WS TRX50-Sage, Threadripper 7960X, RTX 5090 + RX 9060 XT | nvidia-gpu | —          | —                                       | no                |
 | `ZIMA`        | Zima Board 2                                                      | —          | —          | —                                       | no                |
 
@@ -94,6 +97,7 @@ Imported by **workstation `configuration.nix` files**, not by hosts. All four ar
 | `amd-gpu`    | `hardware.graphics` (+32-bit), `videoDrivers=["amdgpu"]`, redistributable firmware, early-KMS `amdgpu` initrd module                                                                                                                       |
 | `intel-gpu`  | `intel-media-driver`, `intel-compute-runtime`, `intel-gpu-tools`                                                                                                                                                                           |
 | `amd-cpu`    | Blacklists `k10temp`, loads `zenpower` for better Zen sensors (only `B850-MAX` uses it)                                                                                                                                                    |
+| `hetzner-cloud` | Hetzner Cloud guest: `qemu-guest` profile; systemd-networkd for Hetzner's routed (Layer 3) network — IPv4 over DHCP until `calamoose.hetznerCloud.ipv4Address` pins a static /32 with the on-link gateway `172.31.1.1`; IPv6 only via `ipv6Address` (no router advertisements on Hetzner; gateway `fe80::1`); Hetzner's resolvers + systemd-resolved; visible boot menu, no Plymouth (web console). Used by `HETZNER-CLOUD` and `HETZNER-CAX`; the hosts set the addresses. |
 
 ---
 

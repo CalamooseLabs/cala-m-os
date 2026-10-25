@@ -59,11 +59,17 @@ Before building, it does what the installer will do: it logs in with the PAT in 
 
 > Revoke the PAT after the install, and delete the ISO from the share and from the provider. Exception: if you install an online-secrets host from this ISO, cala-installer seeds the PAT onto it, so revoking it would cut that host off.
 
-### Hetzner Cloud (tci-cloud)
+### Hetzner Cloud (tci-cloud, webhost)
+
+The two Hetzner Cloud hosts share `machines/modules/hetzner-cloud` (see [[Machines|Machines]]): systemd-networkd for Hetzner's **routed (Layer 3)** network. Hetzner notes that "the Cloud Server network model is always based on Layer 3, so automatic network configuration may fail with some custom operating systems": the public IPv4 is a /32 whose gateway (172.31.1.1) is outside it, and there are no IPv6 router advertisements. The module runs IPv4 over Hetzner's DHCP (systemd-networkd handles the off-subnet gateway) until the host sets `calamoose.hetznerCloud.ipv4Address`, which turns DHCP off and writes the static /32 + on-link default route; IPv6 exists only once `ipv6Address` is set (static, gateway `fe80::1`). A first install therefore runs on DHCP; fill the addresses in afterwards and redeploy, and publish AAAA records only once `curl -6` works on the box.
+
+**Preferred first install — nixos-anywhere from Hetzner's Rescue system** (no custom ISO, no support ticket). Each host's header has the exact commands; in short: create the server with no Volumes attached, point DNS at its IPv4, enable Rescue with your SSH key, reset into it, then from devbox `nix run github:nix-community/nixos-anywhere -- --flake .#<host> --target-host root@<ipv4>` (`--build-on remote` for the aarch64 webhost; `sudo --preserve-env=SSH_AUTH_SOCK …` for tci-cloud, whose private `cobblemon-initiative` input only root's nix can fetch). nixos-anywhere kexecs the rescue system into a NixOS installer, applies the host's disko layout (`/dev/sda`) and installs the full configuration in one pass.
+
+**Alternative — the PAT-bearing ISO** (needed only when the box must install itself, e.g. tci-cloud without a devbox at hand):
 
 1. Put the ISO on the share behind a **direct-download** link that needs no login. Then open a Hetzner support ticket (project → Support → "Miscellaneous") with the link and "x86". The ISO becomes private to the project; the API can't upload or delete ISOs, so removal also takes a ticket.
 2. Server → ISO Images → mount it, then reboot. It boots under UEFI from a virtual CD (`/dev/sr0`); the root disk stays `/dev/sda`. Use the web console (noVNC).
-3. cala-installer's host list doesn't include tci-cloud, and HETZNER-CLOUD can't set `wipeAllDisks`: that needs a `/dev/disk/by-id` pin, and Hetzner root-disk serials differ per server. So choose **Drop to a shell** and run:
+3. Pick the host in cala-installer. The HETZNER machines can't set `wipeAllDisks` (that needs a `/dev/disk/by-id` pin, and Hetzner root-disk serials differ per server), so the TUI runs disko itself for them: disko lists the device it is about to erase and asks for a typed `yes`, then the install continues with `INSTALL_SKIP_DISKO=1`. The same by hand, from **Drop to a shell**:
    ```bash
    sudo -i
    disko --mode destroy,format,mount --flake github:CalamooseLabs/cala-m-os#tci-cloud
@@ -71,16 +77,21 @@ Before building, it does what the installer will do: it logs in with the PAT in 
    ```
    `journalctl -u cala-nix-token` shows whether the GitHub token was fetched. `cala-nix-token` retries it by hand.
 
+**Reinstall** — `sudo cala-reinstall` on the box (below), then the same install from the kexec'd installer. tci-cloud holds no GitHub token of its own (`enableSecrets = false`), so pass `--token-file`; webhost has no private inputs, so `--no-token`.
+
 ---
 
 ## Reinstall in place: `cala-reinstall` (no USB or ISO)
 
-A host with the `cala-reinstall` module (`modules/cala-reinstall`; enrolled on tci-cloud) can turn itself back into the installer. It kexecs into a RAM-only build of the same installer: the flake output `installer-kexec` (`iso/kexec.nix`, a netboot image that keeps the whole store in the initrd). This suits remote boxes and cloud VMs, where there is nothing to plug in.
+**Every physical host** has `cala-reinstall` (`modules/cala-reinstall`, imported by `hosts/_core/non-vm.nix`; microVM guests don't — their root image is rebuilt by the parent host). It turns the running host back into the installer: it kexecs into a RAM-only build of the same installer, the flake output `installer-kexec` (`iso/kexec.nix`, a netboot image that keeps the whole store in the initrd). This suits remote boxes and cloud VMs, where there is nothing to plug in.
+
+The image comes in two flavours and two architectures: `installer-kexec` carries linux-firmware (a bare-metal NIC may need a blob to come back with network), `installer-kexec-vm` leaves it out (`iso/kexec-vm.nix`) and is about half the size — what fits a 4 GB cloud VM. `cala-reinstall` picks `vm` by itself when `systemd-detect-virt` reports a VM (`--variant full|vm` overrides; `programs.cala-reinstall.variant` sets the default), and `<flake>#installer-kexec[-vm]` resolves through `packages.<system>` to the host's own architecture (`installer-kexec-aarch64` / `installer-kexec-vm-aarch64` behind it, for webhost).
 
 ```bash
 sudo cala-reinstall --dry-run     # build the payload and load the image, then unload it
 sudo cala-reinstall               # type the hostname to confirm; the session drops
 #   --flake REF | --image DIR      where the kexec image comes from (default: github:CalamooseLabs/cala-m-os)
+#   --variant full|vm              with / without linux-firmware (default: vm on a virtual machine, else full)
 #   --token-file / --pat-file      what it carries for private inputs (default: the host's own)
 #   --no-token                     go ahead with neither (hosts without private inputs)
 #   --no-keys / --no-network       don't carry SSH keys / static addresses
@@ -100,10 +111,12 @@ It appends a small payload to the image's initrd. The installer copies it to `/v
 - **Nothing on disk changes until you run the install.** A hard reset before then boots the old system.
 - It refuses to run when it would carry neither a token nor a PAT, unless you pass `--no-token`. **tci-cloud holds no token** (`enableSecrets = false`), so give it `--token-file` (copy over an `access-tokens = github.com=…` line) or `--pat-file`.
 - The installer comes up with SSH (same host key, the host's keys plus the YubiKey keys) and the TUI on the console. Then install as usual. For tci-cloud, that's the shell steps above.
-- It needs RAM: the initrd is about 1.4 GB because it includes linux-firmware, like the ISO, and the installer briefly holds it twice. It checks first and refuses on boxes under roughly 4 GB.
+- It needs RAM: the full initrd is about 1.4 GB because it includes linux-firmware, like the ISO, and the installer briefly holds it twice, so the full image needs roughly 4 GB; the `vm` flavour is about half that. It checks first and refuses when the box is short.
 - Kexec skips the firmware reset. That's fine for VMs, but on a workstation with a GPU, rebooting into a USB or ISO is safer.
+- A host that uses Hetzner's DHCP carries no static addresses (DHCP networks need none); one with `calamoose.hetznerCloud.ipv4Address` / `ipv6Address` set carries them, and the installer restores them as a NetworkManager profile with the off-subnet gateway.
+- The aarch64 image and the kexec on a Hetzner CAX box are untested so far (the x86 QEMU test below is what has been run); treat the first webhost reinstall as a smoke test with the web console open.
 - Static addresses become one NetworkManager profile per NIC, matched by MAC, so a renamed or late-appearing NIC still gets them. A NIC that also had DHCP keeps DHCP alongside them. Addresses on VLANs, bonds or bridges without a physical member aren't carried; it says so.
-- The default flake ref only has `installer-kexec` once this is on master. Until then use `--flake github:CalamooseLabs/cala-m-os/<branch>`.
+- The default flake ref only has the `installer-kexec*` outputs once they are on master. Until then use `--flake github:CalamooseLabs/cala-m-os/<branch>`.
 
 Tested in QEMU, from a static-IP NixOS VM:
 - After the jump, the host key was unchanged and root SSH worked with the carried key.
@@ -119,9 +132,8 @@ Tested in QEMU, from a static-IP NixOS VM:
 - Based on `installation-cd-minimal.nix`; flakes + `nix-command` + `allowUnfree`.
 - **SSH forced up** (`sshd.wantedBy = ["multi-user.target"]`); root authorized keys are the two `sk-ssh-ed25519` FIDO2 keys in `iso/public_keys/`; `pcscd` enabled. → You can SSH into the live installer with only the Yubikey.
 - Hostname `cala-m-os-installer`; `forceTextMode`; `lz4` squashfs.
-- Packages: `disko`, `git`, `neovim`, a bash-completion script, and the `install-cala-m-os` script.
-- **Bash completion** completes the host argument from a static list:
-  `lanstation devbox ephemeral homelab simple battlestation broadcast openreturn livedata ai`.
+- Packages: `disko`, `git`, `neovim`, hardware-inspection tools, and antlers' `install-cala-m-os` (with its bash-completion), `cala-installer` and `proton-secrets` — built through `inputs.antlers.overlays.default` against the image's own package set, which is what lets the aarch64 kexec image exist.
+- **Every host and machine is offered**: `iso/installer.nix` computes `CALA_INSTALLER_HOSTS` (every `nixosConfigurations` entry except the installer images), `CALA_INSTALLER_MACHINES` and `CALA_INSTALLER_VM_MACHINES` (the `machines/workstations` and `machines/vms` directories) from the flake and exports them; cala-installer's pickers and the `install-cala-m-os` bash completion read them, and once online cala-installer refreshes both from the flake ref it installs from, so a host added upstream shows up without a new image.
 
 > The `iso` config is built directly (not via `mkSystem`) and gets only `inputs` in `specialArgs` — no `cala-m-os`, no `initialInstallMode`.
 
@@ -141,6 +153,7 @@ Then reboot.
 
 Notes:
 - The ISO auto-starts the `cala-installer` TUI on tty1 (a gum front-end over `install-cala-m-os`): pick the host, then **"Use the host's default machine"** for any existing host. The **"Generate a fresh config for THIS box (self)"** choice is for brand-new hardware only — it neither sets `wipeAllDisks` nor pins the disk by id, so it cannot install a host like `homelab`.
+- Hosts whose `calamoose.install.wipeAllDisks` is `false` (the default; the Hetzner cloud hosts, dual-boot boxes) can't be wiped unattended by `install-cala-m-os`. The TUI runs `disko --mode destroy,format,mount` for them itself — disko shows the device(s) and asks for a typed `yes` — and then installs with `INSTALL_SKIP_DISKO=1`. Only `battlestation`, `broadcast` and `homelab` set `wipeAllDisks = true`.
 - The first (minimal) pass uses the flake's pinned `disko` input, so it needs nothing beyond the clone.
 - Reinstalling onto a **replaced OS disk**: the machine's `disko.nix` pins the drive by id; pass the new path with `sudo INSTALL_OS_DISK=/dev/disk/by-id/... install-cala-m-os <host>` — variable after `sudo` — (MS-02 supports this; a non-by-id value is refused) and update the pin afterwards. Full homelab procedure: [[Disaster Recovery|Disaster-Recovery]].
 - The password entered in Step 5 is `hub`'s password of record: `users.mutableUsers` is on, so the `admin_password` secret only seeds accounts that are created while it is readable.

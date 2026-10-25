@@ -3,6 +3,15 @@
   lib,
   ...
 }: {
+  imports = [
+    # `sudo cala-reinstall`: turn this running host back into the installer, in
+    # RAM, with no USB stick or ISO. On every physical host (cloud VMs included;
+    # they are "Workstation" machines here). microVM guests are left out: their
+    # root image is owned and rebuilt by the parent host, so there is nothing to
+    # reinstall from inside one.
+    ../../modules/cala-reinstall/configuration.nix
+  ];
+
   # Allow unfree
   nixpkgs.config.allowUnfree = true;
 

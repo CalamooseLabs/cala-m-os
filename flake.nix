@@ -184,6 +184,15 @@
           }
         ];
       };
+
+    # The RAM-only installer (iso/kexec.nix) for one architecture, with or
+    # without linux-firmware (iso/kexec-vm.nix). See installer-kexec* below.
+    mkInstallerKexec = system: vm:
+      nixpkgs.lib.nixosSystem {
+        specialArgs = {inherit inputs;};
+        inherit system;
+        modules = [./iso/kexec.nix] ++ nixpkgs.lib.optional vm ./iso/kexec-vm.nix;
+      };
   in {
     nixosConfigurations = {
       lanstation = mkSystem "lanstation" {inherit self;};
@@ -214,12 +223,16 @@
       };
 
       # The same installer as a RAM-only kexec image (no USB or ISO): what
-      # `cala-reinstall` (modules/cala-reinstall) turns a running host into.
-      installer-kexec = nixpkgs.lib.nixosSystem {
-        specialArgs = {inherit inputs;};
-        system = "x86_64-linux";
-        modules = [./iso/kexec.nix];
-      };
+      # `cala-reinstall` (modules/cala-reinstall, on every physical host) turns
+      # a running host into. One per architecture (webhost is aarch64), each in
+      # two flavours: the full image carries linux-firmware for bare-metal NICs;
+      # `vm` leaves it out, which is what fits a 4 GB cloud VM (cala-reinstall
+      # picks it under systemd-detect-virt). `nix build .#installer-kexec` on a
+      # host resolves to its own architecture via packages.<system> below.
+      installer-kexec = mkInstallerKexec "x86_64-linux" false;
+      installer-kexec-vm = mkInstallerKexec "x86_64-linux" true;
+      installer-kexec-aarch64 = mkInstallerKexec "aarch64-linux" false;
+      installer-kexec-vm-aarch64 = mkInstallerKexec "aarch64-linux" true;
     };
 
     formatter = {
@@ -234,7 +247,9 @@
     # context means the check itself is just an `echo`, so this evaluates the
     # systems without realising (building) them. The microvm guests (media,
     # torrent) are validated transitively through `homelab`, whose evaluation
-    # forces their toplevels via the vm-manager restart triggers.
+    # forces their toplevels via the vm-manager restart triggers. The aarch64
+    # configurations (webhost, installer-kexec*-aarch64) are evaluated the same
+    # way — their drvPath is just a string here, nothing is built for them.
     checks.${system} =
       builtins.mapAttrs (
         name: cfg:
@@ -247,7 +262,13 @@
       self.nixosConfigurations;
 
     packages.x86_64-linux.default = self.nixosConfigurations.iso.config.system.build.isoImage;
+    # The kexec images (bzImage/Image, initrd, cmdline) that cala-reinstall loads,
+    # keyed by the architecture they run on, so `<flake>#installer-kexec[-vm]`
+    # resolves to the right one on the host that runs it.
     packages.x86_64-linux.installer-kexec = self.nixosConfigurations.installer-kexec.config.system.build.calaKexec;
+    packages.x86_64-linux.installer-kexec-vm = self.nixosConfigurations.installer-kexec-vm.config.system.build.calaKexec;
+    packages.aarch64-linux.installer-kexec = self.nixosConfigurations.installer-kexec-aarch64.config.system.build.calaKexec;
+    packages.aarch64-linux.installer-kexec-vm = self.nixosConfigurations.installer-kexec-vm-aarch64.config.system.build.calaKexec;
 
     templates = import ./templates;
 

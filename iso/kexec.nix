@@ -115,7 +115,14 @@ in {
             args+=("ipv$v.method" auto "ipv$v.addresses" "$addrs")
           else
             args+=("ipv$v.method" manual "ipv$v.addresses" "$addrs")
-            if [ -n "$gw" ]; then args+=("ipv$v.gateway" "$gw"); fi
+            if [ -n "$gw" ]; then
+              args+=("ipv$v.gateway" "$gw")
+              # A gateway outside the carried prefix (Hetzner Cloud: a /32 behind
+              # 172.31.1.1) needs a direct host route first. NetworkManager adds
+              # one by itself today but warns (1.58+) that this will change, so
+              # spell it out; harmless when the gateway is on-link anyway.
+              [ "$v" = 6 ] || args+=("ipv$v.routes" "$gw/32")
+            fi
             if [ -n "''${!dns}" ]; then args+=("ipv$v.dns" "''${!dns}"); fi
           fi
         done
