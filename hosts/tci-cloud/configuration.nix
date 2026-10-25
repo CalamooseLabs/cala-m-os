@@ -20,10 +20,15 @@
 #        attached, so the root disk is the only /dev/sdX (HETZNER-CLOUD/disko.nix).
 #     2. Point `publicHost` below at its IPv4 (an A record; the AAAA record only
 #        after step 4). Check it with `dig +short <domain> @1.1.1.1`.
-#     3. Enable Rescue (linux64) with your SSH key, reset into it, and run:
+#     3. Enable Rescue (linux64) with your SSH key, reset into it, and check the
+#        box boots UEFI — this layout needs it, CCX servers do, the CX line does
+#        not: `ls /sys/firmware/efi` in the rescue shell (and `lsblk` that
+#        /dev/sda is the only disk). Then run:
 #          sudo --preserve-env=SSH_AUTH_SOCK nix run github:nix-community/nixos-anywhere -- \
 #            --flake .#tci-cloud --target-host root@<ipv4>
 #          ssh-keygen -R <ipv4>
+#        If the kexec step fails with "Address not available" (a kernel 7.0
+#        rescue kernel), add `--kexec-extra-flags -c`.
 #        nixos-anywhere kexecs the rescue system into a NixOS installer, applies
 #        this host's disko layout and installs the FULL config in one pass. The
 #        box comes up on DHCP (calamoose.hetznerCloud, both addresses null).
@@ -36,9 +41,12 @@
 #       --target-host hub@<host> --sudo
 #   Reinstall in place (no media): `sudo cala-reinstall --token-file <f>` on the
 #   box — with enableSecrets = false it holds no GitHub token of its own, so hand
-#   it an `access-tokens = github.com=…` line — then install-cala-m-os tci-cloud
-#   in the installer (disko asks before wiping; wiki: ISO-Installer). The
-#   PAT-bearing custom ISO (build-pat-iso) remains the alternative.
+#   it an `access-tokens = github.com=…` line — then pick tci-cloud in the
+#   installer's TUI (cala-installer; it runs disko, which asks before wiping,
+#   because this host can't set wipeAllDisks). By hand that is
+#   `disko --mode destroy,format,mount --flake <ref>#tci-cloud`, then
+#   `INSTALL_SKIP_DISKO=1 install-cala-m-os tci-cloud` (wiki: ISO-Installer).
+#   The PAT-bearing custom ISO (build-pat-iso) remains the alternative.
 #
 # Log in as `hub` with the YubiKey sk keys (users/server): the key is verified
 # on the CLIENT, so the box itself needs no YubiKey.
@@ -87,7 +95,8 @@ in {
 
       # ---- Hetzner Cloud networking (machines/modules/hetzner-cloud) ----------
       # Hetzner's network is routed (Layer 3): IPv4 is a /32 behind the off-subnet
-      # gateway 172.31.1.1, and IPv6 gets NO router advertisements. Both null =
+      # gateway 172.31.1.1, and IPv6 is configured statically (no router
+      # advertisements to rely on). Both null =
       # IPv4 over Hetzner's DHCP (systemd-networkd handles the odd gateway) and no
       # IPv6 — what a first install runs on, before the addresses are known.
       # Afterwards: ipv6Address = "<the /64 from the Cloud Console>::1/64" (then

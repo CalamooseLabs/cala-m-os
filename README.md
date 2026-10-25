@@ -122,7 +122,7 @@ on real hardware; **MicroVM guests** run on a host through its `cala-vm-manager`
 > boots a running machine into to reinstall it with no USB stick or ISO. The two Hetzner
 > Cloud hosts share `machines/modules/hetzner-cloud` for Hetzner's routed (Layer 3)
 > network: IPv4 over DHCP until `calamoose.hetznerCloud.ipv4Address` pins it as a static
-> /32, static IPv6 via `ipv6Address` (Hetzner sends no router advertisements).
+> /32, static IPv6 via `ipv6Address` (Hetzner configures IPv6 statically, there are no router advertisements to rely on).
 
 ## Common Commands
 

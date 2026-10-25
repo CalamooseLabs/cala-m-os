@@ -11,4 +11,12 @@
 
   # ./kexec.nix re-enables it at mkOverride 60 (netboot-minimal disables at 70).
   hardware.enableRedistributableFirmware = lib.mkOverride 50 false;
+
+  # The installer lives in RAM and then evaluates a whole host flake before it
+  # writes anything to /mnt; on a 4 GB VM that peak needs headroom the
+  # RAM-only root can't give back. Compressed swap is the only swap there is.
+  zramSwap = {
+    enable = true;
+    algorithm = "zstd";
+  };
 }

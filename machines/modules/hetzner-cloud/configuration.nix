@@ -6,21 +6,24 @@
 #
 #   IPv4  The server owns a single /32. The gateway is 172.31.1.1, which is NOT
 #         inside that /32, so the default route has to be installed on-link.
-#         Hetzner's DHCP hands all of this out, and systemd-networkd copes with
-#         an off-subnet router (it adds a host route to it first), so DHCP is
-#         the default here. Hetzner itself warns that "the Cloud Server network
+#         Hetzner's DHCP hands all of this out (the lease also carries the
+#         option-121 routes), and systemd-networkd copes with an off-subnet
+#         router (it adds a host route to it first), so DHCP is the default
+#         here. Hetzner's custom-ISO notice warns that "the Cloud Server network
 #         model is always based on Layer 3, so automatic network configuration
 #         may fail with some custom operating systems" — so a host can pin the
 #         address instead (ipv4Address); DHCP is then off entirely and the
 #         route is written out explicitly.
-#   IPv6  The server owns a /64, but Hetzner sends NO router advertisements:
-#         SLAAC never happens and IPv6AcceptRA would only wait for nothing. The
-#         address must be static (ipv6Address, conventionally <prefix>::1/64)
-#         with the link-local gateway fe80::1.
-#   DNS   Hetzner's resolvers. The DHCP lease carries the IPv4 pair; the static
-#         path sets both pairs (nameservers). systemd-resolved is on, because
-#         networkd only hands lease DNS to resolved — without it a DHCP-only box
-#         boots with an empty /etc/resolv.conf.
+#   IPv6  The server owns a /64. Hetzner configures IPv6 statically (its images
+#         do it through cloud-init) and no router advertisements are documented
+#         or observed, so SLAAC can't be relied on and IPv6AcceptRA stays off.
+#         The address must be static (ipv6Address, conventionally
+#         <prefix>::1/64) with the link-local gateway fe80::1.
+#   DNS   Hetzner's recommended anycast resolvers (nameservers), on the DHCP
+#         path too: the lease has been seen handing out Hetzner's legacy
+#         resolvers, and no IPv6 resolver ever arrives over DHCPv4.
+#         systemd-resolved is on, because networkd only hands DNS to resolved —
+#         without it a networkd box boots with an empty /etc/resolv.conf.
 #
 # The addresses are only known once the server exists, so a FIRST install runs
 # on DHCP (both options null). Fill them in afterwards and redeploy; that is
@@ -36,10 +39,13 @@
 # Firmware: CPX/CCX/CAX servers boot UEFI (systemd-boot + ESP, as laid out in
 # the HETZNER-* disko.nix files). The cheap CX line is still created in legacy
 # BIOS mode and would need a GRUB/BIOS-boot layout instead — don't put a Cala-M-OS
-# host on a CX type without changing its disko.nix.
+# host on a CX type without changing its disko.nix. The mode is fixed per server
+# at creation (only Hetzner support changes it), so check `/sys/firmware/efi`
+# in the Rescue system before partitioning (the host headers say so).
 {
   config,
   lib,
+  pkgs,
   modulesPath,
   ...
 }: let
@@ -59,8 +65,13 @@ in {
       type = lib.types.str;
       default = "en*";
       description = ''
-        systemd.network `Name=` match for the public NIC. The virtio NIC is
-        enp1s0 on current Hetzner images; a glob keeps the exact name out of it.
+        systemd.network `Name=` match for the public NIC: enp1s0 on CAX and
+        newer x86 types, ens3 on older x86 ones, so a glob keeps the exact
+        name out of it. It would also match the NICs of a Hetzner private
+        Network (enp7s0…, ens10…), which want DHCP and MTU 1450 instead — if
+        one is ever attached, narrow this to the public NIC (e.g. its exact
+        name, or switch the match to the MAC) and give the private NIC its
+        own network unit.
       '';
     };
 
@@ -90,8 +101,9 @@ in {
       description = ''
         An address inside the server's /64 (the Cloud Console shows the prefix;
         ::1 is the convention), with the prefix length. null (default) means no
-        public IPv6 at all — Hetzner sends no router advertisements, so there is
-        no automatic path. Confirm `curl -6` works before publishing AAAA records.
+        public IPv6 at all — Hetzner configures IPv6 statically and offers no
+        router advertisements to fall back on. Confirm `curl -6` works before
+        publishing AAAA records.
       '';
     };
 
@@ -108,8 +120,9 @@ in {
         ++ lib.optionals staticV6 ["2a01:4ff:ff00::add:1" "2a01:4ff:ff00::add:2"];
       defaultText = lib.literalExpression ''["185.12.64.1" "185.12.64.2"] ++ (the IPv6 pair when ipv6Address is set)'';
       description = ''
-        Resolvers written into the network unit on the static path(s). Hetzner's
-        recursive resolvers by default; under plain DHCP the lease supplies them.
+        Resolvers written into the network unit, on the DHCP path as well (the
+        lease's own servers are merged in by resolved). Hetzner's recommended
+        anycast resolvers by default; the IPv6 pair only once ipv6Address is set.
       '';
     };
   };
@@ -117,7 +130,11 @@ in {
   config = {
     # One virtio NIC, no Wi-Fi, no VPNs: NetworkManager has nothing to manage
     # and would fight networkd for the link. _core/non-vm.nix defaults it on.
+    # useNetworkd (not just systemd.network.enable) also retires the scripted
+    # backend and dhcpcd, so a stray per-interface useDHCP can never start a
+    # second DHCP client next to networkd.
     networking.networkmanager.enable = lib.mkForce false;
+    networking.useNetworkd = true;
     networking.useDHCP = false;
 
     systemd.network = {
@@ -143,7 +160,7 @@ in {
             GatewayOnLink = true;
           }
           ++ lib.optional staticV6 {Gateway = cfg.ipv6Gateway;};
-        dns = lib.optionals (staticV4 || staticV6) cfg.nameservers;
+        dns = cfg.nameservers;
         linkConfig.RequiredForOnline = "routable";
       };
     };
@@ -151,8 +168,10 @@ in {
     # Lease/static DNS reaches /etc/resolv.conf only through resolved (header).
     services.resolved.enable = lib.mkDefault true;
 
-    # Hetzner's Console "reset root password" talks to the guest agent (header).
+    # Hetzner's Console "reset root password" talks to the guest agent (header),
+    # which runs chpasswd — put shadow on its PATH or the reset fails silently.
     services.qemuGuest.enable = lib.mkDefault true;
+    systemd.services.qemu-guest-agent.path = [pkgs.shadow];
 
     # Console policy (header). mkOverride 900 sits between _core's mkDefault
     # (1000) and a host's plain assignment (100), so a host can still change it.

@@ -77,6 +77,9 @@ esac
 ATTR=installer-kexec
 [ "$CALA_REINSTALL_VARIANT" != vm ] || ATTR=installer-kexec-vm
 
+# What the summary and the RAM hint can say about the image: the variant only
+# describes an image built here; a --image DIR is whatever the user handed in.
+IMAGE_LABEL="given"
 if [ -z "$IMAGE" ]; then
   # `#<attr>` resolves to packages.<this host's system>.<attr>: the x86_64 or
   # aarch64 image, whichever this box runs.
@@ -84,6 +87,7 @@ if [ -z "$IMAGE" ]; then
   IMAGE=$(nix --extra-experimental-features 'nix-command flakes' build --refresh \
     --no-link --print-out-paths "$CALA_REINSTALL_FLAKE#$ATTR") ||
     die "could not build $CALA_REINSTALL_FLAKE#$ATTR."
+  IMAGE_LABEL="$CALA_REINSTALL_VARIANT"
 fi
 for f in bzImage initrd cmdline; do
   [ -r "$IMAGE/$f" ] || die "$IMAGE has no $f; not an installer-kexec image."
@@ -98,7 +102,11 @@ memtotal=$(awk '/^MemTotal:/ {print $2 * 1024}' /proc/meminfo)
 memavail=$(awk '/^MemAvailable:/ {print $2 * 1024}' /proc/meminfo)
 if [ "$memtotal" -lt $((2 * isz + gib)) ]; then
   hint="Use the ISO instead."
-  [ "$CALA_REINSTALL_VARIANT" = vm ] || hint="Try --variant vm (no firmware, about half the size), or the ISO."
+  if [ "$IMAGE_LABEL" = given ]; then
+    hint="Use a smaller image (installer-kexec-vm has no firmware, about half the size), or the ISO."
+  elif [ "$CALA_REINSTALL_VARIANT" != vm ]; then
+    hint="Try --variant vm (no firmware, about half the size), or the ISO."
+  fi
   die "the installer needs about $(((2 * isz + gib) / gib + 1)) GiB of RAM; this box has $((memtotal / gib)) GiB. $hint"
 fi
 if [ "$memavail" -lt $((2 * isz + gib / 4)) ]; then
@@ -264,7 +272,7 @@ done
 
 echo
 echo "This replaces the running '$HOST' with the Cala-M-OS installer, in RAM."
-echo "  image:    $IMAGE ($CALA_REINSTALL_VARIANT)"
+echo "  image:    $IMAGE ($IMAGE_LABEL)"
 if [ "${#carried[@]}" -gt 0 ]; then
   printf '  carrying: %s\n' "${carried[@]}"
 fi
@@ -275,8 +283,16 @@ if [ "$DRY" -eq 0 ] && [ "$YES" -ne 1 ]; then
   [ "$ans" = "$HOST" ] || die "aborted."
 fi
 
-kexec --load "$IMAGE/bzImage" --initrd="$INITRD" --command-line="$CMDLINE" ||
-  die "kexec could not load the image (kernel lockdown / Secure Boot?)."
+# kexec-tools tries kexec_file_load first and only falls back to the legacy
+# kexec_load syscall on ENOSYS/EINVAL/ENOEXEC/ENOTSUP. Some kernels (7.0.x on
+# cloud VMs) fail it with "Address not available" instead, so retry with -c
+# ourselves; --no-checks skips the slow purgatory checksum on that path (it is
+# a no-op on the first one).
+if ! kexec --load "$IMAGE/bzImage" --initrd="$INITRD" --command-line="$CMDLINE"; then
+  echo "kexec_file_load failed; retrying with the legacy kexec_load syscall (-c)..." >&2
+  kexec -c --no-checks --load "$IMAGE/bzImage" --initrd="$INITRD" --command-line="$CMDLINE" ||
+    die "kexec could not load the image (kernel lockdown / Secure Boot, or an unsupported kernel)."
+fi
 LOADED=1
 rm -f "$INITRD"
 

@@ -19,12 +19,16 @@
 #     2. Point every site's domain at its IPv4 BEFORE installing: an A record,
 #        DNS-only (grey cloud on Cloudflare; proxied breaks the ACME
 #        challenges). Check it with `dig +short <domain> @1.1.1.1`.
-#     3. Enable Rescue (linux64) with an SSH key, or boot any stock ARM image,
-#        and then run:
+#     3. Enable Rescue (linux64) with an SSH key and reset the server into it
+#        (enabling alone only arms it). CAX servers boot UEFI, which this
+#        layout needs; confirm with `ls /sys/firmware/efi` in the rescue shell
+#        (and `lsblk` that /dev/sda is the only disk), then run:
 #          nix run github:nix-community/nixos-anywhere -- --flake .#webhost \
 #            --target-host root@<ipv4> --build-on remote
 #          ssh-keygen -R <ipv4>
 #        The box comes up on DHCP (calamoose.hetznerCloud, both addresses null).
+#        If the kexec step fails with "Address not available" (a kernel 7.0
+#        rescue kernel), add `--kexec-extra-flags -c`.
 #     4. If a record was added after the box came up, run
 #        `sudo systemctl restart caddy`. That skips the remaining ACME retry
 #        backoff, which can reach hours. Check with `curl -sSI https://<domain>`.
@@ -39,8 +43,11 @@
 #     nixos-rebuild switch --no-reexec --flake .#webhost \
 #       --target-host hub@<host> --build-host hub@<host> --sudo
 #   Reinstall in place (no media): `sudo cala-reinstall --no-token` on the box
-#   (no private inputs), then install-cala-m-os webhost in the installer. The
-#   installer image is the firmware-less `vm` variant, which fits the 4 GB box.
+#   (no private inputs), then pick webhost in the installer's TUI (it runs
+#   disko, which asks before wiping — this host can't set wipeAllDisks; by hand:
+#   `disko --mode destroy,format,mount --flake <ref>#webhost`, then
+#   `INSTALL_SKIP_DISKO=1 install-cala-m-os webhost`). The installer image is
+#   the firmware-less `vm` variant, which fits the 4 GB box.
 #
 # Log in as `hub` with the YubiKey sk keys (users/webmaster). Each SSH
 # connection needs one touch.
@@ -78,8 +85,8 @@ in {
     ++ lib.optional (!initialInstallMode) {
       # ---- Hetzner Cloud networking (machines/modules/hetzner-cloud) ----------
       # IPv4 over Hetzner's DHCP until ipv4Address is set; IPv6 only once
-      # ipv6Address is (Hetzner sends no router advertisements). See the header
-      # for the order of operations around AAAA records.
+      # ipv6Address is (Hetzner configures IPv6 statically, nothing to fall
+      # back on). See the header for the order of operations around AAAA records.
       calamoose.hetznerCloud = {
         ipv4Address = null; # e.g. "203.0.113.10"
         ipv6Address = null; # e.g. "2a01:4f8:c012:3456::1/64"
