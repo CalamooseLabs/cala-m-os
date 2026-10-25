@@ -3,7 +3,30 @@
   pkgs,
   lib,
   ...
-}: {
+}: let
+  # What the installer offers, computed from the flake itself so the lists can
+  # never drift from it: every host output except the installer images, and
+  # every machine directory (machines are not flake outputs, so the tree is
+  # read). cala-installer and the install-cala-m-os completion take them from
+  # the environment (CALA_INSTALLER_*); once online cala-installer also refreshes
+  # them from the flake ref it installs from, so a host added after this image
+  # was built still shows up.
+  hostNames =
+    builtins.filter (n: n != "iso" && !lib.hasPrefix "installer-" n)
+    (builtins.attrNames inputs.self.nixosConfigurations);
+  machineDirs = dir:
+    builtins.attrNames (lib.filterAttrs (n: t: t == "directory" && !lib.hasPrefix "_" n)
+      (builtins.readDir dir));
+
+  # antlers' scripts (install-cala-m-os, cala-installer) and proton-secrets,
+  # built against THIS image's package set so the same files serve the aarch64
+  # kexec image (webhost): antlers' own packages.<system> is x86_64-only. Called
+  # straight from the package.nix files rather than through antlers' overlay —
+  # an overlay whose attribute NAMES come from `final` (as that one's
+  # `// final.callPackages …` does) is an infinite recursion inside nixpkgs.
+  antlersScripts = pkgs.callPackages (inputs.antlers + "/flakes/scripts/package.nix") {};
+  proton-secrets = pkgs.callPackage (inputs.antlers + "/flakes/proton-secrets/package.nix") {};
+in {
   # Everything the live installer needs, whatever it boots from: imported by
   # ./default.nix (the ISO) and ./kexec.nix (RAM-only, kexec'd by cala-reinstall).
   imports = [
@@ -41,15 +64,23 @@
     iproute2
     dnsutils
     # cala-installer (the auto-running gum TUI) drives install-cala-m-os (the
-    # 5-step backend); both ship from the antlers scripts collection, with their
-    # bash-completion. disko stays on PATH above so Step One resolves it offline.
-    # proton-secrets provides the `proton-secrets login` used to set up online
-    # (Proton Pass) hosts during install. Defaults (flake ref, clone URL, version
-    # attr, /mnt + /etc/nixos paths, hub/root passwords) match this ISO.
-    inputs.antlers.packages.${pkgs.stdenv.hostPlatform.system}.install-cala-m-os
-    inputs.antlers.packages.${pkgs.stdenv.hostPlatform.system}.cala-installer
-    inputs.antlers.packages.${pkgs.stdenv.hostPlatform.system}.proton-secrets
+    # 5-step backend); both ship from the antlers scripts collection (built in
+    # the let above), with their bash-completion. disko stays on PATH above so
+    # Step One resolves it offline. proton-secrets provides the
+    # `proton-secrets login` used to set up online (Proton Pass) hosts during
+    # install. Defaults (flake ref, clone URL, version attr, /mnt + /etc/nixos
+    # paths, hub/root passwords) match this image.
+    antlersScripts.install-cala-m-os
+    antlersScripts.cala-installer
+    proton-secrets
   ];
+
+  # The host and machine pickers (see the let above).
+  environment.variables = {
+    CALA_INSTALLER_HOSTS = lib.concatStringsSep " " hostNames;
+    CALA_INSTALLER_MACHINES = lib.concatStringsSep " " (machineDirs ../machines/workstations);
+    CALA_INSTALLER_VM_MACHINES = lib.concatStringsSep " " (machineDirs ../machines/vms);
+  };
 
   services.pcscd.enable = true;
 

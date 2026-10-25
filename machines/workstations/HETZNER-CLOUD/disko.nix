@@ -2,8 +2,10 @@
 #
 # Cloud instances are DISPOSABLE and world backups are on, so one disk is fine.
 # The disk is a single virtio-SCSI device at /dev/sda (NOT NVMe — that's the
-# Robot/AX bare-metal line). New Cloud x86 VMs boot UEFI, so the systemd-boot +
-# ESP layout from hosts/_core works as-is.
+# Robot/AX bare-metal line). CCX (and CPX/CAX) servers boot UEFI, so the
+# systemd-boot + ESP layout from hosts/_core works as-is; the cheap CX line is
+# still legacy BIOS and would need a GRUB + BIOS-boot-partition layout instead.
+# Install with NO Hetzner Volumes attached: they also appear as /dev/sdX.
 #
 # TODO: confirm the device from the rescue system (`lsblk`); it is normally
 # /dev/sda. nixos-anywhere partitions THIS device; a wrong name wipes the wrong

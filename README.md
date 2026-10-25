@@ -96,6 +96,9 @@ on real hardware; **MicroVM guests** run on a host through its `cala-vm-manager`
 | `simple` | Framework 13 | `basic` | `1.0.0` | Minimal desktop setup |
 | `ai` | Zima | `developer` | `0.0.1-alpha` | Headless TTY dev box (impermanent root) — runs background Claude sessions |
 | `ephemeral` | Zima | `void` | `0.0.1-beta` | Throwaway lab machine — impermanent root |
+| `tci-cloud` | Hetzner Cloud CCX (x86 VM) | `server` | `1.0.0` | The Cobblemon Initiative public hub fleet — internet-facing; deployed from devbox with nixos-anywhere |
+| `tci-private` | TCI-LOCAL | `server` | `1.0.0` | The Cobblemon Initiative soul-link fleet — LAN box |
+| `webhost` | Hetzner Cloud CAX11 (aarch64 VM) | `webmaster` | `1.0.0` | Public web server — Caddy auto-HTTPS for every site under `hosts/webhost/sites/` |
 
 ### MicroVM guests
 
@@ -114,7 +117,12 @@ on real hardware; **MicroVM guests** run on a host through its `cala-vm-manager`
 > gaming VM using the `lanstation-vm` guest config (WIP — its `vms.nix` is not yet wired
 > in). `openreturn` and `quorumcall` are also exposed as standalone flake outputs in
 > addition to running as `livedata` guests. `iso` is the custom installer image (see
-> [Getting Started](#getting-started)).
+> [Getting Started](#getting-started)); `installer-kexec{,-vm}{,-aarch64}` are the same
+> installer as RAM-only kexec images, which `sudo cala-reinstall` (on every physical host)
+> boots a running machine into to reinstall it with no USB stick or ISO. The two Hetzner
+> Cloud hosts share `machines/modules/hetzner-cloud` for Hetzner's routed (Layer 3)
+> network: IPv4 over DHCP until `calamoose.hetznerCloud.ipv4Address` pins it as a static
+> /32, static IPv6 via `ipv6Address` (Hetzner configures IPv6 statically, there are no router advertisements to rely on).
 
 ## Common Commands
 

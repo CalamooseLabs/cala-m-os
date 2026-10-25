@@ -22,7 +22,11 @@ These are the machines declared in `flake.nix` under `nixosConfigurations` (buil
 | `openreturn` | `Small` | **VM** | `server` | **off** | MicroVM guest for the OpenReturn service |
 | `livedata` | `MS-01` | Workstation | `server` | **off** | MicroVM host (openreturn + quorumcall guests) |
 | `ai` | `ZIMA` | Workstation | `developer` | on | Headless TTY dev box (impermanent root); runs background Claude sessions |
+| `tci-cloud` | `HETZNER-CLOUD` | Workstation (cloud VM) | `server` | **off** | The Cobblemon Initiative public hub fleet; Hetzner Cloud x86; private `cobblemon-initiative` input → deploy as root from devbox |
+| `tci-private` | `TCI-LOCAL` | Workstation | `server` | on | The Cobblemon Initiative soul-link fleet; static lab IP |
+| `webhost` | `HETZNER-CAX` | Workstation (cloud VM) | `webmaster` | **off** | Public Caddy web server; Hetzner Cloud CAX11, the only **aarch64** host |
 | `iso` | — | — | — | — | Custom installer image; built directly (not via `mkSystem`) |
+| `installer-kexec`, `installer-kexec-vm`, `…-aarch64` | — | — | — | — | The same installer as RAM-only kexec images for `cala-reinstall` (`vm` = no linux-firmware); built directly |
 
 `lanstation` and `homelab` are the only hosts that receive `self` in `specialArgs`. Hosts with `calamoose.enableSecrets = false` build without needing Yubikey-decryptable secrets — see [[Secrets & Security|Secrets-and-Security]].
 
@@ -93,6 +97,8 @@ The `!initialInstallMode` guard keeps VMs out of the minimal first install pass.
 - **`lanstation`** forces `networking.networkmanager.enable = lib.mkForce false` (static interface config) — overriding the `non-vm.nix` default.
 - **`simple`** bypasses `_core/default.nix` and imports `_core/configuration.nix` directly (so no install-mode switch).
 - **`devbox`** sets `documentation.enable = lib.mkForce true`.
+- **`tci-cloud`** and **`webhost`** run on Hetzner Cloud: their machines import `machines/modules/hetzner-cloud`, and the hosts set `calamoose.hetznerCloud.ipv4Address` / `ipv6Address` (null = IPv4 over Hetzner's DHCP, no IPv6 — what a first install runs on). See [[Machines|Machines]] and the deploy steps in each host's header.
+- **Every physical host** carries `cala-reinstall` (imported by `hosts/_core/non-vm.nix`): `sudo cala-reinstall` reboots the running machine into the installer in RAM. See [[ISO & Installer|ISO-Installer]].
 
 ---
 

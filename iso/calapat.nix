@@ -31,8 +31,9 @@
   lib,
   ...
 }: let
-  system = pkgs.stdenv.hostPlatform.system;
-  antlers = inputs.antlers.packages.${system};
+  # Same build as ./installer.nix: antlers' install-cala-m-os for THIS image's
+  # architecture, straight from its package.nix (see the note there).
+  install-cala-m-os = (pkgs.callPackages (inputs.antlers + "/flakes/scripts/package.nix") {}).install-cala-m-os;
 
   mediaDir = config.cala.installer.mediaDir;
   patFile = "${mediaDir}/pat";
@@ -242,7 +243,7 @@
         echo "install-cala-m-os: no GitHub token from the media PAT; private flake inputs will fail to fetch." >&2
       fi
       export NIX_USER_CONF_FILES="${tokenFile}''${NIX_USER_CONF_FILES:+:$NIX_USER_CONF_FILES}"
-      exec ${antlers.install-cala-m-os}/bin/install-cala-m-os "$@"
+      exec ${install-cala-m-os}/bin/install-cala-m-os "$@"
     '';
   };
 in {

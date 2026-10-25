@@ -9,6 +9,47 @@
 #  forms a co-op group.          #
 #                                #
 ##################################
+#
+# Deploy from devbox at /etc/nixos. The cobblemon-initiative input is a PRIVATE
+# repo and only root's nix on devbox holds the GitHub token for it
+# (modules/nix-github-token), so every command below runs under sudo;
+# --preserve-env=SSH_AUTH_SOCK lets root's ssh use your agent's YubiKey key.
+#
+#   First install (no custom ISO, no support ticket):
+#     1. Create the server (x86 CCX, any placeholder image) with NO Volumes
+#        attached, so the root disk is the only /dev/sdX (HETZNER-CLOUD/disko.nix).
+#     2. Point `publicHost` below at its IPv4 (an A record; the AAAA record only
+#        after step 4). Check it with `dig +short <domain> @1.1.1.1`.
+#     3. Enable Rescue (linux64) with your SSH key, reset into it, and check the
+#        box boots UEFI — this layout needs it, CCX servers do, the CX line does
+#        not: `ls /sys/firmware/efi` in the rescue shell (and `lsblk` that
+#        /dev/sda is the only disk). Then run:
+#          sudo --preserve-env=SSH_AUTH_SOCK nix run github:nix-community/nixos-anywhere -- \
+#            --flake .#tci-cloud --target-host root@<ipv4>
+#          ssh-keygen -R <ipv4>
+#        If the kexec step fails with "Address not available" (a kernel 7.0
+#        rescue kernel), add `--kexec-extra-flags -c`.
+#        nixos-anywhere kexecs the rescue system into a NixOS installer, applies
+#        this host's disko layout and installs the FULL config in one pass. The
+#        box comes up on DHCP (calamoose.hetznerCloud, both addresses null).
+#     4. Copy the IPv4 and the IPv6 /64 from the Cloud Console into
+#        calamoose.hetznerCloud.ipv4Address / ipv6Address below, redeploy, and
+#        confirm `curl -6 https://ifconfig.co` works from the box. Only then
+#        publish the AAAA record.
+#   Updates:
+#     sudo --preserve-env=SSH_AUTH_SOCK nixos-rebuild switch --flake .#tci-cloud \
+#       --target-host hub@<host> --sudo
+#   Reinstall in place (no media): `sudo cala-reinstall --token-file <f>` on the
+#   box — with enableSecrets = false it holds no GitHub token of its own, so hand
+#   it an `access-tokens = github.com=…` line — then pick tci-cloud in the
+#   installer's TUI (cala-installer; it runs disko, which asks before wiping,
+#   because this host can't set wipeAllDisks). By hand that is
+#   `disko --mode destroy,format,mount --flake <ref>#tci-cloud`, then
+#   `INSTALL_SKIP_DISKO=1 install-cala-m-os tci-cloud` (wiki: ISO-Installer).
+#   The PAT-bearing custom ISO (build-pat-iso) remains the alternative.
+#
+# Log in as `hub` with the YubiKey sk keys (users/server): the key is verified
+# on the CLIENT, so the box itself needs no YubiKey.
 {
   lib,
   initialInstallMode,
@@ -34,14 +75,14 @@ in {
         # tci-server        = the dedicated fleet (headless hardening + Aikar JVM).
         # nix-github-token  = the PAT that lets Nix fetch the PRIVATE
         #                     cobblemon-initiative flake input at eval time.
-        # cala-reinstall    = `sudo cala-reinstall` turns the box back into the
-        #                     installer in place (kexec), no custom ISO needed.
-        extra_user_modules = {server = ["tci-server" "nix-github-token" "cala-reinstall"];};
+        # (cala-reinstall rides along on every physical host — _core/non-vm.nix.)
+        extra_user_modules = {server = ["tci-server" "nix-github-token"];};
       })
     ]
-    # tci-server and nix-github-token exist only in the full config, not the minimal
-    # INITIAL_INSTALL_MODE pass, so their settings ride this conditional import:
-    # an unguarded definition fails that pass with "option does not exist".
+    # tci-server, nix-github-token and the HETZNER-CLOUD machine's hetzner-cloud
+    # module exist only in the full config, not the minimal INITIAL_INSTALL_MODE
+    # pass, so their settings ride this conditional import: an unguarded
+    # definition fails that pass with "option does not exist".
     ++ lib.optional (!initialInstallMode) {
       # PAT for the private cobblemon-initiative input. With enableSecrets = false
       # (no Yubikey on a Cloud box) the token is NOT decrypted on the box — so
@@ -50,6 +91,20 @@ in {
       programs.nix-github-token = {
         enable = true;
         agenixFile = ../../modules/nix-github-token/secrets/nix-github-token.age;
+      };
+
+      # ---- Hetzner Cloud networking (machines/modules/hetzner-cloud) ----------
+      # Hetzner's network is routed (Layer 3): IPv4 is a /32 behind the off-subnet
+      # gateway 172.31.1.1, and IPv6 is configured statically (no router
+      # advertisements to rely on). Both null =
+      # IPv4 over Hetzner's DHCP (systemd-networkd handles the odd gateway) and no
+      # IPv6 — what a first install runs on, before the addresses are known.
+      # Afterwards: ipv6Address = "<the /64 from the Cloud Console>::1/64" (then
+      # publish AAAA), and ipv4Address = "<the IPv4>" if DHCP is to be off
+      # entirely (Hetzner notes its Layer-3 model can trip some DHCP clients).
+      calamoose.hetznerCloud = {
+        ipv4Address = null; # e.g. "203.0.113.10"
+        ipv6Address = null; # e.g. "2a01:4f8:c012:3456::1/64"
       };
 
       # ---- The Cobblemon Initiative dedicated fleet (PUBLIC hub) --------------
@@ -87,29 +142,11 @@ in {
   networking.hostName = "tci-cloud";
 
   # ---- Remote access ------------------------------------------------------
-  # A Cloud box has NO Yubikey, but the `server` profile authorizes only Yubikey
-  # (sk-ssh-ed25519) keys — so add a PLAIN key you hold or you are locked out
-  # after the first reboot (only the web VNC console would remain).
-  # TODO: drop in your real public key and uncomment (the login account is `hub`):
+  # The `server` profile authorizes the YubiKey (sk-ssh-ed25519) keys; sshd
+  # verifies those against the public key alone, so they work on a box with no
+  # YubiKey of its own. Only add a plain key here if you need to log in from a
+  # machine WITHOUT the YubiKey (the account is `hub`):
   # users.users.hub.openssh.authorizedKeys.keys = [
   #   "ssh-ed25519 AAAA... you@host"
   # ];
-
-  # ---- Hetzner Cloud networking -------------------------------------------
-  # Cloud instances get their public IPv4 via DHCP and IPv6 via router
-  # advertisements — no static addressing (unlike Robot/AX bare metal). Match
-  # the primary NIC by name glob so we don't depend on its exact name.
-  networking.networkmanager.enable = lib.mkForce false;
-  networking.useDHCP = false;
-  systemd.network = {
-    enable = true;
-    networks."10-wan" = {
-      matchConfig.Name = "en*";
-      networkConfig = {
-        DHCP = "ipv4";
-        IPv6AcceptRA = true;
-      };
-      linkConfig.RequiredForOnline = "routable";
-    };
-  };
 }

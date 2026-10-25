@@ -62,7 +62,7 @@ in
       (inputs.antlers.lib.x86_64-linux.mkZedWrapper zedSettings)
       # The cheat sheet below; the host list leaves out the two installer images.
       (pkgs.callPackage ./cala-help.nix {
-        hosts = builtins.filter (name: !(builtins.elem name ["iso" "installer-kexec"])) (
+        hosts = builtins.filter (name: name != "iso" && !(pkgs.lib.hasPrefix "installer-" name)) (
           builtins.attrNames inputs.self.nixosConfigurations
         );
       })

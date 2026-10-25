@@ -89,6 +89,7 @@ writeShellApplication {
       row iso "build-pat-iso --vault <vault>" "installer .iso file with the PAT inside, no stick"
       row kexec "sudo cala-reinstall" "on a host: reboot into the installer in RAM"
       row deploy "nixos-rebuild switch --flake .#<host> --target-host hub@<ip> --sudo"
+      row cloud "nix run github:nix-community/nixos-anywhere -- --flake .#<host> --target-host root@<ip>" "first install from Hetzner Rescue"
       row edit "zeditor ." "Zed wired to nixd/nil + alejandra"
       local lead="  hosts    " line
       while IFS= read -r line; do
@@ -144,7 +145,8 @@ writeShellApplication {
       cmd "qemu-system-x86_64 -enable-kvm -m 4G -cdrom <file.iso>" "test-boot an ISO in a VM"
       cmd "nix build .#installer-kexec" "the same installer as a RAM-only kexec image"
       cmd "sudo cala-reinstall --dry-run" "on the host: load that image, then unload it"
-      cmd "sudo cala-reinstall [--token-file <f> | --pat-file <f>]" "on the host: jump into the installer (enrolled on tci-cloud)"
+      cmd "sudo cala-reinstall [--token-file <f> | --pat-file <f>]" "on the host: jump into the installer (every physical host)"
+      note "  --variant full|vm picks the image (vm = no firmware, fits 4 GB cloud boxes; auto-detected)"
       note "the installer and cala-reinstall build github:CalamooseLabs/cala-m-os master: push first"
       push_warning
     }
@@ -154,7 +156,7 @@ writeShellApplication {
       cmd "cala-installer" "the TUI (starts by itself on tty1)"
       cmd "sudo install-cala-m-os <host> [<machine>]" "unattended only for battlestation, broadcast, homelab (wipeAllDisks)"
       cmd "sudo disko --mode destroy,format,mount --flake github:CalamooseLabs/cala-m-os#<host>"
-      cmd "sudo INSTALL_SKIP_DISKO=1 install-cala-m-os <host>" "every other host, tci-cloud included: check lsblk, disko by hand, then this"
+      cmd "sudo INSTALL_SKIP_DISKO=1 install-cala-m-os <host>" "every other host (cloud VMs included): disko by hand, then this; the TUI does both"
       cmd "sudo INSTALL_OS_DISK=/dev/disk/by-id/<id> install-cala-m-os homelab" "onto a replacement OS disk"
       cmd "ssh root@<installer-ip>" "YubiKey sk keys; no mDNS, so take the IP from ip -br addr"
       cmd "journalctl -u cala-nix-token" "did the media's PAT get the GitHub token? retry: sudo cala-nix-token --force"
@@ -164,7 +166,9 @@ writeShellApplication {
     topic_remote() {
       section "remote: deploy from here, microVM guests"
       cmd "nixos-rebuild switch --flake .#<host> --target-host hub@<ip> --sudo" "build here, activate there"
-      note "add --build-host hub@<ip> to build on the target instead"
+      note "add --build-host hub@<ip> to build on the target instead (webhost: aarch64, plus --no-reexec)"
+      cmd "nix run github:nix-community/nixos-anywhere -- --flake .#<host> --target-host root@<ip>" "first install of a cloud box from Hetzner Rescue"
+      note "tci-cloud has a private input: run both as root (sudo --preserve-env=SSH_AUTH_SOCK); webhost adds --build-on remote"
       cmd "microvm -l" "on a VM host: guests and whether they are current"
       cmd "sudo systemctl restart microvm@<guest>" "restart one; journalctl -u microvm@<guest> -f for its console"
       cmd "ssh hub@<guest-ip>" "a shell in a guest"
