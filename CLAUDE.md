@@ -44,7 +44,7 @@ INITIAL_INSTALL_MODE=1 sudo nixos-install --flake .#<hostname>
 Configurations flow top-down through layers of abstraction:
 
 ```
-flake.nix  (mkSystem → 10 host outputs; iso built directly)
+flake.nix  (mkSystem → 13 host outputs; iso + installer-kexec{,-vm}{,-aarch64} built directly)
   └── hosts/<hostname>/configuration.nix  (host-specific params: users_list, machine_uuid, machine_type)
         └── hosts/_core/default.nix  (parameterized common config — imports core + machine + users)
               ├── hosts/_core/configuration.nix  (boot, networking, GC, greetd, firewall, timezone)

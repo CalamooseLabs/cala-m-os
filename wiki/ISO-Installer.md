@@ -110,7 +110,7 @@ It appends a small payload to the image's initrd. The installer copies it to `/v
 
 - **Nothing on disk changes until you run the install.** A hard reset before then boots the old system.
 - It refuses to run when it would carry neither a token nor a PAT, unless you pass `--no-token`. **tci-cloud holds no token** (`enableSecrets = false`), so give it `--token-file` (copy over an `access-tokens = github.com=…` line) or `--pat-file`.
-- The installer comes up with SSH (same host key, the host's keys plus the YubiKey keys) and the TUI on the console. Then install as usual. For tci-cloud, that's the shell steps above.
+- The installer comes up with SSH (same host key, the host's keys plus the YubiKey keys) and the TUI on the console. Then install as usual: pick the host in the TUI — for the Hetzner hosts (`wipeAllDisks = false`) it runs disko itself and asks for a typed `yes`, then continues with `INSTALL_SKIP_DISKO=1`; the shell steps above remain the manual alternative.
 - It needs RAM: the full initrd is about 1.4 GB because it includes linux-firmware, like the ISO, and the installer briefly holds it twice, so the full image needs roughly 4 GB; the `vm` flavour is about half that. It checks first and refuses when the box is short.
 - Kexec skips the firmware reset. That's fine for VMs, but on a workstation with a GPU, rebooting into a USB or ISO is safer.
 - A host that uses Hetzner's DHCP carries no static addresses (DHCP networks need none); one with `calamoose.hetznerCloud.ipv4Address` / `ipv6Address` set carries them, and the installer restores them as a NetworkManager profile with the off-subnet gateway.

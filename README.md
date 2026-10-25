@@ -176,8 +176,9 @@ Split into the two kinds of machines we build:
   machine's specific GPU and screen sizes).
 - `machines/vms/<size>/` — **microvm definitions.** MicroVM is the only VM type used
   (no traditional virtual servers), parameterized by size (`X-Small` → `Large`).
-- `machines/modules/` — reusable **hardware-enablement modules** (`amd-gpu`,
-  `nvidia-gpu`, `intel-gpu`, `amd-cpu`). Imported by the workstation machine configs,
+- `machines/modules/` — reusable **hardware/platform-enablement modules** (`amd-gpu`,
+  `nvidia-gpu`, `intel-gpu`, `amd-cpu`, and `hetzner-cloud` for the Hetzner Cloud
+  guests' network/console policy). Imported by the workstation machine configs,
   not by hosts.
 
 ### `modules/` — programs
