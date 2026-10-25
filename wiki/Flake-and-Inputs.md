@@ -24,7 +24,7 @@
 | `openreturn` | `github:CalamooseLabs/OpenReturn` | In-house app/service (consumed by the `openreturn` module) |
 | `quorumcall` | `github:CalamooseLabs/QuorumCall` | In-house app/service (consumed by the `quorumcall` module) |
 
-Most inputs `follows = nixpkgs` to avoid duplicate nixpkgs evaluations. `antlers` is pinned at the repository root: `iso/installer.nix` and `iso/calapat.nix` read `inputs.antlers + "/flakes/scripts/package.nix"` (and `…/flakes/proton-secrets/package.nix`), which only resolves because the input is the whole repo.
+Most inputs `follows = nixpkgs` to avoid duplicate nixpkgs evaluations. `antlers` is pinned at the repository root: `iso/tools.nix` reads `inputs.antlers + "/flakes/scripts/package.nix"` and `iso/installer.nix` reads `…/flakes/proton-secrets/package.nix`, which only resolves because the input is the whole repo.
 
 ---
 
