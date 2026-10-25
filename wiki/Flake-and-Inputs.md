@@ -75,6 +75,7 @@ flowchart LR
 - **`formatter`** → `alejandra` (so `nix fmt` ≡ `alejandra .`).
 - **`packages.x86_64-linux.default`** → `nixosConfigurations.iso.config.system.build.isoImage`, so `nix build` builds the ISO.
 - **`packages.<system>.installer-kexec`** / **`installer-kexec-vm`** (for `x86_64-linux` and `aarch64-linux`) → the kexec image (`bzImage`, `initrd`, `cmdline`) that `cala-reinstall` boots; `<flake>#installer-kexec` resolves to the running host's own architecture. See [[ISO & Installer|ISO-Installer]].
+- **`packages.<system>.installer-tools`** (for `x86_64-linux` and `aarch64-linux`) → the live installer's own tools (`iso/tools.nix`: `cala-installer`, the token-aware `install-cala-m-os` shim + backend, `cala-nix-token`) as one package; what the TUI's "Update the installer" pulls from the flake. See [[ISO & Installer|ISO-Installer]].
 - **`templates`** → imported from `./templates` (see below).
 - **`devShells.${system}.default`** → `./shell.nix`.
 

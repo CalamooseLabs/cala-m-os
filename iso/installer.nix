@@ -1,4 +1,5 @@
 {
+  config,
   inputs,
   pkgs,
   lib,
@@ -18,13 +19,18 @@
     builtins.attrNames (lib.filterAttrs (n: t: t == "directory" && !lib.hasPrefix "_" n)
       (builtins.readDir dir));
 
-  # antlers' scripts (install-cala-m-os, cala-installer) and proton-secrets,
-  # built against THIS image's package set so the same files serve the aarch64
-  # kexec image (webhost): antlers' own packages.<system> is x86_64-only. Called
-  # straight from the package.nix files rather than through antlers' overlay —
-  # an overlay whose attribute NAMES come from `final` (as that one's
-  # `// final.callPackages …` does) is an infinite recursion inside nixpkgs.
-  antlersScripts = pkgs.callPackages (inputs.antlers + "/flakes/scripts/package.nix") {};
+  # The installer's own tools (./tools.nix): antlers' cala-installer TUI and the
+  # token-aware install-cala-m-os shim, built against THIS image's package set
+  # so the same files serve the aarch64 kexec image (webhost). The same set is
+  # the flake's packages.<system>.installer-tools, which the TUI's "Update the
+  # installer" pulls and re-launches from.
+  tools = import ./tools.nix {
+    inherit pkgs inputs lib;
+    mediaDir = config.cala.installer.mediaDir;
+  };
+  # proton-secrets provides the `proton-secrets login` used to set up online
+  # (Proton Pass) hosts during install; built the same way (antlers' own
+  # packages.<system> is x86_64-only, and its overlay is not used here).
   proton-secrets = pkgs.callPackage (inputs.antlers + "/flakes/proton-secrets/package.nix") {};
 in {
   # Everything the live installer needs, whatever it boots from: imported by
@@ -64,14 +70,13 @@ in {
     iproute2
     dnsutils
     # cala-installer (the auto-running gum TUI) drives install-cala-m-os (the
-    # 5-step backend); both ship from the antlers scripts collection (built in
-    # the let above), with their bash-completion. disko stays on PATH above so
-    # Step One resolves it offline. proton-secrets provides the
-    # `proton-secrets login` used to set up online (Proton Pass) hosts during
-    # install. Defaults (flake ref, clone URL, version attr, /mnt + /etc/nixos
-    # paths, hub/root passwords) match this image.
-    antlersScripts.install-cala-m-os
-    antlersScripts.cala-installer
+    # 5-step backend, here antlers' script with its bash-completion; the
+    # token-aware shim that shadows it comes from ./calapat.nix). disko stays on
+    # PATH above so Step One resolves it offline. Defaults (flake ref, clone
+    # URL, version attr, /mnt + /etc/nixos paths, hub/root passwords) match
+    # this image.
+    tools.backend
+    tools.cala-installer
     proton-secrets
   ];
 
