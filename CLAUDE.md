@@ -33,6 +33,10 @@ nix build .#nixosConfigurations.iso.config.system.build.isoImage
 nix build .#installer-kexec
 nix build .#installer-kexec-vm
 
+# The live installer's tools (cala-installer TUI + token-aware install-cala-m-os), the
+# package the TUI's "Update the installer" pulls from the flake onto an old stick
+nix build .#installer-tools
+
 # Install on new hardware (run from ISO)
 INITIAL_INSTALL_MODE=1 sudo nixos-install --flake .#<hostname>
 ```
@@ -44,7 +48,7 @@ INITIAL_INSTALL_MODE=1 sudo nixos-install --flake .#<hostname>
 Configurations flow top-down through layers of abstraction:
 
 ```
-flake.nix  (mkSystem → 10 host outputs; iso built directly)
+flake.nix  (mkSystem → 13 host outputs; iso + installer-kexec{,-vm}{,-aarch64} built directly)
   └── hosts/<hostname>/configuration.nix  (host-specific params: users_list, machine_uuid, machine_type)
         └── hosts/_core/default.nix  (parameterized common config — imports core + machine + users)
               ├── hosts/_core/configuration.nix  (boot, networking, GC, greetd, firewall, timezone)
@@ -99,7 +103,7 @@ Flake outputs (built with `nixos-rebuild ... --flake .#<host>`):
 
 - `machines/modules/hetzner-cloud` is shared by the `HETZNER-CLOUD` and `HETZNER-CAX` machines: systemd-networkd for Hetzner's **routed (Layer 3)** network — IPv4 over Hetzner's DHCP (a /32 behind the off-subnet gateway 172.31.1.1, which networkd handles) until the host sets `calamoose.hetznerCloud.ipv4Address` (then DHCP is off and the /32 + on-link default route are static); IPv6 only via `ipv6Address` (Hetzner configures IPv6 statically and no router advertisements are documented or observed; gateway `fe80::1`); Hetzner's resolvers on both paths; `qemu-guest` profile + guest agent (Console password reset); visible boot menu, no Plymouth (web-console only). Hosts set the addresses inside their `lib.optional (!initialInstallMode)` block because the module (and its options) is not part of the minimal install pass. First installs run on DHCP (addresses unknown); fill them in afterwards, and publish AAAA records only once `curl -6` works.
 - Both Hetzner hosts are first installed with **nixos-anywhere from Hetzner's Rescue system** (steps in each host's header). `install-cala-m-os` can't auto-wipe them (`wipeAllDisks` needs a by-id pin and the root disk's by-id name varies between Hetzner servers), so the installer TUI runs disko interactively for such hosts (it asks for a typed `yes`) and then installs with `INSTALL_SKIP_DISKO=1`. CPX/CCX/CAX servers boot UEFI (what the disko layouts assume); the CX line is legacy BIOS.
-- **`cala-reinstall` is on every physical host** (`hosts/_core/non-vm.nix`; microVM guests are rebuilt by their parent instead): `sudo cala-reinstall` kexecs the running host into the RAM-only installer. Flake outputs `installer-kexec` (with linux-firmware, bare metal) and `installer-kexec-vm` (without, ~half the size — fits a 4 GB cloud VM) exist for x86_64 and aarch64 (`packages.<system>`); `cala-reinstall` picks `vm` under `systemd-detect-virt` (`--variant`). The installer image builds antlers' scripts by calling `pkgs.callPackages` on antlers' `flakes/scripts/package.nix` (and `callPackage` on `flakes/proton-secrets/package.nix`) against its own package set — not antlers' x86_64-only `packages.<system>`, and not its overlay, whose attribute names depend on `final` and recurse inside nixpkgs — which is what lets the aarch64 image exist. It exports `CALA_INSTALLER_HOSTS/_MACHINES/_VM_MACHINES` (computed from the flake) for the TUI's pickers, which also refresh from the flake once online.
+- **`cala-reinstall` is on every physical host** (`hosts/_core/non-vm.nix`; microVM guests are rebuilt by their parent instead): `sudo cala-reinstall` kexecs the running host into the RAM-only installer. Flake outputs `installer-kexec` (with linux-firmware, bare metal) and `installer-kexec-vm` (without, ~half the size — fits a 4 GB cloud VM) exist for x86_64 and aarch64 (`packages.<system>`); `cala-reinstall` picks `vm` under `systemd-detect-virt` (`--variant`). The installer image builds antlers' scripts by calling `pkgs.callPackages` on antlers' `flakes/scripts/package.nix` (and `callPackage` on `flakes/proton-secrets/package.nix`) against its own package set — not antlers' x86_64-only `packages.<system>`, and not its overlay, whose attribute names depend on `final` and recurse inside nixpkgs — which is what lets the aarch64 image exist. It exports `CALA_INSTALLER_HOSTS/_MACHINES/_VM_MACHINES` (computed from the flake) for the TUI's pickers, which also refresh from the flake once online. `iso/tools.nix` holds those tools as plain derivations and the flake exposes them as `packages.<system>.installer-tools`: the TUI's **"Update the installer"** entry builds that from the flake it installs from and re-executes itself from the result (PATH-first), so an old ISO/stick runs today's installer without reflashing; the image exports `CALA_INSTALLER_MEDIA_DIR` so the pulled `cala-nix-token` still finds this image's PAT.
 
 ### Secrets / Security
 

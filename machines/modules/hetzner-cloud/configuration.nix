@@ -170,8 +170,12 @@ in {
 
     # Hetzner's Console "reset root password" talks to the guest agent (header),
     # which runs chpasswd — put shadow on its PATH or the reset fails silently.
+    # Gated on the whole unit attribute: a bare `.path` on a disabled agent would
+    # still emit a unit file with nothing but Environment= in it.
     services.qemuGuest.enable = lib.mkDefault true;
-    systemd.services.qemu-guest-agent.path = [pkgs.shadow];
+    systemd.services.qemu-guest-agent = lib.mkIf config.services.qemuGuest.enable {
+      path = [pkgs.shadow];
+    };
 
     # Console policy (header). mkOverride 900 sits between _core's mkDefault
     # (1000) and a host's plain assignment (100), so a host can still change it.

@@ -20,17 +20,17 @@
 | `home-manager` | `github:nix-community/home-manager` | Per-user home configuration |
 | `agenix` | `github:ryantm/agenix` | Age-based secret management (Yubikey-backed) |
 | `arion` | `github:hercules-ci/arion` | Docker-Compose-style declarative containers |
-| `antlers` | `github:CalamooseLabs/antlers/flakes?dir=flakes` | In-house flake; provides the Nix-enabled `zed-editor` used in the dev shell |
+| `antlers` | `github:CalamooseLabs/antlers` | In-house flake (repo root, default branch): the Nix-enabled `zed-editor` and `flash-iso` for the dev shell, the antlers NixOS/home-manager modules, and the `flakes/<name>/package.nix` files the installer image builds (`install-cala-m-os`, `cala-installer`, `proton-secrets`) relative to it |
 | `openreturn` | `github:CalamooseLabs/OpenReturn` | In-house app/service (consumed by the `openreturn` module) |
 | `quorumcall` | `github:CalamooseLabs/QuorumCall` | In-house app/service (consumed by the `quorumcall` module) |
 
-Most inputs `follows = nixpkgs` to avoid duplicate nixpkgs evaluations. Note `antlers` uses the non-standard `…/flakes?dir=flakes` form to pin a branch **and** a subdirectory as the flake root.
+Most inputs `follows = nixpkgs` to avoid duplicate nixpkgs evaluations. `antlers` is pinned at the repository root: `iso/installer.nix` and `iso/calapat.nix` read `inputs.antlers + "/flakes/scripts/package.nix"` (and `…/flakes/proton-secrets/package.nix`), which only resolves because the input is the whole repo.
 
 ---
 
 ## `mkSystem`
 
-Every machine (except the ISO) is produced by this helper:
+Every host is produced by this helper; the `iso` and the four `installer-kexec*` images are plain `nixpkgs.lib.nixosSystem` calls (see Outputs):
 
 ```nix
 mkSystem = hostname: extraSpecialArgs:
@@ -63,7 +63,8 @@ Everything else (home-manager, disko, stylix, the machine/user/module tree) is p
 ```mermaid
 flowchart LR
   flake["flake.nix outputs"]
-  flake --> nc["nixosConfigurations<br/>10 hosts + iso"]
+  flake --> nc["nixosConfigurations<br/>13 hosts + iso + installer-kexec{,-vm}{,-aarch64}"]
+  flake --> chk["checks.x86_64-linux → one eval check per nixosConfiguration"]
   flake --> fmt["formatter → alejandra"]
   flake --> pkg["packages.default → installer ISO image"]
   flake --> tpl["templates → host / module / user / secret"]
@@ -74,10 +75,13 @@ flowchart LR
 - **`formatter`** → `alejandra` (so `nix fmt` ≡ `alejandra .`).
 - **`packages.x86_64-linux.default`** → `nixosConfigurations.iso.config.system.build.isoImage`, so `nix build` builds the ISO.
 - **`packages.<system>.installer-kexec`** / **`installer-kexec-vm`** (for `x86_64-linux` and `aarch64-linux`) → the kexec image (`bzImage`, `initrd`, `cmdline`) that `cala-reinstall` boots; `<flake>#installer-kexec` resolves to the running host's own architecture. See [[ISO & Installer|ISO-Installer]].
+- **`packages.<system>.installer-tools`** (for `x86_64-linux` and `aarch64-linux`) → the live installer's own tools (`iso/tools.nix`: `cala-installer`, the token-aware `install-cala-m-os` shim + backend, `cala-nix-token`) as one package; what the TUI's "Update the installer" pulls from the flake. See [[ISO & Installer|ISO-Installer]].
 - **`templates`** → imported from `./templates` (see below).
 - **`devShells.${system}.default`** → `./shell.nix`.
 
-There are **no `apps` and no `checks`** outputs.
+- **`checks.x86_64-linux.<name>`** — one check per `nixosConfigurations` entry (the aarch64 ones included) that forces its `toplevel.drvPath` and echoes it, so `nix flake check` evaluates every host's module tree (options, assertions, infinite recursion) without building anything.
+
+There is **no `apps`** output.
 
 ---
 

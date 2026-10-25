@@ -144,6 +144,7 @@ writeShellApplication {
       note "  anyone holding the ISO can use the PAT: grant it one vault only, revoke it after the install"
       cmd "qemu-system-x86_64 -enable-kvm -m 4G -cdrom <file.iso>" "test-boot an ISO in a VM"
       cmd "nix build .#installer-kexec" "the same installer as a RAM-only kexec image"
+      cmd "nix build .#installer-tools" "the TUI + install-cala-m-os as a package: what 'Update the installer' pulls onto an old stick"
       cmd "sudo cala-reinstall --dry-run" "on the host: load that image, then unload it"
       cmd "sudo cala-reinstall [--token-file <f> | --pat-file <f>]" "on the host: jump into the installer (every physical host)"
       note "  --variant full|vm picks the image (vm = no firmware, fits 4 GB cloud boxes; auto-detected)"

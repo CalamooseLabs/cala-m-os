@@ -132,11 +132,24 @@
   } @ inputs: let
     system = "x86_64-linux";
 
-    pkgs = import nixpkgs {
-      system = system;
-      overlays = import ./overlays;
-      config.allowUnfree = true;
-    };
+    pkgsFor = sys:
+      import nixpkgs {
+        system = sys;
+        overlays = import ./overlays;
+        config.allowUnfree = true;
+      };
+    pkgs = pkgsFor system;
+
+    # The live installer's own tools (cala-installer, the token-aware
+    # install-cala-m-os shim + backend, cala-nix-token) as one package per
+    # architecture: what cala-installer's "Update the installer" menu entry
+    # builds from the flake and re-launches from, so an old ISO or stick runs
+    # today's TUI without being reflashed (iso/tools.nix).
+    installerTools = sys:
+      (import ./iso/tools.nix {
+        inherit inputs;
+        pkgs = pkgsFor sys;
+      }).bundle;
     cala-m-os = import ./settings.nix;
     initialInstallMode = builtins.getEnv "INITIAL_INSTALL_MODE" == "1";
 
@@ -269,6 +282,10 @@
     packages.x86_64-linux.installer-kexec-vm = self.nixosConfigurations.installer-kexec-vm.config.system.build.calaKexec;
     packages.aarch64-linux.installer-kexec = self.nixosConfigurations.installer-kexec-aarch64.config.system.build.calaKexec;
     packages.aarch64-linux.installer-kexec-vm = self.nixosConfigurations.installer-kexec-vm-aarch64.config.system.build.calaKexec;
+    # `nix build github:CalamooseLabs/cala-m-os#installer-tools` on a booted
+    # installer = the current TUI + backend for its architecture (see installerTools).
+    packages.x86_64-linux.installer-tools = installerTools "x86_64-linux";
+    packages.aarch64-linux.installer-tools = installerTools "aarch64-linux";
 
     templates = import ./templates;
 

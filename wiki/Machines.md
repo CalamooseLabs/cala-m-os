@@ -89,7 +89,7 @@ The machine's `home.nix` imports the override (`./modules/hyprland/home.nix`).
 
 ## Hardware modules (`machines/modules/`)
 
-Imported by **workstation `configuration.nix` files**, not by hosts. All four are system-only (`home.nix` is an empty stub).
+Imported by **workstation `configuration.nix` files**, not by hosts. All of them are system-only (`home.nix` is an empty stub).
 
 | Module       | Enables                                                                                                                                                                                                                                    |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
