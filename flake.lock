@@ -30,11 +30,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792966446,
-        "narHash": "sha256-DG017YjnPWcrTPmj7QW1mA2yi8uL6I5N7v/x8rbIjj4=",
+        "lastModified": 1792973464,
+        "narHash": "sha256-KqMZsAxB5JEr8eDk3bgJXEWFmRTKsC8I60Qy5Ja5Xn4=",
         "owner": "CalamooseLabs",
         "repo": "antlers",
-        "rev": "d18419706d2ab4bd388bae46f28f4fe2b30e8e0e",
+        "rev": "8ad4e7d7cbcb2c1e14d8795008f95d0115f68ba5",
         "type": "github"
       },
       "original": {
