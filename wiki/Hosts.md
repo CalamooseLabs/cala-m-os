@@ -18,11 +18,11 @@ These are the machines declared in `flake.nix` under `nixosConfigurations` (buil
 | `homelab` | `MS-02` | Workstation | `server` | on | MicroVM host (media + torrent + security guests); ACME certs; receives `self`; see [[Disaster Recovery|Disaster-Recovery]] |
 | `simple` | `FW13-12XXP` | Workstation | `basic` | on | Framework 13 (12th-gen Intel); imports `_core/configuration.nix` directly |
 | `battlestation` | `B850-MAX` | Workstation | `gamer` | on | Ryzen 9800X3D + RTX 5090; PipeWire |
-| `broadcast` | `TRX50-SAGE` | Workstation | `streamer` | **off** | Threadripper; OBS kiosk via greetd+cage; RTX Pro 4000 |
+| `broadcast` | `TRX50-SAGE` | Workstation | `streamer` | online | Threadripper; OBS kiosk via greetd+cage; RTX Pro 4000 |
 | `openreturn` | `Small` | **VM** | `server` | **off** | MicroVM guest for the OpenReturn service |
 | `livedata` | `MS-01` | Workstation | `server` | **off** | MicroVM host (openreturn + quorumcall guests) |
 | `ai` | `ZIMA` | Workstation | `developer` | on | Headless TTY dev box (impermanent root); runs background Claude sessions |
-| `tci-cloud` | `HETZNER-CLOUD` | Workstation (cloud VM) | `server` | **off** | The Cobblemon Initiative cagelocke event fleet (test deployment: hub + two team worlds + practice floors, standby off); Hetzner Cloud CCX33 at 5.78.214.170; private `cobblemon-initiative` input → deploy as root from devbox |
+| `tci-cloud` | `HETZNER-CLOUD` | Workstation (cloud VM) | `server` | online | The Cobblemon Initiative cagelocke event fleet (test deployment: hub + two team worlds + practice floors, standby off); Hetzner Cloud CCX33 at 5.78.214.170; private `cobblemon-initiative` input, fetched with the GitHub token the box gets from Proton Pass (installer-seeded PAT), so it deploys from devbox or rebuilds itself |
 | `tci-private` | `TCI-LOCAL` | Workstation | `server` | on | The Cobblemon Initiative soul-link fleet; static lab IP |
 | `webhost` | `HETZNER-CAX` | Workstation (cloud VM) | `webmaster` | **off** | Public Caddy web server; Hetzner Cloud CAX11, the only **aarch64** host |
 | `iso` | — | — | — | — | Custom installer image; built directly (not via `mkSystem`) |

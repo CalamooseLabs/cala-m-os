@@ -96,7 +96,7 @@ on real hardware; **MicroVM guests** run on a host through its `cala-vm-manager`
 | `simple` | Framework 13 | `basic` | `1.0.0` | Minimal desktop setup |
 | `ai` | Zima | `developer` | `0.0.1-alpha` | Headless TTY dev box (impermanent root) — runs background Claude sessions |
 | `ephemeral` | Zima | `void` | `0.0.1-beta` | Throwaway lab machine — impermanent root |
-| `tci-cloud` | Hetzner Cloud CCX33 (x86 VM) | `server` | `1.0.0` | The Cobblemon Initiative cagelocke event fleet (test deployment) — internet-facing at 5.78.214.170; deployed from devbox with nixos-anywhere |
+| `tci-cloud` | Hetzner Cloud CCX33 (x86 VM) | `server` | `1.0.0` | The Cobblemon Initiative cagelocke event fleet (test deployment) — internet-facing at 5.78.214.170; online (Proton Pass) secrets; first installed from devbox with nixos-anywhere, then rebuilds itself or from devbox |
 | `tci-private` | TCI-LOCAL | `server` | `1.0.0` | The Cobblemon Initiative soul-link fleet — LAN box |
 | `webhost` | Hetzner Cloud CAX11 (aarch64 VM) | `webmaster` | `1.0.0` | Public web server — Caddy auto-HTTPS for every site under `hosts/webhost/sites/` |
 
