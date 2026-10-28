@@ -72,7 +72,7 @@ Operationally: keep the host's recipient YubiKey plugged in; if it was missing a
 
 Declared in `hosts/_core/options.nix` (default `true`). Every secret-consuming block is wrapped in `lib.mkIf config.calamoose.enableSecrets`, so flipping it to `false` skips all secret registration, the agenix install, and the VM secret share.
 
-**Hosts with `enableSecrets = false`:** `openreturn`, `quorumcall`, `livedata`, and the keyless homelab guests `media`, `torrent`, `security` (they read host-decrypted files from `/run/hostsecrets` instead). `broadcast` uses `"online"` (Proton Pass). These build without needing a decryptable Yubikey present.
+**Hosts with `enableSecrets = false`:** `openreturn`, `quorumcall`, `livedata`, and the keyless homelab guests `media`, `torrent`, `security` (they read host-decrypted files from `/run/hostsecrets` instead). `broadcast`, `ai` and `tci-cloud` use `"online"` (Proton Pass; on tci-cloud that covers `admin_password` and `nix-github-token`, the GitHub token for its private flake input, so the box fetches that input itself). These build without needing a decryptable Yubikey present.
 
 ---
 

@@ -14,26 +14,45 @@
 #                                #
 ##################################
 #
-# Deploy from devbox at /etc/nixos. The cobblemon-initiative input is a PRIVATE
-# repo and only root's nix on devbox holds the GitHub token for it
-# (modules/nix-github-token), so every command below runs under sudo;
-# --preserve-env=SSH_AUTH_SOCK lets root's ssh use your agent's YubiKey key.
+# Deploy from devbox at /etc/nixos, or from the box itself. The cobblemon-
+# initiative input is a PRIVATE repo: on devbox only root's nix holds the GitHub
+# token for it (modules/nix-github-token), so the devbox commands below run under
+# sudo (--preserve-env=SSH_AUTH_SOCK lets root's ssh use your agent's YubiKey
+# key). The box holds the SAME token itself: enableSecrets = "online" fetches it
+# from Proton Pass into root's nix.conf (see below), so once installed it can
+# `nixos-rebuild` straight from github:CalamooseLabs/cala-m-os and reinstall
+# itself with no flags. Both need the Proton Pass PAT on the box; the first
+# install seeds it (step 3).
 #
 #   First install (no custom ISO, no support ticket):
 #     1. Create the server (x86 CCX, any placeholder image) with NO Volumes
 #        attached, so the root disk is the only /dev/sdX (HETZNER-CLOUD/disko.nix).
-#     2. Point `publicHost` below at its IPv4 (an A record; the AAAA record only
-#        after step 4). Check it with `dig +short <domain> @1.1.1.1`.
+#     2. `publicHost` below is the box's IPv4 literal (5.78.214.170): nothing to
+#        resolve for the test. When play.thecompany.inc gets an A record pointing
+#        at it (`dig +short play.thecompany.inc @1.1.1.1`), switch publicHost AND
+#        the client pack's --server-address to the name; the AAAA record only
+#        after step 4.
 #     3. Enable Rescue (linux64) with your SSH key, reset into it, and check the
 #        box boots UEFI — this layout needs it, CCX servers do, the CX line does
 #        not: `ls /sys/firmware/efi` in the rescue shell (and `lsblk` that
 #        /dev/sda is the only disk). Then run:
+#          mkdir -p extra/var/lib/proton-pass-cli
+#          (umask 077; printf '%s' 'pst_…' >extra/var/lib/proton-pass-cli/pat)
 #          sudo --preserve-env=SSH_AUTH_SOCK nix run github:nix-community/nixos-anywhere -- \
 #            --flake .#tci-cloud --target-host root@5.78.214.170 \
+#            --extra-files ./extra \
 #            --generate-hardware-config nixos-generate-config \
 #              ./machines/workstations/HETZNER-CLOUD/hardware-configuration.nix
-#          ssh-keygen -R 5.78.214.170
-#        (--generate-hardware-config replaces the placeholder profile with the
+#          rm -rf extra; ssh-keygen -R 5.78.214.170
+#        (The PAT is a Proton Pass Personal Access Token granted the Cala-M-OS
+#        vault, the one build-pat-iso / flash-iso --with-pat take. --extra-files
+#        lands it at /var/lib/proton-pass-cli/pat, root 0600, BEFORE nixos-install
+#        runs this config's activation, which fetches admin_password and
+#        nix-github-token fail-closed: with no PAT and no session that activation
+#        aborts before the users snippet and the install fails. The alternative is
+#        the PAT-bearing installer, build-pat-iso or cala-reinstall on a box that
+#        already holds the PAT, which seeds the same file (wiki: ISO-Installer).
+#        --generate-hardware-config replaces the placeholder profile with the
 #        real box's — commit it. Never rerun nixos-anywhere on an installed box:
 #        it wipes the disk; updates go through nixos-rebuild below.)
 #        If the kexec step fails with "Address not available" (a kernel 7.0
@@ -45,9 +64,15 @@
 #        IPv6 /64 from the Cloud Console into ipv6Address below, redeploy, and
 #        confirm `curl -6 https://ifconfig.co` works from the box. Only then
 #        publish the AAAA record.
-#   Updates:
+#   Updates — from devbox:
 #     sudo --preserve-env=SSH_AUTH_SOCK nixos-rebuild switch --flake .#tci-cloud \
 #       --target-host hub@5.78.214.170 --sudo
+#   or on the box, whose root nix.conf !includes the token Proton Pass hands it
+#   (/run/proton-secrets/nix-github-token, fetched at boot by
+#   proton-secrets-selfheal; `journalctl -u proton-secrets-selfheal` if a private
+#   fetch is refused):
+#     ssh hub@5.78.214.170 sudo nixos-rebuild switch \
+#       --flake github:CalamooseLabs/cala-m-os#tci-cloud
 #   The game bundle (separate from this config): from the mod repo's checkout on
 #   devbox, inside its dev shell (`nix develop` — the deploy app has no gradle on
 #   PATH, and 1.0.18's cagelocke/standby/practice Java gets its FIRST real compile
@@ -60,25 +85,31 @@
 #   version gatekeeper: every bundle rebuild = every client reinstalls).
 #   Hetzner side (outside this repo): the Cloud Firewall, if one is attached,
 #   must pass TCP 22, 25565 and 25600-25609 (hub, team range, practice range).
-#   Reinstall in place (no media): `sudo cala-reinstall --token-file <f>` on the
-#   box — with enableSecrets = false it holds no GitHub token of its own, so hand
-#   it an `access-tokens = github.com=…` line — then pick tci-cloud in the
-#   installer's TUI (cala-installer; it runs disko, which asks before wiping,
-#   because this host can't set wipeAllDisks). By hand that is
-#   `disko --mode destroy,format,mount --flake <ref>#tci-cloud`, then
-#   `INSTALL_SKIP_DISKO=1 install-cala-m-os tci-cloud` (wiki: ISO-Installer).
+#   Reinstall in place (no media): `sudo cala-reinstall` on the box — it carries
+#   the box's own Proton PAT (/var/lib/proton-pass-cli/pat): the installer
+#   fetches the GitHub token from it (cala-nix-token) and seeds it back onto the
+#   reinstalled box; --token-file / --pat-file are only for a box whose PAT is
+#   gone — then pick tci-cloud in the installer's TUI (cala-installer; it runs
+#   disko, which asks before wiping, because this host can't set wipeAllDisks).
+#   By hand that is `disko --mode destroy,format,mount --flake <ref>#tci-cloud`,
+#   then `INSTALL_SKIP_DISKO=1 install-cala-m-os tci-cloud` (wiki: ISO-Installer).
 #   The PAT-bearing custom ISO (build-pat-iso) remains the alternative.
 #
-# Sizing on the CCX33 (8 vCPU, 32 GB): hub 4G + two team floors 6G each, all
-# pre-touched at start (the Aikar -Xms pin, modules/tci-server) = 16 GB of heap,
-# ~20-22 GB with JVM overhead; one practice floor at a time (6G) beside them.
-# Hot standby (a second, pre-booted JVM per team — ~44 GB by the soak ratio) and
-# practice.maxActive 2 need the 64 GB CCX43. metrics.memory below writes the
+# Sizing on the CCX33 (8 vCPU, 32 GB): two team floors 6G each, pre-touched at
+# start (the Aikar -Xms pin in modules/tci-server — INSTANCES only: the hub unit
+# takes no jvmOpts) = 12 GB committed up front, plus the hub's 4G -Xmx ceiling it
+# grows into = 16 GB of heap at most, ~20-22 GB with JVM overhead; one practice
+# floor at a time (6G, pinned like a team floor) beside them. Hot standby (a
+# second, pre-booted JVM per team; on a standby fleet EVERY team world runs
+# cagelocke.standby.jvmOpts, heap pin dropped, so the -Xmx sum does not size it)
+# and practice.maxActive 2 need the 64 GB CCX43. metrics.memory below writes the
 # per-unit RSS CSV (/var/lib/tci-server-metrics/mem.csv): size the upgrade from
-# it, not from -Xmx.
+# it, not from -Xmx (Cagelocke-Design §5.8 / Q21).
 #
 # Log in as `hub` with the YubiKey sk keys (users/server): the key is verified
-# on the CLIENT, so the box itself needs no YubiKey.
+# on the CLIENT, so the box itself needs no YubiKey. hub's login password is the
+# shared admin_password from Proton Pass, as on every other host; SSH stays
+# key-only (modules/openssh).
 {
   lib,
   config,
@@ -91,10 +122,15 @@
 in {
   calamoose.version = "1.0.0";
 
-  # No Yubikey on a Cloud VM: disable agenix so activation doesn't block on a
-  # hardware key. (The private cobblemon-initiative input is still fetched at
-  # eval time from the DEPLOYING box's token — see nix-github-token below.)
-  calamoose.enableSecrets = false;
+  # No YubiKey on a Cloud VM, so secrets come from Proton Pass (online) instead
+  # of agenix. Consumed here, both fetched at activation with the session the
+  # installer-seeded PAT mints (patFile below):
+  #   users/_core/secrets/default.nix -> admin_password (hub's hashedPasswordFile)
+  #   modules/nix-github-token (below) -> nix-github-token (the access-tokens line
+  #                                      for the private cobblemon-initiative input)
+  # The warden/practice event tokens are not backend items: the box generates
+  # them (tciEventTokens below).
+  calamoose.enableSecrets = "online";
 
   imports =
     [
@@ -109,19 +145,33 @@ in {
         extra_user_modules = {server = ["tci-server" "nix-github-token"];};
       })
     ]
-    # tci-server, nix-github-token and the HETZNER-CLOUD machine's hetzner-cloud
-    # module exist only in the full config, not the minimal INITIAL_INSTALL_MODE
+    # tci-server, nix-github-token, proton-secrets (modules/secrets) and the
+    # HETZNER-CLOUD machine's hetzner-cloud module exist only in the full config,
+    # not the minimal INITIAL_INSTALL_MODE
     # pass, so their settings ride this conditional import: an unguarded
     # definition fails that pass with "option does not exist".
     ++ lib.optional (!initialInstallMode) {
-      # PAT for the private cobblemon-initiative input. With enableSecrets = false
-      # (no Yubikey on a Cloud box) the token is NOT decrypted on the box — so
-      # deploy FROM a machine that already holds it (e.g. devbox) via
-      # `nixos-rebuild --target-host`, whose evaluator fetches the private input.
-      programs.nix-github-token = {
-        enable = true;
-        agenixFile = ../../modules/nix-github-token/secrets/nix-github-token.age;
-      };
+      # GitHub token for the private cobblemon-initiative input. Online host: the
+      # secrets facade fetches Proton item nix-github-token (vault Cala-M-OS,
+      # field secret — the module defaults) to /run/proton-secrets/nix-github-token
+      # and !includes it into nix.conf, so root's nix ON THE BOX fetches the input
+      # (on-box nixos-rebuild, cala-reinstall). Deploying from devbox keeps
+      # working: its evaluator uses its own copy of the same token. agenixFile is
+      # ignored on online hosts, so it is not set.
+      programs.nix-github-token.enable = true;
+
+      # Re-mint the Proton session from the installer-seeded PAT (the `ai` /
+      # `broadcast` pattern): the fs-provider session is bound to the machine-id,
+      # so a session minted during the install (in nixos-anywhere's or the ISO's
+      # chroot) does not match this box's own; a PAT is machine-id-independent.
+      # nixos-anywhere --extra-files (header step 3), build-pat-iso and
+      # cala-reinstall all land it at this path; once minted the session persists
+      # (persistent root) and later boots never touch the PAT. No PAT and no
+      # session: `sudo proton-secrets login` on the box. Rides this lib.optional
+      # block because the proton-secrets module is absent in the minimal
+      # INITIAL_INSTALL_MODE pass (a plain mkIf would still fail "option does not
+      # exist" there).
+      services.proton-secrets.patFile = "/var/lib/proton-pass-cli/pat";
 
       # ---- Hetzner Cloud networking (machines/modules/hetzner-cloud) ----------
       # Hetzner's network is routed (Layer 3): IPv4 is a /32 behind the off-subnet
@@ -138,12 +188,17 @@ in {
       };
 
       # ---- Event tokens + deploy dir + StreamSync off (box-level glue) -------
-      # enableSecrets = false (no YubiKey, no agenix), and the warden/practice
-      # tokens are plain files the module reads at RUNTIME as root (warden.py at
+      # The warden/practice tokens stay off the secrets backend: they are plain
+      # files the module reads at RUNTIME as root (warden.py at
       # start, the hub/instance preStarts via LoadCredential, tci-server-practice)
-      # — so generate them on the box at activation, root-only, once. Rotate by
-      # deleting a file and switching again, then restart the warden AND the hub
-      # together (the hub injects the token into its marker at start).
+      # — so generate them on the box at activation, root-only, once. Rotate ONLY
+      # between races (no tci-server@ / tci-server-practice@ JVM up): delete the
+      # file, switch again, then restart EVERY unit that holds it — the warden
+      # reads both files once at start, and the hub, each tci-server@<team> floor
+      # (warden-token) and each tci-server-practice@<Owner>.p floor
+      # (practice-token) bake theirs into their marker at preStart; the units are
+      # restartIfChanged = false, so a switch bounces none of them, and a floor
+      # left running keeps the old token and 401s on every /cage/* call.
       system.activationScripts.tciEventTokens = ''
         (
           umask 077
@@ -192,14 +247,22 @@ in {
         coop.maxGroupSize = 2; # 2v2: a team is exactly two
         soulLink.enable = false; # the inverse of every cagelocke rule (asserted)
 
-        # ROSTER — TODO before anyone but the testers connects. All three are
-        # Mojang-resolved when a unit starts: an unresolvable name REFUSES that
-        # start, so spell them exactly and boot once online.
+        # ROSTER — TODO before anyone but the testers connects. hub.whitelist,
+        # ops and cagelocke.guests are Mojang-resolved when their unit starts: an
+        # unresolvable name REFUSES that start, so spell them exactly and boot
+        # once online. `players` is NOT resolved — the warden matches it
+        # case-insensitively, so a typo there 403s that streamer later, at
+        # /tci-hub coop sign | play | practice start, never at boot.
         #   hub.whitelist    = the four streamers + casters + referee;
         #   players          = the four streamers (who may hold a team world);
         #   ops              = the referee ONLY — streamers must never be ops;
         #   cagelocke.guests = the casters (+ referee) allowed onto a team floor.
-        # Empty whitelist/players = anyone who finds the IP may form a team.
+        # Empty whitelist/players = anyone who finds the IP may form a team AND,
+        # with practice on, open a practice floor (/tci-hub practice start is
+        # perm 0; the warden's only gate is `players`, empty = open): one 6G JVM
+        # at a time (practice.maxActive) and up to 4 × ~3.5 GB seeded worlds on
+        # disk (practice.maxWorlds). Fill `players` before the IP circulates;
+        # `/tci-hub practice close` (referee) latches it shut meanwhile.
         players = [];
         hub.whitelist = [];
         ops = ["TheCalamoose"]; # TODO: the referee's real Mojang name
@@ -236,7 +299,7 @@ in {
           # Practice floors (1.0.18): streamers rehearse on their own floors in
           # the days before. ONE at a time on this plan (6G pinned, beside the
           # hub and any team floor still up); raise maxActive with the box.
-          # Event morning: `tci-server-practice sweep`, then /tci-hub cage create
+          # Event morning: `sudo tci-server-practice sweep`, then /tci-hub cage create
           # (which refuses while any practice JVM is on the box).
           practice = {
             enable = true;
