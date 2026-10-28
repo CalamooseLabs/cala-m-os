@@ -22,7 +22,7 @@ These are the machines declared in `flake.nix` under `nixosConfigurations` (buil
 | `openreturn` | `Small` | **VM** | `server` | **off** | MicroVM guest for the OpenReturn service |
 | `livedata` | `MS-01` | Workstation | `server` | **off** | MicroVM host (openreturn + quorumcall guests) |
 | `ai` | `ZIMA` | Workstation | `developer` | on | Headless TTY dev box (impermanent root); runs background Claude sessions |
-| `tci-cloud` | `HETZNER-CLOUD` | Workstation (cloud VM) | `server` | **off** | The Cobblemon Initiative public hub fleet; Hetzner Cloud x86; private `cobblemon-initiative` input → deploy as root from devbox |
+| `tci-cloud` | `HETZNER-CLOUD` | Workstation (cloud VM) | `server` | **off** | The Cobblemon Initiative cagelocke event fleet (test deployment: hub + two team worlds + practice floors, standby off); Hetzner Cloud CCX33 at 5.78.214.170; private `cobblemon-initiative` input → deploy as root from devbox |
 | `tci-private` | `TCI-LOCAL` | Workstation | `server` | on | The Cobblemon Initiative soul-link fleet; static lab IP |
 | `webhost` | `HETZNER-CAX` | Workstation (cloud VM) | `webmaster` | **off** | Public Caddy web server; Hetzner Cloud CAX11, the only **aarch64** host |
 | `iso` | — | — | — | — | Custom installer image; built directly (not via `mkSystem`) |

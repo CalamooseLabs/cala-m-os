@@ -1,12 +1,16 @@
 ##################################
 #                                #
-#     TCI Cloud Server (hub)     #
-#     Hetzner Cloud (US, CCX)    #
+#  TCI Cloud Server (cagelocke)  #
+#  Hetzner Cloud CCX33 (US)      #
+#  5.78.214.170                  #
 #                                #
-#  Internet-facing fleet: the    #
-#  hub is the front door; each   #
-#  player gets a solo world, or  #
-#  forms a co-op group.          #
+#  The Cobblemon Initiative      #
+#  EVENT fleet: hub + warden +   #
+#  two 2-player team worlds +    #
+#  practice floors. TEST box:    #
+#  sized for the CCX33 (8 vCPU,  #
+#  32 GB, 240 GB); hot standby   #
+#  waits for a 64 GB plan.       #
 #                                #
 ##################################
 #
@@ -25,20 +29,37 @@
 #        not: `ls /sys/firmware/efi` in the rescue shell (and `lsblk` that
 #        /dev/sda is the only disk). Then run:
 #          sudo --preserve-env=SSH_AUTH_SOCK nix run github:nix-community/nixos-anywhere -- \
-#            --flake .#tci-cloud --target-host root@<ipv4>
-#          ssh-keygen -R <ipv4>
+#            --flake .#tci-cloud --target-host root@5.78.214.170 \
+#            --generate-hardware-config nixos-generate-config \
+#              ./machines/workstations/HETZNER-CLOUD/hardware-configuration.nix
+#          ssh-keygen -R 5.78.214.170
+#        (--generate-hardware-config replaces the placeholder profile with the
+#        real box's — commit it. Never rerun nixos-anywhere on an installed box:
+#        it wipes the disk; updates go through nixos-rebuild below.)
 #        If the kexec step fails with "Address not available" (a kernel 7.0
 #        rescue kernel), add `--kexec-extra-flags -c`.
 #        nixos-anywhere kexecs the rescue system into a NixOS installer, applies
 #        this host's disko layout and installs the FULL config in one pass. The
 #        box comes up on DHCP (calamoose.hetznerCloud, both addresses null).
-#     4. Copy the IPv4 and the IPv6 /64 from the Cloud Console into
-#        calamoose.hetznerCloud.ipv4Address / ipv6Address below, redeploy, and
+#     4. Pin the addresses: ipv4Address = "5.78.214.170" (DHCP off) and the
+#        IPv6 /64 from the Cloud Console into ipv6Address below, redeploy, and
 #        confirm `curl -6 https://ifconfig.co` works from the box. Only then
 #        publish the AAAA record.
 #   Updates:
 #     sudo --preserve-env=SSH_AUTH_SOCK nixos-rebuild switch --flake .#tci-cloud \
-#       --target-host hub@<host> --sudo
+#       --target-host hub@5.78.214.170 --sudo
+#   The game bundle (separate from this config): from the mod repo's checkout on
+#   devbox, inside its dev shell (`nix develop` — the deploy app has no gradle on
+#   PATH, and 1.0.18's cagelocke/standby/practice Java gets its FIRST real compile
+#   here; fix what fails before deploying):
+#     nix run .#deploy-server -- hub@5.78.214.170   # build_mrpack.py --server, rsync to
+#                                                   # /srv/tci/bundle-<ver>/, flip /srv/tci/bundle
+#     ssh hub@5.78.214.170 sudo systemctl restart tci-server-hub   # the hub reads its
+#                                                   # marker/bundle once, at start
+#   then build the client pack with --server-address 5.78.214.170 (the exact-
+#   version gatekeeper: every bundle rebuild = every client reinstalls).
+#   Hetzner side (outside this repo): the Cloud Firewall, if one is attached,
+#   must pass TCP 22, 25565 and 25600-25609 (hub, team range, practice range).
 #   Reinstall in place (no media): `sudo cala-reinstall --token-file <f>` on the
 #   box — with enableSecrets = false it holds no GitHub token of its own, so hand
 #   it an `access-tokens = github.com=…` line — then pick tci-cloud in the
@@ -48,10 +69,19 @@
 #   `INSTALL_SKIP_DISKO=1 install-cala-m-os tci-cloud` (wiki: ISO-Installer).
 #   The PAT-bearing custom ISO (build-pat-iso) remains the alternative.
 #
+# Sizing on the CCX33 (8 vCPU, 32 GB): hub 4G + two team floors 6G each, all
+# pre-touched at start (the Aikar -Xms pin, modules/tci-server) = 16 GB of heap,
+# ~20-22 GB with JVM overhead; one practice floor at a time (6G) beside them.
+# Hot standby (a second, pre-booted JVM per team — ~44 GB by the soak ratio) and
+# practice.maxActive 2 need the 64 GB CCX43. metrics.memory below writes the
+# per-unit RSS CSV (/var/lib/tci-server-metrics/mem.csv): size the upgrade from
+# it, not from -Xmx.
+#
 # Log in as `hub` with the YubiKey sk keys (users/server): the key is verified
 # on the CLIENT, so the box itself needs no YubiKey.
 {
   lib,
+  config,
   initialInstallMode,
   ...
 }: let
@@ -99,43 +129,131 @@ in {
       # advertisements to rely on). Both null =
       # IPv4 over Hetzner's DHCP (systemd-networkd handles the odd gateway) and no
       # IPv6 — what a first install runs on, before the addresses are known.
-      # Afterwards: ipv6Address = "<the /64 from the Cloud Console>::1/64" (then
-      # publish AAAA), and ipv4Address = "<the IPv4>" if DHCP is to be off
-      # entirely (Hetzner notes its Layer-3 model can trip some DHCP clients).
+      # Afterwards (header step 4): ipv4Address = "5.78.214.170" takes DHCP out
+      # entirely (Hetzner notes its Layer-3 model can trip some DHCP clients) and
+      # ipv6Address = "<the /64 from the Cloud Console>::1/64" (then publish AAAA).
       calamoose.hetznerCloud = {
-        ipv4Address = null; # e.g. "203.0.113.10"
+        ipv4Address = null; # → "5.78.214.170" once the box is up
         ipv6Address = null; # e.g. "2a01:4f8:c012:3456::1/64"
       };
 
-      # ---- The Cobblemon Initiative dedicated fleet (PUBLIC hub) --------------
+      # ---- Event tokens + deploy dir + StreamSync off (box-level glue) -------
+      # enableSecrets = false (no YubiKey, no agenix), and the warden/practice
+      # tokens are plain files the module reads at RUNTIME as root (warden.py at
+      # start, the hub/instance preStarts via LoadCredential, tci-server-practice)
+      # — so generate them on the box at activation, root-only, once. Rotate by
+      # deleting a file and switching again, then restart the warden AND the hub
+      # together (the hub injects the token into its marker at start).
+      system.activationScripts.tciEventTokens = ''
+        (
+          umask 077
+          mkdir -p /var/lib/tci-secrets
+          for t in warden-token practice-token; do
+            f=/var/lib/tci-secrets/$t
+            if [ ! -s "$f" ]; then
+              head -c 32 /dev/urandom | od -An -tx1 | tr -d ' \n' >"$f"
+            fi
+          done
+        )
+      '';
+
+      # deploy_server rsyncs to /srv/tci/bundle-<version>/ as the ssh user (hub)
+      # and flips /srv/tci/bundle; nothing else creates the directory.
+      systemd.tmpfiles.rules = ["d /srv/tci 0755 hub users -"];
+
+      # No StreamSync endpoint is reachable from this box yet: the overlay ingest
+      # (modules/cobblemon-overlay on broadcast) is studio-LAN-only and
+      # unauthenticated, while the bundle ships that LAN endpoint ENABLED
+      # (10.1.10.49:8082). Process env tops StreamSyncConfig's precedence, so this
+      # keeps the team floors from pushing into the void. The mkIf drops it once
+      # streamSync.endpointUrl is set — the module then defines "true" on the same
+      # unit and the two would conflict.
+      systemd.services."tci-server@".environment.STREAMSYNC_ENABLED =
+        lib.mkIf (config.services.tci-server.streamSync.endpointUrl == null) "false";
+
+      # ---- The Cobblemon Initiative cagelocke fleet (TEST deployment) ----------
       services.tci-server = {
         enable = true;
         eula = true; # accepting Mojang's EULA (required to run the server)
-        bundle = "/srv/tci/bundle"; # `deploy_server` rsyncs here + flips the symlink
+        # The symlink deploy_server flips. For the EVENT pin the versioned dir
+        # instead ("/srv/tci/bundle-cobblemon-initiative-<frozen>"): a mid-event
+        # deploy would otherwise reseed a wiped team on a newer bundle than the
+        # hub and the clients, and the exact-version gate locks that team out.
+        bundle = "/srv/tci/bundle";
 
-        # Where CLIENTS reach the box; instances transfer players back to it. MUST
-        # be a real, client-resolvable address (DNS A/AAAA → the box's IPv4/IPv6).
-        publicHost = "play.thecompany.inc"; # TODO: real DNS for the box
+        # Where CLIENTS reach the box: every transfer (hub → floor, floor → hub,
+        # the hunt, spectate) targets this address, so it MUST resolve from the
+        # players' machines. The IPv4 literal until play.thecompany.inc has an A
+        # record — then switch it here AND in the client pack's --server-address.
+        publicHost = "5.78.214.170";
 
         hub.enable = true; # always-on front door (warden.enable follows hub.enable)
-        coop.enable = true; # offer co-op groups; solo per-player worlds are the
-        #                     default path — flip to false for a singleplayer-ONLY
-        #                     public fleet. soulLink stays OFF: a public fleet never
-        #                     shares fate or widens whitelists.
+        coop.enable = true; # teams ARE co-op groups (cagelocke asserts it)
+        coop.maxGroupSize = 2; # 2v2: a team is exactly two
+        soulLink.enable = false; # the inverse of every cagelocke rule (asserted)
 
-        players = []; # open auto-provisioning; hub.whitelist is the real entry gate
-        hub.whitelist = []; # TODO: allowed/paid roster, or leave open
-        ops = ["RoboMoose"]; # TODO: real operator name(s) (Mojang-resolved at start)
+        # ROSTER — TODO before anyone but the testers connects. All three are
+        # Mojang-resolved when a unit starts: an unresolvable name REFUSES that
+        # start, so spell them exactly and boot once online.
+        #   hub.whitelist    = the four streamers + casters + referee;
+        #   players          = the four streamers (who may hold a team world);
+        #   ops              = the referee ONLY — streamers must never be ops;
+        #   cagelocke.guests = the casters (+ referee) allowed onto a team floor.
+        # Empty whitelist/players = anyone who finds the IP may form a team.
+        players = [];
+        hub.whitelist = [];
+        ops = ["RoboMoose"]; # TODO: the referee's real Mojang name
 
-        # Sizing — MEASURE real RSS under load before packing to the RAM ceiling
-        # (prior notes: an AX102/7950X3D sustains ~14-15 active instances at 6G).
-        maxActive = 8; # concurrent running instances the warden allows
-        maxProvisioned = 32; # worlds on disk (~3.5G each + growth)
-        instanceDefaults.memory = "6G";
+        # Fleet shape for a race: two team worlds plus slack for retire/re-form.
+        # Firewall exposure follows maxProvisioned (team ports 25600-25605).
+        maxActive = 2;
+        maxProvisioned = 6;
+        instanceDefaults = {
+          memory = "6G";
+          emptyShutdownMinutes = 0; # a team floor never spins down mid-race
+          dailyReturnAt = null; # no 04:00 return to the hub during an event
+          # Two members + a hunter + casters on one floor (the bundle ships 4).
+          serverProperties."max-players" = 8;
+        };
         hub.memory = "4G";
+        # A cold team-world boot (3.5 GB copy + modded JVM + the install run)
+        # outlasts the 120 s default, and a timeout drops the armed party.
+        hub.preparingCapSeconds = 900;
 
-        openFirewall = true; # public front door: hub 25565 + game range (25600+)
-        backup.enable = true;
+        # Warden auth: every /cage/* and /practice/* request carries the bearer
+        # token; without it the crash-in-wipe reset backstop is never emitted and
+        # practice floors cannot be enabled. Generated at activation (above).
+        warden.tokenFile = "/var/lib/tci-secrets/warden-token";
+
+        cagelocke = {
+          enable = true;
+          # targetBadge 3 (owner ruling 1), reviveSeconds 120, huntSeconds,
+          # hunterLives and mobWheel stay at the module's canon defaults.
+          guests = []; # TODO: the casters' Mojang names
+          # Hot standby (a pre-booted spare JVM per team) does not fit 32 GB —
+          # turn it on after the plan upgrade, sized from the memory CSV.
+          standby.enable = false;
+          # Practice floors (1.0.18): streamers rehearse on their own floors in
+          # the days before. ONE at a time on this plan (6G pinned, beside the
+          # hub and any team floor still up); raise maxActive with the box.
+          # Event morning: `tci-server-practice sweep`, then /tci-hub cage create
+          # (which refuses while any practice JVM is on the box).
+          practice = {
+            enable = true;
+            tokenFile = "/var/lib/tci-secrets/practice-token";
+            maxActive = 1;
+            # maxWorlds 4; memory = instanceDefaults.memory — never lower it
+            # alone (the Aikar -Xms pin would exceed -Xmx); ports 25606-25609.
+          };
+        };
+
+        openFirewall = true; # hub 25565 + team 25600-25605 + practice 25606-25609
+        # The design's event config: the 03:30 sweep save-offs LIVE team worlds,
+        # and test worlds need no backups. Decide before the real event.
+        backup.enable = false;
+        # Per-unit cgroup/RSS CSV every 10 s — the numbers to size the next plan
+        # (and standby) from: /var/lib/tci-server-metrics/mem.csv
+        metrics.memory.enable = true;
       };
     };
 
