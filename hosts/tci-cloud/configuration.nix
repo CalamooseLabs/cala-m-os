@@ -73,16 +73,30 @@
 #   fetch is refused):
 #     ssh hub@5.78.214.170 sudo nixos-rebuild switch \
 #       --flake github:CalamooseLabs/cala-m-os#tci-cloud
-#   The game bundle (separate from this config): from the mod repo's checkout on
-#   devbox, inside its dev shell (`nix develop` — the deploy app has no gradle on
-#   PATH, and 1.0.18's cagelocke/standby/practice Java gets its FIRST real compile
-#   here; fix what fails before deploying):
-#     nix run .#deploy-server -- hub@5.78.214.170   # build_mrpack.py --server, rsync to
-#                                                   # /srv/tci/bundle-<ver>/, flip /srv/tci/bundle
-#     ssh hub@5.78.214.170 sudo systemctl restart tci-server-hub   # the hub reads its
-#                                                   # marker/bundle once, at start
-#   then build the client pack with --server-address 5.78.214.170 (the exact-
-#   version gatekeeper: every bundle rebuild = every client reinstalls).
+#   The game bundle: the box builds it ITSELF (services.tci-server.bundleBuild,
+#   the mod module's BUNDLE BUILD) from the flake input that pins the mod — the
+#   repo's own `gradle build` + build_mrpack.py --profile server pipeline runs on
+#   the box into /srv/tci/bundle-<version>-<source id>/ and flips /srv/tci/bundle.
+#   A fresh box's hub waits for the first build (tci-bundle-ready), so a new
+#   install needs no deploy step, and the bundle needs no GitHub fetch of its
+#   own (the ~2 GB source travels inside the system closure). 1.0.18's
+#   cagelocke/standby/practice Java gets its FIRST real compile there: watch it.
+#     ssh hub@5.78.214.170 'journalctl -fu tci-bundle-build'   # the first build also
+#                                                   # downloads Maven/Modrinth/Fabric deps
+#     ssh hub@5.78.214.170 sudo tci-bundle status   # pinned source, live link, pin, bundles
+#   New game version = move the pin and redeploy: on devbox
+#     sudo nix flake update cobblemon-initiative && <an Updates command above>
+#   The switch returns at once and the box rebuilds in the background; the hub
+#   and running floors keep their bundle until restarted:
+#     ssh hub@5.78.214.170 sudo systemctl restart tci-server-hub   # when the lobby is quiet
+#   (`sudo tci-bundle build --restart-hub` does both by hand; `tci-bundle use
+#   <dir>` pins the link to a kept bundle — the EVENT freeze — and `tci-bundle
+#   unpin` follows new builds again.) Only a switch issued while the FIRST build
+#   is still running waits for it, through the hub. The CLIENT pack is still
+#   built on devbox from the same checkout, with --server-address 5.78.214.170
+#   (the exact-version gatekeeper: every bundle rebuild = every client
+#   reinstalls); scripts/deploy_server stays usable as a manual fallback, but
+#   the next source change replaces its bundle.
 #   Hetzner side (outside this repo): the Cloud Firewall, if one is attached,
 #   must pass TCP 22, 25565 and 25600-25609 (hub, team range, practice range).
 #   Reinstall in place (no media): `sudo cala-reinstall` on the box — it carries
@@ -104,7 +118,9 @@
 # cagelocke.standby.jvmOpts, heap pin dropped, so the -Xmx sum does not size it)
 # and practice.maxActive 2 need the 64 GB CCX43. metrics.memory below writes the
 # per-unit RSS CSV (/var/lib/tci-server-metrics/mem.csv): size the upgrade from
-# it, not from -Xmx (Cagelocke-Design §5.8 / Q21).
+# it, not from -Xmx (Cagelocke-Design §5.8 / Q21). Disk: the bundle build keeps
+# a ~3 GB working copy + caches under /var/lib/tci-bundle and ~4 GB per kept
+# bundle under /srv/tci (the live one + 2 older), beside the ~3.5 GB team worlds.
 #
 # Log in as `hub` with the YubiKey sk keys (users/server): the key is verified
 # on the CLIENT, so the box itself needs no YubiKey. hub's login password is the
@@ -113,6 +129,7 @@
 {
   lib,
   config,
+  inputs,
   initialInstallMode,
   ...
 }: let
@@ -212,8 +229,9 @@ in {
         )
       '';
 
-      # deploy_server rsyncs to /srv/tci/bundle-<version>/ as the ssh user (hub)
-      # and flips /srv/tci/bundle; nothing else creates the directory.
+      # tci-bundle-build (root) creates /srv/tci itself; this rule only keeps
+      # the manual fallback usable — scripts/deploy_server rsyncs there as the
+      # ssh user (hub) — without a chown first.
       systemd.tmpfiles.rules = ["d /srv/tci 0755 hub users -"];
 
       # No StreamSync endpoint is reachable from this box yet: the overlay ingest
@@ -230,11 +248,22 @@ in {
       services.tci-server = {
         enable = true;
         eula = true; # accepting Mojang's EULA (required to run the server)
-        # The symlink deploy_server flips. For the EVENT pin the versioned dir
-        # instead ("/srv/tci/bundle-cobblemon-initiative-<frozen>"): a mid-event
-        # deploy would otherwise reseed a wiped team on a newer bundle than the
-        # hub and the clients, and the exact-version gate locks that team out.
+        # The symlink the box's own bundle build flips (bundleBuild below; also
+        # what a manual scripts/deploy_server would flip). The EVENT pin is the
+        # flake input: do not `nix flake update cobblemon-initiative` during the
+        # freeze, and `sudo tci-bundle use <dir>` pins a specific build (later
+        # builds install beside it without flipping; `tci-bundle unpin` resumes)
+        # — a newer bundle would otherwise reseed a wiped team on a version the
+        # hub and the clients do not run, and the exact-version gate locks it out.
         bundle = "/srv/tci/bundle";
+        # Build the bundle on the box from the pinned mod source (header): the
+        # repo's gradle + build_mrpack pipeline into /srv/tci/bundle-<version>-
+        # <source id>/, the hub gated on the first build. A lock bump + switch
+        # rebuilds in the background; `sudo tci-bundle status|build|use|unpin|prune`.
+        bundleBuild = {
+          enable = true;
+          source = inputs.cobblemon-initiative;
+        };
 
         # Where CLIENTS reach the box: every transfer (hub → floor, floor → hub,
         # the hunt, spectate) targets this address, so it MUST resolve from the
