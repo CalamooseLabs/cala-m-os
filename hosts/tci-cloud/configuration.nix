@@ -22,8 +22,11 @@
 #   First install (no custom ISO, no support ticket):
 #     1. Create the server (x86 CCX, any placeholder image) with NO Volumes
 #        attached, so the root disk is the only /dev/sdX (HETZNER-CLOUD/disko.nix).
-#     2. Point `publicHost` below at its IPv4 (an A record; the AAAA record only
-#        after step 4). Check it with `dig +short <domain> @1.1.1.1`.
+#     2. `publicHost` below is the box's IPv4 literal (5.78.214.170): nothing to
+#        resolve for the test. When play.thecompany.inc gets an A record pointing
+#        at it (`dig +short play.thecompany.inc @1.1.1.1`), switch publicHost AND
+#        the client pack's --server-address to the name; the AAAA record only
+#        after step 4.
 #     3. Enable Rescue (linux64) with your SSH key, reset into it, and check the
 #        box boots UEFI — this layout needs it, CCX servers do, the CX line does
 #        not: `ls /sys/firmware/efi` in the rescue shell (and `lsblk` that
@@ -69,13 +72,16 @@
 #   `INSTALL_SKIP_DISKO=1 install-cala-m-os tci-cloud` (wiki: ISO-Installer).
 #   The PAT-bearing custom ISO (build-pat-iso) remains the alternative.
 #
-# Sizing on the CCX33 (8 vCPU, 32 GB): hub 4G + two team floors 6G each, all
-# pre-touched at start (the Aikar -Xms pin, modules/tci-server) = 16 GB of heap,
-# ~20-22 GB with JVM overhead; one practice floor at a time (6G) beside them.
-# Hot standby (a second, pre-booted JVM per team — ~44 GB by the soak ratio) and
-# practice.maxActive 2 need the 64 GB CCX43. metrics.memory below writes the
+# Sizing on the CCX33 (8 vCPU, 32 GB): two team floors 6G each, pre-touched at
+# start (the Aikar -Xms pin in modules/tci-server — INSTANCES only: the hub unit
+# takes no jvmOpts) = 12 GB committed up front, plus the hub's 4G -Xmx ceiling it
+# grows into = 16 GB of heap at most, ~20-22 GB with JVM overhead; one practice
+# floor at a time (6G, pinned like a team floor) beside them. Hot standby (a
+# second, pre-booted JVM per team; on a standby fleet EVERY team world runs
+# cagelocke.standby.jvmOpts, heap pin dropped, so the -Xmx sum does not size it)
+# and practice.maxActive 2 need the 64 GB CCX43. metrics.memory below writes the
 # per-unit RSS CSV (/var/lib/tci-server-metrics/mem.csv): size the upgrade from
-# it, not from -Xmx.
+# it, not from -Xmx (Cagelocke-Design §5.8 / Q21).
 #
 # Log in as `hub` with the YubiKey sk keys (users/server): the key is verified
 # on the CLIENT, so the box itself needs no YubiKey.
@@ -141,9 +147,14 @@ in {
       # enableSecrets = false (no YubiKey, no agenix), and the warden/practice
       # tokens are plain files the module reads at RUNTIME as root (warden.py at
       # start, the hub/instance preStarts via LoadCredential, tci-server-practice)
-      # — so generate them on the box at activation, root-only, once. Rotate by
-      # deleting a file and switching again, then restart the warden AND the hub
-      # together (the hub injects the token into its marker at start).
+      # — so generate them on the box at activation, root-only, once. Rotate ONLY
+      # between races (no tci-server@ / tci-server-practice@ JVM up): delete the
+      # file, switch again, then restart EVERY unit that holds it — the warden
+      # reads both files once at start, and the hub, each tci-server@<team> floor
+      # (warden-token) and each tci-server-practice@<Owner>.p floor
+      # (practice-token) bake theirs into their marker at preStart; the units are
+      # restartIfChanged = false, so a switch bounces none of them, and a floor
+      # left running keeps the old token and 401s on every /cage/* call.
       system.activationScripts.tciEventTokens = ''
         (
           umask 077
@@ -192,14 +203,22 @@ in {
         coop.maxGroupSize = 2; # 2v2: a team is exactly two
         soulLink.enable = false; # the inverse of every cagelocke rule (asserted)
 
-        # ROSTER — TODO before anyone but the testers connects. All three are
-        # Mojang-resolved when a unit starts: an unresolvable name REFUSES that
-        # start, so spell them exactly and boot once online.
+        # ROSTER — TODO before anyone but the testers connects. hub.whitelist,
+        # ops and cagelocke.guests are Mojang-resolved when their unit starts: an
+        # unresolvable name REFUSES that start, so spell them exactly and boot
+        # once online. `players` is NOT resolved — the warden matches it
+        # case-insensitively, so a typo there 403s that streamer later, at
+        # /tci-hub coop sign | play | practice start, never at boot.
         #   hub.whitelist    = the four streamers + casters + referee;
         #   players          = the four streamers (who may hold a team world);
         #   ops              = the referee ONLY — streamers must never be ops;
         #   cagelocke.guests = the casters (+ referee) allowed onto a team floor.
-        # Empty whitelist/players = anyone who finds the IP may form a team.
+        # Empty whitelist/players = anyone who finds the IP may form a team AND,
+        # with practice on, open a practice floor (/tci-hub practice start is
+        # perm 0; the warden's only gate is `players`, empty = open): one 6G JVM
+        # at a time (practice.maxActive) and up to 4 × ~3.5 GB seeded worlds on
+        # disk (practice.maxWorlds). Fill `players` before the IP circulates;
+        # `/tci-hub practice close` (referee) latches it shut meanwhile.
         players = [];
         hub.whitelist = [];
         ops = ["TheCalamoose"]; # TODO: the referee's real Mojang name
@@ -236,7 +255,7 @@ in {
           # Practice floors (1.0.18): streamers rehearse on their own floors in
           # the days before. ONE at a time on this plan (6G pinned, beside the
           # hub and any team floor still up); raise maxActive with the box.
-          # Event morning: `tci-server-practice sweep`, then /tci-hub cage create
+          # Event morning: `sudo tci-server-practice sweep`, then /tci-hub cage create
           # (which refuses while any practice JVM is on the box).
           practice = {
             enable = true;
