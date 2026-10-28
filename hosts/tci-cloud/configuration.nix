@@ -202,7 +202,7 @@ in {
         # Empty whitelist/players = anyone who finds the IP may form a team.
         players = [];
         hub.whitelist = [];
-        ops = ["RoboMoose"]; # TODO: the referee's real Mojang name
+        ops = ["TheCalamoose"]; # TODO: the referee's real Mojang name
 
         # Fleet shape for a race: two team worlds plus slack for retire/re-form.
         # Firewall exposure follows maxProvisioned (team ports 25600-25605).
