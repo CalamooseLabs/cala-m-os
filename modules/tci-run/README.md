@@ -32,12 +32,15 @@ hardcore + Nuzlocke run after a death without touching the gaming PC.
 3. Build the template: `tci-run sync` (or just let the first button press build it).
    Verify: `tci-run status` → `template_ready: true`.
 4. **Companion button** (on broadcast): add a *Generic HTTP Request* action:
-   - Method `GET`, URL `http://10.1.10.30:8778/new-run` (no body).
+   - Method `GET`, URL `http://10.2.10.3:8778/new-run` (no body).
    - If a token is set, append `?token=<secret>` or add an `X-Token` header.
-   - Optional second button → `http://10.1.10.30:8778/status` for a health check.
+   - Optional second button → `http://10.2.10.3:8778/status` for a health check.
    Test it once with the rig idle so a live death isn't the first real fire.
-5. **Routing:** broadcast (`10.1.10.15`) and battlestation (`10.1.10.30`) are both on
-   the studio subnet `10.1.10.0/26`, so the button reaches the listener intra-subnet —
+   The committed Companion baseline (`hosts/broadcast/companion/`) already has
+   this as the `http` connection's prefix. It's a literal, not read from
+   `settings.nix`, so re-point it there if battlestation's IP changes.
+5. **Routing:** broadcast (`10.2.10.2`) and battlestation (`10.2.10.3`) are both on
+   the studio subnet `10.2.10.0/26`, so the button reaches the listener intra-subnet —
    no router rule needed. The listener's firewall is already scoped to accept the
    studio subnet (`allowedSources`).
 

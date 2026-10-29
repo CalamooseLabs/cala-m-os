@@ -1306,7 +1306,7 @@
 			"label": "http",
 			"isFirstInit": false,
 			"config": {
-				"prefix": "http://10.2.10.2:8778",
+				"prefix": "http://10.2.10.3:8778",
 				"proxyAddress": "",
 				"rejectUnauthorized": true,
 				"insecureHTTPParser": true

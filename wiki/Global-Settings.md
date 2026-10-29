@@ -7,7 +7,7 @@
 {cala-m-os, ...}:
 cala-m-os.globals.defaultUser   # "hub"
 cala-m-os.globals.TZ            # "America/Denver"
-cala-m-os.ip.gateway            # "10.10.10.1"
+cala-m-os.ip.lab.gateway        # "10.10.10.1"
 cala-m-os.fqdn                  # "calamooselabs.com"
 ```
 
@@ -40,23 +40,37 @@ flowchart LR
 
 Domain roles: `calamos.family` is the personal domain (and the NAS, `nas.calamos.family`); `calamooselabs.com` (`fqdn`) is the lab/company FQDN used for ACME/Caddy. `calamoose.version` is a free-form, human-set mark with no versioning scheme — it's surfaced in the boot tag.
 
-## `ip` — static address table (10.10.10.0/26)
+## `ip` — static address tables
+
+### `ip.lab` — homelab / streaming services (10.10.10.0/26)
 
 | Key | Address | Host |
 |-----|---------|------|
-| `ip.gateway` | `10.10.10.1` | Default gateway |
-| `ip.media` | `10.10.10.10` | media (Plex) guest |
-| `ip.lab` | `10.10.10.15` | homelab host |
-| `ip.battlestation` | `10.10.10.30` | battlestation |
-| `ip.torrent` | `10.10.10.35` | torrent guest |
-| `ip.htpc` | `10.10.10.40` | HTPC |
-| `ip.lanstation-1` | `10.10.10.41` | lanstation NIC 1 |
-| `ip.lanstation-2` | `10.10.10.42` | lanstation NIC 2 / VM |
-| `ip.lanstation-3` | `10.10.10.43` | lanstation NIC 3 / VM |
-| `ip.lanstation-4` | `10.10.10.44` | lanstation NIC 4 / VM |
-| `ip.vault` | `10.10.10.45` | vault guest |
+| `ip.lab.subnet` | `10.10.10.0/26` | CIDR |
+| `ip.lab.prefixLength` | `26` (int) | Read by homelab, tci-private |
+| `ip.lab.gateway` | `10.10.10.1` | Default gateway |
+| `ip.lab.media` | `10.10.10.11` | media (Plex) guest |
+| `ip.lab.homelab` | `10.10.10.15` | homelab host |
+| `ip.lab.tci` | `10.10.10.16` | tci-private (soul-link fleet) |
+| `ip.lab.security` | `10.10.10.20` | security (UniFi Protect) guest |
+| `ip.lab.torrent` | `10.10.10.35` | torrent guest |
+| `ip.lab.htpc` | `10.10.10.40` | HTPC |
+| `ip.lab.lanstation-1` | `10.10.10.41` | lanstation NIC 1 |
+| `ip.lab.lanstation-2` | `10.10.10.42` | lanstation NIC 2 / VM |
 
-The [[MicroVMs|MicroVMs]] manager looks up `cala-m-os.ip.<vmName>` to assign a guest its static IP (unless overridden). See [[Networking|Networking]].
+### `ip.studio` — live broadcast / device control (10.2.10.0/26)
+
+| Key | Address | Host |
+|-----|---------|------|
+| `ip.studio.subnet` | `10.2.10.0/26` | CIDR (battlestation tci-run `allowedSources`) |
+| `ip.studio.prefixLength` | `26` (int) | |
+| `ip.studio.gateway` | `10.2.10.1` | Default gateway |
+| `ip.studio.broadcast` | `10.2.10.2` | broadcast |
+| `ip.studio.battlestation` | `10.2.10.3` | battlestation |
+
+Nix code reads these from `settings.nix`: the cobblemon-overlay firewall allowlist (battlestation /32), battlestation's tci-run `allowedSources` (the studio subnet), tci-run's default `overlayUrl` (broadcast `:8082/control`) and moosewire's host list. `settings.nix` does not *assign* them — broadcast and battlestation are on DHCP (`networking.useDHCP` in their machine hardware configs), so a re-IP starts with the router's DHCP reservations and `settings.nix` follows. Literal copies to update by hand: the Companion `http` (generic-http) connection prefix in `hosts/broadcast/companion/` (edit `db.companionconfig`, rebuild `db.sqlite` per that README), and in the cobblemon-initiative repo the pack's `mrpack/overrides/config/cobblemon-initiative-streamsync.json` `endpointUrl` plus the compiled-in fallback in `StreamSyncConfig.java`, then a rebuilt mrpack.
+
+The [[MicroVMs|MicroVMs]] manager looks up `cala-m-os.ip.lab.<vmName>` to assign a guest its static IP (unless overridden). See [[Networking|Networking]].
 
 ## `nfs` — NAS paths
 

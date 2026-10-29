@@ -52,21 +52,35 @@ Bootstrap: on the box that already has your real OBS setup, run
   box (seeding reproduces the path, not the file).
 - **Profiles / collections:** `TheCalamoose` (→ `TheCalamoose - Coding`) and
   `The Company, Inc.` (→ `The Cobblemon Initiative`, refreshed from the
-  2026-10-01 export). Main canvas: Chat Window / Starting Soon / Be Right Back /
-  Gameplay / Card Opening / Only Me, with the stinger + BRB/Starting Soon media
-  and full overlays. **Aitum Vertical** canvas (1080x1920): Gameplay / Card
-  Opening / BRB / Starting Soon, linked to the same-named main scenes (Be Right
-  Back → BRB) so switching the main scene switches the vertical one; Chat Window
-  and Only Me have no vertical twin. Scene names repeat across the canvases, so
-  any scripted edit must select by `uuid`/`canvas_uuid`, not `name`. History: the
-  2026-09-22 snapshot dropped `Gameplay - Talking Head` + Run Counter; the
-  2026-10-01 export turned the empty `Vertical Scene` into vertical Gameplay and
-  dropped Conference Microphone. `global.ini` opens
-  into **The Company, Inc. / The Cobblemon Initiative** by default (this box is
-  primarily The Company); switch the `[Basic]` `Profile`/`SceneCollection`
+  2026-10-29 export). Main canvas: Chat Window / Starting Soon / Be Right Back /
+  Gameplay / Card Opening / Casino Night, with the stinger + BRB/Starting Soon
+  media and full overlays. **Aitum Vertical** canvas (1080x1920): Gameplay /
+  Card Opening / BRB / Starting Soon / Casino Night, linked to the same-named
+  main scenes (Be Right Back → BRB) so switching the main scene switches the
+  vertical one; Chat Window has no vertical twin. Scene names repeat across the
+  canvases, so any scripted edit must select by `uuid`/`canvas_uuid`, not
+  `name`. History: the 2026-09-22 snapshot dropped `Gameplay - Talking Head` +
+  Run Counter; the 2026-10-01 export turned the empty `Vertical Scene` into
+  vertical Gameplay and dropped Conference Microphone; the 2026-10-29 export
+  renamed `Only Me` to `Casino Night` (same uuid, now with a vertical twin),
+  removed the Facecam + Card Camera DeckLink inputs (both Card Opening scenes
+  now show `Battlestation Feed`), and moved gameplay audio onto the Elgato 4K X
+  (`Gameplay Audio`). `Battlestation Audio` / `#2` stay in Gameplay, muted;
+  `Casino Mic` captures the same Scarlett Line8 node as `Battlestation Audio`,
+  so unmuting that source puts the Casino mic into Gameplay. `global.ini`
+  opens into **The Company, Inc. / The Cobblemon Initiative** by default (this
+  box is primarily The Company); switch the `[Basic]` `Profile`/`SceneCollection`
   pointers to change that. These are the ONLY profiles/collections — no
   "Untitled" leftovers; `obs-config-restore` mirrors, so it prunes any that
   appear on the live box.
+- **Device-bound sources** (each names hardware, not a path seeded here):
+  DeckLink Quad HDMI inputs by `device_hash` (1 = Battlestation Feed, 2 =
+  Casino Night Camera); `Elgato 4K X` is v4l2 `/dev/video0` (stable only
+  because `modules/obs-studio` pins the v4l2loopback virtual camera to
+  `video_nr=1`; another UVC device plugged in first would take video0);
+  `Gameplay Audio` is ALSA `front:CARD=X,DEV=0` (the 4K X's card id); the
+  Scarlett 18i20 sources target PipeWire node names that include the unit's
+  serial, so a replacement interface needs every `TargetName` re-picked.
 - **Recording paths** (`FilePath`/`RecFilePath`/`FFFilePath` in the profile)
   point at `/recordings` — the RAID0 scratch array from the machine's disko
   layout, made user-writable by a tmpfiles rule in `../configuration.nix`.

@@ -236,11 +236,11 @@ in {
 
       # No StreamSync endpoint is reachable from this box yet: the overlay ingest
       # (modules/cobblemon-overlay on broadcast) is studio-LAN-only and
-      # unauthenticated, while the bundle ships that LAN endpoint ENABLED
-      # (10.1.10.49:8082). Process env tops StreamSyncConfig's precedence, so this
-      # keeps the team floors from pushing into the void. The mkIf drops it once
-      # streamSync.endpointUrl is set — the module then defines "true" on the same
-      # unit and the two would conflict.
+      # unauthenticated, while the bundle ships that LAN endpoint ENABLED (a
+      # hardcoded studio-LAN <broadcast>:8082). Process env tops StreamSyncConfig's
+      # precedence, so this keeps the team floors from pushing into the void. The
+      # mkIf drops it once streamSync.endpointUrl is set — the module then defines
+      # "true" on the same unit and the two would conflict.
       systemd.services."tci-server@".environment.STREAMSYNC_ENABLED =
         lib.mkIf (config.services.tci-server.streamSync.endpointUrl == null) "false";
 

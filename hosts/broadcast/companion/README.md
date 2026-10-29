@@ -70,7 +70,15 @@ tradeoff is the file is an opaque binary — git can't diff it.
 `db.companionconfig` is the human-reviewable mirror of the committed db (a "full"
 export from the UI, 2026-09-22: pages HOME/Scenes/TCI, obs + generic-http + twitch
 connections, `deaths` custom variable, Stream Deck Neo surface; Twitch tokens
-scrubbed). It's documentation, not used by the seed —
+scrubbed), hand-edited since (`deaths` default 22 → 38; for the 2026-10 studio
+re-IP, the `http` connection's prefix → battlestation's tci-run listener
+`http://10.2.10.3:8778`) and the db rebuilt from it. Separately, userconfig's
+unused `https_self_cn` (it lives in db.sqlite's `main`/`userconfig`, which the
+export doesn't carry and the import preserves) was set to broadcast's
+`10.2.10.2` directly in db.sqlite with `json_set`. These IPs are literals, not
+read from `settings.nix`, so a future re-IP has to update the prefix here (then
+rebuild) and `https_self_cn` in db.sqlite itself. It's documentation, not used
+by the seed —
 but the db CAN be rebuilt from an export without touching the box:
 
     cp db.sqlite /tmp/db.sqlite && chmod +w /tmp/db.sqlite   # keeps main/userconfig + cloud

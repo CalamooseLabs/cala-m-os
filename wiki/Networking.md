@@ -6,18 +6,28 @@ This page collects the fleet's addressing plan and the networking mechanisms use
 
 ## Address plan
 
-The primary LAN is **`10.10.10.0/26`** (prefix length `26` in `settings.nix`). Static assignments live in `cala-m-os.ip` — see [[Global Settings|Global-Settings]] for the full table.
+Two `/26` subnets, both defined in `settings.nix` (`cala-m-os.ip.lab` and `cala-m-os.ip.studio`) — see [[Global Settings|Global-Settings]] for the full tables.
+
+The **lab** subnet **`10.10.10.0/26`** holds the homelab and its services:
 
 | Address | Host/role |
 |---------|-----------|
 | `10.10.10.1` | gateway |
-| `10.10.10.10` | media (Plex) guest |
+| `10.10.10.11` | media (Plex) guest |
 | `10.10.10.15` | homelab |
-| `10.10.10.30` | battlestation |
+| `10.10.10.16` | tci-private |
+| `10.10.10.20` | security guest |
 | `10.10.10.35` | torrent guest |
 | `10.10.10.40` | htpc |
-| `10.10.10.41`–`44` | lanstation NICs / gaming VMs |
-| `10.10.10.45` | vault guest |
+| `10.10.10.41`–`42` | lanstation NICs / gaming VMs |
+
+The **studio** subnet **`10.2.10.0/26`** holds the live-broadcast rig:
+
+| Address | Host/role |
+|---------|-----------|
+| `10.2.10.1` | gateway |
+| `10.2.10.2` | broadcast |
+| `10.2.10.3` | battlestation |
 
 A separate **`10.1.10.0/24`** segment is used by the `livedata` guests (`openreturn` `10.1.10.41`, `quorumcall` `10.1.10.42`, gateway `10.1.10.1`) via per-guest `ipOverride`/`gatewayOverride`/`dns`.
 

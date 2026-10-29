@@ -570,7 +570,7 @@ in {
     allowedSources = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [];
-      example = ["10.1.10.0/26"];
+      example = ["10.2.10.0/26"];
       description = ''
         When non-empty (and {option}`openFirewall`), the port is opened ONLY to
         these source CIDRs/IPs (iptables, or nftables if enabled) instead of the

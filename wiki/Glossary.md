@@ -9,7 +9,7 @@ Project-specific terms and where to read more.
 | **`calamoose.*`** | The custom NixOS option namespace this repo defines (e.g. `calamoose.enableSecrets`, `calamoose.userSwitching`) |
 | **`cala-*`** | The prefix for repo service modules (`services.cala-*`) and boot tags (e.g. `cala-certs`, `cala-vm-manager`) |
 | **host** | A configurable machine: `hosts/<name>/`. Declares users + machine identity; hardware-agnostic. See [[Hosts|Hosts]] |
-| **`lab` / `studio`** | Subnet names, **not** hosts: `ip.lab` (10.10.10.0/26) and `ip.studio` (10.1.10.0/26) in `settings.nix`. The hosts on those networks are `homelab` (MS-02) and `broadcast` (TRX50-SAGE) respectively. See [[Global Settings|Global-Settings]] |
+| **`lab` / `studio`** | Subnet names, **not** hosts: `ip.lab` (10.10.10.0/26) and `ip.studio` (10.2.10.0/26) in `settings.nix`. The hosts on those networks are `homelab` (MS-02) and `broadcast` (TRX50-SAGE) + `battlestation` (B850-MAX) respectively. See [[Global Settings|Global-Settings]] |
 | **`_core`** | The shared layer every host expands into (`hosts/_core/`). See [[Configuration Hierarchy|Configuration-Hierarchy]] |
 | **machine** | The hardware layer: `machines/workstations/<UUID>/` or `machines/vms/<size>/`. See [[Machines|Machines]] |
 | **`machine_uuid`** | The hardware directory name a host selects (e.g. `FW16-AMD-AI`, `Small`) |

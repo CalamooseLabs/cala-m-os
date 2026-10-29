@@ -144,7 +144,7 @@ microvm.interfaces = [{
 
 MAC derivation: explicit `mac` → else from the last octet of a static IP (`02:00:00:00:00:<octet>`) → else hashed from the name. IP assignment:
 
-- **Static** (`ipOverride` or `cala-m-os.ip.<name>`): systemd-networkd with `address`, default route via gateway (`GatewayOnLink`), DNS = `dns` or the gateway.
+- **Static** (`ipOverride` or `cala-m-os.ip.lab.<name>`): systemd-networkd with `address`, default route via gateway (`GatewayOnLink`), DNS = `dns` or the gateway.
 - **DHCP** otherwise.
 
 The host also defines a `<network-name>-noip` rule marking `vm-*` links unmanaged. See [[Networking|Networking]].
