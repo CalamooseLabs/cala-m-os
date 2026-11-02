@@ -24,6 +24,7 @@
   mediaDir ? "/iso/calapat",
 }: let
   tokenFile = "/dev/shm/cala-install/nix-access-tokens.conf";
+  pcscdDir = "/dev/shm/cala-install/pcscd";
 
   antlersScripts = pkgs.callPackages (inputs.antlers + "/flakes/scripts/package.nix") {};
   backend = antlersScripts.install-cala-m-os;
@@ -236,6 +237,24 @@
         echo "install-cala-m-os: no GitHub token from the media PAT; private flake inputs will fail to fetch." >&2
       fi
       export NIX_USER_CONF_FILES="${tokenFile}''${NIX_USER_CONF_FILES:+:$NIX_USER_CONF_FILES}"
+
+      # Step Five's `nixos-enter -- chpasswd` runs the full target's activation,
+      # whose specialfs mounts a fresh /run in the chroot: the live pcscd socket
+      # is gone, so agenix can't open the YubiKey that is plugged in. /dev is
+      # rbound from the live system (as for the token above), so expose pcscd's
+      # socket dir under /dev/shm and point the pcsc-lite client at it; the
+      # chroot inherits the variable. The dir (not the socket) is bound, so a
+      # restarted pcscd.socket is still seen.
+      if [ "$(${pkgs.coreutils}/bin/id -u)" -eq 0 ] && [ -S /run/pcscd/pcscd.comm ]; then
+        ${pkgs.coreutils}/bin/mkdir -p "${pcscdDir}"
+        if ${pkgs.util-linux}/bin/mountpoint -q "${pcscdDir}" ||
+          ${pkgs.util-linux}/bin/mount --bind /run/pcscd "${pcscdDir}"; then
+          export PCSCLITE_CSOCK_NAME="${pcscdDir}/pcscd.comm"
+        else
+          echo "install-cala-m-os: could not expose pcscd to the install chroot; secrets will only decrypt after the first boot." >&2
+        fi
+      fi
+
       exec ${backend}/bin/install-cala-m-os "$@"
     '';
   };

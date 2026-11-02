@@ -21,17 +21,15 @@ flowchart TD
 
 ```nix
 age = lib.mkIf (config.calamoose._secretsBackend == "agenix") {
-  identityPaths = [
-    "${./.}/identities/server.key"
-    "${./.}/identities/yubi.key"
-    "${./.}/identities/dev.key"
-    "${./.}/identities/backup.key"
-  ];
-  ageBin = "PATH=$PATH:${lib.makeBinPath [pkgs.age-plugin-yubikey]} ${pkgs.age}/bin/age";
+  # own store path with string context, so the stubs stay in the system closure
+  identityPaths = map (k: "${./identities}/${k}.key") ["server" "yubi" "dev" "backup"];
+  ageBin = "${ageWrapper}";   # Go age behind a key-aware wrapper, see below
 };
 ```
 
-The identity files are `age-plugin-yubikey` **stubs** (not secret) — they point at a recipient; the private key lives on the Yubikey. PIN and touch policies are **Never**, so decryption needs the physical key present but no interaction — enabling unattended boot-time decryption.
+The identity files are `age-plugin-yubikey` **stubs** (not secret) — they point at a recipient; the private key lives on the Yubikey. PIN and touch policies are **Never**, so decryption needs the physical key present but no interaction, so it runs unattended (after boot, see `agenix-rerun` below).
+
+**Any recipient key works.** Go `age` tries the `-i` identities strictly in order and **aborts** on the first one whose YubiKey can't be opened. It does not move on to the next. With `server.key` listed first, every secret that has the server stanza used to fail on any other recipient key (`Could not open YubiKey with serial 35229074`, even with the nano plugged in). The wrapper (`ageWrapper` in `modules/agenix/configuration.nix`) asks `age-plugin-yubikey --identity` which stubs are connected and passes **only** the identities whose key is connected. A connected key that isn't a recipient of a file fails fast with `no identity matched any of the recipients` instead of prompting for an absent key, and with no identity key connected at all it names the connected serials and the ones it wanted. If the listing itself fails, it falls back to the full list. When pcscd's socket isn't there (stage-2 activation, or an install chroot that has no access to the installer's socket), it says so (`age: pcscd is not reachable …`) instead of letting the plugin blame whichever serial is first.
 
 ### The four recipients
 
@@ -39,8 +37,8 @@ The identity files are `age-plugin-yubikey` **stubs** (not secret) — they poin
 |---------------|------|------------------|
 | `yubi.key` (nano) | Always-present nano key | **every** secret |
 | `backup.key` | Backup key | **every** secret |
-| `dev.key` | Dev workstation | dev/workstation secrets |
-| `server.key` | Server | server/host secrets |
+| `dev.key` | Dev workstation | `admin_password` and homelab's `cloudflare-token` / `qbit-password` / `proton-vpn.conf` (none of the workstation secrets; those are nano + backup only) |
+| `server.key` | Server | `admin_password`, homelab's `cloudflare-token` / `qbit-password` / `proton-vpn.conf`, and `protect-api-key` / `protect-admin-password` |
 
 ### Where the recipient map lives
 
@@ -63,6 +61,8 @@ agenix installs its secrets from a NixOS **activation script**, and activation r
 - `microvm-virtiofsd@` (the `/run/hostsecrets` share into guests) — `services/vm-manager`
 - `acme-order-renew-<domain>` (the Cloudflare token) — `services/certs`
 - `NetworkManager` (VPN `.nmconnection` secrets) — `modules/vpn`
+
+The installer hits the same problem: Step Five's `nixos-enter -- chpasswd` runs the full system's activation in a chroot with a fresh `/run`, where the live pcscd socket is hidden. The `install-cala-m-os` shim (`iso/tools.nix`) therefore bind-mounts `/run/pcscd` to `/dev/shm/cala-install/pcscd` (`/dev` is rbound into the chroot) and exports `PCSCLITE_CSOCK_NAME` to point at it, so the plugged-in key decrypts during the install too. Those copies live in the chroot's RAM and are gone after the install. So Step Five's `[agenix] decrypting …` lines show before the reboot whether the plugged-in key decrypts every secret. A failure there is only logged (nixos-enter ignores the activation's exit status), so look for `age:` errors under them before rebooting.
 
 Operationally: keep the host's recipient YubiKey plugged in; if it was missing at boot, plug it in and `sudo systemctl restart agenix-rerun` (the VM host's `vm-hostsecrets-sync` is `PartOf` it and re-syncs; then restart the units that needed the secrets). Every host switch rotates the `/run/agenix.d/<n>` generation; the VM host therefore shares a stable copy (`/run/vm-hostsecrets`, refreshed in place by `vm-hostsecrets-sync` after `agenix-rerun` and by an activation snippet on every rebuild) rather than the rotating symlink, so running guests keep a current, read-only `/run/hostsecrets`.
 

@@ -107,7 +107,7 @@ Flake outputs (built with `nixos-rebuild ... --flake .#<host>`):
 
 ### Secrets / Security
 
-- **agenix** manages secrets encrypted to Yubikey-backed SSH keys. Decryption cannot happen at activation time (pcscd is not up yet), so `modules/agenix` ships `agenix-rerun.service`; anything that needs a secret at boot orders after it (`services/vm-manager`, `services/certs`, `modules/vpn`)
+- **agenix** manages secrets encrypted to age-plugin-yubikey (PIV P-256, slot 1) recipients; the stubs in `modules/agenix/identities/` hold no secret. Decryption cannot happen at activation time (pcscd is not up yet), so `modules/agenix` ships `agenix-rerun.service`; anything that needs a secret at boot orders after it (`services/vm-manager`, `services/certs`, `modules/vpn`). Its `ageBin` wrapper passes only the identities of the connected YubiKeys, because Go age aborts on the first identity that is a recipient of the secret but whose YubiKey is absent (with `server.key` first, every secret with a server stanza failed on the other keys). The `install-cala-m-os` shim (`iso/tools.nix`) exposes the live pcscd to the install chroot through `/dev/shm` + `PCSCLITE_CSOCK_NAME`
 - **GPG** and **Yubikey** modules handle hardware key integration
 - The ISO boots with Yubikey SSH auth; installs using `INITIAL_INSTALL_MODE=1` for a minimal first pass, then does a full rebuild
 - `homelab` and its guests rebuild from scratch via `wiki/Disaster-Recovery.md`: guest state comes back through `calamoose.install.firstBootCommands` restores (plex/radarr/sonarr/prowlarr/qbittorrent) from the NAS backup shares

@@ -34,7 +34,7 @@ Nothing on the host's own disk needs backing up.
 
 ## Before you start — checklist
 
-1. **A recipient YubiKey.** The `yubiserver` key (serial `35229074`, identity `modules/agenix/identities/server.key`) must be plugged into the MS-02 for the first full boot and stay there. PIN/touch policy is *Never*, so decryption is unattended. Any of the other three recipients works too, but only unattended if it is the first identity that answers — keep `yubiserver` in the box.
+1. **A recipient YubiKey.** The `yubiserver` key (serial `35229074`, identity `modules/agenix/identities/server.key`) must be plugged into the MS-02 for the first full boot and stay there. PIN/touch policy is *Never*, so decryption is unattended. Any other connected recipient (nano/dev/backup) also decrypts unattended — the `ageBin` wrapper only offers age the keys that are plugged in — except `protect-admin-password`/`protect-api-key`, which are not encrypted to `dev`. Keep `yubiserver` in the box.
 2. **The repo builds.** The ISO installs whatever `master` is at that moment. From any machine with the repo: `nix build .#checks.x86_64-linux.homelab` (evaluates host + all three guests).
 3. **Backups actually exist** on the NAS (see [Verifying the backup streams](#verifying-the-backup-streams-today)). The restores are only as good as the newest snapshot there.
 4. **NAS exports** `/mnt/Media Library` (and therefore `Backups/*`) to `10.10.10.11` (media) and `10.10.10.35` (torrent) with write access for the uids that write backups (see the backup contract below). The host itself never mounts the NAS.
