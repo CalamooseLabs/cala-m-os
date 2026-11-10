@@ -22,7 +22,7 @@ These are the machines declared in `flake.nix` under `nixosConfigurations` (buil
 | `openreturn` | `Small` | **VM** | `server` | **off** | MicroVM guest for the OpenReturn service |
 | `livedata` | `MS-01` | Workstation | `server` | **off** | MicroVM host (openreturn + quorumcall guests) |
 | `ai` | `ZIMA` | Workstation | `developer` | on | Headless TTY dev box (impermanent root); runs background Claude sessions |
-| `tci-cloud` | `HETZNER-CLOUD` | Workstation (cloud VM) | `server` | online | The Cobblemon Initiative cagelocke event fleet (test deployment: hub + two team worlds + practice floors, standby off; the box builds its own game bundle from the flake input); Hetzner Cloud CCX33 at 5.78.214.170; private `cobblemon-initiative` input, fetched with the GitHub token the box gets from Proton Pass (installer-seeded PAT), so it deploys from devbox or rebuilds itself |
+| `tci-cloud` | `HETZNER-CLOUD` | Workstation (cloud VM) | `server` | online | The Cobblemon Initiative public multiplayer fleet (no whitelist, one op: hub + up to 10 worlds at once, solo or co-op groups of up to four on terms the group chooses; players and the warden retire worlds, no operator; the box builds its own game bundle from the flake input); Hetzner Cloud CCX33 at 5.78.214.170; private `cobblemon-initiative` input, fetched with the GitHub token the box gets from Proton Pass (installer-seeded PAT), so it deploys from devbox or rebuilds itself |
 | `tci-private` | `TCI-LOCAL` | Workstation | `server` | on | The Cobblemon Initiative soul-link fleet; static lab IP |
 | `webhost` | `HETZNER-CAX` | Workstation (cloud VM) | `webmaster` | **off** | Public Caddy web server; Hetzner Cloud CAX11, the only **aarch64** host |
 | `iso` | — | — | — | — | Custom installer image; built directly (not via `mkSystem`) |
@@ -98,6 +98,7 @@ The `!initialInstallMode` guard keeps VMs out of the minimal first install pass.
 - **`simple`** bypasses `_core/default.nix` and imports `_core/configuration.nix` directly (so no install-mode switch).
 - **`devbox`** sets `documentation.enable = lib.mkForce true`.
 - **`tci-cloud`** and **`webhost`** run on Hetzner Cloud: their machines import `machines/modules/hetzner-cloud`, and the hosts set `calamoose.hetznerCloud.ipv4Address` / `ipv6Address` (null = IPv4 over Hetzner's DHCP, no IPv6 — what a first install runs on). See [[Machines|Machines]] and the deploy steps in each host's header.
+- **`tci-cloud`** overcommits memory on purpose: it allows 10 worlds at once on 32 GB, so it sets `calamoose.tciServer.pinHeap = false` (declared in `modules/tci-server`; the default `true` pins every instance heap with `-Xms` = `-Xmx` + `AlwaysPreTouch`, which is what `tci-private` runs), raises `zramSwap.memoryPercent` to 50 and sets the fleet's `warden.minFreeMemoryMB`, so a full box queues players instead of starting another world. Ten busy worlds still do not fit; its header has the arithmetic and how to scale back.
 - **Every physical host** carries `cala-reinstall` (imported by `hosts/_core/non-vm.nix`): `sudo cala-reinstall` reboots the running machine into the installer in RAM. See [[ISO & Installer|ISO-Installer]].
 
 ---

@@ -1,14 +1,16 @@
 # Hetzner Cloud (AMD) hardware profile.
 #
-# PLACEHOLDER / safe superset — REGENERATE on the real box, then commit it:
-#   nix run github:nix-community/nixos-anywhere -- \
-#     --flake .#tci-cloud \
+# PLACEHOLDER / safe superset — REGENERATE on the real box, then commit it.
+# nixos-anywhere does that as part of a first install, through
 #     --generate-hardware-config nixos-generate-config \
-#       ./machines/workstations/HETZNER-CLOUD/hardware-configuration.nix \
-#     --target-host root@<SERVER_IP>
-# (enable the Hetzner Rescue System on the instance first, SSH key loaded). The
-# bootloader (systemd-boot, UEFI) comes from hosts/_core; this file carries the
-# hardware scan and nixpkgs.hostPlatform (keep that line when regenerating).
+#       ./machines/workstations/HETZNER-CLOUD/hardware-configuration.nix
+# Use the FULL command in hosts/tci-cloud/configuration.nix (header, first
+# install, step 3), not a bare one: it also runs under sudo (only root's nix
+# can fetch the private flake input) and seeds the Proton Pass PAT with
+# --extra-files, without which the install fails at activation. The
+# bootloader (systemd-boot, UEFI) comes from hosts/_core; this file carries
+# the hardware scan and nixpkgs.hostPlatform (keep that line when
+# regenerating).
 {
   config,
   lib,
