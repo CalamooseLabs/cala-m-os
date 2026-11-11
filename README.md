@@ -81,7 +81,9 @@ below for hosts without the modules.
 Hosts are built with `sudo nixos-rebuild switch --flake .#<host>`. Physical machines run
 on real hardware; **MicroVM guests** run on a host through its `cala-vm-manager` service
 (sizes defined under `machines/vms/`). Each host's `calamoose.version` is surfaced in
-`nixos-version` and the boot-menu entry.
+the system label — `cat /run/current-system/nixos-version` starts with
+`cala-<version>` — and in the boot-menu entry (the `nixos-version` command prints
+the nixpkgs version, not the label).
 
 ### Physical machines
 
@@ -96,7 +98,7 @@ on real hardware; **MicroVM guests** run on a host through its `cala-vm-manager`
 | `simple` | Framework 13 | `basic` | `1.0.0` | Minimal desktop setup |
 | `ai` | Zima | `developer` | `0.0.1-alpha` | Headless TTY dev box (impermanent root) — runs background Claude sessions |
 | `ephemeral` | Zima | `void` | `0.0.1-beta` | Throwaway lab machine — impermanent root |
-| `tci-cloud` | Hetzner Cloud CCX33 (x86 VM) | `server` | `2.0.0` | The Cobblemon Initiative public multiplayer fleet — open (no whitelist) at 5.78.214.170: solo worlds and co-op groups of up to four on terms they choose, up to 10 worlds at once, no operator in the loop; online (Proton Pass) secrets; builds its own game bundle from the flake input; first installed from devbox with nixos-anywhere, then rebuilds itself or from devbox |
+| `tci-cloud` | Hetzner Cloud CCX33 (x86 VM) | `server` | `2.0.0` | The Cobblemon Initiative public multiplayer fleet — open (no whitelist) at 5.78.214.170: solo worlds and co-op groups of up to four on terms they choose, up to 10 worlds at once and 30 on disk (a world is protected for 30 days after its last use, so about thirty owners can hold a live run at a time — after that a newcomer is told the building is full), no operator in the loop; online (Proton Pass) secrets; builds its own game bundle from the flake input; first installed from devbox with nixos-anywhere, then rebuilds itself or from devbox |
 | `tci-private` | TCI-LOCAL | `server` | `1.0.0` | The Cobblemon Initiative soul-link fleet — LAN box |
 | `webhost` | Hetzner Cloud CAX11 (aarch64 VM) | `webmaster` | `1.0.0` | Public web server — Caddy auto-HTTPS for every site under `hosts/webhost/sites/` |
 

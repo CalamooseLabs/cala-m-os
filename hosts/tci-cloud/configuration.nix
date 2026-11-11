@@ -101,10 +101,12 @@
 #       --flake github:CalamooseLabs/cala-m-os#tci-cloud
 #   A switch that changes the warden's config restarts the warden (new caps
 #   apply at once) but never the hub or a running world: both are
-#   restartIfChanged = false and read their marker and JVM flags at launch.
-#   After changing a hub-side knob (greeting, coop.terms, selfService,
-#   clientGate) restart the hub when the lobby is quiet; worlds pick
-#   everything up as they next start.
+#   restartIfChanged = false and read their marker, JVM flags and unit
+#   settings at launch. A restarted warden has forgotten the memory it was
+#   holding for worlds still booting (Sizing) and reclaims nothing for its
+#   first hour (Nobody retires worlds by hand). After changing a hub-side knob
+#   (greeting, coop.terms, selfService, clientGate) restart the hub when the
+#   lobby is quiet; worlds pick everything up as they next start.
 #   The game bundle: the box builds it ITSELF (services.tci-server.bundleBuild,
 #   the mod module's BUNDLE BUILD) from the flake input that pins the mod — the
 #   repo's own `gradle build` + build_mrpack.py --profile server pipeline runs on
@@ -182,8 +184,11 @@
 #        (the hub waits for that first build), the registry and the worlds as
 #        players arrive, the op's uuid from Mojang at the hub's first start.
 #        cala-reinstall carries the Proton PAT and the SSH host keys across.
-#        `nixos-version` then shows cala-2.0.0 (calamoose.version below) — the
-#        public fleet; cala-1.0.0 means step 1 was skipped.
+#        `cat /run/current-system/nixos-version` — the system label, which the
+#        boot-menu entry shows too — then starts with cala-2.0.0
+#        (calamoose.version below): the public fleet; cala-1.0.0 means step 1
+#        was skipped. (The `nixos-version` COMMAND prints neither: it shows the
+#        nixpkgs version, not the label.)
 #
 # Sizing — honestly. The owner asked to TRY ten worlds at once on this plan
 # (8 vCPU, 32 GB) and scale back if needed, so maxActive is 10. Ten BUSY modded
@@ -191,57 +196,110 @@
 # heap ceiling plus roughly 1.5 GB the heap does not count (metaspace, JIT code,
 # GC bookkeeping, thread stacks, direct buffers — an ESTIMATE, neither repo
 # holds a measurement), so ten full ones want about 55 GB beside the hub's 3G
-# ceiling and the OS, on ~31 GB of usable RAM. What makes the attempt safe:
+# ceiling and the OS, on ~31 GB of usable RAM. What the attempt leans on — each
+# lowers the risk of running out of memory, none of them removes it:
 #   - Heaps are UNPINNED here (calamoose.tciServer.pinHeap = false, see
 #     modules/tci-server): no -Xms, no AlwaysPreTouch, so a world commits what
 #     it has needed rather than its ceiling, and G1PeriodicGCInterval lets an
 #     idle one hand heap back. Pinned — that module's default, what tci-private
 #     runs — ten 4G worlds would commit 40 GB at start. INSTANCES only: the hub
 #     unit takes no jvmOpts and grows into its 3G -Xmx on demand.
-#   - The warden's MEMORY GATE (warden.minFreeMemoryMB = 5120): with less than
-#     5 GB of MemAvailable — about one more world — it starts no further world,
-#     exactly as if maxActive were reached, and the hub queues the player until
-#     a world stops. The tenth slot is only handed out while there is really
-#     room for it: under real load expect the queue to form at five or six busy
-#     worlds, not at ten.
+#   - The warden's MEMORY GATE (warden.minFreeMemoryMB = 5120). It starts a
+#     further world only while MemAvailable, less 5 GB held for every world
+#     started in the last few minutes, still shows 5 GB — about one more
+#     world. The hold is there because a JVM that has only just come up has
+#     not yet taken the memory it is going to use: every start the warden
+#     accepts keeps 5 GB aside while that world boots and for five minutes
+#     after (given back at once if the boot fails). A closed gate acts exactly
+#     like a reached maxActive: the hub puts the player in the line ("The
+#     building is at its power limit …") until there is room again. So a
+#     burst cannot fill ten slots on one reading: a box showing 27 GB
+#     available admits five worlds, and a sixth only once holds have run out
+#     and the reading — which by then shows what those five really took —
+#     still has 5 GB to spare. Under real load expect the queue to form at
+#     four to six busy worlds, not at ten.
+#     What the gate does NOT do: it rules on new starts and never touches a
+#     running world. A world goes on growing after its five minutes and is
+#     from then on seen through MemAvailable alone; the 5 GB held is a little
+#     under the ~5.5 GB a full world is estimated at above; a warden restart
+#     forgets the holds; and a world systemd restarts by itself passes no
+#     gate.
 #   - zram at 50 % of RAM (zstd; the module default is 25) and the 8G disk swap
 #     behind it take up worlds that keep GROWING after the gate has closed.
-#     That shows as GC stalls and lag in those worlds, not as a dead JVM. Only
-#     past all of it does the kernel OOM killer take a process: the largest,
-#     which is normally a world, and systemd restarts whatever it took
-#     (Restart=on-failure) — that world's players reconnect through the hub.
-#     No unit here carries a memory limit or an OOM shield; the gate is the
-#     guard.
-#   - An empty world stops after 5 minutes (emptyShutdownMinutes) and a dead
-#     run's after about 10 s: that turnover is what hands slots and RAM on.
+#     That shows as GC stalls and lag in those worlds first. Past all of it
+#     the kernel OOM killer takes a process — still the last resort, and one
+#     the gate cannot rule out. It takes the largest, normally a world; the
+#     lobby is shielded (OOMScoreAdjust = -500 on tci-server-hub, below) and
+#     ranks below every world, so a kill does not also empty the lobby and the
+#     line standing in it. systemd restarts a world that was taken
+#     (Restart=on-failure); its players are disconnected and come back
+#     through the lobby. No unit here carries a memory LIMIT.
+#   - Turnover hands slots and RAM on: an empty world stops after 5 minutes
+#     (emptyShutdownMinutes), a dead run's after about 10 s, and a player who
+#     does nothing for 30 minutes is disconnected (player-idle-timeout — in
+#     the worlds only, never in the lobby), so a client left open overnight
+#     does not hold one of the ten slots and its memory.
 # CPU is the second ceiling: 8 vCPUs for up to 11 JVMs, every cold boot copies
 # a 3.5 GB world and starts a modded JVM (hub.preparingCapSeconds = 900 is the
 # patience for that), and a bundle rebuild may be running beside them at Nice
 # 10. Decide from data, not from this paragraph: metrics.memory writes per-unit
 # cgroup/RSS rows every 10 s to /var/lib/tci-server-metrics/mem.csv (never
-# rotated: truncate it once the question is settled). Scaling BACK is one
-# number — lower maxActive (5 or 6 is what fits in RAM at 4G a world), or raise
-# warden.minFreeMemoryMB so the gate closes earlier — and a switch: the warden
-# restarts with the new caps and no running world is touched. Scaling UP is a
-# resize to the CCX43 (16 vCPU, 64 GB; the IPv4 stays), where ten 4G worlds
-# fit in RAM and no setting in this file has to change. Disk: ~3.5 GB per
-# provisioned world plus growth (30 slots ≈ 105 GB of the 240), a ~3 GB working
-# copy + caches under /var/lib/tci-bundle and ~4 GB per kept bundle under
-# /srv/tci (the live one + 2 older).
+# rotated: truncate it once the question is settled), and the warden's journal
+# (`journalctl -u tci-server-warden`) says when memory held the line: one
+# `memory gate: CLOSED — …` line per spell and one `memory gate: OPEN again —
+# …` once the gate has stayed open a minute. Scaling BACK is one number — lower
+# maxActive (5 or 6 is what fits in RAM at 4G a world), or raise
+# warden.minFreeMemoryMB so the gate closes earlier and holds more for each
+# booting world (one busy world's MEASURED footprint is the number to aim
+# for) — and a switch: the warden restarts with the new caps and no running
+# world is touched. Scaling UP is a resize to the CCX43 (16 vCPU, 64 GB; the
+# IPv4 stays), where ten 4G worlds fit in RAM and no setting in this file has
+# to change. Disk: ~3.5 GB per provisioned world plus growth (30 slots ≈ 105 GB
+# of the 240), a ~3 GB working copy + caches under /var/lib/tci-bundle and
+# ~4 GB per kept bundle under /srv/tci (the live one + 2 older), beside the 8G
+# swap partition and the nix store (every lock bump brings another ~2 GB of
+# mod source until old generations are collected). Thirty worlds is what this
+# disk safely holds: maxProvisioned goes up only together with the disk.
 #
 # Nobody retires worlds by hand. Players end their own (selfService): /tci-hub
 # abandon deletes a solo world and frees its slot, /tci-hub coop leave takes a
 # member out while the world stays with the rest, /tci-hub coop disband (the
 # founder) deletes the shared world for every signatory — each behind a
-# [Confirm]. And the warden reclaims what nobody uses (reclaim): every five
-# minutes, among STOPPED worlds only (and never one the hub asked about in the
-# last hour — a queued player's), it releases any world not started for 14
-# days (idleDays), and whenever fewer than 2 of the 30 slots are free
-# (keepFree) one more: first a world whose run has ended or that never started
-# (once it has sat an hour), then the least recently used one that has sat idle
-# 24 h. A run somebody left this evening is never taken to make room: the fleet
-# reads "full" until a world qualifies. Releasing a founder's world dissolves
+# [Confirm]. Nobody clears idlers by hand either: a player who does nothing in
+# a world for 30 minutes is disconnected (the idle kick, instanceDefaults
+# below). The run is kept — the emptied world stops five minutes later, and
+# the player comes back through the lobby (/tci-hub play). For a co-op group
+# that disconnect is like any other: the session is suspended, and unless the
+# member is back within the 120 s grace the whole group is returned to the
+# lobby with the run kept (a group without soul link that has a colleague
+# down at that moment loses the run instead).
+#   And the warden reclaims (reclaim) — only to make room, and never a run
+# that is still in use. The owner's rule: A WORLD IS PROTECTED FOR 30 DAYS
+# AFTER ITS LAST USE (reclaim.minIdleHours = 720), and there is no age limit
+# (reclaim.idleDays stays at the module's 0: nothing is retired merely for
+# being old). Every five minutes — the first pass an hour after the warden
+# starts — and only while fewer than 2 of the 30 slots are free (keepFree),
+# the warden releases STOPPED worlds until 2 are free again, in this order:
+# first a world whose run has ended or that never started, once it has been
+# quiet for an hour; then the least recently used world, provided nobody has
+# used it for 30 days. Nothing else is ever taken: a world with a live run
+# that was used in the last 30 days stays, whatever the demand. "Last used" is
+# the latest of the world's last start, the last time the lobby asked the
+# warden about it (its owner or a member at the desk; for a player waiting in
+# the line the lobby asks again every two minutes) and the last reclaim pass
+# that saw it running. The last two live only in the warden's memory — after a
+# restart the last start is all it knows — which is why a restarted warden
+# waits an hour before its first pass. Releasing a founder's world dissolves
 # the group. One journal line per release: `journalctl -u tci-server-warden`.
+#   The consequence, unsoftened: the box holds 30 worlds, so about thirty
+# owners — a solo player, or a whole group of up to four — can have a live run
+# at any one time. Once those are taken the next newcomer is told the building
+# is full ("Every office in the building is taken … Please come back another
+# day") — even with nothing running — until a slot comes free: when a player
+# ends a world (/tci-hub abandon, a disband), an hour after a run has died if
+# nobody has started the next one in it, or when a world has sat untouched for
+# 30 days. The two levers are reclaim.minIdleHours (a shorter protection) and
+# more disk with a higher maxProvisioned (a Hetzner Volume or a bigger plan).
 #
 # The op. TheCalamoose is level 4 on the hub AND in every world, rewritten into
 # ops.json at each unit start: an in-game /op never sticks and nobody else is
@@ -249,16 +307,24 @@
 # REFUSES the start — after a wipe the name cache is empty, so the hub's first
 # start needs api.mojang.com and the exact spelling. An op passes every
 # whitelist and the player cap. In the lobby, /tci-hub info prints the warden's
-# view (worlds running, starting and stopped, provisioned n/30) and the queue.
+# view (worlds running, starting and stopped, provisioned n/30, and
+# memoryShort=true while the memory gate is closed) and the queue. The mod's
+# /cobblemon-initiative commands are op-only in the lobby — they act on a run,
+# and the lobby is open to strangers; the one exception is `track`, the quest
+# tracker's keys, which only moves the caller's own cursor.
 # Any world can be joined straight on its port (the registry on the box maps
 # players to ports: `sudo cat /var/lib/tci-server/registry.json`): on a co-op
 # floor a visitor who is not on the roster is forced into spectator, but on a
-# SOLO floor an op arrives as an ordinary survival player — switch to /gamemode
-# spectator at once, because with deathReturnSeconds ANY death there ends the
-# owner's run, and do not linger: a visitor keeps the world from spinning
-# down. Root on the box adds the module's own tools: tci-server-reset
-# <player|hub> (wipe + reseed), tci-server-retire <player> (delete a world and
-# free its slot — what a player's own abandon / disband does), tci-bundle.
+# SOLO floor an op arrives as an ordinary survival player. Only the OWNER's
+# death ends a solo run: an op who dies on a visit does not take the owner's
+# world with him — and is not walked back to the lobby either (leave, or
+# /gamemode out of it). Switch to /gamemode spectator at once all the same — a
+# survival visitor is a second player inside somebody's solo run — and do not
+# linger: a visitor keeps the world from spinning down (the 30-minute idle
+# kick applies to the op like anyone else). Root on the box adds the module's
+# own tools: tci-server-reset <player|hub> (wipe + reseed), tci-server-retire
+# <player> (delete a world and free its slot — what a player's own abandon /
+# disband does), tci-bundle.
 #
 # Log in as `hub` with the YubiKey sk keys (users/server): the key is verified
 # on the CLIENT, so the box itself needs no YubiKey. hub's login password is the
@@ -276,8 +342,10 @@
   machine_uuid = "HETZNER-CLOUD";
 in {
   # 2.0.0 = the PUBLIC fleet (1.0.0 was the cagelocke event fleet). The
-  # installer prints it and `nixos-version` carries it, so after the changeover
-  # it is the proof the box installed THIS config (header: from scratch).
+  # installer prints it and the system label carries it (`cat
+  # /run/current-system/nixos-version`, the boot-menu entry), so after the
+  # changeover it is the proof the box installed THIS config (header: from
+  # scratch).
   calamoose.version = "2.0.0";
 
   # No YubiKey on a Cloud VM, so secrets come from Proton Pass (online) instead
@@ -350,14 +418,22 @@ in {
       # default (-Xms = -Xmx + AlwaysPreTouch) would commit 40 GB at start.
       # Unpinned, a world commits what it has needed and an idle one hands heap
       # back; the warden's memory gate (warden.minFreeMemoryMB below) then
-      # decides how many really run. The option lives in modules/tci-server, so
-      # it rides this block like every other fleet setting.
+      # rules on how many are started. The option lives in modules/tci-server,
+      # so it rides this block like every other fleet setting.
       calamoose.tciServer.pinHeap = false;
       # The other half: zram from the module's 25 % to half of RAM. With
       # overcommitted heaps it is the DESIGNED overflow for worlds that keep
       # growing after the gate has closed — compressed RAM first, the 8G disk
-      # swap (HETZNER-CLOUD/disko.nix) behind it: lag, not a dead JVM.
+      # swap (HETZNER-CLOUD/disko.nix) behind it: lag first, the kernel's OOM
+      # killer only past both.
       zramSwap.memoryPercent = 50;
+      # And if the OOM killer does come, it takes a world before the lobby:
+      # -500 puts the hub below every ordinary process in the killer's
+      # ranking without making it unkillable (-1000 would). A killed world
+      # costs its own players a reconnect; a killed lobby would cost everyone
+      # in it their place in the line. The unit is the mod module's — this
+      # adds the one directive, read when the hub next starts.
+      systemd.services.tci-server-hub.serviceConfig.OOMScoreAdjust = -500;
 
       # ---- Warden token + deploy dir + StreamSync off (box-level glue) --------
       # The warden token stays off the secrets backend: it is a plain file the
@@ -467,22 +543,28 @@ in {
 
         # No operator in the loop. selfService: players end their own worlds
         # (/tci-hub abandon | coop leave | coop disband). reclaim: the warden
-        # retires stopped worlds nobody has started for 14 days, and keeps 2 of
-        # the 30 slots free for newcomers by releasing a world whose run has
-        # ended or that never started (after an hour of quiet), else the least
-        # recently used one that has sat idle 24 h (reclaim.minIdleHours, the
-        # module default). Header: Nobody retires worlds by hand.
+        # makes room, and only when room is needed. While fewer than 2 of the
+        # 30 slots are free (keepFree) it releases stopped worlds: first one
+        # whose run has ended or that never started (after an hour of quiet),
+        # then the least recently used one that nobody has used for 30 DAYS
+        # (minIdleHours = 720 — the owner's rule: a world is protected for 30
+        # days after its last use). No idleDays: the module's 0 means no age
+        # limit, so nothing is ever retired merely for being old. The price:
+        # with 30 live runs on file the next newcomer is told the building is
+        # full, even with nothing running (header: Nobody retires worlds by
+        # hand — the consequence and the two levers).
         selfService.enable = true;
         reclaim = {
-          idleDays = 14;
           keepFree = 2;
+          minIdleHours = 720;
         };
 
         # Fleet shape. maxActive = WORLDS running at once (a co-op group of four
         # is ONE): the owner's "try ten" — an allowance the memory gate below
         # rules on, not a promise (header: Sizing). maxProvisioned = worlds on
-        # DISK (~3.5 GB each plus growth) and the width of the port range the
-        # firewall opens: 25600-25629.
+        # DISK (~3.5 GB each plus growth), the width of the port range the
+        # firewall opens (25600-25629), and so the number of owners who can
+        # hold a live run at one time (reclaim above).
         maxActive = 10;
         maxProvisioned = 30;
         instanceDefaults = {
@@ -496,10 +578,29 @@ in {
           # time and an open server has players in every timezone (that is
           # midday in Europe). Empty worlds stop on their own anyway.
           dailyReturnAt = null;
-          # A solo death ends the run by itself: the world is condemned at once
-          # and 8 s later — death screen clicked or not — the farewell and the
-          # transfer back to the lobby begin; the next /tci-hub play is a fresh
-          # world. (A group's run ends through its co-op session instead.)
+          # The idle kick: a player who gives no input for 30 minutes is
+          # disconnected (vanilla player-idle-timeout, in minutes), so a
+          # client left open does not hold one of the ten slots — the world
+          # empties, stops five minutes later (above) and the run is kept.
+          # WORLDS only, never hub.serverProperties: the line stands idle in
+          # the lobby by design, and a kick there would cost a place in it.
+          # In a co-op group the idle member's disconnect suspends the session
+          # like any other, and after the 120 s grace (coop.graceSeconds)
+          # everyone is back in the lobby (header: Nobody retires worlds by
+          # hand). Input, to vanilla, is a swing or a click in the world, a
+          # used item, an inventory click, a hotbar change, sneaking or
+          # sprinting, chat or a command — NOT walking or looking around, and
+          # not a turn taken in a Cobblemon battle (those travel in Cobblemon's
+          # own packets). 30 is well beyond a single battle or cutscene; raise
+          # it if one is ever cut short. Written to server.properties as each
+          # world next starts.
+          serverProperties."player-idle-timeout" = 30;
+          # The OWNER's death ends a solo run by itself: the world is condemned
+          # at once and 8 s later — death screen clicked or not — the farewell
+          # and the transfer back to the lobby begin; the next /tci-hub play is
+          # a fresh world. Only the owner's: a visitor who dies there (the op)
+          # ends nothing. (A group's run ends through its co-op session
+          # instead.)
           deathReturnSeconds = 8;
           # No max-players override: the bundle ships 4 — the co-op cap — and
           # the op bypasses the limit.
@@ -510,10 +611,13 @@ in {
         # vCPUs, and a timeout drops the waiting player or party.
         hub.preparingCapSeconds = 900;
 
-        # The MEMORY GATE beside maxActive: with less than 5 GB of MemAvailable
-        # — about one more world — the warden starts no further world and the
-        # hub queues the player instead. What turns "try ten" into a queue
-        # rather than an OOM kill (header: Sizing).
+        # The MEMORY GATE beside maxActive: the warden starts a further world
+        # only while MemAvailable, less 5 GB held for every world started in
+        # the last few minutes, still shows 5 GB — about one more world —
+        # and the hub queues the player otherwise. It makes "try ten" queue
+        # before memory runs out: that lowers the risk of an OOM kill, it
+        # cannot rule one out (header: Sizing). The one number is both the
+        # threshold and what is held for each booting world.
         warden.minFreeMemoryMB = 5120;
         # Warden auth, as defence in depth. The warden listens on 127.0.0.1
         # only, but every world's JVM sits on that loopback too, takes its
