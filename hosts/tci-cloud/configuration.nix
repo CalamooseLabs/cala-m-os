@@ -102,11 +102,12 @@
 #   A switch that changes the warden's config restarts the warden (new caps
 #   apply at once) but never the hub or a running world: both are
 #   restartIfChanged = false and read their marker, JVM flags and unit
-#   settings at launch. A restarted warden has forgotten the memory it was
-#   holding for worlds still booting (Sizing) and reclaims nothing for its
-#   first hour (Nobody retires worlds by hand). After changing a hub-side knob
-#   (greeting, coop.terms, selfService, clientGate) restart the hub when the
-#   lobby is quiet; worlds pick everything up as they next start.
+#   settings at launch. A restarted warden holds memory again for the worlds
+#   it finds still booting, but no longer for one that had only just come up
+#   (Sizing), and it reclaims nothing for its first hour (Nobody retires
+#   worlds by hand). After changing a hub-side knob (greeting, coop.terms,
+#   selfService, clientGate) restart the hub when the lobby is quiet; worlds
+#   pick everything up as they next start.
 #   The game bundle: the box builds it ITSELF (services.tci-server.bundleBuild,
 #   the mod module's BUNDLE BUILD) from the flake input that pins the mod — the
 #   repo's own `gradle build` + build_mrpack.py --profile server pipeline runs on
@@ -206,24 +207,37 @@
 #     unit takes no jvmOpts and grows into its 3G -Xmx on demand.
 #   - The warden's MEMORY GATE (warden.minFreeMemoryMB = 5120). It starts a
 #     further world only while MemAvailable, less 5 GB held for every world
-#     started in the last few minutes, still shows 5 GB — about one more
-#     world. The hold is there because a JVM that has only just come up has
-#     not yet taken the memory it is going to use: every start the warden
-#     accepts keeps 5 GB aside while that world boots and for five minutes
-#     after (given back at once if the boot fails). A closed gate acts exactly
-#     like a reached maxActive: the hub puts the player in the line ("The
-#     building is at its power limit …") until there is room again. So a
-#     burst cannot fill ten slots on one reading: a box showing 27 GB
-#     available admits five worlds, and a sixth only once holds have run out
-#     and the reading — which by then shows what those five really took —
-#     still has 5 GB to spare. Under real load expect the queue to form at
-#     four to six busy worlds, not at ten.
+#     that is still booting or came up in the last five minutes, still shows
+#     5 GB — about one more world. The hold is there because a JVM that has
+#     only just come up has not yet taken the memory it is going to use. A
+#     world holds its 5 GB from its start until five minutes after the
+#     warden first finds it up. Every start the warden accepts takes one (a
+#     dead run restarted in place included), and so does a world the warden
+#     merely FINDS starting: one systemd restarted by itself after a kill,
+#     one that was booting while the warden restarted, one started by hand.
+#     A slow stop does not lose it (the old JVM of a restarted world can
+#     take up to two minutes to save and stop); a boot that fails gives it
+#     back at once. A closed gate acts exactly like a reached maxActive: the
+#     hub puts the player in the line ("The building is at its power limit
+#     …") until there is room again. So a burst cannot fill ten slots on one
+#     reading: a box showing 27 GB available admits five worlds, and a sixth
+#     only once holds have run out and the reading — which by then shows
+#     what those five really took — still has 5 GB to spare. Under real load
+#     expect the queue to form at four to six busy worlds, not at ten.
 #     What the gate does NOT do: it rules on new starts and never touches a
 #     running world. A world goes on growing after its five minutes and is
 #     from then on seen through MemAvailable alone; the 5 GB held is a little
-#     under the ~5.5 GB a full world is estimated at above; a warden restart
-#     forgets the holds; and a world systemd restarts by itself passes no
-#     gate.
+#     under the ~5.5 GB a full world is estimated at above; a world systemd
+#     restarts by itself passes no gate — it comes back whatever the reading
+#     says and only holds its 5 GB against the starts after it; and a warden
+#     restart costs a world that was already up the rest of its five
+#     minutes.
+#     And one thing it does that nobody asked for: the lobby asks the warden
+#     for a free slot before EVERY start, and a closed gate shows none. A
+#     player or group whose run has just died and who press play at once —
+#     their old world still up for its last seconds, so no new JVM would
+#     start — therefore wait in the line like everyone else until the gate
+#     reopens.
 #   - zram at 50 % of RAM (zstd; the module default is 25) and the 8G disk swap
 #     behind it take up worlds that keep GROWING after the gate has closed.
 #     That shows as GC stalls and lag in those worlds first. Past all of it
@@ -247,7 +261,12 @@
 # rotated: truncate it once the question is settled), and the warden's journal
 # (`journalctl -u tci-server-warden`) says when memory held the line: one
 # `memory gate: CLOSED — …` line per spell and one `memory gate: OPEN again —
-# …` once the gate has stayed open a minute. Scaling BACK is one number — lower
+# first found open N s ago at …; last found closed N s ago` after it. The
+# warden only looks when the lobby asks, and the lobby stops asking once its
+# line is empty, so the second line can be written hours late: date the
+# reopening by the two ages in it, never by its timestamp (a CLOSED with
+# nothing after it may only mean that nobody has asked since). Spells less
+# than a minute apart read as one. Scaling BACK is one number — lower
 # maxActive (5 or 6 is what fits in RAM at 4G a world), or raise
 # warden.minFreeMemoryMB so the gate closes earlier and holds more for each
 # booting world (one busy world's MEASURED footprint is the number to aim
@@ -286,11 +305,16 @@
 # that was used in the last 30 days stays, whatever the demand. "Last used" is
 # the latest of the world's last start, the last time the lobby asked the
 # warden about it (its owner or a member at the desk; for a player waiting in
-# the line the lobby asks again every two minutes) and the last reclaim pass
-# that saw it running. The last two live only in the warden's memory — after a
-# restart the last start is all it knows — which is why a restarted warden
-# waits an hour before its first pass. Releasing a founder's world dissolves
-# the group. One journal line per release: `journalctl -u tci-server-warden`.
+# the line the lobby asks again every two minutes) and the last time the
+# warden found it up. It notes that whenever anything makes it look at the
+# fleet — the lobby's polls while somebody is in the line, any lookup, any
+# start — and makes no round of its own for it while 2 slots are free: a
+# world that stayed up for more than 30 days while nobody asked the warden
+# anything would be dated by its last start alone. The last two live only in
+# the warden's memory — after a restart the last start is all it knows —
+# which is why a restarted warden waits an hour before its first pass.
+# Releasing a founder's world dissolves the group. One journal line per
+# release: `journalctl -u tci-server-warden`.
 #   The consequence, unsoftened: the box holds 30 worlds, so about thirty
 # owners — a solo player, or a whole group of up to four — can have a live run
 # at any one time. Once those are taken the next newcomer is told the building
@@ -612,12 +636,13 @@ in {
         hub.preparingCapSeconds = 900;
 
         # The MEMORY GATE beside maxActive: the warden starts a further world
-        # only while MemAvailable, less 5 GB held for every world started in
-        # the last few minutes, still shows 5 GB — about one more world —
-        # and the hub queues the player otherwise. It makes "try ten" queue
-        # before memory runs out: that lowers the risk of an OOM kill, it
-        # cannot rule one out (header: Sizing). The one number is both the
-        # threshold and what is held for each booting world.
+        # only while MemAvailable, less 5 GB held for every world that is
+        # still booting or came up in the last five minutes, still shows
+        # 5 GB — about one more world — and the hub queues the player
+        # otherwise. It makes "try ten" queue before memory runs out: that
+        # lowers the risk of an OOM kill, it cannot rule one out (header:
+        # Sizing). The one number is both the threshold and what is held for
+        # each such world.
         warden.minFreeMemoryMB = 5120;
         # Warden auth, as defence in depth. The warden listens on 127.0.0.1
         # only, but every world's JVM sits on that loopback too, takes its
