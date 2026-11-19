@@ -1,6 +1,8 @@
 # Single-disk UEFI layout for a Hetzner Cloud instance (ESP + swap + ext4 root).
 #
-# Cloud instances are DISPOSABLE and world backups are on, so one disk is fine.
+# Cloud instances are DISPOSABLE, and so is what this one holds — the worlds of
+# the public fleet are hardcore runs a death wipes anyway, and everything else
+# regenerates (hosts/tci-cloud: backups are off on purpose) — so one disk is fine.
 # The disk is a single virtio-SCSI device at /dev/sda (NOT NVMe — that's the
 # Robot/AX bare-metal line). CCX (and CPX/CAX) servers boot UEFI, so the
 # systemd-boot + ESP layout from hosts/_core works as-is; the cheap CX line is

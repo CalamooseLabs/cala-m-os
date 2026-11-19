@@ -113,12 +113,16 @@
 
     # The Cobblemon Initiative — dedicated-server fleet module (hub + warden +
     # on-demand per-player instances), consumed by the tci-cloud/tci-private
-    # hosts via modules/tci-server. We use only `nixosModules.tci-server`
-    # (nix/tci-server.nix), a plain module built against THIS flake's nixpkgs;
-    # the game bundle itself is deployed out-of-band by `nix run .#deploy-server`
-    # from the mod repo, not through this input. PRIVATE repo — the consuming
-    # hosts enable modules/nix-github-token so Nix can fetch it (same PAT wiring
-    # as bookkeeper). Tracks the default branch (main), where the module lives.
+    # hosts via modules/tci-server. Two things ride this one pin:
+    # `nixosModules.tci-server` (nix/tci-server.nix), a plain module built
+    # against THIS flake's nixpkgs, and — on tci-cloud — the GAME itself: that
+    # box builds its server bundle from this input's source tree
+    # (services.tci-server.bundleBuild.source), so a lock bump there ships a new
+    # module AND a new game version. tci-private still takes its bundle
+    # out-of-band (`nix run .#deploy-server` from the mod repo). PRIVATE repo —
+    # the consuming hosts enable modules/nix-github-token so Nix can fetch it
+    # (same PAT wiring as bookkeeper). Tracks the default branch (main), where
+    # the module lives.
     cobblemon-initiative = {
       url = "github:The-Company-Inc-Nerds/the-cobblemon-initiative";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -220,7 +224,7 @@
       ai = mkSystem "ai" {};
 
       # The Cobblemon Initiative dedicated servers.
-      # tci-cloud   — Hetzner Cloud (US), internet-facing hub (co-op OR solo).
+      # tci-cloud   — Hetzner Cloud (US), the PUBLIC fleet: open hub, solo or co-op.
       # tci-private — local LAN box, internal soul-link (shared-fate) fleet.
       tci-cloud = mkSystem "tci-cloud" {};
       tci-private = mkSystem "tci-private" {};

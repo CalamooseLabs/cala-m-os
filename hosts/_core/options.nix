@@ -146,8 +146,10 @@ in {
     default = "0.0.1-beta";
     description = ''
       Human-set version mark for this host. The installer prints it at the start
-      and end of an install, and it is appended to the system label so it shows in
-      `nixos-version` and the systemd-boot menu entry.
+      and end of an install, and it leads the system label (as `cala-<version>`),
+      so it shows in `cat /run/current-system/nixos-version` and in the boot-menu
+      entry. The `nixos-version` command does not show it: that prints the
+      nixpkgs version, not the label.
     '';
   };
 
@@ -396,7 +398,9 @@ in {
     (_final: _prev: lib.genAttrs beta.packages (n: pkgs-beta.${n}))
   ]);
 
-  # Surface the host version in `nixos-version` / the boot menu entry.
+  # Surface the host version in the system label: a tag leads the label, which
+  # is the /run/current-system/nixos-version file and part of the boot menu
+  # entry (the `nixos-version` command prints system.nixos.version instead).
   config.system.nixos.tags = ["cala-${config.calamoose.version}"];
 
   # Emit one run-once unit per firstBootCommands entry (empty attrset -> no units).

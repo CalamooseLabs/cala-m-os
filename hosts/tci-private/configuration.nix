@@ -35,8 +35,9 @@ in {
     # INITIAL_INSTALL_MODE pass, so their settings ride this conditional import:
     # an unguarded definition fails that pass with "option does not exist".
     ++ lib.optional (!initialInstallMode) {
-      # PAT for the private cobblemon-initiative input (see tci-cloud for the
-      # host-key bootstrap note).
+      # PAT for the private cobblemon-initiative input. Offline (agenix) host, so
+      # the token is the encrypted file below; tci-cloud, an online host, gets
+      # the same line from Proton Pass instead.
       programs.nix-github-token = {
         enable = true;
         agenixFile = ../../modules/nix-github-token/secrets/nix-github-token.age;
