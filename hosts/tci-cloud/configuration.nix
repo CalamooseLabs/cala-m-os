@@ -213,11 +213,15 @@
 #     world holds its 5 GB from its start until five minutes after the
 #     warden first finds it up. Every start the warden accepts takes one (a
 #     dead run restarted in place included), and so does a world the warden
-#     merely FINDS starting: one systemd restarted by itself after a kill,
+#     merely FINDS booting: one systemd restarted by itself after a kill,
 #     one that was booting while the warden restarted, one started by hand.
-#     A slow stop does not lose it (the old JVM of a restarted world can
-#     take up to two minutes to save and stop); a boot that fails gives it
-#     back at once. A closed gate acts exactly like a reached maxActive: the
+#     Not a world that has been up and only fails to answer on its port
+#     for a moment — an empty one saving on its way down, a missed check:
+#     that one takes nothing. A slow stop does not lose the hold (the old
+#     JVM of a restarted world can take up to two minutes to save and
+#     stop, and all that time the warden reports the world as starting, so
+#     the lobby goes on preparing it); a boot that fails gives it back at
+#     once. A closed gate acts exactly like a reached maxActive: the
 #     hub puts the player in the line ("The building is at its power limit
 #     …") until there is room again. So a burst cannot fill ten slots on one
 #     reading: a box showing 27 GB available admits five worlds, and a sixth
@@ -237,7 +241,12 @@
 #     player or group whose run has just died and who press play at once —
 #     their old world still up for its last seconds, so no new JVM would
 #     start — therefore wait in the line like everyone else until the gate
-#     reopens.
+#     reopens. The same wait can meet a play pressed for a world that was
+#     STOPPED while it held its 5 GB (an abandon answered "try again in a
+#     moment" and not repeated, a stop by hand of a world already seen
+#     running) and is still shutting down: its own hold counts until it is
+#     down — two minutes at most — so with less than 10 GB available the
+#     gate is closed to it.
 #   - zram at 50 % of RAM (zstd; the module default is 25) and the 8G disk swap
 #     behind it take up worlds that keep GROWING after the gate has closed.
 #     That shows as GC stalls and lag in those worlds first. Past all of it
