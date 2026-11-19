@@ -246,7 +246,12 @@
 #     moment" and not repeated, a stop by hand of a world already seen
 #     running) and is still shutting down: its own hold counts until it is
 #     down — two minutes at most — so with less than 10 GB available the
-#     gate is closed to it.
+#     gate is closed to it. A stop by hand of a world the warden started
+#     and has NOT yet seen running (nothing made the warden look while it
+#     was up) goes the other way: the warden reports it as starting until
+#     it is down, so it keeps one of the ten slots and its 5 GB that long,
+#     and a play pressed for it is told the office is being prepared, then
+#     that it went dark.
 #   - zram at 50 % of RAM (zstd; the module default is 25) and the 8G disk swap
 #     behind it take up worlds that keep GROWING after the gate has closed.
 #     That shows as GC stalls and lag in those worlds first. Past all of it
