@@ -164,27 +164,36 @@
 
       # Non-blank check that never turns the key into a shell word (xtrace-safe).
       hasKey() { jq -Rse 'test("\\S")' "$1" >/dev/null 2>&1; }
-      # --wait gives up on a key file once nothing more can deliver it for this
-      # launch. Only the online (Proton Pass) backend has such a moment: the
-      # end of the first run of proton-secrets-fetch.service after boot
-      # (modules/secrets). The engine rewrites its status file at the END of
-      # every run, so mode "unit" in it means the unit has finished one,
-      # whatever came of it: a key that run could not read has to wait for a
-      # later one (the unit retries what is temporary by itself) and for the
-      # next OBS launch. Until then the file is absent, or still the restore
-      # unit's (mode "restore", whatever its state says). A switch's own fetch
-      # writes mode "activate" and is not counted: on a host whose activation
-      # runs in stage 2 that is also what a boot writes, before there is a
-      # network. With no readable status the unit's own state decides: active
-      # (everything read) or failed (it gave up, a human has to act).
+      # --wait gives up on a key file once nothing is left that would deliver
+      # it for this launch. Only the online (Proton Pass) backend has such a
+      # moment: proton-secrets-fetch.service (modules/secrets) has finished a
+      # run it will not repeat by itself — every secret read (exit 0, the unit
+      # is active), or an error only a human can fix (exit 78, the unit is
+      # failed). While the unit is still retrying a temporary failure (exit
+      # 75, e.g. Proton not reachable yet) its next run may bring the key, so
+      # the wait goes on, up to its deadline.
+      # The engine rewrites its status file at the END of every run:
+      #   mode "unit"      the unit finished a run; `retry` is true when that
+      #                    run ended with 75 and systemd will run it again.
+      #   mode "restore"   only the restore unit has run — whatever its state
+      #                    says ("failed" when the cache held nothing); the
+      #                    fetch is still to come.
+      #   mode "activate"  a switch's own fetch, which says nothing about the
+      #                    unit; on a host whose activation runs in stage 2 it
+      #                    is also what a boot writes, before there is a
+      #                    network.
+      #   no file          nothing has finished yet.
+      # Whenever the file does not settle it, the unit's own state does:
+      # active or failed is the end; not started, running, or waiting for its
+      # next try is not.
       # On the offline (agenix) backend, and with no secrets at all, nothing
       # reports "over": the wait runs until the file appears or the deadline
       # passes.
       fetchStatus=${lib.escapeShellArg fetchStatusFile}
       fetchDone() {
         if [ -z "$fetchStatus" ]; then return 1; fi
-        case "$(jq -r '"\(.mode) \(.state)"' "$fetchStatus" 2>/dev/null)" in
-          "unit ok" | "unit degraded" | "unit failed") return 0 ;;
+        case "$(jq -r '"\(.mode) \(.retry)"' "$fetchStatus" 2>/dev/null)" in
+          "unit false") return 0 ;;
         esac
         case "$(systemctl show -P ActiveState proton-secrets-fetch.service 2>/dev/null)" in
           active | failed) return 0 ;;

@@ -80,7 +80,7 @@ Declared in `hosts/_core/options.nix` (default `"offline"`, which is agenix; `tr
 
 ## The online backend (Proton Pass)
 
-`calamoose.enableSecrets = "online"` keeps every declaration as it is (`calamoose.secrets.<name>`, in the same bundle `default.nix` files) and changes where the value comes from: the facade `modules/secrets/configuration.nix` hands each one to antlers' `services.proton-secrets`, which reads it from the `Cala-M-OS` Proton Pass vault with `pass-cli` and installs it at `/run/proton-secrets/<name>` (a symlink into a `/run/proton-secrets.d/<generation>` ramfs). Consumers still read `config.calamoose.secrets.<name>.path`. Plaintext never enters the Nix store.
+`calamoose.enableSecrets = "online"` keeps every declaration as it is (`calamoose.secrets.<name>`, in the same bundle `default.nix` files) and changes where the value comes from: the facade `modules/secrets/configuration.nix` hands each one to antlers' `services.proton-secrets`, which reads it from the `Cala-M-OS` Proton Pass vault with `pass-cli` and installs it at `/run/proton-secrets/<name>` (`/run/proton-secrets` is a symlink to the current generation directory in the `/run/proton-secrets.d` ramfs). Consumers still read `config.calamoose.secrets.<name>.path`. Plaintext never enters the Nix store.
 
 A declaration names the vault item instead of an `.age` file:
 
@@ -102,7 +102,7 @@ The secrets live in RAM, so every boot starts without them, and the boot-time ac
 |------|-----------|--------------|
 | before any service starts — only with `services.proton-secrets.cache.enable` (**broadcast**) | `proton-secrets-restore.service` | Decrypts the sealed last-known-good copies into the ramfs. No network. Never fails the boot, never replaces a generation that is already linked. |
 | after `network-online.target` | `proton-secrets-fetch.service` | Fetches every secret. A temporary failure (Proton unreachable, 5xx/429) is retried with back-off, 15 s growing to 5 min, for as long as it takes. It stops, and shows as **failed**, only when a human has to act (exit 78, below). |
-| `nixos-rebuild switch` | the activation script | The same fetch. `services.proton-secrets.failClosed` (default `true`: `ai`, `tci-cloud`) makes a switch that could not read every secret change nothing and fail; `false` (`broadcast`) installs what it read, keeps the rest, warns and goes through. |
+| `nixos-rebuild switch` | the activation script | The same fetch. `services.proton-secrets.failClosed` (default `true`: `ai`, `tci-cloud`) makes a switch that could not read every secret change nothing and fail; `false` (`broadcast`) installs what it read, keeps the rest, warns and goes through. `switch-to-configuration` also reports every unit that is failed, or retrying after a failure, when it finishes: with the fetch unit in that state a switch that went through still ends with `warning: the following units failed: proton-secrets-fetch.service` and exit status 4, the new generation active all the same. |
 
 What a fetch guarantees:
 
@@ -149,6 +149,7 @@ proton-secrets doctor                    # session files, session probe, PAT fil
 |---------------|---------|----|
 | `session probe: network` | Proton cannot be reached | Nothing: the unit keeps retrying. Fix the network if it is the box's. |
 | `session probe: ok`, and a secret marked `missing` / `carried` with `<-- missing` or `<-- blank` | That vault field is gone, renamed or empty | Fix the item in Proton Pass, then `proton-secrets refresh` |
+| `session probe: ok`, a secret with `<-- unknown`, the unit `activating (auto-restart)` | `pass-cli` failed on that secret in words the fetch does not recognise (its text is on the line), so it is treated as temporary and retried | Read the text: a field or item it cannot find is fixed in Proton Pass like the row above. The unit keeps retrying by itself; `proton-secrets refresh` tries now |
 | `session probe: ok`, a secret with `<-- vault` | The PAT is not granted that vault, or the vault name is wrong | Grant it / fix the name, then `proton-secrets refresh` |
 | `session probe: no-session` | Nobody is logged in | `proton-secrets login` (from the PAT when there is one, else the interactive login). With a PAT the next fetch logs in by itself, unless the last fetch says `pat-invalid` (below). |
 | `session probe: store-corrupt`, or `pat_key: 0 bytes` among the session files | The session files were damaged (a power cut shortly after a login) | `proton-secrets repair` |
@@ -158,14 +159,14 @@ proton-secrets doctor                    # session files, session probe, PAT fil
 Then `proton-secrets refresh`: it runs the fetch unit now, waits for it and prints the result per secret. The units in the `restartUnits` of whatever changed are restarted by the fetch itself; there is nothing to restart by hand.
 
 - `repair` resets the local session (`pass-cli logout --force`) and logs in again from the PAT. Without a PAT it refuses, because it could not log in again: `proton-secrets repair --force`, then `proton-secrets login`.
-- **Exit 78** (the unit is `failed`) means retrying cannot help and the unit will not try again by itself: the PAT was rejected, there is no session and no PAT, or a required field is missing or blank. **Exit 75** is temporary and is retried; exit 0 means every non-optional secret was read from Proton in that run.
+- **Exit 78** (the unit is `failed`) means retrying cannot help and the unit will not try again by itself: the PAT was rejected, there is no session and no PAT, a required field is missing or blank, or its vault is not visible to the PAT. **Exit 75** is temporary and is retried; exit 0 means every non-optional secret was read from Proton in that run.
 - `jq . /run/proton-secrets.status` is the same information for a script: `state` is `ok` (all verified), `degraded` (not verified, but every required secret still has a value), `failed` (a required secret has none) or `restored` (values from the cache, not verified yet), and each secret has a `source` (`fetched`, `unchanged`, `carried`, `cache`, `missing`).
 
 Meanwhile, on `broadcast` the services run on the cached values. A file that is missing there has no usable cache entry either: the secret was never read successfully (a new declaration, a wrong field name), or its entry no longer decrypts (`doctor` lists the entries). On `ai` and `tci-cloud` a consumer simply has no file until the fetch has read it.
 
 **Rotating a secret:** change it in Proton Pass, then `proton-secrets refresh` (a switch or a reboot fetches too). The consumers in its `restartUnits` are restarted. The OBS stream keys need OBS quit and relaunched as well (`hosts/broadcast/configuration.nix` has the steps).
 
-**Passwords:** `users.users.<name>.hashedPasswordFile` works with an online secret because every online host has `users.mutableUsers = true`: the file is read when the account is first created (install, or a switch), and an existing account keeps its password. With `mutableUsers = false` the account would be locked after every boot, since the file is not there yet when the boot-time activation applies passwords; the facade warns at evaluation time about that combination.
+**Passwords:** `users.users.<name>.hashedPasswordFile` may point at an online secret because every online host has `users.mutableUsers = true`: NixOS then applies the file only to an account that has no `/etc/shadow` entry yet, and leaves an existing entry alone. So the secret seeds the password of an account that is created while the file is readable, and never changes one afterwards (see [[ISO & Installer|ISO-Installer]] for `hub`'s password of record). On `ai` it never applies: the root is a tmpfs that keeps no `/etc/shadow`, so every boot creates the accounts anew, before the file exists, and `hub` has no password there (console autologin, `sudo` without one). With `mutableUsers = false` the account would be locked after every boot, since the file is not there yet when the boot-time activation applies passwords; the facade warns at evaluation time about that combination.
 
 ---
 

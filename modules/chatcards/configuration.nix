@@ -13,9 +13,9 @@
 # `restartUnits` (./secrets), so the fetch restarts it when a key changed or
 # first appears — also when it has landed in `failed` by then — and until then
 # the unit retries on its own restart policy. On broadcast the files are
-# restored from the sealed cache before any service starts, so it normally comes
-# up on its first start, with or without the internet. modules/secrets has the
-# reasoning.
+# restored from the sealed cache before any service starts, so the unit normally
+# finds them on its first start, with or without the internet. modules/secrets
+# has the reasoning.
 #
 # With no secrets backend there is no CardSight key, so the service runs in mock
 # mode (canned identify/pricing, nothing billed) rather than tripping the module's

@@ -45,7 +45,11 @@ in {
       # was replaced since the unit last saw it (it keeps the seed's hash beside
       # the token) — so after a re-login, updating the vault item is all it
       # takes: the next fetch (a switch, a reboot, `sudo proton-secrets refresh`)
-      # restarts multichat, and that start installs the new seed.
+      # restarts multichat, and that start installs the new seed. The one
+      # exception is a state directory that holds a token but no hash yet (the
+      # unit has not started on this seed logic before): that start only
+      # records the hash, so a seed replaced before it also needs
+      # /var/lib/multichat/twitch-refresh-<broadcasterId> removed.
       "twitch-refresh-${ids.channel}" = {
         vaultName = "Cala-M-OS";
         itemTitle = "twitch-refresh-${ids.channel}";

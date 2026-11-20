@@ -12,9 +12,9 @@
 # its `restartUnits` (./secrets), so the fetch restarts it when a value changed
 # or first appears, and until then the unit's own restart policy keeps trying
 # (no start limit, backing off to 30 s). On broadcast the files are restored
-# from the sealed cache before any service starts, so it normally comes up on
-# its first start, with or without the internet. modules/secrets has the
-# reasoning.
+# from the sealed cache before any service starts, so the unit normally finds
+# them on its first start, with or without the internet. modules/secrets has
+# the reasoning.
 #
 # When no secrets backend is active the files are left unset and the service
 # starts keyless; the YouTube key can then be supplied at runtime and persisted
@@ -84,11 +84,11 @@ in {
     # The box runs headless: the giveaway is run from another device on the
     # LAN, on the /giveaway page, so its Open / Close / Draw buttons (POST
     # /api/giveaway) have to answer that device and not only this machine.
-    # "lan" admits private and link-local source addresses and still refuses
-    # public ones. No control token on purpose: on this network whoever is on
-    # the LAN may run the show, and who is on the LAN is the UniFi router's
-    # business. It is an address check, not a login — a shared network would
-    # want controlTokenFile.
+    # "lan" admits private, link-local and CGNAT (100.64/10) source addresses
+    # and still refuses public ones. No control token on purpose: on this
+    # network whoever is on the LAN may run the show, and who is on the LAN is
+    # the UniFi router's business. It is an address check, not a login — a
+    # shared network would want controlTokenFile.
     # Everything else that controls the service stays loopback-only whatever
     # this says: the YouTube-key, fake-event, go-live hint, status and rewards
     # endpoints (/api/youtube-key, /api/fake, /api/live, /api/status,

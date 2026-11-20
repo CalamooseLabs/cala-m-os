@@ -32,7 +32,7 @@
 #       5xx/429) with back-off for as long as it takes. It stops, and shows as
 #       failed, only on exit 78 — something a human has to fix: the PAT was
 #       rejected, there is no session and no PAT, a required field is missing or
-#       blank.
+#       blank, or its vault is not visible to the PAT.
 #   nixos-rebuild switch            runs the same fetch from the activation
 #       script; services.proton-secrets.failClosed decides whether a failed one
 #       aborts the switch (the default) or keeps the previous values and warns.
@@ -224,13 +224,18 @@ in {
       # activation runs before the network — and before systemd starts the
       # restore unit — so the file is not there, and nothing re-runs the snippet
       # once the secrets have arrived. With users.mutableUsers = true (every
-      # online host today) that is harmless: an account that already has a
-      # shadow entry keeps it, and the file only matters when the account is
-      # first created, at install time or in a switch. With mutableUsers = false
-      # NixOS rewrites every declared account's password on each activation, and
-      # with the file missing that password is a locked one: such an account
-      # would lose its password at every boot until the next switch. Say so at
-      # eval time rather than lock somebody out.
+      # online host today) that takes nobody's password away: the file is only
+      # applied to an account that has no /etc/shadow entry yet, and an
+      # existing entry is left as it is — so the secret seeds the password of
+      # an account that is created while the file is readable, and never
+      # changes one afterwards. (On `ai` that moment does not come: its root is
+      # a tmpfs that keeps no /etc/shadow, so every boot creates the accounts
+      # anew, before the file exists, and hub has no password there; it is
+      # logged in on the console automatically and sudo asks for none.) With
+      # mutableUsers = false NixOS rewrites every declared account's password
+      # on each activation, and with the file missing that password is a locked
+      # one: such an account would lose its password at every boot until the
+      # next switch. Say so at eval time rather than lock somebody out.
       warnings = lib.optional (!config.users.mutableUsers && passwordFromSecret != []) ''
         calamoose.secrets (online backend): users.mutableUsers is false and hashedPasswordFile of ${lib.concatStringsSep ", " passwordFromSecret} points into ${secretsRoot}. That file does not exist yet when the boot-time activation applies passwords (it runs before the network; the secrets are fetched afterwards), so every boot would leave the account locked until the next `nixos-rebuild switch`. Keep users.mutableUsers = true on online hosts, or take that password from somewhere that exists at boot.
       '';

@@ -30,10 +30,12 @@
 in {
   # Online (Proton Pass) secrets — fetched at boot by proton-secrets-fetch.service
   # and at every switch (modules/secrets has the boot story). This host consumes
-  # two secrets; fill their pass:// references before deploying (offline hosts
-  # ignore these, so it is safe to set them in the shared files):
-  #   users/_core/secrets/default.nix -> admin_password (users.users.hub.hashedPasswordFile)
-  #   modules/gpg/secrets/default.nix -> yubigpg.asc    (gpg-key-import keyFile)
+  # three secrets; fill their vault items before deploying (the first two are
+  # shared declarations — an offline host ignores their Proton selectors, so it
+  # is safe to set them in the shared files):
+  #   users/_core/secrets/default.nix -> admin_password    (users.users.hub.hashedPasswordFile)
+  #   modules/gpg/secrets/default.nix -> yubigpg.asc       (declared by the shared gpg module)
+  #   modules/ai-github               -> ai-github-gpg.asc (gpg-key-import keyFile on this host)
   calamoose.enableSecrets = "online";
   calamoose.version = "0.0.1-alpha";
 

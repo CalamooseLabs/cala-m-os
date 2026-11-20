@@ -130,13 +130,14 @@ in {
         # host configures them): inject now, while OBS is still closed — OBS
         # reads keys only at launch and the Aitum plugins rewrite their config
         # on exit. --wait covers a launch that comes before the key files: on an
-        # online (Proton Pass) host they arrive with the first run of
-        # proton-secrets-fetch.service, after network-online — unless the host
-        # keeps the sealed cache (broadcast does), which restores them before
-        # the session starts, so nothing waits. An injected key also persists
-        # in the OBS config, and only a target that was never keyed waits at
-        # all. May delay the launch (≤90s, and only until that first fetch run
-        # has ended); never prevents it.
+        # online (Proton Pass) host they arrive once proton-secrets-fetch.service
+        # has read them, after network-online — unless the host keeps the sealed
+        # cache (broadcast does), which restores them before the session starts,
+        # so nothing waits. An injected key also persists in the OBS config, and
+        # only a target that was never keyed waits at all. May delay the launch
+        # (≤90s, and only while that unit is still running or retrying: not once
+        # it has read everything or stopped on an error a human has to fix);
+        # never prevents it.
         # Its messages go to the journal as well (`journalctl -t obs-stream-keys`):
         # the autostart path runs under a compositor whose output is discarded, so
         # "key written" / "missing — skipped" at boot would otherwise leave no

@@ -71,19 +71,25 @@ in {
       # warns and goes through (the default would change nothing and fail the
       # switch), so a Proton hiccup or one bad vault field never blocks a
       # deploy. The boot-time unit behaves this way whatever is set here, and
-      # reports through its exit code instead. This is not what keeps the boot
+      # reports through its exit code instead. What that unit can still change
+      # is how a switch ENDS: switch-to-configuration lists every unit that is
+      # failed, or retrying after a failure, when it finishes, and then exits
+      # 4 ("the following units failed: proton-secrets-fetch.service") — the
+      # new generation is active all the same; `sudo proton-secrets doctor`
+      # says what the unit is unhappy about. This is not what keeps the boot
       # safe: the fetch is skipped inside the initrd whatever it is set to (the
       # gen2 "no usable init" hang, see machines/workstations/TRX50-SAGE).
       services.proton-secrets.failClosed = false;
 
       # Keep a sealed last-known-good copy of every secret on disk and restore
       # it before any service starts (proton-secrets-restore.service). What it
-      # buys an always-on box: multichat, chat-cards and the stream keys are
-      # there at boot with the values last read from Proton, without waiting
-      # for it; an expired PAT, a broken session or a Proton or internet outage
-      # does not take the stream box down at its next power cycle; and a secret
-      # rotated in Proton Pass still arrives with the next successful fetch,
-      # which also restarts its consumers.
+      # buys an always-on box: multichat's and chat-cards' secrets and the
+      # stream keys are there at boot with the values last read from Proton,
+      # without waiting for it; an expired PAT, a broken session or a Proton
+      # or internet outage does not leave the stream box without them at its
+      # next power cycle; and a secret rotated in Proton Pass still arrives
+      # with the next successful fetch, which also restarts the units named in
+      # its restartUnits.
       # What it costs, honestly: the secrets now exist at rest. They are
       # encrypted by systemd-creds with the host key,
       # /var/lib/systemd/credential.secret — which lives on the same
@@ -172,9 +178,10 @@ in {
       # per-secret lines of the last fetch, each with its reason), in
       # /run/proton-secrets.status, and in `systemctl status
       # proton-secrets-fetch`, which is not active until every secret was read.
-      # A switch still exits 0 (failClosed above) with a warning. To check a
-      # field without printing it — the count should be well above 1; 0 or 1
-      # means it came back empty:
+      # A switch is not stopped by it: its fetch step only warns (failClosed
+      # above; the same note says when the switch still ends with exit 4). To
+      # check a field without printing it — the count should be well above 1;
+      # 0 or 1 means it came back empty:
       #   sudo proton-secrets resolve --vault-name Cala-M-OS --item-title 'Stream Keys' --field 'YouTube Vertical' | wc -c
       calamoose.secrets = let
         streamKey = field: {
