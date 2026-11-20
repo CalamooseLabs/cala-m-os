@@ -18,7 +18,7 @@
   # Stable symlink to the DisplayLink/evdi card node. This belongs to the
   # teleprompter device itself, not any GPU (it was previously in the intel-gpu
   # module). A compositor given an explicit device allowlist must list the evdi
-  # card too, or the teleprompter output is excluded — e.g. broadcast sets
+  # card too, or the teleprompter output is excluded — e.g. Hyprland with
   # AQ_DRM_DEVICES=/dev/dri/amd-card:/dev/dri/displaylink-card. card* numbering is
   # not stable across boots; matches nothing until an evdi device is present.
   services.udev.extraRules = ''

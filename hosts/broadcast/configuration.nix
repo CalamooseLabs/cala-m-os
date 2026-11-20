@@ -1,11 +1,22 @@
 ##################################
 #                                #
 #          Stream Box            #
-#       NVIDIA RTX Pro 4000      #
-#      Blackmagic Quad HDMI      #
-#             OBS                #
+#    headless services host      #
+#   multichat  +  chat-cards     #
+#      cobblemon-overlay         #
 #                                #
 ##################################
+#
+# No display manager, no compositor, no desktop session: what this host does is
+# done by system services that are up at boot without anybody logging in — the
+# three the streamer profile enrols (multichat on :8081, chat-cards on :8787,
+# cobblemon-overlay on :8082), the secrets fetch and sshd.
+#
+# It is managed from the LAN: over SSH (hub, the keys in
+# users/streamer/public_keys) and through the services' own web pages. The
+# local console is the fallback for when the network is not there: a visible
+# boot menu, a verbose boot and a login prompt on tty1 (see "Headless" and
+# "Boot visibility" below).
 {
   lib,
   initialInstallMode,
@@ -25,10 +36,10 @@ in {
   #                                      twitch-refresh-* (multichat)
   #   modules/chatcards/secrets       -> cardsight-api-key, pricecharting-token
   #                                      (chat-cards)
-  #   this file (below)               -> stream-key-* (OBS stream keys)
+  #   this file (below)               -> stream-key-* (no consumer yet: for
+  #                                      the mailroom module that lands next)
   calamoose.enableSecrets = "online";
   calamoose.version = "1.5.0";
-  calamoose.style = "thecompany"; # The Company, Inc. brand theme
 
   # The installer-seeded PAT (same pattern as `ai`): the file the fetch logs in
   # from whenever this box has no usable Proton session. The installer seeds it
@@ -63,7 +74,7 @@ in {
         machine_uuid = machine_uuid;
       })
     ]
-    ++ lib.optional (!initialInstallMode) ({config, ...}: {
+    ++ lib.optional (!initialInstallMode) {
       services.proton-secrets.patFile = "/var/lib/proton-pass-cli/pat";
 
       # Secrets are best-effort on this box: a switch that could not read every
@@ -101,77 +112,16 @@ in {
       # next successful fetch replaces it.
       services.proton-secrets.cache.enable = true;
 
-      # OBS + Bitfocus Companion baselines are owned by this HOST (broadcast =
-      # streaming role + brand identity), not the TRX50-SAGE machine (hardware).
-      # Wired inside the non-install branch on purpose: the bitfocus-companion
-      # module and home-manager only exist in the full config, not the minimal
-      # INITIAL_INSTALL_MODE pass — the same reason the machine files (evaluated
-      # only in full mode) could set these unguarded.
-      #
-      # seedDb auto-wires once hosts/broadcast/companion/db.sqlite is committed;
-      # push it back with `sudo companion-restore`, capture live changes with
-      # `sudo companion-snapshot`. The committed db carries a BLANK OBS-WebSocket
-      # password on purpose: OBS runs its websocket with auth DISABLED (port 4455
-      # is firewalled to localhost, single-user box — see ./home.nix), so Companion
-      # connects over loopback with no password and there is no secret to manage.
-      services.bitfocus-companion.seedDb = let
-        p = ./companion/db.sqlite;
-      in
-        if builtins.pathExists p
-        then p
-        else null;
-      services.bitfocus-companion.repoPath = "/etc/nixos/hosts/broadcast/companion";
-
-      # Companion 4.x ships ZERO connection modules — normally each is downloaded
-      # from the Bitfocus module store into /var/lib/bitfocus-companion/modules/,
-      # which a reinstall wipes. The seeded db pins these EXACT versions
-      # (moduleVersionId per connection) and Companion never auto-installs, so
-      # without pre-seeding every connection came up "Unknown module" after each
-      # reinstall until deleted and re-added by hand. Keep this list in lockstep
-      # with the committed db: whenever a snapshot/export changes a connection's
-      # moduleVersionId, add the matching entry here (see connectionModules option
-      # docs in modules/bitfocus-companion for how to get url + hash from the
-      # store API). The elgato-stream-deck surface is "builtin" — ships in the
-      # package, nothing to seed.
-      services.bitfocus-companion.connectionModules = {
-        "obs-studio-3.15.3" = {
-          url = "https://developer-module-builds.s4.bitfocus.io/connection/obs-studio/v3.15.3-64a9f074fc8f6ee4eefd86e6e7e9396e76b44050/obs-studio-v3.15.3.tgz";
-          hash = "sha256-pM6YBUu1xMWXm2rvoVFGl1c2m6H46nwRD/mUGpWRdpA=";
-        };
-        "generic-http-3.1.1" = {
-          url = "https://developer-module-builds.s4.bitfocus.io/connection/generic-http/v3.1.1-aa2f436c546b4aa1f8081938c9db7528b246d43e/generic-http-v3.1.1.tgz";
-          hash = "sha256-oiHRs+SX1FHHoj+yser6+YtjmXX/TwJfat/2CJBbUrM=";
-        };
-        "twitch-api-4.1.1" = {
-          url = "https://developer-module-builds.s4.bitfocus.io/connection/twitch-api/v4.1.1-0eb88139b7c913f618271c8e3af89b555b1318f2/twitch-api-v4.1.1.tgz";
-          hash = "sha256-gKidGWtGU7gNebFeY23a2QRDfJJIGReZXlQGhPaFw8Q=";
-        };
-      };
-
-      # Host-level home-manager entry point (merges with the machine's home.nix
-      # via the list-typed sharedModules option) — carries the OBS baseline seed,
-      # $HOME media assets, and the seeded (auth-disabled) OBS-websocket config.
-      # See ./home.nix.
-      home-manager.sharedModules = [./home.nix];
-
-      # OBS stream keys for The Company, Inc. — one Proton Pass item ("Stream
-      # Keys", vault Cala-M-OS) with a field per destination. Owned by the
-      # session user: obs-stream-keys runs as hub from obs-kiosk, right before
-      # each OBS launch, and writes them into the live OBS config (see
-      # calamoose.obs.streamKeys in modules/obs-studio). The committed baseline
-      # carries NO keys — service.json's key is blank and obs-config-snapshot
-      # blanks it again.
-      # No restartUnits on these three, on purpose: OBS reads keys only at
-      # launch, and a secrets refresh must never restart OBS — it may be live.
-      # Rotating a key is therefore two steps:
-      #   1. update the field in Proton Pass, then get the file refreshed: `sudo
-      #      proton-secrets refresh` (fetches now and prints the result per
-      #      secret), a rebuild switch, or a reboot;
-      #   2. quit OBS and relaunch it via obs-kiosk / the bar pill, off air.
-      # A reboot alone is NOT a reliable way to do both: the OBS that autostarts
-      # with the session is keyed from the files as they are at that moment —
-      # normally the cached, old key — and the fetch replaces them only once the
-      # network is up. Quit + relaunch OBS after it has.
+      # Stream keys for The Company, Inc. — one Proton Pass item ("Stream
+      # Keys", vault Cala-M-OS) with a field per destination. Declared here for
+      # the mailroom module that lands next; until it does, nothing on this
+      # host reads them. They are fetched, cached and reported like every
+      # other secret all the same, so a wrong field shows up before there is a
+      # consumer to miss it.
+      # Root-only — the facade's default, root:root 0400 — and no owner: a
+      # LoadCredential consumer needs none (multichat and chat-cards run as
+      # DynamicUser units and take their root-only secrets that way). No
+      # restartUnits either, while there is no unit to name.
       # A missing, renamed or blank field costs only that one key: the fetch
       # keeps its previous (or cached) value, installs the other secrets and
       # reports the secret by name — in `sudo proton-secrets doctor` (the
@@ -188,80 +138,45 @@ in {
           vaultName = "Cala-M-OS";
           itemTitle = "Stream Keys";
           inherit field;
-          owner = cala-m-os.globals.defaultUser;
         };
       in {
         "stream-key-twitch" = streamKey "Twitch";
         "stream-key-youtube" = streamKey "YouTube";
         "stream-key-youtube-vertical" = streamKey "YouTube Vertical";
       };
-
-      # Where each key goes. Existing outputs keep their name/settings and just
-      # get the key; one is created only when none qualifies.
-      #   Twitch           main output (service.json, Twitch + Enhanced
-      #                    Broadcasting, which also carries the vertical canvas)
-      #   YouTube          every youtube.com Aitum Multistream output of this
-      #                    profile (a primary + backup pair shares the key)
-      #   YouTube Vertical the Aitum Vertical output NAMED "YouTube Vertical"
-      #                    (a youtube.com output already holding this exact
-      #                    key is renamed to that once). That plugin's config
-      #                    is GLOBAL (it also shows under TheCalamoose), so
-      #                    another channel's YouTube output there is left alone.
-      calamoose.obs.streamKeys = let
-        youtube = "rtmps://a.rtmps.youtube.com:443/live2";
-      in {
-        twitch = {
-          target = "service";
-          profile = "The_Company_Inc";
-          match = "twitch";
-          keyFile = config.calamoose.secrets."stream-key-twitch".path;
-        };
-        youtube = {
-          target = "multistream";
-          profile = "The_Company_Inc";
-          match = "youtube.com";
-          create = {
-            name = "YouTube";
-            server = youtube;
-          };
-          keyFile = config.calamoose.secrets."stream-key-youtube".path;
-        };
-        youtube-vertical = {
-          target = "vertical";
-          match = "youtube.com";
-          create = {
-            name = "YouTube Vertical";
-            server = youtube;
-          };
-          keyFile = config.calamoose.secrets."stream-key-youtube-vertical".path;
-        };
-      };
-    });
+    };
 
   networking.hostName = "broadcast";
 
-  # Physical power button: don't let logind hard-poweroff a box that's likely
-  # mid-stream. Hyprland binds XF86PowerOff to obs-safe-poweroff instead (see
-  # ./home.nix), which lets OBS exit cleanly — saving config and clearing its
-  # crash sentinel — before systemctl poweroff, so the next launch skips the
-  # "did not shut down properly / Safe Mode?" dialog. A ≥5s hold stays a forced
-  # poweroff for when the session itself is wedged (Hyprland dead = nothing
-  # listening for the short press).
-  services.logind.settings.Login = {
-    HandlePowerKey = "ignore";
-    HandlePowerKeyLongPress = "poweroff";
-  };
+  # ---- Headless -----------------------------------------------------------
+  # Core turns greetd on for every host (hosts/_core/configuration.nix). There
+  # is no session to start here, so it is forced off — the switch `ai`,
+  # `webhost` and modules/tci-server use. Without it the system boots to
+  # multi-user.target and tty1 carries a plain getty: a login prompt, no
+  # autologin. That prompt is the local way in when the network is not there;
+  # hub logs in with the password typed at install (wiki: ISO-Installer — the
+  # admin_password secret only seeds an account that is created while the
+  # file is readable). Day to day the box is reached over SSH with hub's keys
+  # (users/streamer/public_keys), and sudo asks for no password.
+  services.greetd.enable = lib.mkForce false;
 
-  # Always on. This box is also the mailroom server (modules/mailroom): a phone
-  # may publish to it at any hour and its services have to be there when it
-  # does, so the machine must never put itself to sleep. Nothing in the
-  # streamer profile asks for sleep today (no hypridle), but that is an
-  # absence, not a guarantee: one `systemctl suspend`, a desktop applet or a
-  # future module would take the ingest down until someone walked to the box.
-  # sleep.conf makes every sleep verb fail instead. Coming back by itself
-  # after a power cut is the other half and lives outside this repo: the
-  # firmware's "restore on AC power loss" must be set to power on (after that,
-  # greetd auto-logs in and everything below starts unattended).
+  # Physical power button: a short press is a clean shutdown. logind handles
+  # the key itself and has systemd power the machine off, so every service
+  # gets its stop signal and the filesystems are unmounted before the power
+  # goes. That is logind's default; it is written down because this box
+  # depends on it — there is no session and no screen to shut it down from,
+  # and somebody standing in front of it has only this button.
+  services.logind.settings.Login.HandlePowerKey = "poweroff";
+
+  # Always on. The services here have to be there whenever a stream starts
+  # and nobody sits at this box to wake it, so the machine must never put
+  # itself to sleep. Nothing in the streamer profile asks for sleep, but that
+  # is an absence, not a guarantee: one `systemctl suspend` or a future module
+  # would take the services down until someone walked to the box. sleep.conf
+  # makes every sleep verb fail instead. Coming back by itself after a power
+  # cut is the other half and lives outside this repo: the firmware's
+  # "restore on AC power loss" must be set to power on (after that every
+  # service here starts unattended; none of them waits for a login).
   systemd.sleep.settings.Sleep = {
     AllowSuspend = "no";
     AllowHibernation = "no";
@@ -283,20 +198,20 @@ in {
     persistent = false;
   };
 
-  # OBS records to the RAID0 scratch array (disko mounts it at /recordings,
-  # root-owned by default) — the seeded profile's FilePath/RecFilePath point
-  # there, so the session user must be able to write it. tmpfiles covers the
-  # nofail case: if the array is absent the dir still exists on root and
-  # recordings degrade to the boot disk instead of erroring out. (Files written
-  # there while the array is away get shadowed under the mountpoint when it
-  # returns — still eating boot-disk space; unmount to reclaim.)
+  # The RAID0 scratch array (disko mounts it at /recordings, root-owned by
+  # default) is the default user's to write, and group-writable for `users`.
+  # tmpfiles covers the nofail case: if the array is absent the dir still
+  # exists on root and a writer degrades to the boot disk instead of erroring
+  # out. (Files written there while the array is away get shadowed under the
+  # mountpoint when it returns — still eating boot-disk space; unmount to
+  # reclaim.)
   systemd.tmpfiles.rules = [
     "d /recordings 0775 ${cala-m-os.globals.defaultUser} users -"
   ];
   # tmpfiles alone races the mount: nofail mounts are NOT ordered before
   # local-fs.target (which tmpfiles-setup runs after), so on a boot where
-  # tmpfiles wins, the root-owned xfs mounts OVER the chowned stub and OBS
-  # gets EACCES — bites exactly once, on the first boots after a fresh
+  # tmpfiles wins, the root-owned xfs mounts OVER the chowned stub and a
+  # writer gets EACCES — bites exactly once, on the first boots after a fresh
   # format, until a chown lands on the mounted fs (xfs persists it). Bind a
   # oneshot to the mount so ownership is asserted whenever it actually mounts.
   systemd.services.recordings-owner = {
@@ -308,41 +223,6 @@ in {
       chmod 0775 /recordings
     '';
   };
-
-  # Pin Hyprland's (Aquamarine) primary renderer to the AMD GPU and include the
-  # DisplayLink (evdi) card. WHY THIS WORKS ON AMD BUT NOT THE OLD ARC: Aquamarine
-  # special-cases evdi as a NON-multigpu output (primary={}, rendererRequired=false,
-  # PR#25) and hands it the primary renderer's buffer directly — it never does the
-  # LINEAR blit it reserves for multigpu outputs. So the primary GPU must NATIVELY
-  # produce evdi-importable (LINEAR-friendly) scanout buffers. AMD does (this is the
-  # exact path that works on devbox's AMD iGPU); a discrete Intel Arc / NVIDIA hands
-  # evdi a tiled buffer its LINEAR-only plane rejects → black, and NO AQ_* env var
-  # changes that (AQ_NO_MODIFIERS / AQ_MGPU_NO_EXPLICIT only touch the multigpu path
-  # evdi never enters — they were removed as no-op confounders). NVIDIA (RTX PRO
-  # 4000) is intentionally excluded from the device list so it stays free for OBS
-  # NVENC, which uses PRIME render-offload independent of the compositor's DRM set.
-  # Stable symlinks: amd-card from the amd-gpu module, displaylink-card from the
-  # teleprompter module. This lives in the session env (not Hyprland's in-config
-  # `env=`) because Aquamarine reads AQ_DRM_DEVICES once at DRM-backend start and
-  # does not re-apply config `env=` on reload. Order matters: amd-card first = primary.
-  environment.sessionVariables.AQ_DRM_DEVICES = "/dev/dri/amd-card:/dev/dri/displaylink-card";
-
-  # Audio for OBS streaming and monitoring
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    wireplumber.enable = true;
-    jack.enable = true;
-  };
-
-  services.pulseaudio.enable = false;
-
-  boot.extraModprobeConfig = ''
-    options snd_usb_audio vid=0x1235 pid=0x8218 device_setup=1
-  '';
 
   # Boot visibility + recoverability. A stage-1 failure on this box once showed
   # only a bare "no usable init" — the console was silenced (loglevel=0, from
@@ -361,17 +241,4 @@ in {
   boot.initrd.systemd.emergencyAccess = true;
   boot.loader.timeout = 5; # core defaults 0 (hidden menu)
   boot.loader.systemd-boot.configurationLimit = 10; # bounded, keeps fallback gens
-
-  # With amdgpu no longer force-loaded in the initrd (see machines/modules/
-  # amd-gpu), the card is probed by udev in stage-2 — so greetd can win the race
-  # against /dev/dri/amd-card appearing, Hyprland then finds no usable
-  # AQ_DRM_DEVICES primary and exits, and greetd (Restart=on-success upstream)
-  # would die once and leave a permanently black seat. Two-layer guard:
-  # wait briefly for the card before launching, and always restart the seat so
-  # any lost race (or Hyprland crash) is a 2s blink instead of a dead console.
-  services.greetd.settings.default_session.command = lib.mkForce "sh -c 'for _ in $(seq 100); do [ -e /dev/dri/amd-card ] && break; sleep 0.1; done; start-hyprland &> /dev/null'";
-  systemd.services.greetd.serviceConfig = {
-    Restart = lib.mkForce "always";
-    RestartSec = 2;
-  };
 }

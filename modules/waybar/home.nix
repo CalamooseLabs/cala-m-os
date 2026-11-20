@@ -258,8 +258,8 @@ in {
     default = "powermenu";
     description = ''
       Command the bar's power pill runs on click. The default expects the rofi
-      module's powermenu on PATH; hosts without rofi point it elsewhere (the
-      broadcast box uses obs-safe-poweroff so a click is a safe shutdown).
+      module's powermenu on PATH; hosts without rofi point it elsewhere (a
+      streaming box can use obs-safe-poweroff so a click is a safe shutdown).
     '';
   };
 
@@ -293,8 +293,8 @@ in {
     });
     default = [];
     description = ''
-      Quick-launch buttons rendered as pills left of the clock — e.g. the
-      broadcast box's relaunch-OBS / Companion / Multichat buttons.
+      Quick-launch buttons rendered as pills left of the clock — e.g.
+      relaunch-OBS / Companion / Multichat buttons on a streaming box.
     '';
   };
 

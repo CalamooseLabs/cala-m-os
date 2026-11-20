@@ -381,7 +381,7 @@ in {
           # (and on capture-source teardown). Disabling explicit sync for OBS only
           # is the upstream-attested fix (obsproject/obs-studio#11022, #12007).
           # Vendor-agnostic and OBS-scoped, so it's safe across devbox (Hyprland,
-          # plain obs) and broadcast (the obs-kiosk PRIME wrapper execs finalPackage).
+          # plain obs) and an obs-kiosk launch (which execs finalPackage).
           obsPkgs.symlinkJoin {
             name = "obs-studio-nosync";
             paths = [baseObs];

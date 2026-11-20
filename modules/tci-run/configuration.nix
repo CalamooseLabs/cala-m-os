@@ -5,11 +5,11 @@
 #   Clones a pristine PrismLauncher template (built from the   #
 #   Cobblemon Initiative .mrpack) into a fresh, uniquely       #
 #   named instance ("TCI - Run #N") on demand. A tiny HTTP     #
-#   listener lets the broadcast box's Bitfocus Companion fire  #
-#   it from a Stream Deck button after a death. Create-only:   #
-#   the new instance pops into Prism's live-watched list and   #
-#   you double-click it. If a tile doesn't appear, press F5    #
-#   in Prism to force a rescan.                                #
+#   listener lets a Bitfocus Companion on the studio subnet    #
+#   fire it from a Stream Deck button after a death.           #
+#   Create-only: the new instance pops into Prism's            #
+#   live-watched list and you double-click it. If a tile       #
+#   doesn't appear, press F5 in Prism to force a rescan.       #
 #                                                              #
 #   Relies on Prism's local metadata cache holding the pack's  #
 #   Minecraft + Fabric components (guaranteed once the pack    #

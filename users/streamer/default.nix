@@ -1,24 +1,20 @@
 {isDefaultUser, ...}: let
   uuid = baseNameOf (toString ./.);
 
+  # Headless (broadcast): the three stream services plus what an SSH or
+  # console login uses. No compositor, terminal, browser or theming modules;
+  # that host has no session to show them in.
   modules = [
+    # Needed although the host's backend is the online one: modules/secrets
+    # (always imported by _core) defines age.* under a false mkIf, and that
+    # still requires the options to exist. Nothing is installed by it there.
     "agenix"
     "bash"
-    "bitfocus-companion"
     "chatcards"
-    "chromium"
     "cobblemon-overlay"
-    "fonts"
-    "ghostty"
-    "hyprland"
     "moosefetch"
     "multichat"
-    "obs-studio"
     "openssh"
-    "stylix"
-    "teleprompter"
-    "waybar"
-    "yazi"
   ];
 in {
   inherit modules;

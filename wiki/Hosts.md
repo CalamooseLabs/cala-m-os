@@ -18,7 +18,7 @@ These are the machines declared in `flake.nix` under `nixosConfigurations` (buil
 | `homelab` | `MS-02` | Workstation | `server` | on | MicroVM host (media + torrent + security guests); ACME certs; receives `self`; see [[Disaster Recovery|Disaster-Recovery]] |
 | `simple` | `FW13-12XXP` | Workstation | `basic` | on | Framework 13 (12th-gen Intel); imports `_core/configuration.nix` directly |
 | `battlestation` | `B850-MAX` | Workstation | `gamer` | on | Ryzen 9800X3D + RTX 5090; PipeWire |
-| `broadcast` | `TRX50-SAGE` | Workstation | `streamer` | online | Threadripper; OBS kiosk via greetd+cage; RTX Pro 4000 |
+| `broadcast` | `TRX50-SAGE` | Workstation | `streamer` | online | Threadripper + RTX Pro 4000; headless services host (multichat, chat-cards, cobblemon-overlay), greetd off |
 | `openreturn` | `Small` | **VM** | `server` | **off** | MicroVM guest for the OpenReturn service |
 | `livedata` | `MS-01` | Workstation | `server` | **off** | MicroVM host (openreturn + quorumcall guests) |
 | `ai` | `ZIMA` | Workstation | `developer` | on | Headless TTY dev box (impermanent root); runs background Claude sessions |
@@ -93,7 +93,7 @@ The `!initialInstallMode` guard keeps VMs out of the minimal first install pass.
 
 ### Special host behaviors worth knowing
 
-- **`broadcast`** runs OBS as a kiosk: greetd's session launches `cage -s -- obs` instead of a shell.
+- **`broadcast`** is headless: `services.greetd.enable = lib.mkForce false` (as on `ai` and `webhost`), so it boots to `multi-user.target` with a login prompt on tty1 and no autologin. multichat, chat-cards and cobblemon-overlay run as system services; sleep is disabled (`systemd.sleep.settings`), and a short press of the power button is logind's clean poweroff.
 - **`lanstation`** forces `networking.networkmanager.enable = lib.mkForce false` (static interface config) — overriding the `non-vm.nix` default.
 - **`simple`** bypasses `_core/default.nix` and imports `_core/configuration.nix` directly (so no install-mode switch).
 - **`devbox`** sets `documentation.enable = lib.mkForce true`.

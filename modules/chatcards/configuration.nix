@@ -2,11 +2,11 @@
 # multichat's giveaway loop (see modules/multichat).
 #
 # Attached to the broadcast (stream) host only (streamer user profile). A producer
-# scans each revealed card from a phone at /scan; OBS reads /overlay over
-# loopback. Both API keys come from the secrets facade — on hosts running a
-# backend (broadcast → online/Proton Pass) they are wired to the *File options,
-# which the upstream module stages via systemd LoadCredential. Provision them in
-# Proton Pass — see modules/chatcards/secrets/default.nix.
+# scans each revealed card from a phone at /scan; /overlay is the page an OBS
+# browser source shows. Both API keys come from the secrets facade — on hosts
+# running a backend (broadcast → online/Proton Pass) they are wired to the *File
+# options, which the upstream module stages via systemd LoadCredential.
+# Provision them in Proton Pass — see modules/chatcards/secrets/default.nix.
 #
 # With LoadCredential the unit cannot start until those files exist, and nothing
 # here orders it onto the secrets fetch: each key names chat-cards.service in its
@@ -35,8 +35,8 @@
   services.chat-cards = {
     enable = true;
 
-    # LAN-reachable so the producer's phone can hit /scan; OBS reads /overlay
-    # over loopback on the same box.
+    # LAN-reachable so the producer's phone can hit /scan and an OBS on the
+    # LAN can load /overlay; one on this box reads it over loopback.
     address = "0.0.0.0";
     port = 8787;
     openFirewall = true;

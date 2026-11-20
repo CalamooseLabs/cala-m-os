@@ -13,8 +13,8 @@
     ./disko.nix
 
     # Modules
-    ../../modules/nvidia-gpu/configuration.nix # RTX PRO 4000 Blackwell — OBS/NVENC
-    ../../modules/amd-gpu/configuration.nix # AMD workstation GPU — Hyprland display + DisplayLink teleprompter render
+    ../../modules/nvidia-gpu/configuration.nix # RTX PRO 4000 Blackwell
+    ../../modules/amd-gpu/configuration.nix # AMD RX 9060 — the card the JetKVM is plugged into
   ];
 
   # NixOS owns all three NVMe drives here (boot + RAID0 recordings, see disko.nix),
@@ -32,8 +32,4 @@
   # 6.18, so the earlier stable pin here was a red herring; run
   # linuxPackages_latest like the other workstations.
   boot.kernelPackages = pkgs.linuxPackages_latest;
-
-  # NOTE: the OBS + Bitfocus Companion baselines used to live here; they now live
-  # with the `broadcast` HOST (hosts/broadcast/{obs,companion} + ./home.nix), since
-  # they are role/brand identity rather than TRX50-SAGE hardware.
 }

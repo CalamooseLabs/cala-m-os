@@ -88,7 +88,7 @@ Flake outputs (built with `nixos-rebuild ... --flake .#<host>`):
 | `ephemeral` | ZIMA | `void` | Throwaway impermanent test box (niri) |
 | `battlestation` | B850-MAX | `gamer` | Gaming desktop + stream source |
 | `lanstation` | B760-PLUS | `gamer` | RTX 5090 host; VFIO — splits into a GPU-passthrough gaming VM (WIP) |
-| `broadcast` | TRX50-SAGE | `streamer` | OBS live-stream box; RTX Pro 4000 + AMD GPU (evdi teleprompter); `enableSecrets="online"` (Proton Pass: admin_password + multichat youtube-api-key) |
+| `broadcast` | TRX50-SAGE | `streamer` | Headless, always-on stream services host: multichat (:8081), chat-cards (:8787) and cobblemon-overlay (:8082, battlestation only) as system services; no display manager or desktop session (greetd forced off, `multi-user.target`, login prompt on tty1), managed over SSH; RTX Pro 4000 + AMD GPU; `enableSecrets="online"` (Proton Pass: admin_password, the multichat and chat-cards secrets, and three stream keys that nothing reads yet) with the sealed secrets cache |
 | `homelab` | MS-02 | `server` | Homelab VM host (media + torrent + security); owns agenix secrets + cala-certs |
 | `livedata` | MS-01 | `server` | Client app/VM host (openreturn + quorumcall); `enableSecrets=false` |
 | `openreturn` | Small VM | `server` | OpenReturn app; standalone output *and* a `livedata` guest |

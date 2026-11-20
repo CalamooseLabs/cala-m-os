@@ -92,7 +92,7 @@ the nixpkgs version, not the label).
 | `devbox` | Framework 16 (AMD, RTX 5070) | `debugger` | `2.1.0` | Main daily laptop — dev, printing, OBS |
 | `battlestation` | AM5 desktop (B850) | `gamer` | `2.0.0` | Gaming desktop — also the game/stream source |
 | `lanstation` | Intel desktop (B760) | `gamer` | `1.0.0` | LAN gaming station — RTX 5090 host; splits into a GPU-passthrough gaming VM (WIP) |
-| `broadcast` | Threadripper (TRX50-SAGE) | `streamer` | `1.0.0-beta` | Live stream box — RTX Pro 4000, Blackmagic Quad HDMI, OBS |
+| `broadcast` | Threadripper (TRX50-SAGE) | `streamer` | `1.5.0` | Headless stream services host — multichat, chat-cards, cobblemon-overlay; RTX Pro 4000 |
 | `homelab` | Minisforum MS-02 | `server` | `2.1.0-beta` | Homelab VM host — runs `media` + `torrent` + `security` |
 | `livedata` | Minisforum MS-01 | `server` | `1.0.0-alpha` | App/VM host — runs `openreturn` + `quorumcall` |
 | `simple` | Framework 13 | `basic` | `1.0.0` | Minimal desktop setup |
