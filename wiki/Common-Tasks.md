@@ -131,7 +131,7 @@ Details: [[MicroVMs|MicroVMs]].
 calamoose.enableSecrets = false;   # build without Yubikey-decryptable secrets
 ```
 
-Default is `true`. Currently `false` on `broadcast`, `openreturn`, `quorumcall`, `livedata`.
+Default is `true`. Currently `false` on `openreturn`, `quorumcall`, `livedata`; `broadcast`, `ai` and `tci-cloud` set `"online"` instead (Proton Pass, see [[Secrets & Security|Secrets-and-Security]]).
 
 ---
 

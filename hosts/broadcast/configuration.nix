@@ -118,10 +118,11 @@ in {
       # host reads them. They are fetched, cached and reported like every
       # other secret all the same, so a wrong field shows up before there is a
       # consumer to miss it.
-      # Root-only — the facade's default, root:root 0400 — and no owner: a
-      # LoadCredential consumer needs none (multichat and chat-cards run as
-      # DynamicUser units and take their root-only secrets that way). No
-      # restartUnits either, while there is no unit to name.
+      # Root-only: no owner, group or mode is set, so the facade passes none on
+      # and the backend's default applies, root:root 0400. A LoadCredential
+      # consumer needs no more (multichat and chat-cards run as DynamicUser
+      # units and take their root-only secrets that way). No restartUnits
+      # either, while there is no unit to name.
       # A missing, renamed or blank field costs only that one key: the fetch
       # keeps its previous (or cached) value, installs the other secrets and
       # reports the secret by name — in `sudo proton-secrets doctor` (the
