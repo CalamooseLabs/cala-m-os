@@ -30,11 +30,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792973464,
-        "narHash": "sha256-KqMZsAxB5JEr8eDk3bgJXEWFmRTKsC8I60Qy5Ja5Xn4=",
+        "lastModified": 1795139536,
+        "narHash": "sha256-jYyIbwHJq6yRVvhDtWNuhuGFKaXishXPANvIBBsr0dQ=",
         "owner": "CalamooseLabs",
         "repo": "antlers",
-        "rev": "8ad4e7d7cbcb2c1e14d8795008f95d0115f68ba5",
+        "rev": "c84e3db08a5b963cdfb39f77820b8128611e295d",
         "type": "github"
       },
       "original": {
@@ -872,11 +872,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791989663,
-        "narHash": "sha256-Dz7mdE7Iy+FDunZtUVwnbiC5KTRfDxWlNXKsSyZQQ+0=",
+        "lastModified": 1795139546,
+        "narHash": "sha256-0J8wQ3sAVyxpOWokt3bxYtl5F7n/5a3LzkerHOxDewk=",
         "owner": "The-Company-Inc-Nerds",
         "repo": "multichat",
-        "rev": "3480b6c9ad995fac6ecc04a0606f90fc8b9acaa9",
+        "rev": "39151d850b08dc5c5c385662c6fd36c1b25135cf",
         "type": "github"
       },
       "original": {

@@ -159,8 +159,9 @@
       fi
 
       # Returns 0 on success, 1 for errors worth retrying (network), 2 for ones
-      # retrying can't fix. pass-cli is called directly, not via proton-secrets,
-      # whose session probe (`pass-cli test`) is gone from pass-cli 2.2.4+.
+      # retrying can't fix. pass-cli is called directly, not via proton-secrets:
+      # this wants a throwaway session of its own (above), pass-cli's own words
+      # for a rejected PAT, and exactly one field.
       attempt() {
         local value line err
         rm -rf "$PROTON_PASS_SESSION_DIR"

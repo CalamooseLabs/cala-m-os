@@ -16,7 +16,10 @@
   # rebuild the guests would see an empty share until restarted. Share a stable
   # directory instead, refreshed in place (same inode) after every decrypt:
   # by an activation snippet on rebuilds and by vm-hostsecrets-sync after the
-  # post-boot agenix-rerun. The Proton backend writes a stable directory already.
+  # post-boot agenix-rerun. The Proton backend is shared as it is, which is only
+  # right while no online host runs guests: /run/proton-secrets is a generation
+  # symlink of the same kind (repointed whenever a secret's content changed), so
+  # the first online VM host needs this stable copy too.
   secretsBackend = config.calamoose._secretsBackend;
   useStableCopy = secretsBackend == "agenix" && config.age.secrets != {};
   hostSecretsDir = "/run/vm-hostsecrets";

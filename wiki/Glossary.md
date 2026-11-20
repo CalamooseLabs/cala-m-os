@@ -26,9 +26,13 @@ Project-specific terms and where to read more.
 | **`mkSystem`** | The `flake.nix` helper that builds a host. See [[Flake & Inputs|Flake-and-Inputs]] |
 | **`specialArgs`** | Module arguments injected at the flake level: `inputs`, `cala-m-os`, `initialInstallMode` |
 | **`initialInstallMode`** | Boolean from `INITIAL_INSTALL_MODE` env var; selects the minimal first-pass install config. See [[ISO & Installer|ISO-Installer]] |
-| **`calamoose.enableSecrets`** | Per-host option (in the `calamoose.*` namespace) gating all agenix secret loading (default `true`; `false` on broadcast, livedata, openreturn, quorumcall) |
-| **agenix** | Age-based secret manager and the only secret backend; secrets encrypted to Yubikey recipients. See [[Secrets & Security|Secrets-and-Security]] |
-| **`/run/agenix`** | Where decrypted secrets land on a host |
+| **`calamoose.enableSecrets`** | Per-host option (in the `calamoose.*` namespace) selecting the secrets backend: `"offline"` / `true` = agenix (the default), `"online"` = Proton Pass (broadcast, ai, tci-cloud), `false` = no secrets. See [[Secrets & Security|Secrets-and-Security]] |
+| **agenix** | Age-based secret manager, the offline (default) secret backend; secrets encrypted to Yubikey recipients. See [[Secrets & Security|Secrets-and-Security]] |
+| **`/run/agenix`** | Where decrypted secrets land on an agenix host |
+| **online backend** | Secrets fetched from Proton Pass at run time by antlers' `services.proton-secrets`: a retrying unit at boot (`proton-secrets-fetch.service`), the activation at every switch, optionally a sealed cache restored before services start. See [[Secrets & Security|Secrets-and-Security]] |
+| **`/run/proton-secrets`** | Where fetched secrets land on an online host (a ramfs generation; `/run/proton-secrets.status` says how the last fetch went) |
+| **PAT** | Proton Pass Personal Access Token. On an online host, `/var/lib/proton-pass-cli/pat` is what the fetch logs in from; it expires (one year at most). On install media it fetches the GitHub token. See [[ISO & Installer|ISO-Installer]] |
+| **`proton-secrets`** | The CLI on online hosts: `doctor` (diagnose), `repair` (re-create the session from the PAT), `refresh` (fetch now), `login`, `status`, `resolve` |
 | **`/run/hostsecrets`** | Where a MicroVM guest sees the host's `/run/agenix` (read-only virtiofs) |
 | **MicroVM** | The only VM type used (microvm.nix/QEMU). See [[MicroVMs|MicroVMs]] |
 | **`cala-vm-manager`** | The service that turns a declarative `vms` set into MicroVM guests |

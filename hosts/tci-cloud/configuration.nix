@@ -95,8 +95,8 @@
 #       --target-host hub@5.78.214.170 --sudo
 #   or on the box, whose root nix.conf !includes the token Proton Pass hands it
 #   (/run/proton-secrets/nix-github-token, fetched at boot by
-#   proton-secrets-selfheal; `journalctl -u proton-secrets-selfheal` if a private
-#   fetch is refused):
+#   proton-secrets-fetch.service, which retries until Proton answers; `sudo
+#   proton-secrets doctor` if a private fetch is refused):
 #     ssh hub@5.78.214.170 sudo nixos-rebuild switch \
 #       --flake github:CalamooseLabs/cala-m-os#tci-cloud
 #   A switch that changes the warden's config restarts the warden (new caps
@@ -387,8 +387,8 @@ in {
   calamoose.version = "2.0.0";
 
   # No YubiKey on a Cloud VM, so secrets come from Proton Pass (online) instead
-  # of agenix. Consumed here, both fetched at activation with the session the
-  # installer-seeded PAT mints (patFile below):
+  # of agenix. Consumed here, both fetched by the boot-time unit and at every
+  # switch, with the session the installer-seeded PAT mints (patFile below):
   #   users/_core/secrets/default.nix -> admin_password (hub's hashedPasswordFile)
   #   modules/nix-github-token (below) -> nix-github-token (the access-tokens line
   #                                      for the private cobblemon-initiative input)
@@ -424,17 +424,20 @@ in {
       # ignored on online hosts, so it is not set.
       programs.nix-github-token.enable = true;
 
-      # Re-mint the Proton session from the installer-seeded PAT (the `ai` /
-      # `broadcast` pattern): the fs-provider session is bound to the machine-id,
-      # so a session minted during the install (in nixos-anywhere's or the ISO's
-      # chroot) does not match this box's own; a PAT is machine-id-independent.
+      # The installer-seeded PAT (the `ai` / `broadcast` pattern): the file the
+      # fetch logs in from whenever the box has no usable Proton session.
       # nixos-anywhere --extra-files (header step 3), build-pat-iso and
-      # cala-reinstall all land it at this path; once minted the session persists
-      # (persistent root) and later boots never touch the PAT. No PAT and no
-      # session: `sudo proton-secrets login` on the box. Rides this lib.optional
-      # block because the proton-secrets module is absent in the minimal
-      # INITIAL_INSTALL_MODE pass (a plain mkIf would still fail "option does not
-      # exist" there).
+      # cala-reinstall all land it at this path. A session made from it persists
+      # (persistent root) and is reused; the PAT is needed again whenever the
+      # session has to be made anew — Proton dropped it, or a power cut left its
+      # files unusable — and having it is what lets the fetch replace such a
+      # session by itself. (The session is not bound to the machine-id.) A PAT
+      # expires, one year at most: once Proton rejects it the fetch unit stays
+      # failed (exit 78) until this file holds a valid one; `sudo proton-secrets
+      # doctor` says which it is. No PAT and no session: `sudo proton-secrets
+      # login` on the box. Rides this lib.optional block because the
+      # proton-secrets module is absent in the minimal INITIAL_INSTALL_MODE pass
+      # (a plain mkIf would still fail "option does not exist" there).
       services.proton-secrets.patFile = "/var/lib/proton-pass-cli/pat";
 
       # ---- Hetzner Cloud networking (machines/modules/hetzner-cloud) ----------

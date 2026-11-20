@@ -16,24 +16,38 @@
   machine_type = "Workstation";
   machine_uuid = "TRX50-SAGE";
 in {
-  # Online (Proton Pass) secrets — fetched at activation. Consumed here:
+  # Online (Proton Pass) secrets: fetched by a boot-time unit and at every
+  # switch, and (cache.enable below) restored from a sealed last-known-good
+  # copy before any service starts. modules/secrets has the whole boot story.
+  # Consumed here:
   #   users/_core/secrets/default.nix -> admin_password (hub hashedPasswordFile)
-  #   modules/multichat/secrets       -> youtube-api-key (multichat apiKeyFile)
+  #   modules/multichat/secrets       -> youtube-api-key, twitch-client-secret,
+  #                                      twitch-refresh-* (multichat)
+  #   modules/chatcards/secrets       -> cardsight-api-key, pricecharting-token
+  #                                      (chat-cards)
   #   this file (below)               -> stream-key-* (OBS stream keys)
   calamoose.enableSecrets = "online";
   calamoose.version = "1.5.0";
   calamoose.style = "thecompany"; # The Company, Inc. brand theme
 
-  # Re-mint a Proton session from the installer-seeded PAT (same pattern as `ai`).
-  # The fs-provider session is bound to the machine-id, so the session the ISO
-  # installer copies onto the target won't match this box's freshly generated
-  # machine-id — the activation preflight then reports "no usable Proton Pass
-  # session" on first boot. A PAT is machine-id-independent, so this re-establishes
-  # a valid session; the installer seeds it to /var/lib/proton-pass-cli/pat when you
-  # supply a PAT at the prompt (or pre-provision one with `flash-iso --with-pat`).
-  # Once minted, the session persists here (persistent root), so later boots reuse
-  # it and never touch the PAT again. (Without a seeded PAT you can still bootstrap
-  # by hand on the running host: `sudo proton-secrets login`.)
+  # The installer-seeded PAT (same pattern as `ai`): the file the fetch logs in
+  # from whenever this box has no usable Proton session. The installer seeds it
+  # to /var/lib/proton-pass-cli/pat when you supply a PAT at the prompt (or
+  # pre-provision one with `flash-iso --with-pat`). A session made from it
+  # persists here (persistent root) and is reused, but not for ever: Proton can
+  # drop it, and a power cut shortly after a login can leave its files unusable.
+  # The fetch then logs in from this file again, and having it is also what
+  # lets the fetch throw such a session away by itself; with no PAT that repair
+  # is by hand (`sudo proton-secrets repair --force`, then `sudo proton-secrets
+  # login`). The session is NOT tied to the machine — it is bound to neither the
+  # machine-id nor the hostname — so nothing needs redoing when those change.
+  # A PAT expires (one year at most) and can be deleted from the account. When
+  # Proton rejects it the fetch unit stops with exit 78 and stays failed —
+  # `systemctl status proton-secrets-fetch`, and `sudo proton-secrets doctor`
+  # says pat-invalid — until this file holds a valid one and `sudo
+  # proton-secrets repair`, then `sudo proton-secrets refresh`, have been run.
+  # Give this box a long-lived PAT of its own, not whatever the install media
+  # carried (wiki: ISO-Installer).
   #
   # Applied as a conditional import — NOT
   # `services.proton-secrets.patFile = mkIf (!initialInstallMode) …` — because the
@@ -51,18 +65,35 @@ in {
     ]
     ++ lib.optional (!initialInstallMode) ({config, ...}: {
       services.proton-secrets.patFile = "/var/lib/proton-pass-cli/pat";
-      # Defense-in-depth for the gen2 "Switch root target contains no usable init"
-      # hang. Root cause: the Proton fetch ran in the no-network INITRD activation
-      # (systemd stage-1 runs `activate` inside the initrd) and its `exit 1` aborted
-      # `activate` before the `etc` snippet set up /etc on the new root — so
-      # switch-root found no /sbin/init. The STRUCTURAL fix is in antlers: the
-      # proton-secrets activation snippets now skip the initrd entirely
-      # (IN_NIXOS_SYSTEMD_STAGE1), so the boot can no longer abort regardless of
-      # this setting. failClosed=false is kept because it additionally makes any
-      # live/self-heal fetch failure non-fatal (best-effort secrets on this box).
-      # The real fetch happens post-network via the proton-secrets-selfheal oneshot
-      # (see modules/secrets), which re-runs activation once network-online.
+
+      # Secrets are best-effort on this box: a switch that could not read every
+      # secret installs what it did read, keeps the previous value of the rest,
+      # warns and goes through (the default would change nothing and fail the
+      # switch), so a Proton hiccup or one bad vault field never blocks a
+      # deploy. The boot-time unit behaves this way whatever is set here, and
+      # reports through its exit code instead. This is not what keeps the boot
+      # safe: the fetch is skipped inside the initrd whatever it is set to (the
+      # gen2 "no usable init" hang, see machines/workstations/TRX50-SAGE).
       services.proton-secrets.failClosed = false;
+
+      # Keep a sealed last-known-good copy of every secret on disk and restore
+      # it before any service starts (proton-secrets-restore.service). What it
+      # buys an always-on box: multichat, chat-cards and the stream keys are
+      # there at boot with the values last read from Proton, without waiting
+      # for it; an expired PAT, a broken session or a Proton or internet outage
+      # does not take the stream box down at its next power cycle; and a secret
+      # rotated in Proton Pass still arrives with the next successful fetch,
+      # which also restarts its consumers.
+      # What it costs, honestly: the secrets now exist at rest. They are
+      # encrypted by systemd-creds with the host key,
+      # /var/lib/systemd/credential.secret — which lives on the same
+      # unencrypted disk as the cache, and as the PAT. So this protects a copy
+      # of /var/lib/proton-secrets-cache that leaves the box on its own (a
+      # backup, a stray rsync); it does NOT protect a stolen disk — but a
+      # stolen disk gives the vault away regardless: the PAT on it opens it.
+      # A secret revoked in Proton also stays usable from the cache until the
+      # next successful fetch replaces it.
+      services.proton-secrets.cache.enable = true;
 
       # OBS + Bitfocus Companion baselines are owned by this HOST (broadcast =
       # streaming role + brand identity), not the TRX50-SAGE machine (hardware).
@@ -123,19 +154,28 @@ in {
       # each OBS launch, and writes them into the live OBS config (see
       # calamoose.obs.streamKeys in modules/obs-studio). The committed baseline
       # carries NO keys — service.json's key is blank and obs-config-snapshot
-      # blanks it again — so rotating a key is: update Proton Pass, rebuild
-      # switch (re-fetches), quit OBS, relaunch it via obs-kiosk / the bar pill.
-      # A reboot alone is NOT enough: the boot-time OBS launch runs before the
-      # post-network fetch, so it keeps the key already in the OBS config —
-      # quit + relaunch OBS once the box is up.
-      # CAUTION: a missing/renamed/blank field aborts the WHOLE proton-secrets
-      # fetch (all 9 broadcast secrets — multichat, chat-cards, admin_password
-      # too). failClosed=false means the switch still exits 0 (only a
-      # "[proton-secrets] … refresh failed" warning), and the damage lands on
-      # the NEXT boot. Check each of the three fields BEFORE switching, without
-      # printing it — the count must be > 1 (1 = blank field):
+      # blanks it again.
+      # No restartUnits on these three, on purpose: OBS reads keys only at
+      # launch, and a secrets refresh must never restart OBS — it may be live.
+      # Rotating a key is therefore two steps:
+      #   1. update the field in Proton Pass, then get the file refreshed: `sudo
+      #      proton-secrets refresh` (fetches now and prints the result per
+      #      secret), a rebuild switch, or a reboot;
+      #   2. quit OBS and relaunch it via obs-kiosk / the bar pill, off air.
+      # A reboot alone is NOT a reliable way to do both: the OBS that autostarts
+      # with the session is keyed from the files as they are at that moment —
+      # normally the cached, old key — and the fetch replaces them only once the
+      # network is up. Quit + relaunch OBS after it has.
+      # A missing, renamed or blank field costs only that one key: the fetch
+      # keeps its previous (or cached) value, installs the other secrets and
+      # reports the secret by name — in `sudo proton-secrets doctor` (the
+      # per-secret lines of the last fetch, each with its reason), in
+      # /run/proton-secrets.status, and in `systemctl status
+      # proton-secrets-fetch`, which is not active until every secret was read.
+      # A switch still exits 0 (failClosed above) with a warning. To check a
+      # field without printing it — the count should be well above 1; 0 or 1
+      # means it came back empty:
       #   sudo proton-secrets resolve --vault-name Cala-M-OS --item-title 'Stream Keys' --field 'YouTube Vertical' | wc -c
-      # and after switching: ls /run/proton-secrets/stream-key-*  (all three).
       calamoose.secrets = let
         streamKey = field: {
           vaultName = "Cala-M-OS";

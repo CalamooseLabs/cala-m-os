@@ -129,10 +129,14 @@ in {
         # Stream keys (calamoose.obs.streamKeys in modules/obs-studio, where a
         # host configures them): inject now, while OBS is still closed — OBS
         # reads keys only at launch and the Aitum plugins rewrite their config
-        # on exit. --wait covers a fresh box whose Proton secrets are still being
-        # fetched (they arrive after network-online); an injected key persists in
-        # the OBS config, so later boots don't wait. May delay the launch (≤90s,
-        # only until the boot-time fetch finishes); never prevents it.
+        # on exit. --wait covers a launch that comes before the key files: on an
+        # online (Proton Pass) host they arrive with the first run of
+        # proton-secrets-fetch.service, after network-online — unless the host
+        # keeps the sealed cache (broadcast does), which restores them before
+        # the session starts, so nothing waits. An injected key also persists
+        # in the OBS config, and only a target that was never keyed waits at
+        # all. May delay the launch (≤90s, and only until that first fetch run
+        # has ended); never prevents it.
         # Its messages go to the journal as well (`journalctl -t obs-stream-keys`):
         # the autostart path runs under a compositor whose output is discarded, so
         # "key written" / "missing — skipped" at boot would otherwise leave no

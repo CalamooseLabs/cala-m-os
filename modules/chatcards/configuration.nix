@@ -8,6 +8,15 @@
 # which the upstream module stages via systemd LoadCredential. Provision them in
 # Proton Pass — see modules/chatcards/secrets/default.nix.
 #
+# With LoadCredential the unit cannot start until those files exist, and nothing
+# here orders it onto the secrets fetch: each key names chat-cards.service in its
+# `restartUnits` (./secrets), so the fetch restarts it when a key changed or
+# first appears — also when it has landed in `failed` by then — and until then
+# the unit retries on its own restart policy. On broadcast the files are
+# restored from the sealed cache before any service starts, so it normally comes
+# up on its first start, with or without the internet. modules/secrets has the
+# reasoning.
+#
 # With no secrets backend there is no CardSight key, so the service runs in mock
 # mode (canned identify/pricing, nothing billed) rather than tripping the module's
 # assertion — which also makes the whole giveaway→pack→ledger loop rehearsable
@@ -22,14 +31,6 @@
     inputs.chatcards.nixosModules.default
     ./secrets
   ];
-
-  # chat-cards reads its key files via LoadCredential at service START, so on an
-  # online host — where they arrive only after the network is up (the initrd
-  # activation that would fetch them has no network; see modules/secrets) — it
-  # must be bounced once the self-heal has fetched them, or it stays keyless (and
-  # therefore failing every scan) until the next restart.
-  calamoose.secretsSelfHealRestartUnits =
-    lib.optionals config.calamoose._secretsEnabled ["chat-cards.service"];
 
   services.chat-cards = {
     enable = true;

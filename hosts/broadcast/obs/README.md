@@ -99,9 +99,11 @@ Bootstrap: on the box that already has your real OBS setup, run
   the live config when obs-kiosk launches OBS, wired by
   `calamoose.obs.streamKeys` in `../configuration.nix`. It refuses to run while
   OBS is open: OBS reads keys only at launch, and both Aitum plugins rewrite
-  their config on exit. The boot-time launch usually runs before the
-  post-network Proton fetch, so it uses the key already in the OBS config. After
-  rotating a key, quit and relaunch OBS once the box is up. The two Aitum
+  their config on exit. The boot-time launch is keyed from the sealed cache
+  (the keys last read from Proton, restored before the session starts); the
+  fetch that would bring a rotated key only runs once the network is up. So
+  after rotating a key in Proton Pass: `sudo proton-secrets refresh` (a rebuild
+  switch or a reboot fetches too), then quit and relaunch OBS. The two Aitum
   configs (`plugin_config/{aitum-multistream,vertical-canvas}/config.json`) are
   not part of this baseline either. On a fresh box the vertical one only exists
   after OBS's first run, so YouTube Vertical gets its key from the second

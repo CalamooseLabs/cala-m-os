@@ -28,17 +28,23 @@
     (map (d: lib.removePrefix homePrefix d)
       (lib.unique (lib.attrValues config.programs.github-repo-puller.repos)));
 in {
-  # Online (Proton Pass) secrets — fetched at activation. This host consumes two
-  # secrets; fill their pass:// references before deploying (offline hosts ignore
-  # these, so it is safe to set them in the shared files):
+  # Online (Proton Pass) secrets — fetched at boot by proton-secrets-fetch.service
+  # and at every switch (modules/secrets has the boot story). This host consumes
+  # two secrets; fill their pass:// references before deploying (offline hosts
+  # ignore these, so it is safe to set them in the shared files):
   #   users/_core/secrets/default.nix -> admin_password (users.users.hub.hashedPasswordFile)
   #   modules/gpg/secrets/default.nix -> yubigpg.asc    (gpg-key-import keyFile)
   calamoose.enableSecrets = "online";
   calamoose.version = "0.0.1-alpha";
 
-  # Re-mint a Proton session from the installer-seeded PAT. Essential on a fresh
-  # first boot: the fs session copied off the ISO won't match this host's newly
-  # generated machine-id, and (being impermanent) the session dir starts empty.
+  # The installer-seeded PAT: the file the fetch logs in from whenever this host
+  # has no usable Proton session — a fresh install, or later a session Proton
+  # dropped or a power cut damaged — and what lets it replace such a session by
+  # itself. (The session is not bound to the machine-id or the hostname; the PAT
+  # is there because an unattended box cannot do the interactive login.) A PAT
+  # expires, one year at most: once Proton rejects it the fetch unit stays
+  # failed (exit 78) until this file holds a valid one — `sudo proton-secrets
+  # doctor` says which it is, wiki/Secrets-and-Security.md has the steps.
   #
   # Applied as a conditional import so the minimal-install pass — which does not
   # import the proton-secrets module — never carries this definition. A plain
