@@ -99,6 +99,14 @@
   # config (no db in the current or any prior release dir) — so an existing box's
   # live config, and Companion's own forward-migration, are never clobbered. Runs
   # as the service user; the store file is readable, install drops a writable copy.
+  #
+  # "${cfg.seedDb}" (here and in companion-restore) copies the baseline into its
+  # own store path WITH string context, so it is part of the system closure. The
+  # old "${toString cfg.seedDb}" was a context-less path into the flake source,
+  # which nothing roots: once the daily nix-gc had collected that source, the
+  # seed and the restore pointed at a file that no longer existed — and
+  # companion-restore stops Companion before it copies (the same bug
+  # modules/agenix fixed for its identities).
   seedScript = pkgs.writeShellScript "companion-seed-db" ''
     set -eu
     base="${cfg.configDir}"
@@ -107,7 +115,7 @@
       exit 0
     fi
     ${pkgs.coreutils}/bin/mkdir -p "$dbdir"
-    ${pkgs.coreutils}/bin/install -m 0600 "${toString cfg.seedDb}" "$dbdir/db.sqlite"
+    ${pkgs.coreutils}/bin/install -m 0600 "${cfg.seedDb}" "$dbdir/db.sqlite"
     echo "companion: seeded baseline db into $dbdir/db.sqlite"
   '';
 
@@ -118,7 +126,7 @@
     runtimeInputs = [pkgs.coreutils pkgs.systemd pkgs.gnutar];
     text = ''
       if [ "$(id -u)" -ne 0 ]; then echo "run with sudo: sudo companion-restore" >&2; exit 1; fi
-      src="${toString cfg.seedDb}"
+      src="${cfg.seedDb}"
       dbdir="${dbDir}"
 
       if [ "''${1:-}" != "--yes" ]; then

@@ -205,6 +205,37 @@ in {
     HandlePowerKeyLongPress = "poweroff";
   };
 
+  # Always on. This box is also the mailroom server (modules/mailroom): a phone
+  # may publish to it at any hour and its services have to be there when it
+  # does, so the machine must never put itself to sleep. Nothing in the
+  # streamer profile asks for sleep today (no hypridle), but that is an
+  # absence, not a guarantee: one `systemctl suspend`, a desktop applet or a
+  # future module would take the ingest down until someone walked to the box.
+  # sleep.conf makes every sleep verb fail instead. Coming back by itself
+  # after a power cut is the other half and lives outside this repo: the
+  # firmware's "restore on AC power loss" must be set to power on (after that,
+  # greetd auto-logs in and everything below starts unattended).
+  systemd.sleep.settings.Sleep = {
+    AllowSuspend = "no";
+    AllowHibernation = "no";
+    AllowHybridSleep = "no";
+    AllowSuspendThenHibernate = "no";
+  };
+
+  # Core's nix-gc is daily at midnight with Persistent=true and a three-day
+  # horizon, which is wrong for this box two ways. A missed midnight run fires
+  # at the next boot, i.e. while the box is being brought up for a stream. And
+  # a box that is rebuilt once in a while loses every older generation after
+  # three days, while their boot-menu entries stay (configurationLimit below)
+  # and point at inits that are gone, so the known-good generation this host
+  # keeps the menu visible for is not there when it is needed.
+  # Weekly, off air, a month of generations, never caught up at boot.
+  nix.gc = {
+    dates = lib.mkForce "Mon 05:00";
+    options = lib.mkForce "--delete-older-than 30d";
+    persistent = false;
+  };
+
   # OBS records to the RAID0 scratch array (disko mounts it at /recordings,
   # root-owned by default) — the seeded profile's FilePath/RecFilePath point
   # there, so the session user must be able to write it. tmpfiles covers the
