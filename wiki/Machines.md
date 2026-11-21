@@ -40,7 +40,7 @@ flowchart TD
 | `MS-01`       | Minisforum MS-01                                                  | —          | —          | —                                       | no                |
 | `MS-02`       | Minisforum MS-02 + RTX Pro 4000                                   | nvidia-gpu | —          | —                                       | no                |
 | `TCI-LOCAL`   | The Cobblemon Initiative LAN box (`tci-private`)                   | —          | —          | —                                       | no                |
-| `TRX50-SAGE`  | ASUS Pro WS TRX50-Sage, Threadripper 7960X, RTX 5090 + RX 9060 XT | nvidia-gpu | —          | —                                       | no                |
+| `TRX50-SAGE`  | ASUS Pro WS TRX50-Sage, Threadripper 7960X, RTX PRO 4000 Blackwell + RX 9060 (`broadcast`) | nvidia-gpu, amd-gpu | — | —                         | no                |
 | `ZIMA`        | Zima Board 2                                                      | —          | —          | —                                       | no                |
 
 Most pin `boot.kernelPackages = pkgs.linuxPackages_latest` (the two FW13 Intel laptops rely on their nixos-hardware modules instead).
@@ -60,21 +60,22 @@ hardware.nvidia.prime = {
 
 The reusable `nvidia-gpu` module installs the driver; the **bus IDs stay in the machine file** because they're hardware-specific. This is the project's recurring pattern: generic module + hardware-local override.
 
-### Example: VFIO passthrough host (`TRX50-SAGE`)
+### Example: two GPUs, one job each (`TRX50-SAGE`)
 
 ```nix
-boot.kernelParams = [
-  "amd_iommu=on" "iommu=pt"
-  "vfio-pci.ids=1002:7590,1002:ab40,1002:7480,1002:ab30"  # RX 9060 XT + W7600 (GPU+audio)
-];
+imports = [ ./hardware-configuration.nix ./disko.nix
+            ../../modules/nvidia-gpu/configuration.nix   # RTX PRO 4000 Blackwell
+            ../../modules/amd-gpu/configuration.nix ];   # RX 9060: the console (the KVM is plugged into it)
+calamoose.install.wipeAllDisks = true;                   # NixOS owns all three NVMe drives
+boot.kernelPackages = pkgs.linuxPackages_latest;
 ```
 
-The secondary GPUs are bound to `vfio-pci` for guest passthrough while the NVIDIA card serves the host.
+The machine file only imports the two shared GPU modules. What `broadcast` needs of the NVIDIA card beyond them — `nvidiaPersistenced`, no `videoAcceleration`, no `nvidiaSettings`, no 32-bit GL, as mailroom's GPU guide asks — is set in the **host** file, so the shared module stays as the other NVIDIA machines use it.
 
 ### disko layouts
 
 - **B850-MAX / FW16-AMD-AI** — single NVMe, GPT: 500M ESP (vfat `/boot`) · ext4 `/` (`end = "-70G"`) · 10M random-encrypted swap · remaining swap (hibernation `resumeDevice = true`).
-- **TRX50-SAGE** — three disks: `nvme2` boot (512M ESP + ext4 `/`); `nvme0` + `nvme1` each an mdraid member → **RAID 0 xfs `recordings`** at `/recordings` (`noatime,nodiratime`) for high-throughput VM storage.
+- **TRX50-SAGE** — three disks, each pinned by `/dev/disk/by-id`: the boot drive (1G ESP + ext4 `/`); two more, each an mdraid member → **RAID 0 xfs `recordings`** at `/recordings` (`noatime,nodiratime,nofail`, 30 s device timeout), the scratch array for mailroom's ISO recordings on `broadcast`. `nofail` keeps a missing member from blocking the boot.
 
 ### Per-machine module overrides
 
@@ -94,7 +95,7 @@ Imported by **workstation `configuration.nix` files**, not by hosts. All of them
 | Module       | Enables                                                                                                                                                                                                                                    |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `nvidia-gpu` | `hardware.graphics` (+32-bit), `hardware.nvidia` (open kernel module, modesetting, stable driver, `nvidiaSettings`), `videoDrivers=["nvidia"]`, nvidia kernel modules, `nvidia-drm.modeset=1`. **PRIME is _not_ here** — it's per-machine. |
-| `amd-gpu`    | `hardware.graphics` (+32-bit), `videoDrivers=["amdgpu"]`, redistributable firmware, early-KMS `amdgpu` initrd module                                                                                                                       |
+| `amd-gpu`    | `hardware.graphics` (+32-bit), `videoDrivers=["amdgpu"]`, redistributable firmware, stable `/dev/dri/amd-card` / `amd-render` udev symlinks. `amdgpu` is deliberately **not** forced into the initrd (no early KMS) |
 | `intel-gpu`  | `intel-media-driver`, `intel-compute-runtime`, `intel-gpu-tools`                                                                                                                                                                           |
 | `amd-cpu`    | Blacklists `k10temp`, loads `zenpower` for better Zen sensors (only `B850-MAX` uses it)                                                                                                                                                    |
 | `hetzner-cloud` | Hetzner Cloud guest: `qemu-guest` profile; systemd-networkd for Hetzner's routed (Layer 3) network — IPv4 over DHCP until `calamoose.hetznerCloud.ipv4Address` pins a static /32 with the on-link gateway `172.31.1.1`; IPv6 only via `ipv6Address` (Hetzner configures IPv6 statically; no router advertisements are documented or observed; gateway `fe80::1`); Hetzner's resolvers + systemd-resolved; QEMU guest agent for the Console's password reset; visible boot menu, no Plymouth (web console). Used by `HETZNER-CLOUD` and `HETZNER-CAX`; the hosts set the addresses. |

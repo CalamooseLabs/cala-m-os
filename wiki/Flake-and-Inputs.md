@@ -23,6 +23,7 @@
 | `antlers` | `github:CalamooseLabs/antlers` | In-house flake (repo root, default branch): the Nix-enabled `zed-editor` and `flash-iso` for the dev shell, the antlers NixOS/home-manager modules, and the `flakes/<name>/package.nix` files the installer image builds (`install-cala-m-os`, `cala-installer`, `proton-secrets`) relative to it |
 | `openreturn` | `github:CalamooseLabs/OpenReturn` | In-house app/service (consumed by the `openreturn` module) |
 | `quorumcall` | `github:CalamooseLabs/QuorumCall` | In-house app/service (consumed by the `quorumcall` module) |
+| `mailroom` | `github:CalamooseLabs/mailroom` | In-house stream relay with its own OBS (`services.mailroom`; consumed by the `mailroom` module on `broadcast`). **Private** repo: the host enables `modules/nix-github-token`. Follows `nixpkgs`, so mailroomd is built on the same pin as the NVIDIA driver and OBS it runs next to; MediaMTX, the one package the main pin is too old for, comes from `nixpkgs-beta` (`calamoose.beta.packages` in the module) |
 
 Most inputs `follows = nixpkgs` to avoid duplicate nixpkgs evaluations. `antlers` is pinned at the repository root: `iso/tools.nix` reads `inputs.antlers + "/flakes/scripts/package.nix"` and `iso/installer.nix` reads `…/flakes/proton-secrets/package.nix`, which only resolves because the input is the whole repo.
 

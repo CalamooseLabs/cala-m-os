@@ -844,6 +844,26 @@
         "type": "github"
       }
     },
+    "mailroom": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1795244094,
+        "narHash": "sha256-j0uO6fy7mX/D2noz/EockAkqIZ/muqZanSX/Grmd4k8=",
+        "owner": "CalamooseLabs",
+        "repo": "mailroom",
+        "rev": "e017c8cd1bf4ded456f90d30d920b2769a9e15c2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "CalamooseLabs",
+        "repo": "mailroom",
+        "type": "github"
+      }
+    },
     "microvm": {
       "inputs": {
         "nixpkgs": [
@@ -1082,6 +1102,7 @@
         "home-manager": "home-manager_2",
         "hyprland": "hyprland",
         "hyprland-plugins": "hyprland-plugins",
+        "mailroom": "mailroom",
         "microvm": "microvm",
         "multichat": "multichat",
         "nixos-hardware": "nixos-hardware",

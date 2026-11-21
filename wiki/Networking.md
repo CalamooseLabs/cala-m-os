@@ -29,6 +29,21 @@ The **studio** subnet **`10.2.10.0/26`** holds the live-broadcast rig:
 | `10.2.10.2` | broadcast |
 | `10.2.10.3` | battlestation |
 
+`broadcast` is run from this subnet (it is headless), so its services listen on the LAN and open their own ports in the host firewall; what reaches them from outside the subnet is the router's business:
+
+| Port | Service |
+|------|---------|
+| `22/tcp` | sshd |
+| `1935/tcp` | mailroom: RTMP ingest |
+| `8890/udp` | mailroom: SRT ingest |
+| `8740/tcp` | mailroom: dashboard and API (token) |
+| `4455/tcp` | mailroom: obs-websocket gateway for remote-control apps (plain `ws://`, password) |
+| `8081/tcp` | multichat |
+| `8787/tcp` | chat-cards |
+| `8082/tcp` | cobblemon-overlay — from `battlestation` (`10.2.10.3`) only |
+
+Everything else of mailroom's stays on loopback, except OBS's own websocket (`4460/tcp`), which listens on every interface and is deliberately not opened.
+
 A separate **`10.1.10.0/24`** segment is used by the `livedata` guests (`openreturn` `10.1.10.41`, `quorumcall` `10.1.10.42`, gateway `10.1.10.1`) via per-guest `ipOverride`/`gatewayOverride`/`dns`.
 
 ---
