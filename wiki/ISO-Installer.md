@@ -30,7 +30,7 @@ The ISO is also the flake's `packages.default`. `flash-iso` is documented in [[F
 
 ## Proton PAT on the media → private flake inputs (`iso/calapat.nix`)
 
-Hosts with a **private** `github:` input (tci-cloud's `cobblemon-initiative`, battlestation/devbox's `bookkeeper`) can't be evaluated without a GitHub `access-tokens` line, and that line lives in Proton Pass (vault `Cala-M-OS`, item `nix-github-token`, field `secret`, the same item [[Secrets & Security|Secrets-and-Security]] uses). When the install media carries a Proton Pass PAT, the live installer logs in with it and fetches the line:
+Hosts with a **private** `github:` input (tci-cloud's `cobblemon-initiative`, battlestation/devbox's `bookkeeper`, broadcast's `mailroom`) can't be evaluated without a GitHub `access-tokens` line, and that line lives in Proton Pass (vault `Cala-M-OS`, item `nix-github-token`, field `secret`, the same item [[Secrets & Security|Secrets-and-Security]] uses). When the install media carries a Proton Pass PAT, the live installer logs in with it and fetches the line:
 
 | PAT source | Written by | Use |
 |---|---|---|
@@ -48,6 +48,8 @@ Hosts with a **private** `github:` input (tci-cloud's `cobblemon-initiative`, ba
 
 Anyone holding the ISO can use the PAT, and Proton PAT grants are per vault. So the ISO should carry a PAT that can only read the token: put a copy of `nix-github-token` in its own vault, create a plain (non-agent) PAT with a short expiry, and grant it **viewer on that vault only**. The vault has to be granted as a whole; `--vault-name` lookups don't see item-only grants.
 
+That advice is for media that install hosts **without** online secrets. For an online-secrets host (`broadcast`, `ai`, `tci-cloud`) the PAT on the media does not stay on the media: see [The media PAT becomes the host's PAT](#the-media-pat-becomes-the-hosts-pat) before building.
+
 ```bash
 nix develop -c build-pat-iso --vault Cala-M-OS-Install       # prompts for the PAT; writes ~/cala-m-os-installer-pat.iso (0600)
 nix develop -c build-pat-iso --vault Cala-M-OS-Install --pat-file ~/pat --out /path/on/share/installer.iso
@@ -58,7 +60,27 @@ nix develop -c build-pat-iso --vault Cala-M-OS-Install --pat-file ~/pat --out /p
 
 Before building, it does what the installer will do: it logs in with the PAT in a throwaway session and reads the token item, so a bad PAT or a missing grant fails here rather than on the cloud box. It then builds the normal ISO and uses xorriso to add `/calapat/` (root-only) to a **copy** outside the nix store, replaying the original El Torito/MBR/GPT boot records. Before writing the output it verifies the PAT reads back and the boot setup matches the original. It refuses to write inside the flake.
 
-> Revoke the PAT after the install, and delete the ISO from the share and from the provider. Exception: if you install an online-secrets host from this ISO, cala-installer seeds the PAT onto it, so revoking it would cut that host off.
+> Revoke the PAT after the install, and delete the ISO from the share and from the provider. Exception: if you install an online-secrets host from this ISO, cala-installer seeds the PAT onto it, so revoking it would cut that host off (next section).
+
+### The media PAT becomes the host's PAT
+
+When an online-secrets host is installed, the installer copies the PAT it was given (typed at its prompt, or found on the media: `build-pat-iso`, `flash-iso --with-pat`, a kexec'd `cala-reinstall`) to `/var/lib/proton-pass-cli/pat` on the target. From then on that file is the host's **permanent** credential (`services.proton-secrets.patFile`): the secrets fetch logs in from it whenever the host has no usable Proton session. Two things follow.
+
+- **A short-expiry media PAT does not stay harmless on such a host.** A PAT always expires (the choices are `1d`, `1w`, `1m`, `3m`, `6m`, `1y`; one year is the most there is). The fetch only presents the PAT when it has to log in, so the day it lapses can pass unnoticed. The first login after that fails, and from then on the host cannot fetch its secrets until someone replaces the file.
+- **The media PAT's grants are the host's grants.** A PAT that can only read a one-item install vault cannot fetch the host's own secrets from `Cala-M-OS`.
+
+So give every online host **a PAT of its own**: created for that host, with the longest expiry (`pass-cli personal-access-token create --name <host> --expiration 1y`), granted the `Cala-M-OS` vault, its expiry date written down where you will see it. Either install with that PAT in the first place (type it at the installer's prompt; for tci-cloud it is the file `--extra-files` seeds), or install from whatever media you have and replace the file afterwards:
+
+```bash
+# on the host, as root
+(umask 077; cat >/var/lib/proton-pass-cli/pat)    # paste the PAT, Enter, Ctrl-D
+proton-secrets repair                              # reset the session, log in from the new PAT
+proton-secrets refresh                             # fetch now and show the result per secret
+```
+
+Only then revoke the media PAT. Renew the host's PAT before it lapses (`pass-cli personal-access-token renew --personal-access-token-name <host> --expiration 1y`, or create a new one) from a `pass-cli` that is logged in to the account itself, not from the host, whose login is a PAT login; if that leaves you with a new token, it goes into the same file the same way. `cala-reinstall` carries the host's own PAT across a reinstall, so a host that has a good one keeps it.
+
+**How a rejected PAT shows up** on the host: `proton-secrets-fetch.service` ends **failed** with exit 78 and is not retried (`systemctl status proton-secrets-fetch`); its journal says Proton rejected the personal access token and names the file; `sudo proton-secrets doctor` prints `error: pat-invalid`. On `broadcast` the services keep the values they have, across a reboot too (the sealed cache); on `ai` and `tci-cloud` the secrets are gone after the next boot. The fix is the three commands above. The full runbook is in [[Secrets & Security|Secrets-and-Security]].
 
 ### Hetzner Cloud (tci-cloud, webhost)
 

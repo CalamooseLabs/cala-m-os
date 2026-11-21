@@ -1,9 +1,10 @@
-# Shared obs-kiosk launcher — deduplicated from modules/niri and users/streamer
-# (both imported the same script). Runs OBS on the AMD GPU (same renderer as the
-# compositor, so the preview + capture sources import cleanly) and lets NVENC
-# encode on the NVIDIA card via libnvidia-encode. This is welded to that studio
-# box (hardcoded /run/opengl-driver path), so it stays in the config rather than
-# moving to the portable antlers collection.
+# Shared obs-kiosk launcher — imported by modules/niri; a profile that runs OBS
+# under another compositor imports it the same way. Runs OBS on the AMD GPU
+# (same renderer as the compositor, so the preview + capture sources import
+# cleanly) and lets NVENC encode on the NVIDIA card via libnvidia-encode. This
+# is welded to a studio box with that pair of GPUs (hardcoded
+# /run/opengl-driver path), so it stays in the config rather than moving to the
+# portable antlers collection.
 #
 # Usage:
 #   obs-kiosk            launch OBS here (the autostart path: a graphical session
@@ -129,12 +130,21 @@ in {
         # Stream keys (calamoose.obs.streamKeys in modules/obs-studio, where a
         # host configures them): inject now, while OBS is still closed — OBS
         # reads keys only at launch and the Aitum plugins rewrite their config
-        # on exit. --wait covers a fresh box whose Proton secrets are still being
-        # fetched (they arrive after network-online); an injected key persists in
-        # the OBS config, so later boots don't wait. May delay the launch (≤90s,
-        # only until the boot-time fetch finishes); never prevents it.
+        # on exit. --wait covers a launch that comes before the key files: on an
+        # online (Proton Pass) host they arrive once proton-secrets-fetch.service
+        # has read them, after network-online — unless the host keeps the sealed
+        # cache (services.proton-secrets.cache.enable), which restores them
+        # before the session starts, so nothing waits. An injected key also
+        # persists in the OBS config, and only a target that was never keyed
+        # waits at all. May delay the launch (≤90s, and only while that unit is
+        # still running or retrying: not once it has read everything or stopped
+        # on an error a human has to fix); never prevents it.
+        # Its messages go to the journal as well (`journalctl -t obs-stream-keys`):
+        # the autostart path runs under a compositor whose output is discarded, so
+        # "key written" / "missing — skipped" at boot would otherwise leave no
+        # trace of whether this launch was keyed. logger -s still echoes them here.
         if command -v obs-stream-keys >/dev/null 2>&1; then
-          obs-stream-keys --wait 90 || true
+          obs-stream-keys --wait 90 2>&1 | ${pkgs.util-linux}/bin/logger -s -t obs-stream-keys || true
           # Another launcher may have started OBS during that wait — don't
           # stack a second instance (and its "already running" modal) on it.
           if pgrep -u "$(id -un)" ${obsProc} >/dev/null 2>&1; then
@@ -156,7 +166,15 @@ in {
         # on LD_LIBRARY_PATH above), independent of which GPU OBS renders on — so
         # hardware encoding stays available while the preview works.
 
-        exec ${config.programs.obs-studio.finalPackage}/bin/obs
+        # --multi: OBS decides "already running" by counting its abstract unix
+        # sockets, which every OBS on the machine shares regardless of user. A
+        # host that also runs an OBS as a system service (such as mailroom's
+        # obs engine) would therefore greet every launch here with the
+        # modal "OBS is already running" dialog — default button Cancel — and
+        # the unattended autostart would sit there until someone clicked.
+        # --multi skips that question. A real second instance for THIS user is
+        # still prevented, by the pgrep -u guards above and in --hypr.
+        exec ${config.programs.obs-studio.finalPackage}/bin/obs --multi
       '')
 
       # Power off, but let OBS die with dignity first. On OBS 32+, SIGTERM is a
@@ -169,14 +187,21 @@ in {
       # not match obs-ffmpeg-mux (TERM would kill a replay-buffer save mid-write
       # and truncate the file — OBS stops it cleanly itself), obs-nvenc-test,
       # or the CEF helpers.
-      # Wired to the physical power button on broadcast (logind ignores the key,
-      # Hyprland bindl execs this) and to the waybar power pill there.
+      # Scoped to the session user's OBS (-u; SUDO_USER when run through sudo):
+      # an OBS owned by a system service (the mailroom obs engine) is systemd's
+      # to stop. Unscoped, the wait loop below kept matching that other OBS —
+      # which this user cannot signal — and every press of the power button
+      # hung for the full 20s before powering off.
+      # A host wires it to the physical power button by having logind ignore
+      # the key and binding XF86PowerOff to it in the compositor (Hyprland:
+      # bindl), and to the waybar power pill with cala.waybar.powerCommand.
       (pkgs.writeShellScriptBin "obs-safe-poweroff" ''
-        if pkill -TERM ${obsProc} 2>/dev/null; then
+        user="''${SUDO_USER:-$(id -un)}"
+        if pkill -TERM -u "$user" ${obsProc} 2>/dev/null; then
           # up to 20s for stream/recording teardown + config write; if OBS is
           # truly hung we power off anyway and let systemd do the killing
           for _ in $(seq 1 40); do
-            pgrep ${obsProc} >/dev/null 2>&1 || break
+            pgrep -u "$user" ${obsProc} >/dev/null 2>&1 || break
             sleep 0.5
           done
         fi

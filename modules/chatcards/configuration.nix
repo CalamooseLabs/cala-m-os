@@ -2,11 +2,20 @@
 # multichat's giveaway loop (see modules/multichat).
 #
 # Attached to the broadcast (stream) host only (streamer user profile). A producer
-# scans each revealed card from a phone at /scan; OBS reads /overlay over
-# loopback. Both API keys come from the secrets facade — on hosts running a
-# backend (broadcast → online/Proton Pass) they are wired to the *File options,
-# which the upstream module stages via systemd LoadCredential. Provision them in
-# Proton Pass — see modules/chatcards/secrets/default.nix.
+# scans each revealed card from a phone at /scan; /overlay is the page an OBS
+# browser source shows. Both API keys come from the secrets facade — on hosts
+# running a backend (broadcast → online/Proton Pass) they are wired to the *File
+# options, which the upstream module stages via systemd LoadCredential.
+# Provision them in Proton Pass — see modules/chatcards/secrets/default.nix.
+#
+# With LoadCredential the unit cannot start until those files exist, and nothing
+# here orders it onto the secrets fetch: each key names chat-cards.service in its
+# `restartUnits` (./secrets), so the fetch restarts it when a key changed or
+# first appears — also when it has landed in `failed` by then — and until then
+# the unit retries on its own restart policy. On broadcast the files are
+# restored from the sealed cache before any service starts, so the unit normally
+# finds them on its first start, with or without the internet. modules/secrets
+# has the reasoning.
 #
 # With no secrets backend there is no CardSight key, so the service runs in mock
 # mode (canned identify/pricing, nothing billed) rather than tripping the module's
@@ -23,19 +32,11 @@
     ./secrets
   ];
 
-  # chat-cards reads its key files via LoadCredential at service START, so on an
-  # online host — where they arrive only after the network is up (the initrd
-  # activation that would fetch them has no network; see modules/secrets) — it
-  # must be bounced once the self-heal has fetched them, or it stays keyless (and
-  # therefore failing every scan) until the next restart.
-  calamoose.secretsSelfHealRestartUnits =
-    lib.optionals config.calamoose._secretsEnabled ["chat-cards.service"];
-
   services.chat-cards = {
     enable = true;
 
-    # LAN-reachable so the producer's phone can hit /scan; OBS reads /overlay
-    # over loopback on the same box.
+    # LAN-reachable so the producer's phone can hit /scan and an OBS on the
+    # LAN can load /overlay; one on this box reads it over loopback.
     address = "0.0.0.0";
     port = 8787;
     openFirewall = true;

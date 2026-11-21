@@ -86,7 +86,7 @@ Each `name` resolves to `modules/<name>/{configuration,home}.nix`. No paths, no 
 `virt-manager`
 
 ### First-party flake-input wrappers
-`openreturn` (`services.openreturn`), `quorumcall` (`services.quorumcall`), `openswitcher`, `lanserver`
+`openreturn` (`services.openreturn`), `quorumcall` (`services.quorumcall`), `openswitcher`, `lanserver`, `multichat` (`services.multichat`: the Twitch + YouTube chat viewer, alerts and giveaway), `chatcards` (`services.chat-cards`: the pack-opening scanner and overlay), `cobblemon-overlay` (`services.cobblemon-overlay`, from antlers), `mailroom` (`services.mailroom`: the stream relay with its own OBS — the dashboard on the LAN, ingest passwords and dashboard token generated on the box, the sibling services' pages as OBS overlays, multichat's go-live webhook, and the `mailroom-ctl` operator command; private input)
 
 ---
 

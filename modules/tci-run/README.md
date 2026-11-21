@@ -1,9 +1,10 @@
 # tci-run — Stream Deck "new hardcore run" spawner
 
-Press a Stream Deck button on **broadcast** → a fresh PrismLauncher instance named
-`TCI - Run #N` appears in Prism's list on **battlestation**, cloned from the Cobblemon
-Initiative `.mrpack` (fresh pristine world every time). Built for resetting a
-hardcore + Nuzlocke run after a death without touching the gaming PC.
+Press a Stream Deck button (a Bitfocus Companion on the studio subnet) → a fresh
+PrismLauncher instance named `TCI - Run #N` appears in Prism's list on
+**battlestation**, cloned from the Cobblemon Initiative `.mrpack` (fresh pristine
+world every time). Built for resetting a hardcore + Nuzlocke run after a death
+without touching the gaming PC.
 
 ## How it works
 
@@ -31,18 +32,18 @@ hardcore + Nuzlocke run after a death without touching the gaming PC.
    drop the file there, or repoint `services.tci-run.mrpackPath` at a synced `dist/`).
 3. Build the template: `tci-run sync` (or just let the first button press build it).
    Verify: `tci-run status` → `template_ready: true`.
-4. **Companion button** (on broadcast): add a *Generic HTTP Request* action:
+4. **Companion button** (a Companion on the studio subnet): add a *Generic HTTP
+   Request* action:
    - Method `GET`, URL `http://10.2.10.3:8778/new-run` (no body).
    - If a token is set, append `?token=<secret>` or add an `X-Token` header.
    - Optional second button → `http://10.2.10.3:8778/status` for a health check.
    Test it once with the rig idle so a live death isn't the first real fire.
-   The committed Companion baseline (`hosts/broadcast/companion/`) already has
-   this as the `http` connection's prefix. It's a literal, not read from
+   The address is a literal in the Companion config, not read from
    `settings.nix`, so re-point it there if battlestation's IP changes.
-5. **Routing:** broadcast (`10.2.10.2`) and battlestation (`10.2.10.3`) are both on
-   the studio subnet `10.2.10.0/26`, so the button reaches the listener intra-subnet —
-   no router rule needed. The listener's firewall is already scoped to accept the
-   studio subnet (`allowedSources`).
+5. **Routing:** battlestation (`10.2.10.3`) is on the studio subnet
+   `10.2.10.0/26`, and so must the Companion be: the button then reaches the
+   listener intra-subnet — no router rule needed. The listener's firewall is
+   already scoped to accept the studio subnet (`allowedSources`).
 
 ## Sync + reset (optional)
 

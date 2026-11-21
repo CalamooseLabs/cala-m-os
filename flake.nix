@@ -103,6 +103,27 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Mailroom — the stream relay with a real OBS on the server
+    # (services.mailroom: MediaMTX ingest, the dashboard, OBS on the NVIDIA
+    # card), consumed by broadcast through modules/mailroom. PRIVATE repo — the
+    # consuming host enables modules/nix-github-token so Nix can fetch it (same
+    # PAT wiring as bookkeeper and cobblemon-initiative below).
+    # follows = "nixpkgs" is the house convention and here it carries weight:
+    # mailroom's module builds everything that touches the GPU (OBS and its
+    # plugin, the unit's X server, the launcher) from the HOST's package set
+    # anyway, and takes only mailroomd and srtla from its own flake. Following
+    # keeps those two on the same nixpkgs as the NVIDIA driver they sit next
+    # to, and keeps a third nixpkgs (mailroom's own lock) out of the closure.
+    # The price: mailroomd runs on this pin's Python, not the snapshot it was
+    # released with — its build runs its whole unit-test suite, so a pin it
+    # does not work on fails the build, never the stream. The one thing this
+    # pin is too old for is MediaMTX, and that comes from nixpkgs-beta
+    # (modules/mailroom).
+    mailroom = {
+      url = "github:CalamooseLabs/mailroom";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # The Company, Inc. bookkeeping app (books CLI + services.calamoose-books).
     # PRIVATE repo — hosts that consume it (devbox) must hand Nix a
     # GitHub PAT at fetch time (see modules/nix-github-token + each host's wiring).

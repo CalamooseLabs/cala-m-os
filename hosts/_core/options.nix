@@ -103,7 +103,8 @@ in {
     description = ''
       Secrets backend for this host. `false` disables secrets; `true`/"offline"
       uses agenix (Yubikey/age, offline); "online" uses the Proton Pass CLI
-      (services.proton-secrets) to fetch secrets at activation.
+      (services.proton-secrets) to fetch secrets at boot, once the network is
+      up, and at every switch (see modules/secrets/configuration.nix).
     '';
   };
 

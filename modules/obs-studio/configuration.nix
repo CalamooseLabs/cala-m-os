@@ -46,6 +46,15 @@
     })
     streamKeysCfg));
 
+  # Where the online (Proton Pass) backend reports each fetch — what
+  # `obs-stream-keys --wait` reads to know that waiting longer is pointless (see
+  # fetchDone in the script). Empty on the offline (agenix) backend and on a
+  # host with no secrets, where nothing reports that.
+  fetchStatusFile =
+    lib.optionalString
+    (config.calamoose._secretsBackend == "proton-pass" && config.calamoose.secrets != {})
+    config.services.proton-secrets.statusFile;
+
   obsStreamKeys = pkgs.writeShellApplication {
     name = "obs-stream-keys";
     runtimeInputs = [pkgs.coreutils pkgs.gawk pkgs.jq pkgs.procps];
@@ -155,10 +164,38 @@
 
       # Non-blank check that never turns the key into a shell word (xtrace-safe).
       hasKey() { jq -Rse 'test("\\S")' "$1" >/dev/null 2>&1; }
-      # The boot-time Proton fetch (modules/secrets) is over once its self-heal
-      # unit has finished — waiting any longer cannot produce a key.
+      # --wait gives up on a key file once nothing is left that would deliver
+      # it for this launch. Only the online (Proton Pass) backend has such a
+      # moment: proton-secrets-fetch.service (modules/secrets) has finished a
+      # run it will not repeat by itself — every secret read (exit 0, the unit
+      # is active), or an error only a human can fix (exit 78, the unit is
+      # failed). While the unit is still retrying a temporary failure (exit
+      # 75, e.g. Proton not reachable yet) its next run may bring the key, so
+      # the wait goes on, up to its deadline.
+      # The engine rewrites its status file at the END of every run:
+      #   mode "unit"      the unit finished a run; `retry` is true when that
+      #                    run ended with 75 and systemd will run it again.
+      #   mode "restore"   only the restore unit has run — whatever its state
+      #                    says ("failed" when the cache held nothing); the
+      #                    fetch is still to come.
+      #   mode "activate"  a switch's own fetch, which says nothing about the
+      #                    unit; on a host whose activation runs in stage 2 it
+      #                    is also what a boot writes, before there is a
+      #                    network.
+      #   no file          nothing has finished yet.
+      # Whenever the file does not settle it, the unit's own state does:
+      # active or failed is the end; not started, running, or waiting for its
+      # next try is not.
+      # On the offline (agenix) backend, and with no secrets at all, nothing
+      # reports "over": the wait runs until the file appears or the deadline
+      # passes.
+      fetchStatus=${lib.escapeShellArg fetchStatusFile}
       fetchDone() {
-        case "$(systemctl show -P ActiveState proton-secrets-selfheal.service 2>/dev/null)" in
+        if [ -z "$fetchStatus" ]; then return 1; fi
+        case "$(jq -r '"\(.mode) \(.retry)"' "$fetchStatus" 2>/dev/null)" in
+          "unit false") return 0 ;;
+        esac
+        case "$(systemctl show -P ActiveState proton-secrets-fetch.service 2>/dev/null)" in
           active | failed) return 0 ;;
           *) return 1 ;;
         esac
@@ -344,7 +381,7 @@ in {
           # (and on capture-source teardown). Disabling explicit sync for OBS only
           # is the upstream-attested fix (obsproject/obs-studio#11022, #12007).
           # Vendor-agnostic and OBS-scoped, so it's safe across devbox (Hyprland,
-          # plain obs) and broadcast (the obs-kiosk PRIME wrapper execs finalPackage).
+          # plain obs) and an obs-kiosk launch (which execs finalPackage).
           obsPkgs.symlinkJoin {
             name = "obs-studio-nosync";
             paths = [baseObs];

@@ -7,6 +7,15 @@
 # stages into the service via systemd LoadCredential (private tmpfs, mode 0400).
 # Provision the values in Proton Pass — see modules/multichat/secrets/default.nix.
 #
+# With LoadCredential the unit cannot start until those files exist, and nothing
+# here orders it onto the secrets fetch: each secret names multichat.service in
+# its `restartUnits` (./secrets), so the fetch restarts it when a value changed
+# or first appears, and until then the unit's own restart policy keeps trying
+# (no start limit, backing off to 30 s). On broadcast the files are restored
+# from the sealed cache before any service starts, so the unit normally finds
+# them on its first start, with or without the internet. modules/secrets has
+# the reasoning.
+#
 # When no secrets backend is active the files are left unset and the service
 # starts keyless; the YouTube key can then be supplied at runtime and persisted
 # under systemd's StateDirectory (/var/lib/multichat):
@@ -60,25 +69,32 @@ in {
     ./secrets
   ];
 
-  # multichat reads its secret files via LoadCredential at service START, so on an
-  # online host — where they arrive only after the network is up (the initrd
-  # activation that would fetch them has no network; see modules/secrets) — it
-  # must be bounced once the self-heal has fetched them, or it stays keyless until
-  # the next restart.
-  calamoose.secretsSelfHealRestartUnits =
-    lib.optionals config.calamoose._secretsEnabled ["multichat.service"];
-
   services.multichat = {
     enable = true;
 
     # LAN-reachable viewer (matches the project's settings.json) — e.g. an OBS
     # browser source or another machine on the network. The viewer is
     # unauthenticated, so keep this to a trusted LAN; tighten to "127.0.0.1" for
-    # a same-box OBS overlay only. The runtime-key control endpoint, /api/giveaway
-    # and /api/turn-report are loopback-only regardless of this setting.
+    # a same-box OBS overlay only. Which of the control endpoints answer the LAN
+    # is controlAccess, next.
     host = "0.0.0.0";
     port = 8081;
     openFirewall = true;
+
+    # The box runs headless: the giveaway is run from another device on the
+    # LAN, on the /giveaway page, so its Open / Close / Draw buttons (POST
+    # /api/giveaway) have to answer that device and not only this machine.
+    # "lan" admits private, link-local and CGNAT (100.64/10) source addresses
+    # and still refuses public ones. No control token on purpose: on this
+    # network whoever is on the LAN may run the show, and who is on the LAN is
+    # the UniFi router's business. It is an address check, not a login — a
+    # shared network would want controlTokenFile.
+    # Everything else that controls the service stays loopback-only whatever
+    # this says: the YouTube-key, fake-event, go-live hint, status and rewards
+    # endpoints (/api/youtube-key, /api/fake, /api/live, /api/status,
+    # /api/rewards). /api/turn-report is loopback-only too for as long as no
+    # callback token is set (chat-cards reports from this box).
+    controlAccess = "lan";
 
     twitch = {
       channels = [ids.channel];

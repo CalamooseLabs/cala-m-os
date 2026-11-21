@@ -19,7 +19,7 @@ A **user profile** is a directory under `users/` that declares which [[modules|M
 | `gamer` | Gaming persona (also used by VM guests) |
 | `mixer` | A/V persona (defined but currently unused by any host) |
 | `server` | Headless server persona (`homelab`, `livedata`, `openreturn`, `quorumcall`, `media`, `torrent`, `vault`) |
-| `streamer` | OBS/streaming persona (`broadcast`) |
+| `streamer` | Headless stream-box persona (`broadcast`): mailroom, multichat, chat-cards, cobblemon-overlay, plus btop, git and neovim for the SSH login (no `nh` / `rebuild-config`: rebuilds there are `sudo nixos-rebuild`) |
 | `developer` | Headless TTY dev persona (`ai`) |
 | `void` | Minimal persona (`ephemeral`) |
 

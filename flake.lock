@@ -30,11 +30,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792973464,
-        "narHash": "sha256-KqMZsAxB5JEr8eDk3bgJXEWFmRTKsC8I60Qy5Ja5Xn4=",
+        "lastModified": 1795146676,
+        "narHash": "sha256-bykCGLs4xgG3V3k7kpmU/B9c5KDQNOXzTgqy4P3WG54=",
         "owner": "CalamooseLabs",
         "repo": "antlers",
-        "rev": "8ad4e7d7cbcb2c1e14d8795008f95d0115f68ba5",
+        "rev": "19b8496b045d423ed9d17239959b39264c21824a",
         "type": "github"
       },
       "original": {
@@ -215,11 +215,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1787935810,
-        "narHash": "sha256-+NawX8aGqMXW4oo8Pb4IEbgf8Gt6ytqVfXYxtdJ98uk=",
+        "lastModified": 1795147647,
+        "narHash": "sha256-WclEDG/gZf2fz8H0+zCHv1Hm18D7QIS4EKbJQDfwu7g=",
         "owner": "The-Company-Inc-Nerds",
         "repo": "chat-cards",
-        "rev": "14563d641d94f9e22b927f5376d9170756839fe2",
+        "rev": "f452cbb6b1dd06136c699f0428557e0017587072",
         "type": "github"
       },
       "original": {
@@ -844,6 +844,26 @@
         "type": "github"
       }
     },
+    "mailroom": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1795257842,
+        "narHash": "sha256-eUZxPDEWFUE9imAZV9Pk/Vi/w2VbqAXiqQdytQ0TyPs=",
+        "owner": "CalamooseLabs",
+        "repo": "mailroom",
+        "rev": "dd260f2a17c5f25110a669ef8faf7323964d7af2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "CalamooseLabs",
+        "repo": "mailroom",
+        "type": "github"
+      }
+    },
     "microvm": {
       "inputs": {
         "nixpkgs": [
@@ -872,11 +892,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791989663,
-        "narHash": "sha256-Dz7mdE7Iy+FDunZtUVwnbiC5KTRfDxWlNXKsSyZQQ+0=",
+        "lastModified": 1795148244,
+        "narHash": "sha256-6I+msf2B+CSnMnzQBtA9lkmqBOnDdF+TVef2gOiIDLI=",
         "owner": "The-Company-Inc-Nerds",
         "repo": "multichat",
-        "rev": "3480b6c9ad995fac6ecc04a0606f90fc8b9acaa9",
+        "rev": "1467effa091dfd62724ea1ebc6e857ac223460f0",
         "type": "github"
       },
       "original": {
@@ -1082,6 +1102,7 @@
         "home-manager": "home-manager_2",
         "hyprland": "hyprland",
         "hyprland-plugins": "hyprland-plugins",
+        "mailroom": "mailroom",
         "microvm": "microvm",
         "multichat": "multichat",
         "nixos-hardware": "nixos-hardware",

@@ -26,11 +26,18 @@
   # profiles/collections the baseline doesn't have — OBS's auto-created
   # "Untitled" leftovers, dropped brands — instead of merging them back in.
   # Symmetric with obs-config-snapshot, which mirrors live → repo the same way.
+  #
+  # "${cfg.seedSource}" (here and in the seed activation below) copies the
+  # baseline into its own store path WITH string context, so it rides the home
+  # generation's closure. "${toString cfg.seedSource}" was a context-less path
+  # into the flake source, which nothing roots: once the daily nix-gc had
+  # collected that source, a restore found nothing to copy, changed nothing and
+  # still printed "restored baseline".
   restoreApp = pkgs.writeShellApplication {
     name = "obs-config-restore";
     runtimeInputs = [pkgs.coreutils pkgs.gnutar pkgs.rsync];
     text = ''
-      src="${toString cfg.seedSource}"
+      src="${cfg.seedSource}"
       obsDir="${obsDir}"
 
       if [ "''${1:-}" != "--yes" ]; then
@@ -205,7 +212,7 @@ in {
       # `cp -n` skips files the machine already owns; `--no-preserve=mode` drops
       # the 0444 store bit so OBS can rewrite the copy.
       home.activation.seedObsConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
-        src="${toString cfg.seedSource}"
+        src="${cfg.seedSource}"
         obsDir="${obsDir}"
         run mkdir -p "$obsDir"
         for item in basic global.ini; do

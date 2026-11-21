@@ -3,7 +3,7 @@
   pkgs,
   ...
 }: {
-  # obs-kiosk is the shared modules/obs-kiosk (deduped with users/streamer).
+  # obs-kiosk is the shared modules/obs-kiosk.
   imports = [../obs-kiosk/configuration.nix];
 
   programs.niri.enable = true;
