@@ -851,11 +851,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1795244094,
-        "narHash": "sha256-j0uO6fy7mX/D2noz/EockAkqIZ/muqZanSX/Grmd4k8=",
+        "lastModified": 1795257842,
+        "narHash": "sha256-eUZxPDEWFUE9imAZV9Pk/Vi/w2VbqAXiqQdytQ0TyPs=",
         "owner": "CalamooseLabs",
         "repo": "mailroom",
-        "rev": "e017c8cd1bf4ded456f90d30d920b2769a9e15c2",
+        "rev": "dd260f2a17c5f25110a669ef8faf7323964d7af2",
         "type": "github"
       },
       "original": {
