@@ -116,8 +116,13 @@
 #   install needs no deploy step, and the bundle needs no GitHub fetch of its
 #   own (the ~2 GB source travels inside the system closure). Whatever the pin
 #   moves to gets its first full build ON THIS BOX — and the public co-op code
-#   of mod 1.0.21 its first real play: watch that build, and walk the player
-#   flow once yourself before the address circulates.
+#   (new in mod 1.0.21; the pin now carries 1.0.22, the go-live round) its
+#   first real play: watch that build, and walk the player flow once yourself
+#   before the address circulates. The same pipeline was run once off the box
+#   for 1.0.22 (gradle build, then build_mrpack.py --profile server --cache
+#   --out-dir) and the bundle it made booted: 107 mods, no function, tag or
+#   mixin error. That proves the source builds and loads, not that THIS box's
+#   first build goes through.
 #     ssh hub@5.78.214.170 'journalctl -fu tci-bundle-build'   # the first build also
 #                                                   # downloads Maven/Modrinth/Fabric deps
 #     ssh hub@5.78.214.170 sudo tci-bundle status   # pinned source, live link, pin, bundles
@@ -136,14 +141,28 @@
 #     build-multiplayer --server-address 5.78.214.170
 #   (the public online client: no world, no resource packs, START GAME joins
 #   this box). clientGate = "pack" below admits ANY pack version at the door, so
-#   a bundle rebuild no longer makes every client reinstall: a 1.0.19 or 1.0.20
-#   pack keeps playing against a newer server. Two limits no knob lifts: the
-#   pack itself is still required, and Fabric's registry sync disconnects a
-#   client that lacks a registry entry the server has — so packs older than
-#   1.0.19 cannot join at all, and a later build that ADDS registry content (an
-#   item, a block, an entity, a sound) forces the reinstall after all. Publish
-#   the new pack with every release anyway: an old client is admitted, it is
-#   not updated.
+#   a bundle rebuild no longer makes every client reinstall: a 1.0.19, 1.0.20
+#   or 1.0.21 pack keeps playing against a newer server. Two limits no knob
+#   lifts: the pack itself is still required, and Fabric's registry sync
+#   disconnects a client that lacks a registry entry the server has — so packs
+#   older than 1.0.19 cannot join at all, and a later build that ADDS registry
+#   content (an item, a block, an entity, a sound) forces the reinstall after
+#   all. Publish the new pack with every release anyway: an old client is
+#   admitted, it is not updated.
+#   1.0.22 adds no registry entry, payload or language key of the mod's own, so
+#   that still holds. What an OLDER pack gets from a 1.0.22 server is everything
+#   the server decides: gift Pokémon locked until the previous town's badge, the
+#   closed Battle Frontier and its COMING SOON card, the professor's call, the
+#   Circlet's EV sharing, the candy EV screen and the EV-yield readout. What it
+#   does NOT get is client-side: the repaired graphics selector, the 75 % volume
+#   default and the Inventory Sorting button and key. The 1.0.22 bundle carries
+#   the Inventory Sorting mod (the sort runs on the server): a client without
+#   the jar still joins — the mod registers nothing, only three payloads — and
+#   middle- or double-click on an empty slot still sorts for it. Its command
+#   `/invsort downloadBlacklist` is open to every player and CRASHES a
+#   dedicated server (it runs client code); the mod replaces that command with
+#   a refusal (compat/InventorySorterGuard). Never ship that jar to this box
+#   with a mod build older than 1.0.22.
 #   Hetzner side (outside this repo): the Cloud Firewall, if one is attached,
 #   must pass TCP 22, 25565 and 25600-25629 (sshd, the hub, and one port per
 #   provisionable world, up to 25600 + maxProvisioned - 1). The event's rule
