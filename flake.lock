@@ -236,11 +236,11 @@
         "zed-editor": "zed-editor"
       },
       "locked": {
-        "lastModified": 1795390242,
-        "narHash": "sha256-I9XMplx/ldqekVGuGX2J9HOXaf8ZOaVetvlohT1pdDY=",
+        "lastModified": 1795392336,
+        "narHash": "sha256-AaVb3mtT53OXoxop7kST+ut6LnhR1JuCM/HZdPUcdNs=",
         "owner": "The-Company-Inc-Nerds",
         "repo": "the-cobblemon-initiative",
-        "rev": "7cfcee4f4e5855ff0fd501515eea912195ce9811",
+        "rev": "a4f17517b6caff7433f861c9f7f4ce7251654d2f",
         "type": "github"
       },
       "original": {
