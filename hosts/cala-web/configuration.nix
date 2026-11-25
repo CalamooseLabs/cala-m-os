@@ -14,44 +14,55 @@
 # builds, then copies the closure over. Never build on the box itself: 1 GB of
 # RAM can't run a nix build, and the 20 GB disk has no room for one.
 #
-#   First install:
-#     1. Create the CPX02 with no Volumes attached.
+#   First install (a new server, with the cala-m-os installer):
+#     1. Create the server as a CPX02 with no Volumes attached. CPX boots UEFI,
+#        which this layout needs (the CX line is legacy BIOS: don't use it).
 #     2. Point every site's domain at its IPv4 BEFORE installing: an A record,
 #        DNS-only (grey cloud on Cloudflare; proxied breaks the ACME
 #        challenges). Check it with `dig +short <domain> @1.1.1.1`.
-#     3. nixos-anywhere kexecs a NixOS installer into RAM, and 1 GB is not
-#        enough for it. Rescale the powered-off server to a larger CPX with
-#        "CPU and RAM only" (leaves the disk at 20 GB, so it can be scaled
-#        back down later) for the install.
-#     4. Enable Rescue (linux64) with an SSH key and reset the server into it
-#        (enabling alone only arms it). CPX servers boot UEFI, which this
-#        layout needs; confirm with `ls /sys/firmware/efi` in the rescue shell
-#        (and `lsblk` that /dev/sda is the only disk), then run:
-#          nix run github:nix-community/nixos-anywhere -- --flake .#cala-web \
-#            --target-host root@<ipv4> --build-on local
-#          ssh-keygen -R <ipv4>
-#        The box comes up on DHCP (calamoose.hetznerCloud, both addresses null).
-#        If the kexec step fails with "Address not available" (a kernel 7.0
-#        rescue kernel), add `--kexec-extra-flags -c`.
-#     5. Power off, rescale back to CPX02 (CPU and RAM only), power on.
-#     6. If a record was added after the box came up, run
+#     3. Rescale the powered-off server UP for the install: "CPU and RAM only"
+#        to a CPX with 4 GB or more (this leaves the disk at 20 GB, so it can
+#        scale back down). The installer runs from RAM and evaluates and
+#        fetches the flake on the box; 1 GB can't hold that.
+#     4. Boot the installer ISO. Hetzner mounts custom ISOs only through a
+#        support ticket (direct-download link, "x86"), and an ISO is private to
+#        its project; then Server -> ISO Images -> mount, and reboot. Work in
+#        the web console. cala-web has no private inputs, so the plain ISO is
+#        enough (no PAT needed). If the TUI finds no network, pick "Hetzner
+#        Cloud: set the static address" in its no-network menu.
+#     5. In cala-installer pick cala-web. HETZNER-CPX can't set wipeAllDisks,
+#        so the TUI runs disko itself: check that the device it lists is
+#        /dev/sda (the only disk), type `yes`, and the install continues. By
+#        hand, from "Drop to a shell":
+#          sudo -i
+#          disko --mode destroy,format,mount --flake github:CalamooseLabs/cala-m-os#cala-web
+#          INSTALL_SKIP_DISKO=1 install-cala-m-os cala-web
+#        The installer builds the default branch: merge this host first.
+#     6. Unmount the ISO, reboot, and let the box come up on the full
+#        configuration (on DHCP: calamoose.hetznerCloud, both addresses null).
+#        Then power off, rescale back down to CPX02 (CPU and RAM only), and
+#        power on. From here on nothing builds on the box.
+#     7. If a record was added after the box came up, run
 #        `sudo systemctl restart caddy`. That skips the remaining ACME retry
 #        backoff, which can reach hours. Check with `curl -sSI https://<domain>`.
 #        Caddy logs only errors, so a successful issuance prints nothing.
-#     7. IPv6: copy the /64 from the Cloud Console into
+#     8. IPv6: copy the /64 from the Cloud Console into
 #        calamoose.hetznerCloud.ipv6Address below, deploy, confirm `curl -6`
 #        works from the box, and only THEN publish AAAA records — Let's Encrypt
 #        validates over IPv6 first, so an AAAA record without working IPv6
 #        breaks certificate issuance. (ipv4Address pins IPv4 too, if DHCP is to
 #        be off entirely.)
+#   Without the ISO: steps 1-3, then Rescue (linux64, with an SSH key; reset
+#   into it, `ls /sys/firmware/efi`, `lsblk`) and from devbox
+#     nix run github:nix-community/nixos-anywhere -- --flake .#cala-web \
+#       --target-host root@<ipv4> --build-on local
+#   (add `--kexec-extra-flags -c` if kexec fails with "Address not available"),
+#   then `ssh-keygen -R <ipv4>` and steps 6-8.
 #   Updates (built on devbox, activated on the box):
 #     nixos-rebuild switch --flake .#cala-web --target-host hub@<host> --sudo
-#   Reinstall: `cala-reinstall` refuses on this box (the installer image needs
-#   ~2 GB of RAM). Rescale up as in step 3, then either `sudo cala-reinstall
-#   --no-token` (no private inputs) and pick cala-web in the installer's TUI (it
-#   runs disko, which asks before wiping — this host can't set wipeAllDisks; by
-#   hand: `disko --mode destroy,format,mount --flake <ref>#cala-web`, then
-#   `INSTALL_SKIP_DISKO=1 install-cala-m-os cala-web`), or repeat steps 4-5.
+#   Reinstall in place: rescale up (step 3) first — at 1 GB `cala-reinstall`
+#   refuses, its image needs ~2 GB — then `sudo cala-reinstall --no-token` (no
+#   private inputs) and steps 5-6 in the installer it kexecs into.
 #
 # Log in as `hub` with the YubiKey sk keys (users/webmaster). Each SSH
 # connection needs one touch.
