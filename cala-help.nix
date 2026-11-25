@@ -167,9 +167,9 @@ writeShellApplication {
     topic_remote() {
       section "remote: deploy from here, microVM guests"
       cmd "nixos-rebuild switch --flake .#<host> --target-host hub@<ip> --sudo" "build here, activate there"
-      note "add --build-host hub@<ip> to build on the target instead (webhost: aarch64, plus --no-reexec)"
+      note "add --build-host hub@<ip> to build on the target instead (never on cala-web: 1 GB RAM)"
       cmd "nix run github:nix-community/nixos-anywhere -- --flake .#<host> --target-host root@<ip>" "first install of a cloud box from Hetzner Rescue"
-      note "tci-cloud has a private input: run both as root (sudo --preserve-env=SSH_AUTH_SOCK); webhost adds --build-on remote"
+      note "tci-cloud has a private input: run both as root (sudo --preserve-env=SSH_AUTH_SOCK); cala-web installs from the installer ISO instead, rescaled above 1 GB (header)"
       cmd "microvm -l" "on a VM host: guests and whether they are current"
       cmd "sudo systemctl restart microvm@<guest>" "restart one; journalctl -u microvm@<guest> -f for its console"
       cmd "ssh hub@<guest-ip>" "a shell in a guest"

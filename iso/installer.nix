@@ -21,7 +21,7 @@
 
   # The installer's own tools (./tools.nix): antlers' cala-installer TUI and the
   # token-aware install-cala-m-os shim, built against THIS image's package set
-  # so the same files serve the aarch64 kexec image (webhost). The same set is
+  # so the same files serve the aarch64 kexec image. The same set is
   # the flake's packages.<system>.installer-tools, which the TUI's "Update the
   # installer" pulls and re-launches from.
   tools = import ./tools.nix {

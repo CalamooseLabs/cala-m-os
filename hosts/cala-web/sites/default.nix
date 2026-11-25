@@ -1,4 +1,4 @@
-# Websites served by webhost.
+# Websites served by cala-web.
 #
 # Each subdirectory is one site. Its default.nix is a small NixOS module that
 # declares the site's Caddy vhost. A static site is one line,
@@ -37,7 +37,7 @@ in {
   assertions = [
     {
       assertion = duplicateDomains == [];
-      message = "webhost: domain(s) claimed by more than one site in hosts/webhost/sites: ${lib.concatStringsSep ", " duplicateDomains}";
+      message = "cala-web: domain(s) claimed by more than one site in hosts/cala-web/sites: ${lib.concatStringsSep ", " duplicateDomains}";
     }
   ];
 
