@@ -660,7 +660,7 @@ in {
   # ---- Headless -----------------------------------------------------------
   # Core turns greetd on for every host (hosts/_core/configuration.nix). There
   # is no session to start here, so it is forced off — the switch `ai`,
-  # `webhost` and modules/tci-server use. Without it the system boots to
+  # `cala-web` and modules/tci-server use. Without it the system boots to
   # multi-user.target and tty1 carries a plain getty: a login prompt, no
   # autologin. That prompt is the local way in when the network is not there;
   # hub logs in with the password typed at install (wiki: ISO-Installer — the

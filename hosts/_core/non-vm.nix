@@ -16,7 +16,7 @@
   nixpkgs.config.allowUnfree = true;
 
   # Each machine's hardware-configuration.nix owns the platform (x86_64
-  # everywhere except HETZNER-CAX, which is aarch64). This is only the
+  # everywhere today). This is only the
   # lowest-priority fallback, so hostPlatform is always defined; the beta pin
   # (options.nix) reads it. It must stay below the machines' mkDefault.
   nixpkgs.hostPlatform = lib.mkOptionDefault "x86_64-linux";
@@ -25,7 +25,7 @@
 
   # Allow any wheel user to change configuration. Skipped when there is no
   # checkout: hosts deployed remotely (nixos-anywhere / --target-host, e.g.
-  # webhost) have no /etc/nixos, and a failing snippet fails the whole switch.
+  # cala-web) have no /etc/nixos, and a failing snippet fails the whole switch.
   system.activationScripts.setPermissions = ''
     if [ -d /etc/nixos ]; then
       # Set ownership to root:wheel

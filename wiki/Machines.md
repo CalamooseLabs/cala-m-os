@@ -35,7 +35,7 @@ flowchart TD
 | `FW13-11XXP`  | Framework 13, 11th-gen Intel                                      | —          | —          | `framework-11th-gen-intel`              | **yes**           |
 | `FW13-12XXP`  | Framework 13, 12th-gen Intel                                      | —          | —          | `framework-12th-gen-intel`              | **yes**           |
 | `FW16-AMD-AI` | Framework 16 AMD + NVIDIA 5070                                    | nvidia-gpu | —          | `framework-16-amd-ai-300-series-nvidia` | **yes**           |
-| `HETZNER-CAX` | Hetzner Cloud CAX (Ampere Altra KVM guest, **aarch64**; `webhost`)  | —          | —          | — (hetzner-cloud module)                | no                |
+| `HETZNER-CPX` | Hetzner Cloud CPX (AMD EPYC KVM guest, x86_64; `cala-web` on a CPX02) | —          | —          | — (hetzner-cloud module)                | no                |
 | `HETZNER-CLOUD` | Hetzner Cloud CCX (AMD KVM guest, x86; `tci-cloud`)             | —          | —          | — (hetzner-cloud module)                | no                |
 | `MS-01`       | Minisforum MS-01                                                  | —          | —          | —                                       | no                |
 | `MS-02`       | Minisforum MS-02 + RTX Pro 4000                                   | nvidia-gpu | —          | —                                       | no                |
@@ -98,7 +98,7 @@ Imported by **workstation `configuration.nix` files**, not by hosts. All of them
 | `amd-gpu`    | `hardware.graphics` (+32-bit), `videoDrivers=["amdgpu"]`, redistributable firmware, stable `/dev/dri/amd-card` / `amd-render` udev symlinks. `amdgpu` is deliberately **not** forced into the initrd (no early KMS) |
 | `intel-gpu`  | `intel-media-driver`, `intel-compute-runtime`, `intel-gpu-tools`                                                                                                                                                                           |
 | `amd-cpu`    | Blacklists `k10temp`, loads `zenpower` for better Zen sensors (only `B850-MAX` uses it)                                                                                                                                                    |
-| `hetzner-cloud` | Hetzner Cloud guest: `qemu-guest` profile; systemd-networkd for Hetzner's routed (Layer 3) network — IPv4 over DHCP until `calamoose.hetznerCloud.ipv4Address` pins a static /32 with the on-link gateway `172.31.1.1`; IPv6 only via `ipv6Address` (Hetzner configures IPv6 statically; no router advertisements are documented or observed; gateway `fe80::1`); Hetzner's resolvers + systemd-resolved; QEMU guest agent for the Console's password reset; visible boot menu, no Plymouth (web console). Used by `HETZNER-CLOUD` and `HETZNER-CAX`; the hosts set the addresses. |
+| `hetzner-cloud` | Hetzner Cloud guest: `qemu-guest` profile; systemd-networkd for Hetzner's routed (Layer 3) network — IPv4 over DHCP until `calamoose.hetznerCloud.ipv4Address` pins a static /32 with the on-link gateway `172.31.1.1`; IPv6 only via `ipv6Address` (Hetzner configures IPv6 statically; no router advertisements are documented or observed; gateway `fe80::1`); Hetzner's resolvers + systemd-resolved; QEMU guest agent for the Console's password reset; visible boot menu, no Plymouth (web console). Used by `HETZNER-CLOUD` and `HETZNER-CPX`; the hosts set the addresses. |
 
 ---
 

@@ -195,7 +195,7 @@
       nixpkgs.lib.nixosSystem {
         # Only a fallback: a machine whose hardware-configuration.nix sets
         # nixpkgs.hostPlatform (every workstation does) builds natively for that
-        # platform instead, e.g. HETZNER-CAX → aarch64-linux for webhost.
+        # platform instead (the fallback is x86_64-linux; a machine could set aarch64-linux).
         inherit system;
         specialArgs =
           {
@@ -250,9 +250,9 @@
       tci-cloud = mkSystem "tci-cloud" {};
       tci-private = mkSystem "tci-private" {};
 
-      # Minimal public web server (Hetzner Cloud CAX11, aarch64): Caddy serves
-      # every site under hosts/webhost/sites. Deploy notes in its configuration.nix.
-      webhost = mkSystem "webhost" {};
+      # Minimal public web server (Hetzner Cloud CPX02, x86_64): Caddy serves
+      # every site under hosts/cala-web/sites. Deploy notes in its configuration.nix.
+      cala-web = mkSystem "cala-web" {};
 
       iso = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs;};
@@ -262,8 +262,9 @@
 
       # The same installer as a RAM-only kexec image (no USB or ISO): what
       # `cala-reinstall` (modules/cala-reinstall, on every physical host) turns
-      # a running host into. One per architecture (webhost is aarch64), each in
-      # two flavours: the full image carries linux-firmware for bare-metal NICs;
+      # a running host into. One per architecture (no host is aarch64 today; the
+      # ARM image stays buildable for one), each in two flavours: the full
+      # image carries linux-firmware for bare-metal NICs;
       # `vm` leaves it out, which is what fits a 4 GB cloud VM (cala-reinstall
       # picks it under systemd-detect-virt). `nix build .#installer-kexec` on a
       # host resolves to its own architecture via packages.<system> below.
@@ -286,7 +287,7 @@
     # systems without realising (building) them. The microvm guests (media,
     # torrent) are validated transitively through `homelab`, whose evaluation
     # forces their toplevels via the vm-manager restart triggers. The aarch64
-    # configurations (webhost, installer-kexec*-aarch64) are evaluated the same
+    # configurations (installer-kexec*-aarch64) are evaluated the same
     # way — their drvPath is just a string here, nothing is built for them.
     checks.${system} =
       builtins.mapAttrs (

@@ -1,11 +1,11 @@
 {isDefaultUser, ...}: let
   uuid = baseNameOf (toString ./.);
 
-  # Deliberately lean: an internet-facing ARM box managed remotely from devbox.
-  # Unlike `server`, there's no yubikey module: its yubioath-flutter GUI isn't
-  # cached for aarch64, so it would compile Flutter on the box. There's also no
-  # rebuild-config/restore-config, because deploys come from devbox and the box
-  # has no /etc/nixos checkout.
+  # Deliberately lean: an internet-facing 1 GB box (cala-web) managed remotely
+  # from devbox. Unlike `server`, there's no yubikey module: it brings the
+  # yubioath-flutter GUI, which a headless box with a 20 GB disk doesn't need.
+  # There's also no rebuild-config/restore-config, because deploys come from
+  # devbox and the box has no /etc/nixos checkout.
   modules = [
     # Needed even with secrets off: modules/secrets (always imported by _core)
     # defines age.* under a false mkIf, and that still requires the options to
