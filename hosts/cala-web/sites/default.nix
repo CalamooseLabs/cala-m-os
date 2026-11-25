@@ -25,9 +25,11 @@
   # Domains declared by the site modules in this folder. Two sites claiming the
   # same domain (e.g. a copied site dir whose domain wasn't changed) would merge
   # into ONE Caddy block, where the last root silently wins, so refuse it.
-  # Assumes the documented plain-attrset form; mkIf/mkMerge-wrapped definitions
-  # are skipped.
-  siteDomains = lib.concatMap (d: lib.attrNames d.value) (lib.filter
+  # A vhost key may list several domains ("a.com, b.com"), so each key is split
+  # into its names. Assumes the documented plain-attrset form; mkIf/mkMerge-
+  # wrapped definitions are skipped.
+  splitDomains = key: lib.filter (n: n != "") (lib.splitString " " (lib.replaceStrings [","] [" "] key));
+  siteDomains = lib.concatMap (d: lib.concatMap splitDomains (lib.attrNames d.value)) (lib.filter
     (d: lib.hasPrefix "${toString ./.}/" d.file && !(d.value ? _type))
     options.services.caddy.virtualHosts.definitionsWithLocations);
   duplicateDomains = lib.unique (lib.filter (n: lib.count (m: m == n) siteDomains > 1) siteDomains);

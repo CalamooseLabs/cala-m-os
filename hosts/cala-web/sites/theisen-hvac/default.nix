@@ -4,7 +4,8 @@
 # files. output.css is prebuilt Tailwind v3 output: rebuild it if the markup
 # starts using new classes.
 {
-  services.caddy.virtualHosts."hvac.calamooselabs.com".extraConfig = ''
+  # Served on both family domains (one vhost, a certificate for each).
+  services.caddy.virtualHosts."hvac.calamooselabs.com, hvac.calamosfamily.com".extraConfig = ''
     import static ${./public}
     # No JavaScript. The inline <style> tags live inside the SVG logos.
     header Content-Security-Policy "default-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
